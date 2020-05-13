@@ -1,1 +1,8 @@
 # List required packages in this file, one per line.
+python
+numpy
+matplotlib
+scipy
+diffpy-cmi
+xpdtools
+streamz

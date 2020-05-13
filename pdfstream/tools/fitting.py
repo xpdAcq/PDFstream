@@ -18,7 +18,8 @@ from scipy.optimize import least_squares
 from pdfstream.tools.fitobjs import GenConfig, FunConfig, ConConfig, MyRecipe
 
 __all__ = ["make_profile", "make_generator", "make_recipe", "fit", "old_save", "gen_save_all", "F", "plot",
-           "constrainAsSpaceGroup", "load_default", 'sgconstrain', "cfconstrain", 'free_and_fit', 'loadData']
+           "constrainAsSpaceGroup", "load_default", 'sgconstrain', "cfconstrain", 'free_and_fit', 'loadData',
+           'print_result']
 
 # abbreviate some useful modules and functions
 F = characteristicfunctions
@@ -752,6 +753,18 @@ def free_and_fit(recipe: MyRecipe, tags: List[Union[str, Tuple[str, ...]]], **kw
         else:
             raise TypeError(f"Unknown tag type: {type(tag)}")
         fit(recipe, **kwargs)
+    return
+
+
+def print_result(recipe: MyRecipe) -> None:
+    """
+    Print out the result of the recipe.
+
+    Parameters
+    ----------
+    recipe : MyRecipe
+        The recipe to print the results.
+    """
     res = FitResults(recipe)
     res.printResults()
     return
