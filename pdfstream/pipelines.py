@@ -12,7 +12,7 @@ import pdfstream.tools.visualization as vis
 OFF = "off"
 
 
-def integration(img: Stream, ai: Stream, bg_img: Stream, bg_scale: float = None, mask_setting: dict = None,
+def integration(img: Stream, ai: Stream, bg_img: Stream = None, bg_scale: float = None, mask_setting: dict = None,
                 integ_setting: dict = None, img_settings: dict = None, plot_settings: dict = None) -> Tuple[
     Stream, Stream, Stream]:
     """Make integration pipeline.
@@ -60,7 +60,7 @@ def integration(img: Stream, ai: Stream, bg_img: Stream, bg_scale: float = None,
         ax0 = sz.starmap(sz.combine_latest(img, mask), integ.vis_img, img_settings)
         sz.sink(ax0, lambda x: None, stream_name="End")
     _mask_setting = sz.pluck(auto_mask_output, 1, stream_name='_mask_setting')
-    if bg_scale is not OFF:
+    if bg_img is not None:
         img = sz.starmap(sz.combine_latest(img, bg_img), integ.bg_sub, bg_scale)
     integrate_output = sz.starmap(sz.combine_latest(img, ai, mask), integ.integrate, integ_setting)
     chi = sz.pluck(integrate_output, 0, stream_name='chi')

@@ -10,7 +10,7 @@ import pdfstream.tools.io as io
 
 def image_to_iq(img_files: Union[str, Iterable[str]], poni_file: str, bg_img_file: str = None, chi_file: str = None,
                 bg_scale: float = None, mask_setting: dict = None,
-                integ_setting: dict = None, plot_setting: dict = None):
+                integ_setting: dict = None, plot_setting: dict = None, img_settings: dict = None):
     """"""
     if isinstance(img_files, str):
         img_files = (img_files,)
@@ -27,7 +27,7 @@ def image_to_iq(img_files: Union[str, Iterable[str]], poni_file: str, bg_img_fil
     # build pipeline
     integ_setting.update({'filename': chi_file})
     pl.integration(_img, _ai, _bg_img, bg_scale=bg_scale, mask_setting=mask_setting, integ_setting=integ_setting,
-                   plot_setting=plot_setting)
+                   plot_settings=plot_setting, img_settings=img_settings)
     # input data
     _poni_file.emit(poni_file)
     if bg_img_file is not None:
