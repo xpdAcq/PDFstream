@@ -9,9 +9,12 @@ import pdfstream.tools.integration as integ
 import pdfstream.tools.transformation as trans
 import pdfstream.tools.visualization as vis
 
+OFF = "off"
 
-def integration(img: Stream, ai: Stream, bg_img: Stream = None, bg_scale: float = None, mask_setting: dict = None,
-                integ_setting: dict = None, plot_setting: dict = None) -> Tuple[Stream, Stream, Stream]:
+
+def integration(img: Stream, ai: Stream, bg_img: Stream, bg_scale: float = None, mask_setting: dict = None,
+                integ_setting: dict = None, img_settings: dict = None, plot_settings: dict = None) -> Tuple[
+    Stream, Stream, Stream]:
     """Make integration pipeline.
 
     Parameters
@@ -34,8 +37,11 @@ def integration(img: Stream, ai: Stream, bg_img: Stream = None, bg_scale: float 
     integ_setting : dict
         The integration setting. See _INTEG_SETTING in pdfstream.tools.integration. If None, use default.
 
-    plot_setting : dict
-        The visualization setting. see _PLOT_SETTING in pdfstream.tools.integration. If None, use default.
+    img_settings : dict
+        The user's modification to imshow kwargs except a special key 'z_score'.
+
+    plot_settings : dict
+        The kwargs for the plot function.
 
     Returns
     -------
@@ -50,13 +56,18 @@ def integration(img: Stream, ai: Stream, bg_img: Stream = None, bg_scale: float 
     """
     auto_mask_output = sz.starmap(sz.combine_latest(img, ai), integ.auto_mask, mask_setting)
     mask = sz.pluck(auto_mask_output, 0, stream_name='mask')
+    if img_settings is not OFF:
+        ax0 = sz.starmap(sz.combine_latest(img, mask), integ.vis_img, img_settings)
+        sz.sink(ax0, lambda x: None, stream_name="End")
     _mask_setting = sz.pluck(auto_mask_output, 1, stream_name='_mask_setting')
-    if bg_img is not None:
+    if bg_scale is not OFF:
         img = sz.starmap(sz.combine_latest(img, bg_img), integ.bg_sub, bg_scale)
     integrate_output = sz.starmap(sz.combine_latest(img, ai, mask), integ.integrate, integ_setting)
     chi = sz.pluck(integrate_output, 0, stream_name='chi')
     _integ_setting = sz.pluck(integrate_output, 1, stream_name='_integ_setting')
-    sz.sink(sz.combine_latest(img, chi, _integ_setting), integ.visualize, plot_setting)
+    if plot_settings is not OFF:
+        ax1 = sz.starmap(sz.combine_latest(chi, _integ_setting), integ.vis_chi, plot_settings)
+        sz.sink(ax1, lambda x: None, stream_name="End")
     return chi, _integ_setting, _mask_setting
 
 

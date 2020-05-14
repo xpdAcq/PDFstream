@@ -1,12 +1,15 @@
 """The functions used in the integration pipelines. All functions consume namespace and return the modified
 namespace. """
+from typing import Tuple
+
 import matplotlib.pyplot as plt
 import numpy as np
+from matplotlib.axes import Axes
 from numpy import ndarray
 from pyFAI.azimuthalIntegrator import AzimuthalIntegrator
 from xpdtools.tools import generate_binner, mask_img
 
-__all__ = ['bg_sub', 'auto_mask', 'integrate', 'visualize']
+__all__ = ['bg_sub', 'auto_mask', 'integrate']
 
 # default mask_img auto mask setting
 _AUTOMASK_SETTING = dict(
@@ -40,21 +43,16 @@ _INTEG_SETTING = dict(
     metadata=None
 )
 # default visualization setting
-_PLOT_SETTING = {
-    'figsize': (8, 4),
-    'xlabel': {
-        "q_A^-1": r"Q ($\mathrm{\AA}^{-1}$)",
-        "q_nm^-1": r"Q ({nm}$^{-1}$)",
-        "2th_deg": r"2$\theta$ (deg)",
-        "2th_rad": r"2$\theta$ (rad)",
-        "r_mm": r"radius (mm)",
-    },
-    'ylabel': 'I (A. U.)',
-    'z_score': 2.
+_LABEL = {
+    "q_A^-1": r"Q ($\mathrm{\AA}^{-1}$)",
+    "q_nm^-1": r"Q ({nm}$^{-1}$)",
+    "2th_deg": r"2$\theta$ (deg)",
+    "2th_rad": r"2$\theta$ (rad)",
+    "r_mm": r"radius (mm)"
 }
 
 
-def bg_sub(img: ndarray, bg_img: ndarray, bg_scale: float = None):
+def bg_sub(img: ndarray, bg_img: ndarray, bg_scale: float = None) -> ndarray:
     """Subtract the background image from the data image inplace.
 
     Parameters
@@ -76,7 +74,7 @@ def bg_sub(img: ndarray, bg_img: ndarray, bg_scale: float = None):
     return img
 
 
-def auto_mask(img: ndarray, ai: AzimuthalIntegrator, mask_setting: dict = None):
+def auto_mask(img: ndarray, ai: AzimuthalIntegrator, mask_setting: dict = None) -> Tuple[ndarray, dict]:
     """Automatically generate the mask of the image.
 
     Parameters
@@ -89,9 +87,6 @@ def auto_mask(img: ndarray, ai: AzimuthalIntegrator, mask_setting: dict = None):
 
     mask_setting : dict
         The user's modification to auto-masking settings.
-
-    kwargs
-        The other keywords not used in this function.
 
     Returns
     -------
@@ -109,8 +104,9 @@ def auto_mask(img: ndarray, ai: AzimuthalIntegrator, mask_setting: dict = None):
     return mask, _mask_setting
 
 
-def integrate(img: ndarray, ai: AzimuthalIntegrator, mask: ndarray = None, integ_setting: dict = None):
-    """Use AzimuthalIntegrator to integrate the image. Add chi_x, chi_y, _integ_setting to namespace.
+def integrate(img: ndarray, ai: AzimuthalIntegrator, mask: ndarray = None, integ_setting: dict = None) -> Tuple[
+    ndarray, dict]:
+    """Use AzimuthalIntegrator to integrate the image.
 
     Parameters
     ----------
@@ -147,40 +143,70 @@ def integrate(img: ndarray, ai: AzimuthalIntegrator, mask: ndarray = None, integ
     return chi, _integ_setting
 
 
-def visualize(img: ndarray, chi: ndarray, _integ_setting: dict, plot_setting: dict = None):
-    """Visualize the processed image and the integrated curve.
+def vis_img(img: ndarray, mask: ndarray, img_settings: dict = None) -> Axes:
+    """Visualize the processed image. The color map will be determined by statistics of the pixel values. The color map
+    is determined by mean +/- z_score * std.
 
     Parameters
     ----------
     img : ndarray
         The 2D diffraction image array.
 
+    mask: ndarray
+        The whole integration setting.
+
+    img_settings : dict
+        The user's modification to imshow kwargs except a special key 'z_score'.
+
+    Returns
+    -------
+    ax : Axes
+        The axes with the image shown.
+    """
+    if img_settings is None:
+        img_settings = dict()
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    img = np.ma.masked_array(img, mask)
+    mean, std = img.mean(), img.std()
+    z_score = img_settings.pop('z_score', 2.)
+    kwargs = {
+        'vmin': mean - z_score * std,
+        'vmax': mean + z_score * std
+    }
+    kwargs.update(**img_settings)
+    ax.imshow(img, **kwargs)
+    ax.axis('off')
+    plt.show(block=False)
+    return ax
+
+
+def vis_chi(chi: ndarray, _integ_setting: dict, plot_settings: dict = None) -> Axes:
+    """Visualize the chi curve.
+
+    Parameters
+    ----------
     chi : ndarray
         The chi data. The first row is bin centers and the second row is the average intensity in bins.
 
     _integ_setting: dict
         The whole integration setting.
 
-    plot_setting : dict
-        The user's modification to integration settings.
+    plot_settings : dict
+        The kwargs for the plot function.
+
+    Returns
+    -------
+    ax : Axes
+        The axes with the curve plotted.
     """
-    _plot_setting = _PLOT_SETTING.copy()
-    if plot_setting is not None:
-        _plot_setting.update(plot_setting)
-    plt.figure(figsize=_plot_setting['figsize'])
-    plt.subplot(121)
-    plt.plot(chi[0], chi[1])
+    if plot_settings is None:
+        plot_settings = dict()
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    ax.plot(chi[0], chi[1], **plot_settings)
     unit = _integ_setting['unit']
-    plt.xlabel(_plot_setting['xlabel'][unit])
-    plt.ylabel(_plot_setting['ylabel'])
-    plt.subplot(122)
-    mask = _integ_setting['mask']
-    img = np.ma.masked_array(img, mask)
-    mean, std = img.mean(), img.std()
-    plt.imshow(
-        img,
-        vmin=mean - _plot_setting['z_score'] * std,
-        vmax=mean + _plot_setting['z_score'] * std
-    )
+    ax.set_xlabel(_LABEL.get(unit))
+    ax.set_ylabel('I (A. U.)')
     plt.show(block=False)
-    return
+    return ax
