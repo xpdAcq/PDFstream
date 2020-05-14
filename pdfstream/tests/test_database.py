@@ -1,18 +1,19 @@
 import numpy as np
-from tests import NI_PONI, NI_IMG
 
 from pdfstream.utils.data import load_poni, paths, from_db, to_db
 
 
-def test_load_poni():
-    config = load_poni(NI_PONI)
+def test_load_poni(db):
+    poni_file = db.get('Ni_poni_file')
+    black_img = db.get('black_img')
+    config = load_poni(poni_file)
     from pyFAI.azimuthalIntegrator import AzimuthalIntegrator
     ai0 = AzimuthalIntegrator()
     ai0.set_config(config)
-    q0, i0 = ai0.integrate1d(NI_IMG, 1024, safe=False)
+    q0, i0 = ai0.integrate1d(black_img, 1024, safe=False)
     import pyFAI
-    ai1 = pyFAI.load(NI_PONI)
-    q1, i1 = ai1.integrate1d(NI_IMG, 1024, safe=False)
+    ai1 = pyFAI.load(poni_file)
+    q1, i1 = ai1.integrate1d(black_img, 1024, safe=False)
     assert np.array_equal(q0, q1)
     assert np.array_equal(i0, i1)
 
