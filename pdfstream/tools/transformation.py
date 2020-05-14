@@ -9,9 +9,8 @@ from numpy import ndarray
 
 def make_pdfgetter(pdfconfig: PDFConfig, user_config: dict = None) -> PDFGetter:
     """Make the pdfgetter."""
-    if user_config is None:
-        user_config = {}
-    PDFConfig.update(**user_config)
+    if user_config is not None:
+        pdfconfig.update(**user_config)
     pdfgetter = PDFGetter(pdfconfig)
     return pdfgetter
 
