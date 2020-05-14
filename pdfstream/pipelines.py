@@ -13,8 +13,8 @@ OFF = "off"
 
 
 def integration(img: Stream, ai: Stream, bg_img: Stream = None, bg_scale: float = None, mask_setting: dict = None,
-                integ_setting: dict = None, img_settings: dict = None, plot_settings: dict = None) -> Tuple[
-    Stream, Stream, Stream]:
+                integ_setting: dict = None, img_settings: dict = None, plot_settings: dict = None) \
+        -> Tuple[Stream, Stream, Stream]:
     """Make integration pipeline.
 
     Parameters

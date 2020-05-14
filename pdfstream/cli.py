@@ -14,7 +14,7 @@ def image_to_iq(img_files: Union[str, Iterable[str]], poni_file: str, bg_img_fil
     """"""
     if isinstance(img_files, str):
         img_files = (img_files,)
-    # create input nodes
+    # input nodes
     _img_file = Stream()
     _img = sz.map(_img_file, io.load_img)
     _poni_file = Stream()
@@ -25,9 +25,10 @@ def image_to_iq(img_files: Union[str, Iterable[str]], poni_file: str, bg_img_fil
     else:
         _bg_img = None
     # build pipeline
-    integ_setting.update({'filename': chi_file})
-    pl.integration(_img, _ai, _bg_img, bg_scale=bg_scale, mask_setting=mask_setting, integ_setting=integ_setting,
-                   plot_settings=plot_setting, img_settings=img_settings)
+    integ_setting.update({'filename': chi_file})  # let pyFAI write the file
+    _chi, _, _ = pl.integration(_img, _ai, _bg_img, bg_scale=bg_scale, mask_setting=mask_setting,
+                                integ_setting=integ_setting,
+                                plot_settings=plot_setting, img_settings=img_settings)
     # input data
     _poni_file.emit(poni_file)
     if bg_img_file is not None:
