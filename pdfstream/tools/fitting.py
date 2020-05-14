@@ -17,7 +17,7 @@ from scipy.optimize import least_squares
 
 from pdfstream.tools.fitobjs import GenConfig, FunConfig, ConConfig, MyRecipe
 
-__all__ = ["make_profile", "make_generator", "make_recipe", "fit", "old_save", "gen_save_all", "F", "plot",
+__all__ = ["make_profile", "make_generator", "make_recipe", "fit", "gen_save_all", "F", "plot",
            "constrainAsSpaceGroup", "load_default", 'sgconstrain', "cfconstrain", 'free_and_fit', 'loadData',
            'print_result']
 
@@ -161,9 +161,9 @@ def _make_df(recipe: MyRecipe) -> Tuple[pd.DataFrame, FitResults]:
     """
     df = pd.DataFrame()
     res = FitResults(recipe)
-    df["name"] = ["Rw", "half_chi2"] + res.varnames
-    df["val"] = [res.rw, res.chi2 / 2] + res.varvals.tolist()
-    df["std"] = [np.nan, np.nan] + res.varunc
+    df["name"] = ["Rw", "half_chi2", "penalty"] + res.varnames
+    df["val"] = [res.rw, res.chi2 / 2, res.penalty] + res.varvals.tolist()
+    df["std"] = [np.nan, np.nan, np.nan] + res.varunc
     df = df.set_index("name")
     return df, res
 
@@ -235,57 +235,36 @@ def plot(recipe: MyRecipe) -> None:
     return
 
 
-def old_save(recipe: MyRecipe, con_names: Union[str, List[str]], base_name: str) -> Tuple[str, Union[List[str], str]]:
-    """
-    save fitting result and fitted gr. the fitting result will be saved as csv file with name same as the file_name.
-    the fitted gr will be saved with name of file_name followed by index of the contribution if there are multiple
-    contributions.
-    :param recipe: fit recipe.
-    :param con_names: single or a list of names of FitContribution.
-    :param base_name: base name for the saving file.
-    :return: path to saved csv file, path to saved fgr file or a list of the path to saved fgr files.
-    """
-    df, res = _make_df(recipe)
-    csv_file = rf"{base_name}.csv"
-    df.to_csv(csv_file)
-
-    rw = df.iloc[0, 0]
-    if isinstance(con_names, str):
-        con = getattr(recipe, con_names)
-        fgr = rf"{base_name}_{con_names}.fgr"
-        con.profile.savetxt(fgr, header=f"Rw = {rw}\nx ycalc y dy")
-    else:
-        fgr = []
-        for con_name in con_names:
-            con: FitContribution = getattr(recipe, con_name)
-            fgr_file = rf"{base_name}_{con_name}.fgr"
-            fgr.append(fgr_file)
-            con.profile.savetxt(fgr_file, header=f"Rw = {rw}\nx ycalc y dy")
-
-    return csv_file, fgr
-
-
-def save_csv(recipe: MyRecipe, base_name: str) -> Tuple[str, float, float]:
+def save_csv(recipe: MyRecipe, base_name: str) -> Tuple[str, dict]:
     """
     Save fitting results to a csv file.
 
     Parameters
     ----------
-    recipe
-        Fitrecipe.
-    base_name
-        base name for saving. The saving name will be "{base_name}.csv"
+    recipe : MyRecipe
+        The fit recipe.
+
+    base_name : str
+        The base name for saving. The saving name will be "{base_name}.csv"
 
     Returns
     -------
-    path to the csv file.
+    csv_file : str
+        The path to the csv file.
+
+    goodness : dict
+        The metric of the goodness of the fit.
     """
     df, res = _make_df(recipe)
     csv_file = rf"{base_name}.csv"
     df.to_csv(csv_file)
-    rw = res.rw
-    half_chi2 = res.chi2 / 2.
-    return csv_file, rw, half_chi2
+
+    goodness = {
+        'rw': res.rw,
+        'half_chi2': res.chi2 / 2,
+        'penalty': res.penalty
+    }
+    return csv_file, goodness
 
 
 def save_fgr(contribution: FitContribution, base_name: str, rw: float) -> str:
@@ -296,13 +275,16 @@ def save_fgr(contribution: FitContribution, base_name: str, rw: float) -> str:
     ----------
     contribution
         arbitrary number of Fitcontributions.
+
     base_name
         base name for saving. The saving name will be "{base_name}_{contribution.name}.fgr"
+
     rw
         value of Rw. It will be in the header as "Rw = {rw}".
 
     Returns
     -------
+    fgr_file : str
         the path to the fgr file.
     """
     fgr_file = rf"{base_name}_{contribution.name}.fgr"
@@ -444,15 +426,15 @@ def _save_all(recipe: MyRecipe, folder: str, csv: str, fgr: str, cif: str) -> No
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     name = os.path.join(folder, f"{timestamp}_{uid}")
 
-    csv_file, rw, half_chi2 = save_csv(recipe, name)
+    csv_file, goodness = save_csv(recipe, name)
     params = ", ".join(recipe.getNames())
-    csv_info = dict(recipe_name=recipe.name, rw=rw, half_chi2=half_chi2, timestamp=timestamp, csv_file=csv_file,
+    csv_info = dict(recipe_name=recipe.name, **goodness, timestamp=timestamp, csv_file=csv_file,
                     params=params)
     recipe_id = update(csv, csv_info, id_col='recipe_id')
 
     for con_config in recipe.configs:
         con = getattr(recipe, con_config.name)
-        fgr_file = save_fgr(con, base_name=name, rw=rw)
+        fgr_file = save_fgr(con, base_name=name, rw=goodness.get('rw', 'unknown'))
         config_info = con_config.to_dict()
         if con_config.partial_eqs is not None:
             pgr_file = calc_pgar(con, name, con_config.partial_eqs)
