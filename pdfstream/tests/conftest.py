@@ -1,20 +1,33 @@
 """Configuration of pytest."""
-from pathlib import Path
+import numpy
+import pyFAI
+import pytest
+from diffpy.pdfgetx import PDFConfig
+from pkg_resources import resource_filename
 
-import fabio
+from pdfstream.utils.data import load_data
 
-from pdfstream.utils.data import load_poni, load_data
+NI_PONI = resource_filename('pdfstream', 'data_files/Ni_calib.poni')
+NI_GR = resource_filename('pdfstream', 'data_files/Ni.gr')
+NI_CHI = resource_filename('pdfstream', 'data_files/Ni.chi')
+NI_FGR = resource_filename('pdfstream', 'data_files/Ni.fgr')
+NI_CONFIG = PDFConfig()
+NI_CONFIG.readConfig(NI_GR)
 
-TEST_DIR = Path(__file__).parent
-NI_TIFF = str(TEST_DIR.joinpath('data', 'Ni_calib.tiff'))
-NI_PONI = str(TEST_DIR.joinpath('data', 'Ni_calib.poni'))
-BG_TIFF = str(TEST_DIR.joinpath('data', 'BG_zero.tiff'))
-NI_GR_FILE = str(TEST_DIR.joinpath('data', 'Ni.gr'))
-NI_CHI_FILE = str(TEST_DIR.joinpath('data', 'Ni.chi'))
-NI_FGR_FILE = str(TEST_DIR.joinpath('data', 'Ni.fgr'))
-NI_IMG = fabio.open(NI_TIFF).data
-BG_IMG = fabio.open(BG_TIFF).data
-NI_CALIB_RESULT = load_poni(NI_PONI)
-NI_CHI = load_data(NI_CHI_FILE).T
-NI_GR = load_data(NI_GR_FILE).T
-NI_FGR = load_data(NI_FGR_FILE).T
+DB = {
+    'Ni_poni_file': NI_PONI,
+    'Ni_gr_file': NI_GR,
+    'Ni_chi_file': NI_CHI,
+    'Ni_fgr_file': NI_FGR,
+    'ai': pyFAI.load(NI_PONI),
+    'Ni_gr': load_data(NI_GR).T,
+    'Ni_chi': load_data(NI_CHI).T,
+    'Ni_fgr': load_data(NI_FGR).T,
+    'black_img': numpy.zeros((128, 128)),
+    'Ni_config': NI_CONFIG
+}
+
+
+@pytest.fixture
+def db():
+    return DB
