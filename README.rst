@@ -20,11 +20,17 @@ Installation
 Development mode
 ================
 
-Install the packages listed in the requirements.txt and requirement-dev.txt using anaconda.
+Create a new environment.
 
-``conda install --file requirements.txt -c diffpy -c conda-forge --yes``
+``conda create -n pdfstream``
 
-``conda install --file requirements-dev.txt -c diffpy -c conda-forge --yes``
+``conda activate pdfstream``
+
+Install the required packages using anaconda.
+
+``conda install xpdtools -c conda-forge``
+
+``conda install diffpy-cmi -c diffpy``
 
 Then clone this repo and tnstall this package in development mode..
 
