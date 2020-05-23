@@ -22,7 +22,6 @@ _AUTOMASK_SETTING = dict(
 )
 # default pyfai integration setting
 _INTEG_SETTING = dict(
-    filename=None,
     npt=1480,
     correctSolidAngle=False,
     variance=None,
@@ -104,7 +103,7 @@ def auto_mask(img: ndarray, ai: AzimuthalIntegrator, mask_setting: dict = None) 
     return mask, _mask_setting
 
 
-def integrate(img: ndarray, ai: AzimuthalIntegrator, mask: ndarray = None, integ_setting: dict = None) -> Tuple[
+def integrate(img: ndarray, ai: AzimuthalIntegrator, mask: ndarray = None, integ_settings: dict = None) -> Tuple[
     ndarray, dict]:
     """Use AzimuthalIntegrator to integrate the image.
 
@@ -119,7 +118,7 @@ def integrate(img: ndarray, ai: AzimuthalIntegrator, mask: ndarray = None, integ
     mask : ndarray
         The mask as a boolean array. True pixels are good pixels, False pixels are masked out.
 
-    integ_setting : dict
+    integ_settings : dict
         The user's modification to integration settings.
 
     Returns
@@ -133,9 +132,8 @@ def integrate(img: ndarray, ai: AzimuthalIntegrator, mask: ndarray = None, integ
     # merge integrate setting
     _integ_setting = _INTEG_SETTING.copy()
     _integ_setting.update(mask=mask)
-    if integ_setting is not None:
-        _integ_setting.update(integ_setting)
-    del integ_setting
+    if integ_settings is not None:
+        _integ_setting.update(integ_settings)
     # integrate
     chi = np.stack(
         ai.integrate1d(img, **_integ_setting)
@@ -167,7 +165,7 @@ def vis_img(img: ndarray, mask: ndarray, img_settings: dict = None) -> Axes:
         img_settings = dict()
     fig = plt.figure()
     ax = fig.add_subplot(111)
-    img = np.ma.masked_array(img, mask)
+    img = np.ma.masked_array(img, np.invert(mask))
     mean, std = img.mean(), img.std()
     z_score = img_settings.pop('z_score', 2.)
     kwargs = {
@@ -175,8 +173,10 @@ def vis_img(img: ndarray, mask: ndarray, img_settings: dict = None) -> Axes:
         'vmax': mean + z_score * std
     }
     kwargs.update(**img_settings)
-    ax.imshow(img, **kwargs)
+    img_obj = ax.imshow(img, **kwargs)
     ax.axis('off')
+    # color bar with magical settings to make it same size as the plot
+    plt.colorbar(img_obj, ax=ax, fraction=0.046, pad=0.04)
     plt.show(block=False)
     return ax
 

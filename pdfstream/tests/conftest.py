@@ -7,14 +7,18 @@ from pkg_resources import resource_filename
 
 from pdfstream.utils.data import load_data
 
-NI_PONI = resource_filename('pdfstream', 'data_files/Ni_calib.poni')
-NI_GR = resource_filename('pdfstream', 'data_files/Ni.gr')
-NI_CHI = resource_filename('pdfstream', 'data_files/Ni.chi')
-NI_FGR = resource_filename('pdfstream', 'data_files/Ni.fgr')
+NI_PONI = resource_filename('pdfstream', 'test_data/Ni_poni_file.poni')
+NI_GR = resource_filename('pdfstream', 'test_data/Ni_gr_file.gr')
+NI_CHI = resource_filename('pdfstream', 'test_data/Ni_chi_file.chi')
+NI_FGR = resource_filename('pdfstream', 'test_data/Ni_fgr_file.fgr')
+NI_IMG = resource_filename('pdfstream', 'test_data/Ni_img_file.tiff')
+KAPTON_IMG = resource_filename('pdfstream', 'test_data/Kapton_img_file.tiff')
 NI_CONFIG = PDFConfig()
 NI_CONFIG.readConfig(NI_GR)
 
 DB = {
+    'Ni_img_file': NI_IMG,
+    'Kapton_img_file': KAPTON_IMG,
     'Ni_poni_file': NI_PONI,
     'Ni_gr_file': NI_GR,
     'Ni_chi_file': NI_CHI,
