@@ -14,7 +14,33 @@ The data streaming PDF analysis software
 * Free software: 3-clause BSD license
 * Documentation: (COMING SOON!) https://st3107.github.io/pdfstream.
 
+Installation
+------------
+
+Development mode
+================
+
+Install the packages listed in the requirements.txt and requirement-dev.txt using anaconda. Then clone this repo
+and tnstall this package in development mode..
+
+``git clone https://gitlab.thebillingegroup.com/stao/pdfstream.git``
+
+``cd pdfstream``
+
+``pip install -e . --no-deps``
+
 Features
 --------
 
-* TODO
+Integration
+===========
+
+It supports the azimuthal integration of the diffraction image to one dimensional diffraction pattern. It uses
+the auto masking functionality in the xpdtools and the integration functionality in pyFAI.
+
+It can be used in the command line interface (CLI). Try the following command in the terminal to learn about the
+usage.
+
+``image_to_iq -- --help``
+
+It can also be used in python scripts. See the function `pdfstream.cli.image_to_iq`.
