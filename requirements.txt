@@ -1,13 +1,12 @@
 # List required packages in this file, one per line.
-# python
-# setuptools
-# versioneer
-# numpy
-# matplotlib
-# scipy
-# diffpy.structure
-# pyobjcryst
-# diffpy.srreal
-# diffpy.srfit
-# pyFAI
-# xpdtools
+python
+setuptools
+versioneer
+numpy
+matplotlib
+scipy
+diffpy.structure
+pyobjcryst
+diffpy.srreal
+diffpy.srfit
+xpdtools

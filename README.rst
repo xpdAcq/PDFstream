@@ -20,8 +20,13 @@ Installation
 Development mode
 ================
 
-Install the packages listed in the requirements.txt and requirement-dev.txt using anaconda. Then clone this repo
-and tnstall this package in development mode..
+Install the packages listed in the requirements.txt and requirement-dev.txt using anaconda.
+
+``conda install --file requirements.txt -c diffpy -c conda-forge --yes``
+
+``conda install --file requirements-dev.txt -c diffpy -c conda-forge --yes``
+
+Then clone this repo and tnstall this package in development mode..
 
 ``git clone https://gitlab.thebillingegroup.com/stao/pdfstream.git``
 
