@@ -46,6 +46,7 @@ setup(
     packages=find_packages(exclude=['docs', 'tests']),
     entry_points={
         'console_scripts': [
+            'image_to_iq = pdfstream.bonfire:image_to_iq'
             # 'command = some.module:some_function',
         ],
     },

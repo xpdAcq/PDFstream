@@ -26,7 +26,9 @@ def image_to_iq(img_files: Union[str, Iterable[str]],
     image will be integrated again by the pyFAI. The polarization correction and pixel-splitting algorithm will
     be applied according to user settings before the integration. The results are saved as chi files.
 
-
+    Examples
+    --------
+    image_to_iq diffraction_image.tiff calibrant.poni --bg_img_file background.tiff --integ_setting {npt: 2048}
 
     Parameters
     ----------
