@@ -9,15 +9,15 @@ import pdfstream.pipelines as pl
 import pdfstream.tools.io as io
 
 
-def image_to_iq(img_files: Union[str, Iterable[str]],
-                poni_file: str,
-                bg_img_file: str = None,
-                output_dir: str = ".",
-                bg_scale: float = None,
-                mask_setting: dict = None,
-                integ_setting: dict = None,
-                plot_setting: dict = None,
-                img_settings: dict = None):
+def integrate(img_files: Union[str, Iterable[str]],
+              poni_file: str,
+              bg_img_file: str = None,
+              output_dir: str = ".",
+              bg_scale: float = None,
+              mask_setting: dict = None,
+              integ_setting: dict = None,
+              plot_setting: dict = None,
+              img_settings: dict = None):
     """Azimuthal integration of the two dimensional diffraction image.
 
     The image will be first subtracted by background if background image file is given. Then, it will be binned

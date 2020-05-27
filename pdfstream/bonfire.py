@@ -4,7 +4,7 @@ import fire
 import pdfstream.cli as cli
 
 
-def image_to_iq():
+def integrate():
     """The CLI of image_to_iq."""
-    fire.Fire(cli.image_to_iq)
+    fire.Fire(cli.integrate)
     return

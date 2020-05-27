@@ -206,7 +206,8 @@ def vis_waterfall(data: Stream, ax: Stream, text: Stream = None, label_type: str
     )
 
 
-def vis_fit_waterfall(data: Stream, ax: Stream, text: Stream = None, *, label_type: str = None, normalize: bool = True,
+def vis_fit_waterfall(data: Stream, ax: Stream, text: Stream = None, *, label_type: str = None,
+                      normalize: bool = True,
                       shift: bool = True, line_spacing: float = None, xy_kwargs: dict = None,
                       xycalc_kwargs: dict = None,
                       xydiff_kwargs: dict = None, xyzero_kwargs: dict = None, fill_kwargs: dict = None,

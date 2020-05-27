@@ -52,6 +52,6 @@ the auto masking functionality in the xpdtools and the integration functionality
 It can be used in the command line interface (CLI). Try the following command in the terminal to learn about the
 usage.
 
-``image_to_iq -- --help``
+``integrate -- --help``
 
-It can also be used in python scripts. See the function `pdfstream.cli.image_to_iq`.
+It can also be used in python scripts. See the function `pdfstream.cli.integrate`.

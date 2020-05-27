@@ -10,7 +10,7 @@ source:
 build:
   noarch: python
   number: 0
-  script: "{{ PYTHON }} -m pip install ../setup.py --no-deps -vv"
+  script: "{{ PYTHON }} -m pip install {{ SRC_DIR }}/pdfstream-{{ version }}0.tar.gz --no-deps -vv"
 
 requirements:
   host:
@@ -25,6 +25,7 @@ requirements:
     - scipy
     - diffpy-cmi
     - xpdtools
+    - streamz
 
 test:
   imports:
