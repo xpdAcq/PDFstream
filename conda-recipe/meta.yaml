@@ -1,16 +1,15 @@
-{% set version = 0.0.0a %}
-  {% set number = 0 %}
+{% set version = load_setup_py_data(setup_file='../setup.py', from_recipe_dir=True).get('version') %}
 
 package:
-  name: xpdacq
+  name: pdfstream
   version: {{ version }}
 
 source:
-  url: https://pypi.org/project/pdfstream/{{ version }}{{ number }}/pdfstream-{{ version }}{{ number }}.tar.gz
+  path: ../dist/pdfstream-{{ version }}.tar.gz
 
 build:
   noarch: python
-  number: {{ number }}
+  number: 0
   script: "{{ PYTHON }} -m pip install . --no-deps -vv"
 
 requirements:
