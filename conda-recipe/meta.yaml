@@ -1,0 +1,32 @@
+{% set version = "0.0.0a" %}
+
+package:
+  name: xpdacq
+  version: {{ version }}
+
+source:
+
+
+build:
+  noarch: python
+  number: 0
+  script: "{{ PYTHON }} -m pip install . --no-deps -vv"
+
+requirements:
+  host:
+    - python >=3.6
+    - pip
+  run:
+    - python >=3.6
+    - setuptools
+    - versioneer
+    - numpy
+    - matplotlib
+    - scipy
+    - diffpy-cmi
+    - xpdtools
+
+test:
+  imports:
+    - pdfstream
+    - pdfstream.bonfire
