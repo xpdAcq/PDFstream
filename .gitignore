@@ -28,6 +28,7 @@ __pycache__/
 *.so
 
 # Distribution / packaging
+conda-recipe/
 .Python
 build/
 develop-eggs/
