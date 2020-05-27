@@ -17,9 +17,6 @@ The data streaming PDF analysis software
 Installation
 ------------
 
-Anaconda
-========
-
 Create a new environment.
 
 ``conda create -n pdfstream``
@@ -29,29 +26,6 @@ Create a new environment.
 Install the diffpy.pdfgetx following the `instructions <https://www.diffpy.org/doc/pdfgetx/2.0.0/install.html>`_.
 
 Install the pdfstream from the conda following the `webpage <https://anaconda.org/st3107/pdfstream>`_.
-
-Development mode
-================
-
-Create a new environment.
-
-``conda create -n pdfstream``
-
-``conda activate pdfstream``
-
-Install the required packages using anaconda.
-
-``conda install xpdtools -c conda-forge``
-
-``conda install diffpy-cmi -c diffpy``
-
-Then clone this repo and tnstall this package in development mode..
-
-``git clone https://gitlab.thebillingegroup.com/stao/pdfstream.git``
-
-``cd pdfstream``
-
-``pip install -e . --no-deps``
 
 Features
 --------
