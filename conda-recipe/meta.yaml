@@ -1,15 +1,16 @@
-{% set version = "0.0.0a" %}
+{% set version = 0.0.0a %}
+  {% set number = 0 %}
 
 package:
   name: xpdacq
   version: {{ version }}
 
 source:
-
+  url: https://pypi.org/project/pdfstream/{{ version }}{{ number }}/pdfstream-{{ version }}{{ number }}.tar.gz
 
 build:
   noarch: python
-  number: 0
+  number: {{ number }}
   script: "{{ PYTHON }} -m pip install . --no-deps -vv"
 
 requirements:
