@@ -5,7 +5,7 @@ package:
   version: {{ version }}
 
 source:
-  path: ../dist/pdfstream-{{ version }}.tar.gz
+  path: ../dist/pdfstream-{{ version }}0.tar.gz
 
 build:
   noarch: python
