@@ -1,24 +1,3 @@
-Skip to content
-Search or jump to…
-
-Pull requests
-Issues
-Marketplace
-Explore
-
-@st3107
-github
-/
-gitignore
-3k
-96.7k51.2k
- Code Pull requests 112 Actions Projects 0 Security Insights
-gitignore/Python.gitignore
-@meysam81 meysam81 [Python] adding IDE & static related stuff (#3317)
-e931ef7 8 days ago
-@arcresu@shiftkey@Lucretiel@Harrison-G@jwg4@GabrielC101@misaelnieto@pmsosa@svkampen@vltr@thedrow@matheussl@hugovk@ghisvail@EvandroLG@DSIW@amigcamel@toanant@2Cubed@brettcannon@weinihou@Visgean@nvie@skuschel@sigo@sethmlarson
-143 lines (116 sloc)  2.09 KB
-
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
