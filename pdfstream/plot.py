@@ -8,7 +8,7 @@ from numpy import ndarray
 from streamz import Stream
 
 import pdfstream.pipelines as pipelines
-import pdfstream.tools.visualization as vis
+import pdfstream.visualization.tools as vis
 
 
 def init_pipe(pipe: Callable, text: str = None, **kwargs):

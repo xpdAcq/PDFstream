@@ -15,7 +15,7 @@ from diffpy.srfit.structure.sgconstraints import constrainAsSpaceGroup
 from diffpy.utils.parsers.loaddata import loadData
 from scipy.optimize import least_squares
 
-from pdfstream.tools.fitobjs import GenConfig, FunConfig, ConConfig, MyRecipe
+from pdfstream.modeling.fitobjs import GenConfig, FunConfig, ConConfig, MyRecipe
 
 __all__ = ["make_profile", "make_generator", "make_recipe", "fit", "gen_save_all", "F", "plot",
            "constrainAsSpaceGroup", "load_default", 'sgconstrain', "cfconstrain", 'free_and_fit', 'loadData',

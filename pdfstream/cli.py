@@ -6,7 +6,7 @@ import streamz as sz
 from streamz import Stream
 
 import pdfstream.pipelines as pl
-import pdfstream.tools.io as io
+import pdfstream.io as io
 
 
 def integrate(img_files: Union[str, Iterable[str]],
