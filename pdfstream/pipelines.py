@@ -5,7 +5,7 @@ from typing import Tuple, Callable
 import streamz as sz
 from streamz import Stream
 
-import pdfstream.integration.tools as integ
+import pdfstream.integration as integ
 import pdfstream.transformation.tools as trans
 import pdfstream.visualization.tools as vis
 
