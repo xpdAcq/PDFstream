@@ -13,33 +13,14 @@ __all__ = ['bg_sub', 'auto_mask', 'integrate']
 
 # default mask_img auto mask setting
 _AUTOMASK_SETTING = dict(
-    edge=30,
-    lower_thresh=0.0,
-    upper_thresh=None,
-    alpha=2.0,
-    auto_type='median',
-    tmsk=None
+    alpha=2.0
 )
 # default pyfai integration setting
 _INTEG_SETTING = dict(
     npt=1480,
     correctSolidAngle=False,
-    variance=None,
-    error_model=None,
-    radial_range=None,
-    azimuth_range=None,
-    dummy=None,
-    delta_dummy=None,
-    polarization_factor=0.99,
-    dark=None,
-    flat=None,
-    method='splitpixel',
     unit='q_A^-1',
-    safe=False,
-    normalization_factor=1.0,
-    block_size=32,
-    profile=False,
-    metadata=None
+    safe=False
 )
 # default visualization setting
 _LABEL = {
@@ -51,7 +32,7 @@ _LABEL = {
 }
 
 
-def bg_sub(img: ndarray, bg_img: ndarray, bg_scale: float = None) -> ndarray:
+def bg_sub(img: ndarray, bg_img: ndarray = None, bg_scale: float = None) -> ndarray:
     """Subtract the background image from the data image inplace.
 
     Parameters
@@ -65,6 +46,8 @@ def bg_sub(img: ndarray, bg_img: ndarray, bg_scale: float = None) -> ndarray:
     bg_scale : float
         The scale of the the background image.
     """
+    if bg_img is None:
+        return img
     if bg_scale is None:
         bg_scale = 1.
     if bg_img.shape != img.shape:
@@ -95,6 +78,8 @@ def auto_mask(img: ndarray, ai: AzimuthalIntegrator, mask_setting: dict = None) 
     _mask_setting : dict
         The whole mask_setting.
     """
+    if mask_setting == "OFF":
+        return np.ones_like(img, dtype=bool), {}
     _mask_setting = _AUTOMASK_SETTING.copy()
     if mask_setting is not None:
         _mask_setting.update(mask_setting)
@@ -161,6 +146,8 @@ def vis_img(img: ndarray, mask: ndarray, img_settings: dict = None) -> Axes:
     ax : Axes
         The axes with the image shown.
     """
+    if img_settings == "OFF":
+        return plt.gca()
     if img_settings is None:
         img_settings = dict()
     fig = plt.figure()
@@ -200,6 +187,8 @@ def vis_chi(chi: ndarray, _integ_setting: dict, plot_settings: dict = None) -> A
     ax : Axes
         The axes with the curve plotted.
     """
+    if plot_settings == "OFF":
+        return plt.gca()
     if plot_settings is None:
         plot_settings = dict()
     fig = plt.figure()

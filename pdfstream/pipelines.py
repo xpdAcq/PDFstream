@@ -9,10 +9,8 @@ import pdfstream.tools.integration as integ
 import pdfstream.tools.transformation as trans
 import pdfstream.tools.visualization as vis
 
-OFF = "off"
 
-
-def integration(img: Stream, ai: Stream, bg_img: Stream = None, bg_scale: float = None,
+def integration(img: Stream, ai: Stream, bg_img: Stream, bg_scale: float = None,
                 mask_setting: dict = None, integ_settings: dict = None, img_settings: dict = None, plot_settings:
         dict = None) -> Tuple[Stream, Stream, Stream]:
     """Make integration pipeline.
@@ -54,20 +52,17 @@ def integration(img: Stream, ai: Stream, bg_img: Stream = None, bg_scale: float 
     _mask_setting : Stream
         The stream of whole auto masking setting.
     """
-    auto_mask_output = sz.starmap(sz.combine_latest(img, ai), integ.auto_mask, mask_setting=mask_setting)
+    auto_mask_output = sz.starmap(sz.zip(img, ai), integ.auto_mask, mask_setting=mask_setting)
     mask = sz.pluck(auto_mask_output, 0, stream_name='mask')
-    if img_settings is not OFF:
-        ax0 = sz.starmap(sz.combine_latest(img, mask), integ.vis_img, img_settings=img_settings)
-        sz.sink(ax0, lambda x: None, stream_name="End")
+    ax0 = sz.starmap(sz.zip(img, mask), integ.vis_img, img_settings=img_settings)
+    sz.sink(ax0, lambda ax: None, stream_name="End")
     _mask_setting = sz.pluck(auto_mask_output, 1, stream_name='_mask_setting')
-    if bg_img is not None:
-        img = sz.starmap(sz.combine_latest(img, bg_img), integ.bg_sub, bg_scale)
-    integrate_output = sz.starmap(sz.combine_latest(img, ai, mask), integ.integrate, integ_settings=integ_settings)
+    img = sz.starmap(sz.zip(img, bg_img), integ.bg_sub, bg_scale)
+    integrate_output = sz.starmap(sz.zip(img, ai, mask), integ.integrate, integ_settings=integ_settings)
     chi = sz.pluck(integrate_output, 0, stream_name='chi')
     _integ_setting = sz.pluck(integrate_output, 1, stream_name='_integ_setting')
-    if plot_settings is not OFF:
-        ax1 = sz.starmap(sz.combine_latest(chi, _integ_setting), integ.vis_chi, plot_settings=plot_settings)
-        sz.sink(ax1, lambda x: None, stream_name="End")
+    ax1 = sz.starmap(sz.zip(chi, _integ_setting), integ.vis_chi, plot_settings=plot_settings)
+    sz.sink(ax1, lambda ax: None, stream_name="End")
     return chi, _integ_setting, _mask_setting
 
 

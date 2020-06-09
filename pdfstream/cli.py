@@ -14,10 +14,10 @@ def integrate(img_files: Union[str, Iterable[str]],
               bg_img_file: str = None,
               output_dir: str = ".",
               bg_scale: float = None,
-              mask_setting: dict = None,
+              mask_setting: Union[dict, str] = None,
               integ_setting: dict = None,
-              plot_setting: dict = None,
-              img_settings: dict = None):
+              plot_setting: Union[dict, str] = None,
+              img_settings: Union[dict, str] = None):
     """Azimuthal integration of the two dimensional diffraction image.
 
     The image will be first subtracted by background if background image file is given. Then, it will be binned
@@ -50,7 +50,8 @@ def integrate(img_files: Union[str, Iterable[str]],
 
     mask_setting : dict
         The settings for the auto-masking. See the arguments for mask_img (
-        https://xpdacq.github.io/xpdtools/xpdtools.html?highlight=mask_img#xpdtools.tools.mask_img).
+        https://xpdacq.github.io/xpdtools/xpdtools.html?highlight=mask_img#xpdtools.tools.mask_img). To turn
+        off the auto masking, enter "OFF".
 
     integ_setting : dict
         The settings for the integration. See the arguments for integrate1d (
@@ -58,13 +59,14 @@ def integrate(img_files: Union[str, Iterable[str]],
 
     plot_setting : dict
         The keywords for the matplotlib.pyplot.plot (
-        https://matplotlib.org/3.2.1/api/_as_gen/matplotlib.pyplot.plot.html).
+        https://matplotlib.org/3.2.1/api/_as_gen/matplotlib.pyplot.plot.html). To turn off the plotting,
+        enter "OFF".
 
     img_settings : dict
         The keywords for the matplotlib.pyplot.imshow (
         https://matplotlib.org/3.2.1/api/_as_gen/matplotlib.pyplot.imshow.html). Besides, there is a key
         'z_score', which determines the range of the colormap. The range is mean +/- z_score * std in the
-        statistics of the image.
+        statistics of the image. To turn of the image, enter "OFF".
     """
     if integ_setting is None:
         integ_setting = dict()
@@ -80,26 +82,22 @@ def integrate(img_files: Union[str, Iterable[str]],
     _poni_file = Stream()
     _ai = sz.map(_poni_file, io.load_ai_from_poni_file)
     _bg_img_file = Stream()
-    if bg_img_file is not None:
-        _bg_img = sz.map(_img_file, io.load_img)
-    else:
-        _bg_img = None
+    _bg_img = sz.map(_bg_img_file, lambda f: io.load_img(f) if f is not None else None)
     # build pipeline
-    _chi, _, _ = pl.integration(_img, _ai, bg_img=_bg_img, bg_scale=bg_scale,
+    _chi, _, _ = pl.integration(_img, _ai, _bg_img, bg_scale=bg_scale,
                                 mask_setting=mask_setting,
                                 integ_settings=integ_setting,
                                 plot_settings=plot_setting, img_settings=img_settings)
     # get the node to change filename settings
     integ_node = _chi.upstream
     # input data
-    _poni_file.emit(poni_file)
-    if bg_img_file is not None:
-        _bg_img_file.emit(bg_img_file)
     for img_file in img_files:
         # the output file name is the image file name with .chi extension
         chi_file = Path(output_dir).joinpath(Path(img_file).with_suffix(".chi").name)
         # update the integration setting to output different files
         integ_node.kwargs['integ_settings'].update({"filename": str(chi_file)})
+        _poni_file.emit(poni_file)
+        _bg_img_file.emit(bg_img_file)
         _img_file.emit(img_file)
     return
 
