@@ -19,6 +19,7 @@ _AUTOMASK_SETTING = dict(
 _INTEG_SETTING = dict(
     npt=1480,
     correctSolidAngle=False,
+    method='splitpixel',
     unit='q_A^-1',
     safe=False
 )
@@ -79,12 +80,12 @@ def auto_mask(img: ndarray, ai: AzimuthalIntegrator, mask_setting: dict = None) 
         The whole mask_setting.
     """
     if mask_setting == "OFF":
-        return np.ones_like(img, dtype=bool), {}
+        return np.zeros_like(img, dtype=bool), {}
     _mask_setting = _AUTOMASK_SETTING.copy()
     if mask_setting is not None:
         _mask_setting.update(mask_setting)
     binner = generate_binner(ai, img.shape)
-    mask = mask_img(img, binner, **_mask_setting)
+    mask = np.invert(mask_img(img, binner, **_mask_setting))
     return mask, _mask_setting
 
 
@@ -116,7 +117,7 @@ def integrate(img: ndarray, ai: AzimuthalIntegrator, mask: ndarray = None, integ
     """
     # merge integrate setting
     _integ_setting = _INTEG_SETTING.copy()
-    _integ_setting.update(mask=mask)
+    _integ_setting.update({'mask': mask})
     if integ_settings is not None:
         _integ_setting.update(integ_settings)
     # integrate
@@ -152,7 +153,7 @@ def vis_img(img: ndarray, mask: ndarray, img_settings: dict = None) -> Axes:
         img_settings = dict()
     fig = plt.figure()
     ax = fig.add_subplot(111)
-    img = np.ma.masked_array(img, np.invert(mask))
+    img = np.ma.masked_array(img, mask)
     mean, std = img.mean(), img.std()
     z_score = img_settings.pop('z_score', 2.)
     kwargs = {
