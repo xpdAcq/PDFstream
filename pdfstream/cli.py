@@ -2,6 +2,7 @@
 from pathlib import Path
 from typing import Iterable, Union
 
+import pdfstream.integration as integ
 import streamz as sz
 from streamz import Stream
 
@@ -17,7 +18,7 @@ def integrate(img_files: Union[str, Iterable[str]],
               mask_setting: Union[dict, str] = None,
               integ_setting: dict = None,
               plot_setting: Union[dict, str] = None,
-              img_settings: Union[dict, str] = None):
+              img_setting: Union[dict, str] = None):
     """Azimuthal integration of the two dimensional diffraction image.
 
     The image will be first subtracted by background if background image file is given. Then, it will be binned
@@ -28,7 +29,7 @@ def integrate(img_files: Union[str, Iterable[str]],
 
     Examples
     --------
-    image_to_iq diffraction_image.tiff calibrant.poni --bg_img_file background.tiff --integ_setting {npt: 2048}
+    integrate diffraction_image.tiff calibrant.poni --bg_img_file background.tiff --integ_setting {npt: 2048}
 
     Parameters
     ----------
@@ -62,7 +63,7 @@ def integrate(img_files: Union[str, Iterable[str]],
         https://matplotlib.org/3.2.1/api/_as_gen/matplotlib.pyplot.plot.html). To turn off the plotting,
         enter "OFF".
 
-    img_settings : dict
+    img_setting : dict
         The keywords for the matplotlib.pyplot.imshow (
         https://matplotlib.org/3.2.1/api/_as_gen/matplotlib.pyplot.imshow.html). Besides, there is a key
         'z_score', which determines the range of the colormap. The range is mean +/- z_score * std in the
@@ -70,35 +71,17 @@ def integrate(img_files: Union[str, Iterable[str]],
     """
     if integ_setting is None:
         integ_setting = dict()
-    if plot_setting is None:
-        plot_setting = dict()
-    if img_settings is None:
-        img_settings = dict()
     if isinstance(img_files, str):
-        img_files = (img_files,)
-    # input nodes
-    _img_file = Stream()
-    _img = sz.map(_img_file, io.load_img)
-    _poni_file = Stream()
-    _ai = sz.map(_poni_file, io.load_ai_from_poni_file)
-    _bg_img_file = Stream()
-    _bg_img = sz.map(_bg_img_file, lambda f: io.load_img(f) if f is not None else None)
-    # build pipeline
-    _chi, _, _ = pl.integration(_img, _ai, _bg_img, bg_scale=bg_scale,
-                                mask_setting=mask_setting,
-                                integ_settings=integ_setting,
-                                plot_settings=plot_setting, img_settings=img_settings)
-    # get the node to change filename settings
-    integ_node = _chi.upstream
-    # input data
+        img_files = [img_files]
+    ai = io.load_ai_from_poni_file(poni_file)
+    bg_img = io.load_img(bg_img_file) if bg_img_file else None
     for img_file in img_files:
-        # the output file name is the image file name with .chi extension
-        chi_file = Path(output_dir).joinpath(Path(img_file).with_suffix(".chi").name)
-        # update the integration setting to output different files
-        integ_node.kwargs['integ_settings'].update({"filename": str(chi_file)})
-        _poni_file.emit(poni_file)
-        _bg_img_file.emit(bg_img_file)
-        _img_file.emit(img_file)
+        img = io.load_img(img_file)
+        chi_name = Path(img_file).with_suffix('.chi').name
+        chi_path = Path(output_dir).joinpath(chi_name)
+        integ_setting.update({'filename': str(chi_path)})
+        integ.main(ai, img, bg_img, bg_scale=bg_scale, mask_setting=mask_setting, integ_setting=integ_setting,
+                   plot_setting=plot_setting, img_setting=img_setting)
     return
 
 
