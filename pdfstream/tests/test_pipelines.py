@@ -8,22 +8,6 @@ from diffpy.pdfgetx import PDFGetter
 import pdfstream.pipelines as pipelines
 
 
-def test_integration(db):
-    img, ai, bg_img = sz.Stream(), sz.Stream(), sz.Stream()
-    img1, _integ_setting, _mask_setting = pipelines.integration(
-        img, ai, bg_img, plot_settings=pipelines.OFF, img_settings=pipelines.OFF
-    )
-    lst0 = img1.sink_to_list()
-    lst1 = _integ_setting.sink_to_list()
-    lst2 = _mask_setting.sink_to_list()
-    img.emit(db.get('black_img'))
-    ai.emit(db.get('ai'))
-    bg_img.emit(db.get('black_img'))
-    assert isinstance(lst0.pop(), np.ndarray)  # img are zeros so it will be the same after the pipeline
-    assert isinstance(lst1.pop(), dict)  # integration settings
-    assert isinstance(lst2.pop(), dict)  # auto-masking settings
-
-
 def test_get_pdf(db):
     chi = sz.Stream()
     pdfconfig = sz.Stream()
