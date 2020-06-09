@@ -2,12 +2,11 @@
 
 from typing import Tuple, Callable
 
-import streamz as sz
-from streamz import Stream
-
 import pdfstream.integration as integ
 import pdfstream.transformation.tools as trans
 import pdfstream.visualization.tools as vis
+import streamz as sz
+from streamz import Stream
 
 
 def integration(img: Stream, ai: Stream, bg_img: Stream, bg_scale: float = None,

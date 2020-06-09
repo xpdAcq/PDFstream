@@ -33,8 +33,14 @@ _LABEL = {
 }
 
 
-def main(ai: AzimuthalIntegrator, img: ndarray, bg_img: ndarray = None, bg_scale: float = None, mask_setting:
-dict = None, integ_setting: dict = None, img_setting: dict = None, plot_setting: dict = None) -> ndarray:
+def main(ai: AzimuthalIntegrator,
+         img: ndarray,
+         bg_img: ndarray = None,
+         bg_scale: float = None,
+         mask_setting: dict = None,
+         integ_setting: dict = None,
+         img_setting: dict = None,
+         plot_setting: dict = None) -> ndarray:
     """Process the diffraction image to get I(Q).
     
     The image will be subtracted by the background image and then auto masked. The results will be binned on the azimuthal direction and the average value of the intensity in the bin and their corresponding Q will be returned. The I(Q) and background subtracted masked image will be visualized. 
