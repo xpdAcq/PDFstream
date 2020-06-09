@@ -43,7 +43,10 @@ def main(ai: AzimuthalIntegrator,
          plot_setting: dict = None) -> ndarray:
     """Process the diffraction image to get I(Q).
     
-    The image will be subtracted by the background image and then auto masked. The results will be binned on the azimuthal direction and the average value of the intensity in the bin and their corresponding Q will be returned. The I(Q) and background subtracted masked image will be visualized. 
+    The image will be subtracted by the background image and then auto masked. The results will be
+    binned on the azimuthal direction and the average value of the intensity in the bin and their
+    corresponding Q will be returned. The I(Q) and background subtracted masked image will
+    be visualized.
     
     Parameters
     ---------- 
