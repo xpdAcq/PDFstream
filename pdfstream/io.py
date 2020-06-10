@@ -4,35 +4,36 @@ from pathlib import Path
 import fabio
 import pyFAI
 from diffpy.pdfgetx import PDFConfig, PDFGetter
+from numpy import ndarray
 
 
-def load_ai_from_poni_file(poni_file: str):
+def load_ai_from_poni_file(poni_file: str) -> pyFAI.AzimuthalIntegrator:
     """Initiate the AzimuthalIntegrator using poni file."""
     ai = pyFAI.load(poni_file)
     return ai
 
 
-def load_ai_from_calib_result(calib_result: dict):
+def load_ai_from_calib_result(calib_result: dict) -> pyFAI.AzimuthalIntegrator:
     """Initiate the AzimuthalIntegrator using calibration information."""
     ai = pyFAI.AzimuthalIntegrator()
     ai.set_config(calib_result)
     return ai
 
 
-def load_img(img_file: str):
+def load_img(img_file: str) -> ndarray:
     """Load the img data from the img_file."""
     img = fabio.open(img_file).data
     return img
 
 
-def load_pdfconfig(cfg_file: str):
+def load_pdfconfig(cfg_file: str) -> PDFConfig:
     """Load the PDFConfig from the processed data file or configuration file."""
     pdfconfig = PDFConfig()
     pdfconfig.readConfig(cfg_file)
     return pdfconfig
 
 
-def write_out(saving_dir: str, filename: str, pdfgetter: PDFGetter):
+def write_out(saving_dir: str, filename: str, pdfgetter: PDFGetter) -> dict:
     """Write out data in pdfgetter into files"""
     data_dirs = {}
     for out_type in pdfgetter.config.outputtypes:
@@ -47,3 +48,11 @@ def write_out(saving_dir: str, filename: str, pdfgetter: PDFGetter):
         pdfgetter.writeOutput(str(out_file), out_type)
         dct.update({out_type: str(out_file)})
     return dct
+
+
+def write_img(filepath: str, img: ndarray, template: str) -> None:
+    """Write out the image data as the same type of the template file."""
+    temp_img = fabio.open(template)
+    temp_img.data = img
+    temp_img.save(filepath)
+    return

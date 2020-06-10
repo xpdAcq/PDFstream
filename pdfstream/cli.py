@@ -1,24 +1,21 @@
 """The command line intefrace function."""
+import typing as tp
 from pathlib import Path
-from typing import Iterable, Union
 
+import pdfstream.average as avg
 import pdfstream.integration as integ
-import streamz as sz
-from streamz import Stream
-
-import pdfstream.pipelines as pl
 import pdfstream.io as io
 
 
-def integrate(img_files: Union[str, Iterable[str]],
+def integrate(img_files: tp.Union[str, tp.Iterable[str]],
               poni_file: str,
               bg_img_file: str = None,
               output_dir: str = ".",
               bg_scale: float = None,
-              mask_setting: Union[dict, str] = None,
+              mask_setting: tp.Union[dict, str] = None,
               integ_setting: dict = None,
-              plot_setting: Union[dict, str] = None,
-              img_setting: Union[dict, str] = None):
+              plot_setting: tp.Union[dict, str] = None,
+              img_setting: tp.Union[dict, str] = None) -> None:
     """Azimuthal integration of the two dimensional diffraction image.
 
     The image will be first subtracted by background if background image file is given. Then, it will be binned
@@ -33,7 +30,7 @@ def integrate(img_files: Union[str, Iterable[str]],
 
     Parameters
     ----------
-    img_files : str or iterable of str
+    img_files : str or an iterable of str
         The path to the image file. It will be read by fabio.
 
     poni_file : str
@@ -82,6 +79,28 @@ def integrate(img_files: Union[str, Iterable[str]],
         integ_setting.update({'filename': str(chi_path)})
         integ.main(ai, img, bg_img, bg_scale=bg_scale, mask_setting=mask_setting, integ_setting=integ_setting,
                    plot_setting=plot_setting, img_setting=img_setting)
+    return
+
+
+def average(out_file: str, img_files: tp.Union[str, tp.List[str]], weights: tp.List[float] = None) -> None:
+    """Average the single channel image files with weights.
+
+    Parameters
+    ----------
+    out_file : str
+        The output file path. It will be the type as the first image in img_files.
+
+    img_files : str or an iterable of str
+        The image files to be averaged.
+
+    weights : an iterable of floats
+        The weights for the images. If None, images will not be weighted when averaged.
+    """
+    if isinstance(img_files, str):
+        img_files = [img_files]
+    imgs = (io.load_img(_) for _ in img_files)
+    avg_img = avg.main(imgs, weights=weights)
+    io.write_img(out_file, avg_img, img_files[0])
     return
 
 
