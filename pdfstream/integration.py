@@ -81,13 +81,14 @@ def main(ai: AzimuthalIntegrator,
     chi : ndarray
         The 2D array of integrated results. The first row is the Q and the second row is the I.
     """
-    mask, _mask_setting = auto_mask(img, ai, mask_setting=mask_setting)
-    if img_setting != "OFF":
-        vis_img(img, mask, img_setting=img_setting)
     if bg_img is not None:
         img = bg_sub(img, bg_img, bg_scale=bg_scale)
     if mask_setting != "OFF":
         mask, _ = auto_mask(img, ai, mask_setting=mask_setting)
+    else:
+        mask = None
+    if img_setting != "OFF":
+        vis_img(img, mask, img_setting=img_setting)
     chi, integ_setting = integrate(img, ai, mask=mask, integ_setting=integ_setting)
     if plot_setting != "OFF":
         vis_chi(chi, plot_setting=plot_setting, unit=integ_setting.get('unit'))
@@ -186,7 +187,7 @@ def integrate(img: ndarray, ai: AzimuthalIntegrator, mask: ndarray = None, integ
     return chi, _integ_setting
 
 
-def vis_img(img: ndarray, mask: ndarray, img_setting: dict = None) -> Axes:
+def vis_img(img: ndarray, mask: ndarray = None, img_setting: dict = None) -> Axes:
     """Visualize the processed image. The color map will be determined by statistics of the pixel values. The color map
     is determined by mean +/- z_score * std.
 
@@ -210,7 +211,8 @@ def vis_img(img: ndarray, mask: ndarray, img_setting: dict = None) -> Axes:
         img_setting = dict()
     fig = plt.figure()
     ax = fig.add_subplot(111)
-    img = np.ma.masked_array(img, mask)
+    if mask is not None:
+        img = np.ma.masked_array(img, mask)
     mean, std = img.mean(), img.std()
     z_score = img_setting.pop('z_score', 2.)
     kwargs = {

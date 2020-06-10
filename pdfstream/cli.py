@@ -10,7 +10,7 @@ import pdfstream.io as io
 def integrate(poni_file: str, img_files: tp.Union[str, tp.Iterable[str]], *, bg_img_file: str = None,
               output_dir: str = ".", bg_scale: float = None, mask_setting: tp.Union[dict, str] = None,
               integ_setting: dict = None, plot_setting: tp.Union[dict, str] = None,
-              img_setting: tp.Union[dict, str] = None) -> None:
+              img_setting: tp.Union[dict, str] = None) -> tp.List[str]:
     """Azimuthal integration of the two dimensional diffraction image.
 
     The image will be first subtracted by background if background image file is given. Then, it will be binned
@@ -60,6 +60,11 @@ def integrate(poni_file: str, img_files: tp.Union[str, tp.Iterable[str]], *, bg_
         https://matplotlib.org/3.2.1/api/_as_gen/matplotlib.pyplot.imshow.html). Besides, there is a key
         'z_score', which determines the range of the colormap. The range is mean +/- z_score * std in the
         statistics of the image. To turn of the image, enter "OFF".
+
+    Returns
+    -------
+    chi_files : a list of strings
+        The path to the output chi file.
     """
     if integ_setting is None:
         integ_setting = dict()
@@ -67,6 +72,7 @@ def integrate(poni_file: str, img_files: tp.Union[str, tp.Iterable[str]], *, bg_
         img_files = [img_files]
     ai = io.load_ai_from_poni_file(poni_file)
     bg_img = io.load_img(bg_img_file) if bg_img_file else None
+    chi_paths = []
     for img_file in img_files:
         img = io.load_img(img_file)
         chi_name = Path(img_file).with_suffix('.chi').name
@@ -74,7 +80,8 @@ def integrate(poni_file: str, img_files: tp.Union[str, tp.Iterable[str]], *, bg_
         integ_setting.update({'filename': str(chi_path)})
         integ.main(ai, img, bg_img, bg_scale=bg_scale, mask_setting=mask_setting, integ_setting=integ_setting,
                    plot_setting=plot_setting, img_setting=img_setting)
-    return
+        chi_paths.append(str(chi_path))
+    return chi_paths
 
 
 def average(out_file: str, img_files: tp.Union[str, tp.List[str]], *, weights: tp.List[float] = None) -> None:
