@@ -20,4 +20,4 @@ def main(imgs: tp.Iterable[ndarray], weights: tp.Iterable[float] = None) -> ndar
     avg_img : ndarray
         The averaged 2D image array.
     """
-    return np.average(np.stack(imgs, axis=0), weights=weights, axis=0)
+    return np.average(np.stack(tuple(imgs), axis=0), axis=0, weights=weights)

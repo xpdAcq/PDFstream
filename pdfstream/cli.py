@@ -7,14 +7,9 @@ import pdfstream.integration as integ
 import pdfstream.io as io
 
 
-def integrate(img_files: tp.Union[str, tp.Iterable[str]],
-              poni_file: str,
-              bg_img_file: str = None,
-              output_dir: str = ".",
-              bg_scale: float = None,
-              mask_setting: tp.Union[dict, str] = None,
-              integ_setting: dict = None,
-              plot_setting: tp.Union[dict, str] = None,
+def integrate(poni_file: str, img_files: tp.Union[str, tp.Iterable[str]], *, bg_img_file: str = None,
+              output_dir: str = ".", bg_scale: float = None, mask_setting: tp.Union[dict, str] = None,
+              integ_setting: dict = None, plot_setting: tp.Union[dict, str] = None,
               img_setting: tp.Union[dict, str] = None) -> None:
     """Azimuthal integration of the two dimensional diffraction image.
 
@@ -30,11 +25,11 @@ def integrate(img_files: tp.Union[str, tp.Iterable[str]],
 
     Parameters
     ----------
-    img_files : str or an iterable of str
-        The path to the image file. It will be read by fabio.
-
     poni_file : str
         The path to the poni file. It will be read by pyFAI.
+
+    img_files : str or an iterable of str
+        The path to the image file. It will be read by fabio.
 
     bg_img_file : str
         The path to the background image file. It should have the same dimension as the data image. If None,
@@ -82,7 +77,7 @@ def integrate(img_files: tp.Union[str, tp.Iterable[str]],
     return
 
 
-def average(out_file: str, img_files: tp.Union[str, tp.List[str]], weights: tp.List[float] = None) -> None:
+def average(out_file: str, img_files: tp.Union[str, tp.List[str]], *, weights: tp.List[float] = None) -> None:
     """Average the single channel image files with weights.
 
     Parameters
