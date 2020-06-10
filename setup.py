@@ -46,7 +46,7 @@ setup(
     packages=find_packages(exclude=['docs', 'tests']),
     entry_points={
         'console_scripts': [
-            'integrate = pdfstream.bonfire:integrate'
+            'integrate = pdfstream.bonfire:integrate',
             'average = pdfstream.bonfire:average'
             # 'command = some.module:some_function',
         ],
