@@ -221,7 +221,8 @@ def vis_img(img: ndarray, mask: ndarray = None, img_setting: dict = None) -> Axe
     }
     kwargs.update(**img_setting)
     img_obj = ax.imshow(img, **kwargs)
-    ax.axis('off')
+    ax.set_xticks([], [])
+    ax.set_yticks([], [])
     # color bar with magical settings to make it same size as the plot
     plt.colorbar(img_obj, ax=ax, fraction=0.046, pad=0.04)
     plt.show(block=False)
