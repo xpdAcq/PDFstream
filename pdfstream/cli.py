@@ -2,8 +2,7 @@
 import typing as tp
 from pathlib import Path
 
-import pdfstream.average as avg
-import pdfstream.integration as integ
+import pdfstream.integration.main as integ
 import pdfstream.io as io
 
 
@@ -78,8 +77,8 @@ def integrate(poni_file: str, img_files: tp.Union[str, tp.Iterable[str]], *, bg_
         chi_name = Path(img_file).with_suffix('.chi').name
         chi_path = Path(output_dir).joinpath(chi_name)
         integ_setting.update({'filename': str(chi_path)})
-        integ.main(ai, img, bg_img, bg_scale=bg_scale, mask_setting=mask_setting, integ_setting=integ_setting,
-                   plot_setting=plot_setting, img_setting=img_setting)
+        integ.get_chi(ai, img, bg_img, bg_scale=bg_scale, mask_setting=mask_setting,
+                      integ_setting=integ_setting, plot_setting=plot_setting, img_setting=img_setting)
         chi_paths.append(str(chi_path))
     return chi_paths
 
@@ -101,7 +100,7 @@ def average(out_file: str, img_files: tp.Union[str, tp.List[str]], *, weights: t
     if isinstance(img_files, str):
         img_files = [img_files]
     imgs = (io.load_img(_) for _ in img_files)
-    avg_img = avg.main(imgs, weights=weights)
+    avg_img = integ.avg_imgs(imgs, weights=weights)
     io.write_img(out_file, avg_img, img_files[0])
     return
 
