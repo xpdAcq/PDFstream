@@ -5,7 +5,7 @@ import pdfstream.visualization.main as vis
 
 
 @pytest.mark.parametrize(
-    'data_keys,kwargs', [
+    'keys,kwargs', [
         (['Ni_gr', 'Ni_gr'], {'mode': 'line', 'legends': ['Ni0', 'Ni1']}),
         (['Ni_gr', 'Ni_gr'], {'mode': 'line', 'stack': False}),
         (['Ni_gr', 'Ni_gr'], {'mode': 'line', 'xy_kwargs': {'color': 'black'}, 'texts': ['Ni0', 'Ni1']}),
@@ -14,22 +14,22 @@ import pdfstream.visualization.main as vis
         (['Ni_fgr', 'Ni_fgr'], {'mode': 'fit', 'xy_kwargs': {'color': 'black'}})
     ]
 )
-def test_waterfall(db, data_keys, kwargs):
+def test_waterfall(db, keys, kwargs):
     fig = plt.figure()
     ax = fig.add_subplot(111)
-    vis.waterfall((db[k] for k in data_keys), ax=ax, **kwargs)
+    vis.waterfall((db[k] for k in keys), ax=ax, **kwargs)
     plt.show(block=False)
 
 
 @pytest.mark.parametrize(
-    'data_key,kwargs', [
+    'key,kwargs', [
         ('Ni_gr', {'mode': 'line', 'text': 'Ni', 'xy_kwargs': {'color': 'black'}}),
         ('Ni_gr', {'mode': 'line', 'legend': 'Ni', 'xy_kwargs': {'color': 'black'}}),
         ('Ni_fgr', {'mode': 'fit', 'text': 'Ni', 'xy_kwargs': {'color': 'black'}})
     ]
 )
-def test_visualize(db, data_key, kwargs):
+def test_visualize(db, key, kwargs):
     fig = plt.figure()
     ax = fig.add_subplot(111)
-    vis.visualize(db[data_key], ax=ax, **kwargs)
+    vis.visualize(db[key], ax=ax, **kwargs)
     plt.show(block=False)

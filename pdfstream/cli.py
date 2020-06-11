@@ -1,9 +1,13 @@
-"""The command line intefrace function."""
+"""The functions used in the command line interface. The input and output are all files."""
 import typing as tp
 from pathlib import Path
 
+import matplotlib.pyplot as plt
+from matplotlib.axes import Axes
+
 import pdfstream.integration.main as integ
 import pdfstream.io as io
+import pdfstream.visualization.main as vis
 
 
 def integrate(poni_file: str, img_files: tp.Union[str, tp.Iterable[str]], *, bg_img_file: str = None,
@@ -83,7 +87,7 @@ def integrate(poni_file: str, img_files: tp.Union[str, tp.Iterable[str]], *, bg_
     return chi_paths
 
 
-def average(out_file: str, img_files: tp.Union[str, tp.List[str]], *, weights: tp.List[float] = None) -> None:
+def average(out_file: str, img_files: tp.Union[str, tp.Iterable[str]], *, weights: tp.List[float] = None) -> None:
     """Average the single channel image files with weights.
 
     Parameters
@@ -105,13 +109,27 @@ def average(out_file: str, img_files: tp.Union[str, tp.List[str]], *, weights: t
     return
 
 
-def iq_to_gr():
-    return
+def waterfall(
+        data_files: tp.List[str], ax: Axes = None, mode: str = "line", normal: bool = True,
+        stack: bool = True, gap: float = 0, texts: tp.List[str] = (), text_xy: tuple = None,
+        label: str = None, minor_tick: tp.Union[int, None] = 2, legends: tp.List[str] = None, **kwargs
+) -> Axes:
+    dataset = (io.load_array(_) for _ in data_files)
+    ax = vis.waterfall(
+        dataset, ax=ax, mode=mode, normal=normal, stack=stack, gap=gap, texts=texts, text_xy=text_xy,
+        label=label, minor_tick=minor_tick, legends=legends, **kwargs
+    )
+    plt.show(block=False)
+    return ax
 
 
-def vis_fit():
-    return
-
-
-def vis_data():
-    return
+def visualize(
+        data_file: str, ax: Axes = None, mode: str = "line", normal: bool = True,
+        text: str = None, text_xy: tuple = None, label: str = None,
+        minor_tick: int = 2, legend: str = None, **kwargs
+) -> Axes:
+    data = io.load_array(data_file)
+    ax = vis.visualize(data, ax=ax, mode=mode, normal=normal, text=text, text_xy=text_xy, label=label,
+                       minor_tick=minor_tick, legend=legend, **kwargs)
+    plt.show(block=False)
+    return ax

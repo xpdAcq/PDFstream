@@ -40,3 +40,29 @@ def test_average(db, kwargs):
         avg_img = io.load_img(img_file)
         white_img = io.load_img(db['white_img_file'])
         assert np.array_equal(avg_img, white_img)
+
+
+@pytest.mark.parametrize(
+    'keys,kwargs', [
+        (['Ni_gr_file', 'Ni_gr_file'], {'mode': 'line', 'legends': ['Ni0', 'Ni1']}),
+        (['Ni_gr_file', 'Ni_gr_file'], {'mode': 'line', 'stack': False}),
+        (['Ni_gr_file', 'Ni_gr_file'], {'mode': 'line', 'xy_kwargs': {'color': 'black'}, 'texts': ['Ni0', 'Ni1']}),
+        (['Ni_fgr_file', 'Ni_fgr_file'], {'mode': 'fit', 'texts': ['Ni0', 'Ni1']}),
+        (['Ni_fgr_file', 'Ni_fgr_file'], {'mode': 'fit', 'stack': False}),
+        (['Ni_fgr_file', 'Ni_fgr_file'], {'mode': 'fit', 'xy_kwargs': {'color': 'black'}})
+    ]
+)
+def test_waterfall(db, keys, kwargs):
+    data_files = db[keys] if isinstance(keys, str) else [db[key] for key in keys]
+    cli.waterfall(data_files, **kwargs)
+
+
+@pytest.mark.parametrize(
+    'key,kwargs', [
+        ('Ni_gr_file', {'mode': 'line', 'text': 'Ni', 'xy_kwargs': {'color': 'black'}}),
+        ('Ni_gr_file', {'mode': 'line', 'legend': 'Ni', 'xy_kwargs': {'color': 'black'}}),
+        ('Ni_fgr_file', {'mode': 'fit', 'text': 'Ni', 'xy_kwargs': {'color': 'black'}})
+    ]
+)
+def test_visualize(db, key, kwargs):
+    cli.visualize(db[key], **kwargs)

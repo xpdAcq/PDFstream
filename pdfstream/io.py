@@ -6,6 +6,8 @@ import pyFAI
 from diffpy.pdfgetx import PDFConfig, PDFGetter
 from numpy import ndarray
 
+from pdfstream.utils.data import load_data
+
 
 def load_ai_from_poni_file(poni_file: str) -> pyFAI.AzimuthalIntegrator:
     """Initiate the AzimuthalIntegrator using poni file."""
@@ -56,3 +58,8 @@ def write_img(filepath: str, img: ndarray, template: str) -> None:
     temp_img.data = img
     temp_img.save(filepath)
     return
+
+
+def load_array(data_file: str) -> ndarray:
+    """Load data columns from the .txt file and turn columns to rows and return the numpy array."""
+    return load_data(data_file).T

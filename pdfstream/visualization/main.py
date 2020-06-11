@@ -18,7 +18,7 @@ TEXT_IND = {
 
 
 def _waterfall(
-        data: ndarray, plot_method: tp.Callable, ax: Axes = None, normal: bool = True,
+        data: ndarray, plot_method: tp.Callable, ax: Axes, normal: bool = True,
         stack: bool = True, gap: float = 0, text: tp.Union[str, None] = None, text_xy: tuple = None,
         text_ind: int = -1, **kwargs
 ) -> None:
@@ -58,8 +58,6 @@ def _waterfall(
     kwargs : optional
         The kwargs arguments for the 'plot_method'.
     """
-    if ax is None:
-        ax = plt.gca()
     if normal:
         data = normalize(data)
     if stack:
@@ -74,7 +72,7 @@ def waterfall(
         dataset: tp.Iterable[ndarray], ax: Axes = None, mode: str = "line", normal: bool = True,
         stack: bool = True, gap: float = 0, texts: tp.Iterable[str] = (), text_xy: tuple = None,
         label: str = None, minor_tick: tp.Union[int, None] = 2, legends: tp.List[str] = None, **kwargs
-) -> None:
+) -> Axes:
     """The basic visualization function to realize single, waterfall, and comparison plot.
 
     Parameters
@@ -123,6 +121,8 @@ def waterfall(
     legends : a list of str
         The legend labels for the curves.
     """
+    if ax is None:
+        ax = plt.gca()
     if mode not in PLOT_METHOD:
         raise ValueError(
             "Unknown mode {}. Mode options: {}".format(mode, list(PLOT_METHOD.keys()))
@@ -139,14 +139,14 @@ def waterfall(
         auto_label(ax, label)
     if legends is not None:
         ax.legend(legends)
-    return
+    return ax
 
 
 def visualize(
         data: ndarray, ax: Axes = None, mode: str = "line", normal: bool = True,
         text: str = None, text_xy: tuple = None, label: str = None,
         minor_tick: int = 2, legend: str = None, **kwargs
-) -> None:
+) -> Axes:
     """The basic visualization function to realize single, waterfall, and comparison plot.
 
     Parameters
