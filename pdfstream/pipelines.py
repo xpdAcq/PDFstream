@@ -2,11 +2,12 @@
 
 from typing import Tuple, Callable
 
+import streamz as sz
+from streamz import Stream
+
 import pdfstream.integration as integ
 import pdfstream.transformation.tools as trans
 import pdfstream.visualization.tools as vis
-import streamz as sz
-from streamz import Stream
 
 
 def integration(img: Stream, ai: Stream, bg_img: Stream, bg_scale: float = None,
@@ -195,7 +196,7 @@ def vis_waterfall(data: Stream, ax: Stream, text: Stream = None, label_type: str
         A stream of Axes where data is plotted.
     """
     return _vis_waterfall(
-        vis.plot, data, ax, text, label_type, normalize, shift, line_spacing,
+        vis.plot_line, data, ax, text, label_type, normalize, shift, line_spacing,
         plot_setting=plot_setting, text_xy=text_xy, line_ind=-1
     )
 

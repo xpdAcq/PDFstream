@@ -190,7 +190,7 @@ def vis_chi(chi: ndarray, plot_setting: dict = None, unit: str = None) -> Axes:
         plot_setting = dict()
     fig = plt.figure()
     ax = fig.add_subplot(111)
-    ax.plot(chi[0], chi[1], **plot_setting)
+    ax.plot_line(chi[0], chi[1], **plot_setting)
     if unit:
         ax.set_xlabel(_LABEL.get(unit))
     ax.set_ylabel('I (A. U.)')

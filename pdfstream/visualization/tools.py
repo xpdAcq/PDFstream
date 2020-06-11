@@ -5,6 +5,17 @@ import numpy as np
 from matplotlib.axes import Axes
 from numpy import ndarray
 
+__all__ = [
+    'auto_label',
+    'auto_text',
+    'normalize',
+    'plot_line',
+    'plot_fit',
+    'shift',
+    'text_position',
+    'set_minor_tick'
+]
+
 _LABELS = {
     "xy": (r"Q ($\mathrm{\AA}^{-1}$)", r"I (A. U.)"),
     "chi": (r"Q ($\mathrm{\AA}^{-1}$)", r"I (A. U.)"),
@@ -30,7 +41,7 @@ def normalize(vis_data: ndarray):
     return vis_data
 
 
-def shift(vis_data: ndarray, ax: Axes, line_spacing: float = None):
+def shift(vis_data: ndarray, ax: Axes, gap: float = 0, inplace: bool = False):
     """Shift the data so that the max(data[n-1]) - max(data[n]) = line_spacing for n > 1.
 
     Parameters
@@ -41,21 +52,23 @@ def shift(vis_data: ndarray, ax: Axes, line_spacing: float = None):
     ax : Axes
         The axes to plot the data on.
 
-    line_spacing : float
-        The spacing between two adjacent lines. If None, use 0.
+    gap : float
+        The spacing between two adjacent lines.
+
+    inplace : bool
+        If True, shift the data inplace. Else, shift the copied data.
     """
-    vis_data = np.copy(vis_data)
-    if line_spacing is None:
-        line_spacing = 0.
+    if not inplace:
+        vis_data = np.copy(vis_data)
     lines = ax.get_lines()
     if len(lines) > 0:
         last_y = lines[-1].get_ydata()
         y = vis_data[1:]
-        vis_data[1:] += np.min(last_y) - np.max(y) - line_spacing
+        vis_data[1:] += np.min(last_y) - np.max(y) - gap
     return vis_data
 
 
-def plot(vis_data: ndarray, ax: Axes, plot_setting: dict = None):
+def plot_line(vis_data: ndarray, ax: Axes, xy_kwargs: dict = None):
     """Plot the first two rows of the data.
 
     Parameters
@@ -66,12 +79,12 @@ def plot(vis_data: ndarray, ax: Axes, plot_setting: dict = None):
     ax : Axes
         The axes to plot the data on.
 
-    plot_setting : dict
+    xy_kwargs : dict
         The kwargs for the ax.plot().
     """
-    if plot_setting is None:
-        plot_setting = {}
-    ax.plot(vis_data[0], vis_data[1], **plot_setting)
+    if xy_kwargs is None:
+        xy_kwargs = {}
+    ax.plot(vis_data[0], vis_data[1], **xy_kwargs)
     return ax
 
 
@@ -102,7 +115,7 @@ def complimentary(color: Union[str, Any]):
     return comp_color
 
 
-def auto_text(text: str, ax: Axes, text_xy: tuple = None, line_ind: int = -1):
+def auto_text(text: str, ax: Axes, text_xy: tuple = None, index: int = -1):
     """
     Automatically add the text.
 
@@ -117,14 +130,14 @@ def auto_text(text: str, ax: Axes, text_xy: tuple = None, line_ind: int = -1):
     text_xy : tuple
         The relative position. The horizontal bound is the xlim. The vertical is the two curves.
 
-    line_ind : int
+    index : int
         The index of the lines to add text. Default -1 (the last line).
     """
     lines = ax.get_lines()
     if len(lines) == 0:
         return ax
-    vis_data = lines[line_ind].get_data()
-    color = lines[line_ind].get_color()
+    vis_data = lines[index].get_data()
+    color = lines[index].get_color()
     if text_xy is None:
         text_xy = _TEXT_XY
     xy = text_position(vis_data, text_xy)
@@ -233,9 +246,9 @@ def plot_fit(vis_data: ndarray, ax: Axes,
     return ax
 
 
-def set_minor_tick(ax: Axes):
+def set_minor_tick(ax: Axes, n: int = 2):
     """Set one minor tick between major ticks."""
     from matplotlib.ticker import AutoMinorLocator
-    ax.xaxis.set_minor_locator(AutoMinorLocator(2))
-    ax.yaxis.set_minor_locator(AutoMinorLocator(2))
+    ax.xaxis.set_minor_locator(AutoMinorLocator(n))
+    ax.yaxis.set_minor_locator(AutoMinorLocator(n))
     return ax

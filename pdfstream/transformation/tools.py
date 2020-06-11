@@ -46,7 +46,7 @@ def visualize(pdfgetter: PDFGetter):
         x, y = tup
         xlabel, ylabel = labels.get(dtype)
         ax = fig.add_subplot(grid)
-        ax.plot(x, y)
+        ax.plot_line(x, y)
         ax.set_xlabel(xlabel)
         ax.set_ylabel(ylabel)
     return
