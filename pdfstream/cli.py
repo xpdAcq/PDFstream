@@ -2,7 +2,6 @@
 import typing as tp
 from pathlib import Path
 
-import matplotlib.pyplot as plt
 from matplotlib.axes import Axes
 
 import pdfstream.integration.main as integ
@@ -122,12 +121,10 @@ def waterfall(
         label: str = None, minor_tick: tp.Union[int, None] = 2, legends: tp.List[str] = None, **kwargs
 ) -> Axes:
     dataset = (io.load_array(_) for _ in data_files)
-    ax = vis.waterfall(
+    return vis.waterfall(
         dataset, ax=ax, mode=mode, normal=normal, stack=stack, gap=gap, texts=texts, text_xy=text_xy,
         label=label, minor_tick=minor_tick, legends=legends, **kwargs
     )
-    plt.show(block=False)
-    return ax
 
 
 def visualize(
@@ -136,7 +133,6 @@ def visualize(
         minor_tick: int = 2, legend: str = None, **kwargs
 ) -> Axes:
     data = io.load_array(data_file)
-    ax = vis.visualize(data, ax=ax, mode=mode, normal=normal, text=text, text_xy=text_xy, label=label,
-                       minor_tick=minor_tick, legend=legend, **kwargs)
-    plt.show(block=False)
-    return ax
+    return vis.visualize(
+        data, ax=ax, mode=mode, normal=normal, text=text, text_xy=text_xy, label=label,
+        minor_tick=minor_tick, legend=legend, **kwargs)
