@@ -9,6 +9,13 @@ import pdfstream.integration.main as integ
 import pdfstream.io as io
 import pdfstream.visualization.main as vis
 
+__all__ = [
+    'integrate',
+    'average',
+    'waterfall',
+    'visualize'
+]
+
 
 def integrate(poni_file: str, img_files: tp.Union[str, tp.Iterable[str]], *, bg_img_file: str = None,
               output_dir: str = ".", bg_scale: float = None, mask_setting: tp.Union[dict, str] = None,
