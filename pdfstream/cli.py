@@ -120,6 +120,54 @@ def waterfall(
         stack: bool = True, gap: float = 0, texts: tp.List[str] = (), text_xy: tuple = None,
         label: str = None, minor_tick: tp.Union[int, None] = 2, legends: tp.List[str] = None, **kwargs
 ) -> Axes:
+    """The visualization function to realize waterfall, and comparison plot.
+
+    Parameters
+    ----------
+    data_files : a list of file paths
+        The file paths. Each file contains column data. The required format depends on the 'mode'.
+        If mode = 'line', data = (x_array, y_array)
+        If mode = 'fit', data = (x_array, y_array, ycalc_array, ydiff_array)
+
+    kwargs : optional
+        The kwargs arguments for the plotting of each data. It depends on mode.
+        If mode = 'line', kwargs in ('xy_kwargs',).
+        If mode = 'fit', kwargs in ('xy_kwargs', 'xycalc_kwargs', 'xydiff_kwargs', 'xyzero_kwargs',
+        'fill_kwargs', 'yzero').
+
+    mode : str
+        The plotting mode. Currently support 'line', 'fit'.
+
+    ax : Axes
+        The axes to visualize the data. If None, use current axes.
+
+    normal : bool
+        If True, the second and the following rows in data will be normalized by (max - min). Else, do nothing.
+
+    stack : bool
+        If True, the second and the third rows will be shifted so that there will be a gap between data (
+        waterfall plot). Else, the data will be plotted without shifting (comparison plot).
+
+    gap : float
+        The gap between the adjacent curves. It is defined by the nearest points in vertical direction.
+
+    texts : an iterable of str
+        The texts to annotate the curves. It has the same order as the curves.
+
+    text_xy : tuple
+        The tuple of x and y position of the annotation in data coordinates. If None, use the default in the
+        'tools.auto_text'.
+
+    label : str
+        The label type used in automatic labeling. Acceptable types are listed in 'tools._LABELS'
+
+    minor_tick : int
+        How many parts that the minor ticks separate the space between the two adjacent major ticks. Default 2.
+        If None, no minor ticks.
+
+    legends : a list of str
+        The legend labels for the curves.
+    """
     dataset = (io.load_array(_) for _ in data_files)
     return vis.waterfall(
         dataset, ax=ax, mode=mode, normal=normal, stack=stack, gap=gap, texts=texts, text_xy=text_xy,
@@ -132,6 +180,47 @@ def visualize(
         text: str = None, text_xy: tuple = None, label: str = None,
         minor_tick: int = 2, legend: str = None, **kwargs
 ) -> Axes:
+    """The visualization function to realize single plot.
+
+    Parameters
+    ----------
+    data_file : file path
+        The file path. The file contains column data. The required format depends on the 'mode'.
+        If mode = 'line', data = (x_array, y_array)
+        If mode = 'fit', data = (x_array, y_array, ycalc_array, ydiff_array)
+
+    kwargs : optional
+        The kwargs arguments for the plotting of each data. It depends on mode.
+        If mode = 'line', kwargs in ('xy_kwargs',).
+        If mode = 'fit', kwargs in ('xy_kwargs', 'xycalc_kwargs', 'xydiff_kwargs', 'xyzero_kwargs',
+        'fill_kwargs', 'yzero').
+
+    mode : str
+        The plotting mode. Currently support 'line', 'fit'.
+
+    ax : Axes
+        The axes to visualize the data. If None, use current axes.
+
+    normal : bool
+        If True, the second and the following rows in data will be normalized by (max - min). Else, do nothing.
+
+    text : str
+        The text to annotate the curve.
+
+    text_xy : tuple
+        The tuple of x and y position of the annotation in data coordinates. If None, use the default in the
+        'tools.auto_text'.
+
+    label : str
+        The label type used in automatic labeling. Acceptable types are listed in 'tools._LABELS'
+
+    minor_tick : int
+        How many parts that the minor ticks separate the space between the two adjacent major ticks. Default 2.
+        If None, no minor ticks.
+
+    legend : str
+        The legend label for the curve.
+    """
     data = io.load_array(data_file)
     return vis.visualize(
         data, ax=ax, mode=mode, normal=normal, text=text, text_xy=text_xy, label=label,

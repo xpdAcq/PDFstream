@@ -73,7 +73,7 @@ def waterfall(
         stack: bool = True, gap: float = 0, texts: tp.Iterable[str] = (), text_xy: tuple = None,
         label: str = None, minor_tick: tp.Union[int, None] = 2, legends: tp.List[str] = None, **kwargs
 ) -> Axes:
-    """The basic visualization function to realize single, waterfall, and comparison plot.
+    """The visualization function to realize waterfall, and comparison plot.
 
     Parameters
     ----------
@@ -147,7 +147,7 @@ def visualize(
         text: str = None, text_xy: tuple = None, label: str = None,
         minor_tick: int = 2, legend: str = None, **kwargs
 ) -> Axes:
-    """The basic visualization function to realize single, waterfall, and comparison plot.
+    """The visualization function to realize single plot.
 
     Parameters
     ----------
