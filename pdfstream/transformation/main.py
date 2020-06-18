@@ -1,10 +1,6 @@
-from pdfstream.transformation.tools import *
-
-try:
-    from diffpy.pdfgetx import PDFConfig
-except ImportError:
-    print("diffpy.pdfgetx not installed.")
+from diffpy.pdfgetx import PDFConfig
 from numpy import ndarray
+from pdfstream.transformation.tools import *
 
 __all__ = [
     'get_pdf'
