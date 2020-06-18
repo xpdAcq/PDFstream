@@ -6,6 +6,12 @@ from diffpy.pdfgetx import PDFGetter, PDFConfig
 from matplotlib.gridspec import GridSpec
 from numpy import ndarray
 
+__all__ = [
+    'make_pdfgetter',
+    'use_pdfgetter',
+    'visualize'
+]
+
 
 def make_pdfgetter(pdfconfig: PDFConfig, user_config: dict = None) -> PDFGetter:
     """Make the pdfgetter."""
@@ -25,8 +31,10 @@ def use_pdfgetter(chi: ndarray, pdfgetter: PDFGetter) -> PDFGetter:
     return pdfgetter
 
 
-def visualize(pdfgetter: PDFGetter):
+def visualize(pdfgetter: PDFGetter, plot_setting: dict = None):
     """Visualize data in pdfgetter."""
+    if plot_setting is None:
+        plot_setting = {}
     # get data
     dct = OrderedDict()
     for attr in ("iq", "sq", "fq", "gr"):
@@ -34,7 +42,7 @@ def visualize(pdfgetter: PDFGetter):
         if len(tup) > 0:
             dct[attr] = tup
     # plot data
-    fig = plt.figure(figsize=(6, 6 * len(dct)))
+    fig = plt.figure()
     grids = GridSpec(len(dct), 1)
     labels = {
         "iq": (r"Q ($\AA^{-1}$)", r"I (A. U.)"),
@@ -46,7 +54,8 @@ def visualize(pdfgetter: PDFGetter):
         x, y = tup
         xlabel, ylabel = labels.get(dtype)
         ax = fig.add_subplot(grid)
-        ax.plot_line(x, y)
+        ax.plot(x, y, **plot_setting)
         ax.set_xlabel(xlabel)
         ax.set_ylabel(ylabel)
+    plt.show(block=False)
     return
