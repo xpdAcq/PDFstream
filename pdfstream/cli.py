@@ -225,3 +225,8 @@ def visualize(
     return vis.visualize(
         data, ax=ax, mode=mode, normal=normal, text=text, text_xy=text_xy, label=label,
         minor_tick=minor_tick, legend=legend, **kwargs)
+
+
+def calibinst():
+    """"""
+    return

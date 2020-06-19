@@ -10,12 +10,13 @@ import numpy as np
 import pandas as pd
 from diffpy.srfit.fitbase import Profile, FitContribution, FitResults
 from diffpy.srfit.fitbase.parameter import ParameterProxy
-from diffpy.srfit.pdf import PDFGenerator, DebyePDFGenerator, PDFParser
+from diffpy.srfit.pdf import PDFGenerator, DebyePDFGenerator
 from diffpy.srfit.structure.sgconstraints import constrainAsSpaceGroup
 from matplotlib.axes import Axes
-from pdfstream.modeling.fitobjs import GenConfig, FunConfig, ConConfig, MyRecipe
-from pdfstream.visualization.main import visualize
 from scipy.optimize import least_squares
+
+from pdfstream.modeling.fitobjs import *
+from pdfstream.visualization.main import visualize
 
 __all__ = [
     'make_profile',
@@ -33,36 +34,27 @@ __all__ = [
 
 
 # functions used in fitting
-def make_profile(data_source: str, fit_range: Tuple[float, float, float], parser=None) -> Profile:
+def make_profile(parser: MyParser, fit_range: Tuple[float, float, float]) -> Profile:
     """
     Make a Profile, parse data file to it and set its calculation range.
 
     Parameters
     ----------
-    data_source
-        The source of the data.
+    parser
+        The parser with parsed data from the data source.
 
     fit_range
         The tuple of (rmax, rmin, dr) in Angstrom.
-
-    parser
-        The parser to parse the data from the data source. If None, use PDFParser.
 
     Returns
     -------
     profile
         The Profile with the parsed data and the calculation range.
-
     """
     profile = Profile()
-    if parser is None:
-        parser = PDFParser()
-    parser.parseFile(data_source)
     profile.loadParsedData(parser)
-
     rmin, rmax, rstep = fit_range
     profile.setCalculationRange(rmin, rmax, rstep)
-
     return profile
 
 
@@ -79,7 +71,6 @@ def make_generator(genconfig: GenConfig) -> Union[PDFGenerator, DebyePDFGenerato
     -------
     generator: PDFGenerator or DebyePDFGenerator
         A generator built from GenConfig.
-
     """
     generator = DebyePDFGenerator(genconfig.name) if genconfig.debye else PDFGenerator(genconfig.name)
     generator.setStructure(genconfig.structure, periodic=genconfig.structure)
@@ -103,18 +94,18 @@ def make_contribution(conconfig: ConConfig) -> FitContribution:
     -------
     contribution : FitContribution
         The FitContribution built from ConConfig.
-
     """
     contribution = FitContribution(conconfig.name)
 
     fit_range = conconfig.fit_range
-    profile = make_profile(conconfig.data_file, fit_range)
+    profile = make_profile(conconfig.parser, fit_range)
     contribution.setProfile(profile, xname="r")
 
     for genconfig in conconfig.genconfigs:
         generator = make_generator(genconfig)
-        generator.qdamp.value = conconfig.qparams[0]
-        generator.qbroad.value = conconfig.qparams[1]
+        if conconfig.qparams is not None:
+            generator.qdamp.value = conconfig.qparams[0]
+            generator.qbroad.value = conconfig.qparams[1]
         contribution.addProfileGenerator(generator)
 
     for base_line in conconfig.baselines:
@@ -122,7 +113,7 @@ def make_contribution(conconfig: ConConfig) -> FitContribution:
 
     for function in conconfig.funconfigs:
         name = function.name
-        func_type = function.func_type
+        func_type = function.func
         argnames = function.argnames
         contribution.registerFunction(func_type, name, argnames)
 
@@ -145,7 +136,6 @@ def make_recipe(*conconfigs: ConConfig) -> MyRecipe:
     -------
     recipe
         MyRecipe built from ConConfigs.
-
     """
     recipe = MyRecipe(configs=conconfigs)
 
@@ -184,23 +174,18 @@ def fit(recipe: MyRecipe, **kwargs) -> None:
 
     kwargs
         Parameters in fitting. They are
-            verbose: how much information to print. Default 2.
+            verbose: how much information to print. Default 1.
             values: initial value for fitting. Default get from recipe.
             bounds: two list of lower and upper bounds. Default get from recipe.
-            xtol, gtol, ftol: tolerance in least squares. Default 1.E-4, 1.E-4, 1.E-4.
+            xtol, gtol, ftol: tolerance in least squares. Default 1.E-5, 1.E-5, 1.E-5.
             max_nfev: maximum number of evaluation of residual function. Default None.
-
-    Returns
-    -------
-    None
-
     """
     values = kwargs.get("values", recipe.values)
     bounds = kwargs.get("bounds", recipe.getBounds2())
-    verbose = kwargs.get("verbose", 2)
-    xtol = kwargs.get("xtol", 1.E-4)
-    gtol = kwargs.get("gtol", 1.E-4)
-    ftol = kwargs.get("ftol", 1.E-4)
+    verbose = kwargs.get("verbose", 1)
+    xtol = kwargs.get("xtol", 1.E-5)
+    gtol = kwargs.get("gtol", 1.E-5)
+    ftol = kwargs.get("ftol", 1.E-5)
     max_nfev = kwargs.get("max_fev", None)
     least_squares(recipe.residual, values, bounds=bounds, verbose=verbose, xtol=xtol, gtol=gtol, ftol=ftol,
                   max_nfev=max_nfev)
@@ -415,11 +400,6 @@ def _save_all(recipe: MyRecipe, folder: str, csv: str, fgr: str, cif: str) -> No
         The path to the csv file containing fitted PDFs information.
     cif
         The path to the csv file containing refined structure information.
-
-    Returns
-    -------
-    None
-
     """
     print(f"Save {recipe.name} ...\n")
     uid = str(uuid4())[:4]
@@ -470,7 +450,6 @@ def update(file_path: str, info_dct: dict, id_col: str) -> int:
     -------
     id_val
         An id for the information.
-
     """
     df = pd.read_csv(file_path)
     row_dct = {id_col: df.shape[0]}
@@ -526,7 +505,6 @@ def cfconstrain(recipe: MyRecipe, fun_name: str, dv: Dict[str, float] = None, co
     -------
     variables
         The dictionary mapping from the name of the variable to the variable itself.
-
     """
     variables = {}
     if dv is None:

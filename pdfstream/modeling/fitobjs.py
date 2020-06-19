@@ -1,20 +1,59 @@
 """Objects used in the fitting."""
+import types
 from typing import Union, List, Callable, Dict, Tuple
 
 from diffpy.srfit.fitbase import FitRecipe, ProfileGenerator
+from diffpy.srfit.pdf import PDFParser
 from diffpy.structure import Structure
+from numpy import ndarray
 from pyobjcryst.crystal import Crystal
 from pyobjcryst.molecule import Molecule
 
-__all__ = ["GenConfig", "FunConfig", "ConConfig", "MyRecipe"]
+__all__ = ["GenConfig", "FunConfig", "ConConfig", "MyRecipe", "MyParser"]
 
 Stru = Union[Crystal, Molecule, Structure]
 
 
+class MyParser(PDFParser):
+    """The parser to parse data and meta data."""
+
+    def parseDict(self, data: ndarray, meta: dict = None):
+        """Parse the data and meta data from a ndarray and a dictionary.
+
+        Parameters
+        ----------
+        data : ndarray
+            The data. Each row is a data array.
+
+        meta : dict
+            The meta data. Valid keys are
+
+                stype       --  The scattering type ("X", "N")
+                qmin        --  Minimum scattering vector (float)
+                qmax        --  Maximum scattering vector (float)
+                qdamp       --  Resolution damping factor (float)
+                qbroad      --  Resolution broadening factor (float)
+                spdiameter  --  Nanoparticle diameter (float)
+                scale       --  Data scale (float)
+                temperature --  Temperature (float)
+                doping      --  Doping (float)
+        """
+        if meta is None:
+            meta = {}
+        if data.shape[0] < 2:
+            raise ValueError("Data dimension less than 2.")
+        if data.shape[0] > 4:
+            raise ValueError("Data dimension larger than 4.")
+        self._banks.append(
+            [_ for _ in data] + [None] * (4 - data.shape[0])
+        )
+        self._meta = meta
+        return
+
+
 class GenConfig:
-    """
-    A configuration class to provide information in the building of PDFGenerator or DebyePDFGenerator. It is used
-    by 'make_generator' in 'myscripts.fittingfunction'.
+    """A configuration class to provide information in the building of PDFGenerator or DebyePDFGenerator. It is
+    used by 'make_generator' in 'myscripts.fittingfunction'.
 
     Attributes
     ----------
@@ -64,8 +103,7 @@ class GenConfig:
         return type_str
 
     def to_dict(self) -> dict:
-        """
-        Parse the GenConfig as a dictionary. The keys include: gen_name, stru_file, debye, periodic, ncpu.
+        """Parse the GenConfig as a dictionary. The keys include: gen_name, stru_file, debye, periodic, ncpu.
 
         Returns
         -------
@@ -84,30 +122,28 @@ class GenConfig:
 
 
 class FunConfig:
-    """
-    Configuration for the characteristic function.
+    """Configuration for the characteristic function.
 
     Attributes
     ----------
         name
             name of the function, also the name in Fitcontribution.
-        func_type
+        func
             characteristic function from diffpy cmi.
         argnames
             argument names in the function. it will rename all arguments to avoid conflicts. If None, no renaming.
             If not None, it always starts with "r" when using diffpy characteristic functions. Default None.
     """
 
-    def __init__(self, name: str, func_type: Callable, argnames: List[str] = None):
+    def __init__(self, name: str, func: types.CodeType, argnames: List[str] = None):
         """Initiate Function object."""
         self.name = name
-        self.func_type = func_type
+        self.func = func
         self.argnames = argnames
 
 
 class ConConfig:
-    """
-    Configuration for the FitContribution.
+    """Configuration for the FitContribution.
 
     Attributes
     ----------
@@ -117,8 +153,8 @@ class ConConfig:
     data_id : int
         The id of the data. It will be used as a foreign key when the results are saved.
 
-    data_file : str
-        The path to the data file.
+    parser : MyParser
+        The parser with parsed data.
 
     fit_range
         A tuple of (rmin, rmax, rstep) in angstrom for fitting.
@@ -150,10 +186,10 @@ class ConConfig:
 
     def __init__(self,
                  name: str,
-                 data_id: int,
-                 data_file: str,
+                 parser: MyParser,
                  fit_range: Tuple[float, float, float],
-                 qparams: Tuple[float, float],
+                 qparams: Tuple[float, float] = None,
+                 data_id: int = None,
                  partial_eqs: Dict[str, str] = None,
                  eq: str = None,
                  genconfigs: Union[GenConfig, List[GenConfig]] = (),
@@ -164,7 +200,7 @@ class ConConfig:
         """Initiate the instance."""
         self.name: str = name
         self.data_id: int = data_id
-        self.data_file: str = data_file
+        self.parser: MyParser = parser
         self.fit_range: Tuple[float, float, float] = fit_range
         self.qparams: Tuple[float, float] = qparams
         if partial_eqs is None and eq is None:
@@ -185,9 +221,8 @@ class ConConfig:
         self.weight = weight
 
     def to_dict(self) -> dict:
-        """
-        Parse the ConConfig to a dictionary. The keys will include: con_name, data_id, data_file, rmin, rmax, dr, qdamp,
-        qbroad, eq, phases, functions, base_lines, res_eq.
+        """Parse the ConConfig to a dictionary. The keys will include con_name, data_id, data_file, rmin, rmax,
+        dr, qdamp, qbroad, eq, phases, functions, base_lines, res_eq.
 
         Returns
         -------
@@ -197,7 +232,6 @@ class ConConfig:
         config_dct = {
             'con_name': self.name,
             'data_id': self.data_id,
-            'data_file': self.data_file,
             'rmin': self.fit_range[0],
             'rmax': self.fit_range[1],
             'dr': self.fit_range[2],
@@ -213,8 +247,7 @@ class ConConfig:
 
 
 class MyRecipe(FitRecipe):
-    """
-    The FitRecipe with augmented features.
+    """The FitRecipe with augmented features.
 
     Attributes
     ----------
