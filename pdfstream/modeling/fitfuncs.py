@@ -4,7 +4,7 @@ from datetime import datetime
 from typing import Tuple, Union, List, Dict
 from uuid import uuid4
 
-import diffpy.srfit.pdf.characteristicfunctions as characteristicfunctions
+import diffpy.srfit.pdf.characteristicfunctions as F
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -12,19 +12,24 @@ from diffpy.srfit.fitbase import Profile, FitContribution, FitResults
 from diffpy.srfit.fitbase.parameter import ParameterProxy
 from diffpy.srfit.pdf import PDFGenerator, DebyePDFGenerator, PDFParser
 from diffpy.srfit.structure.sgconstraints import constrainAsSpaceGroup
-from diffpy.utils.parsers.loaddata import loadData
+from matplotlib.axes import Axes
+from pdfstream.modeling.fitobjs import GenConfig, FunConfig, ConConfig, MyRecipe
+from pdfstream.visualization.main import visualize
 from scipy.optimize import least_squares
 
-from pdfstream.modeling.fitobjs import GenConfig, FunConfig, ConConfig, MyRecipe
-
-__all__ = ["make_profile", "make_generator", "make_recipe", "fit", "gen_save_all", "F", "plot",
-           "constrainAsSpaceGroup", "load_default", 'sgconstrain', "cfconstrain", 'free_and_fit', 'loadData',
-           'print_result']
-
-# abbreviate some useful modules and functions
-F = characteristicfunctions
-constrainAsSpaceGroup = constrainAsSpaceGroup
-loadData = loadData
+__all__ = [
+    'make_profile',
+    'make_generator',
+    'make_recipe',
+    'fit',
+    'gen_save_all',
+    'F',
+    'plot',
+    'constrainAsSpaceGroup',
+    'load_default',
+    'sgconstrain',
+    'cfconstrain',
+    'sgconstrain_all']
 
 
 # functions used in fitting
@@ -202,37 +207,31 @@ def fit(recipe: MyRecipe, **kwargs) -> None:
     return
 
 
-def plot(recipe: MyRecipe) -> None:
+def plot(contribution: FitContribution) -> Axes:
     """
     Plot the fits for all FitContributions in the recipe.
 
     Parameters
     ----------
-    recipe
+    contribution : FitContribution
         The FitRecipe.
+
+    Returns
+    -------
+    ax : Axes
+        The axes that has the plot.
     """
-    for config in recipe.configs:
-        contribution = getattr(recipe, config.name)
+    r = contribution.profile.x
+    g = contribution.profile.y
+    gcalc = contribution.profile.ycalc
+    gdiff = g - gcalc
+    data = np.stack([r, g, gcalc, gdiff])
 
-        r = contribution.profile.x
-        g = contribution.profile.y
-        gcalc = contribution.profile.ycalc
-        diff = g - gcalc
-        offset = min([g.min(), gcalc.min()]) - diff.max()
-        diffzero = offset * np.ones_like(diff)
-        diff += diffzero
-
-        plt.figure()
-        plt.title(config.name)
-        plt.plot(r, g, 'bo', mfc="None", label="Data")
-        plt.plot(r, gcalc, 'r-', label="Calculation")
-        plt.plot(r, diff, 'g-', label="Difference")
-        plt.plot(r, diffzero, 'k-')
-        plt.xlabel(r"r ($\AA$)")
-        plt.ylabel(r"G ($\AA^{-2}$)")
-        plt.legend(loc=1)
-        plt.show()
-    return
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    ax = visualize(data, ax=ax, mode='fit', text=contribution.name)
+    plt.show(block=False)
+    return ax
 
 
 def save_csv(recipe: MyRecipe, base_name: str) -> Tuple[str, dict]:
@@ -323,7 +322,8 @@ def calc_pgar(contribution: FitContribution, base_name: str, partial_eqs: Dict[s
     return pgr_file
 
 
-def save_cif(generator: Union[PDFGenerator, DebyePDFGenerator], base_name: str, con_name: str, ext: str = "cif") -> str:
+def save_cif(generator: Union[PDFGenerator, DebyePDFGenerator], base_name: str, con_name: str,
+             ext: str = "cif") -> str:
     """
     Save refined structure.
 
@@ -549,12 +549,11 @@ def sgconstrain(recipe: MyRecipe, gen_name: str = None, con_name: str = None, sg
                 dv: Union[str, Dict[str, float]] = None, bounds: Dict[str, tuple] = None,
                 scatterers: List = None, add_xyz=False) \
         -> Dict[str, ParameterProxy]:
-    """
-    Constrain the generator by space group. The constrained parameters are scale, delta2, lattice parameters,
-    ADPs and xyz coordinates. The lattice constants and xyz coordinates are constrained by space group while the ADPs
-    are constrained by elements. All paramters will be added as '{par.name}_{gen.name}'. The parameters tags are
-    scale_{gen.name}, delta2_{gen.name}, lat_{gen.name}, adp_{gen.name}, xyz_{gen.name}. Return the added variables
-    in a dictionary.
+    """Constrain the generator by space group. The constrained parameters are scale, delta2, lattice parameters,
+    ADPs and xyz coordinates. The lattice constants and xyz coordinates are constrained by space group while the
+    ADPs are constrained by elements. All paramters will be added as '{par.name}_{gen.name}'. The parameters
+    tags are scale_{gen.name}, delta2_{gen.name}, lat_{gen.name}, adp_{gen.name}, xyz_{gen.name}. Return the
+    added variables in a dictionary.
 
     Parameters
     ----------
@@ -565,12 +564,12 @@ def sgconstrain(recipe: MyRecipe, gen_name: str = None, con_name: str = None, sg
         The name of the PDFGenerator to constrain.
 
     con_name
-        The name of the FitContribution where the PDFGenerator is in. If None, get it according to the name of the first
-        ConConfig in 'recipe.configs'. Default None.
+        The name of the FitContribution where the PDFGenerator is in. If None, get it according to the name of
+        the first ConConfig in 'recipe.configs'. Default None.
 
     sg
-        The space group. The expression can be the string. If the structure is Crystal object, use internal constrain.
-        If not, use the space group read by the gen_config.
+        The space group. The expression can be the string. If the structure is Crystal object, use internal
+        constrain. If not, use the space group read by the gen_config.
 
     dv
         The path to the .csv file contains the fitting results or the dictionary of values.
@@ -595,7 +594,6 @@ def sgconstrain(recipe: MyRecipe, gen_name: str = None, con_name: str = None, sg
     -------
     variables
         The dictionary mapping from the name of the variable to the variable itself.
-
     """
     # the default of variables
     if dv is None:
@@ -665,6 +663,47 @@ def sgconstrain(recipe: MyRecipe, gen_name: str = None, con_name: str = None, sg
     return variables
 
 
+def sgconstrain_all(recipe: MyRecipe, dv: dict = None, bounds: dict = None, add_xyz: bool = False):
+    """Use space group to constrain all the generators in the recipe.
+
+    This method is only applicable to the generators initiated by objects in pyobjcryst. It does not work for
+    Structure in diffpy.structure.
+
+    Parameters
+    ----------
+    recipe
+        The recipe to add variables.
+
+    dv
+        The path to the .csv file contains the fitting results or the dictionary of values.
+        If None, the following values will be used:
+        type, initiate value, range, tag
+        scale, 0, (0, inf), scale_{gen.name}
+        delta2, 0, (0, inf), delta2_{gen.name}
+        lat, par.value, (0, 2 * par.value), lat_{gen.name}
+        adp, 0.006, (0, inf), adp_{gen.name}
+        xyz, par.value, None, xyz_{gen.name}
+
+    bounds
+        The mapping from the name of the variable to the tuple of the arguments for the bounding function.
+
+    add_xyz
+        Whether to constrain xyz coordinates. Default False.
+
+    Returns
+    -------
+    variables
+        The dictionary mapping from the name of the variable to the variable itself.
+    """
+    variables = dict()
+    for conconfig in recipe.configs:
+        for genconfig in conconfig.genconfigs:
+            variables.update(
+                sgconstrain(recipe, genconfig.name, dv=dv, bounds=bounds, add_xyz=add_xyz)
+            )
+    return variables
+
+
 def only_alpha(s: str):
     """Remove all characters other than alphabets. Use to get a valid variable name."""
     return ''.join((c for c in s if c.isalpha()))
@@ -701,52 +740,3 @@ def get_funconfig(con_config: ConConfig, fun_name: str = None) -> FunConfig:
             return funconfig
     else:
         raise ValueError(f"No CharacteristicFunction names '{fun_name}' in FitContribution '{con_config.name}'.")
-
-
-def free_and_fit(recipe: MyRecipe, tags: List[Union[str, Tuple[str, ...]]], **kwargs) -> None:
-    """
-    First fix all variables and then free the variables one by one and fit the recipe.
-
-    Parameters
-    ----------
-    recipe
-        The recipe to fit.
-
-    tags
-        The tags of variables to free. It can be single tag or a tuple of tags.
-
-    kwargs
-        The kwargs of the 'fit'.
-
-    Returns
-    -------
-    None
-
-    """
-    print(f"Start {recipe.name} with all parameters fixed.")
-    recipe.fix('all')
-    for n, tag in enumerate(tags):
-        if isinstance(tag, tuple):
-            print("Free " + ', '.join(tag) + ' ...')
-            recipe.free(*tag)
-        elif isinstance(tag, str):
-            print(f"Free {tag} ...")
-            recipe.free(tag)
-        else:
-            raise TypeError(f"Unknown tag type: {type(tag)}")
-        fit(recipe, **kwargs)
-    return
-
-
-def print_result(recipe: MyRecipe) -> None:
-    """
-    Print out the result of the recipe.
-
-    Parameters
-    ----------
-    recipe : MyRecipe
-        The recipe to print the results.
-    """
-    res = FitResults(recipe)
-    res.printResults()
-    return

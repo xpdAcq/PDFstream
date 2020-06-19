@@ -143,7 +143,7 @@ def waterfall(
 
 
 def visualize(
-        data: ndarray, ax: Axes = None, mode: str = "line", normal: bool = True,
+        data: ndarray, ax: Axes = None, mode: str = "line", normal: bool = False,
         text: str = None, text_xy: tuple = None, label: str = None,
         minor_tick: int = 2, legend: str = None, **kwargs
 ) -> Axes:

@@ -159,7 +159,7 @@ class ConConfig:
                  genconfigs: Union[GenConfig, List[GenConfig]] = (),
                  funconfigs: Union[FunConfig, List[FunConfig]] = (),
                  baselines: Union[Callable, List[Callable]] = (),
-                 res_eq: str = "res",
+                 res_eq: str = "resv",
                  weight: float = 1.):
         """Initiate the instance."""
         self.name: str = name

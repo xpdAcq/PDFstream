@@ -2,14 +2,19 @@
 from collections import OrderedDict
 
 import matplotlib.pyplot as plt
-from diffpy.pdfgetx import PDFGetter, PDFConfig
+from pdfstream.transformation import __PDFGETX_AVAL__
+
+if __PDFGETX_AVAL__:
+    from diffpy.pdfgetx import PDFGetter, PDFConfig
 from matplotlib.gridspec import GridSpec
 from numpy import ndarray
 
 __all__ = [
     'make_pdfgetter',
     'use_pdfgetter',
-    'visualize'
+    'visualize',
+    'PDFConfig',
+    'PDFGetter'
 ]
 
 

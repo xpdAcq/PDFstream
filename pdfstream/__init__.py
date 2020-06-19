@@ -1,3 +1,4 @@
+# get the version from using versioneer
 from ._version import get_versions
 
 __version__ = get_versions()['version']

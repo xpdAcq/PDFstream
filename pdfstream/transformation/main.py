@@ -1,4 +1,3 @@
-from diffpy.pdfgetx import PDFConfig
 from numpy import ndarray
 from pdfstream.transformation.tools import *
 
