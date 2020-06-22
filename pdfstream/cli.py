@@ -1,11 +1,14 @@
 """The functions used in the command line interface. The input and output are all files."""
 import typing as tp
-from pathlib import Path
+from pathlib import Path, PurePath
 
 from matplotlib.axes import Axes
+from pkg_resources import resource_filename
 
+import pdfstream.calibration.main as calib
 import pdfstream.integration.main as integ
 import pdfstream.io as io
+import pdfstream.modeling.main as mod
 import pdfstream.visualization.main as vis
 
 __all__ = [
@@ -16,10 +19,12 @@ __all__ = [
 ]
 
 
-def integrate(poni_file: str, img_files: tp.Union[str, tp.Iterable[str]], *, bg_img_file: str = None,
-              output_dir: str = ".", bg_scale: float = None, mask_setting: tp.Union[dict, str] = None,
-              integ_setting: dict = None, plot_setting: tp.Union[dict, str] = None,
-              img_setting: tp.Union[dict, str] = None) -> tp.List[str]:
+def integrate(
+        poni_file: str, img_files: tp.Union[str, tp.Iterable[str]], *, bg_img_file: str = None,
+        output_dir: str = ".", bg_scale: float = None, mask_setting: tp.Union[dict, str] = None,
+        integ_setting: dict = None, plot_setting: tp.Union[dict, str] = None,
+        img_setting: tp.Union[dict, str] = None
+) -> tp.List[str]:
     """Azimuthal integration of the two dimensional diffraction image.
 
     The image will be first subtracted by background if background image file is given. Then, it will be binned
@@ -38,14 +43,14 @@ def integrate(poni_file: str, img_files: tp.Union[str, tp.Iterable[str]], *, bg_
         The path to the poni file. It will be read by pyFAI.
 
     img_files : str or an iterable of str
-        The path to the image file. It will be read by fabio.
+        The path or a list of paths to the image file. It will be read by fabio.
 
     bg_img_file : str
         The path to the background image file. It should have the same dimension as the data image. If None,
         no background subtraction will be done.
 
     output_dir : str
-        The directory to save the image file. Default current working directory.
+        The directory to save the chi data file. Default current working directory.
 
     bg_scale : float
         The scale of the background. Default 1
@@ -167,6 +172,11 @@ def waterfall(
 
     legends : a list of str
         The legend labels for the curves.
+
+    Returns
+    -------
+    ax : Axes
+        The axes with the plot.
     """
     dataset = (io.load_array(_) for _ in data_files)
     return vis.waterfall(
@@ -220,6 +230,11 @@ def visualize(
 
     legend : str
         The legend label for the curve.
+
+    Returns
+    -------
+    ax : Axes
+        The axes with the plot.
     """
     data = io.load_array(data_file)
     return vis.visualize(
@@ -227,6 +242,103 @@ def visualize(
         minor_tick=minor_tick, legend=legend, **kwargs)
 
 
-def calibinst():
-    """"""
+def instrucalib(
+        poni_file: str, img_file: str, cfg_file: str = None, stru_file: str = None, output_dir=".",
+        fit_range: calib.FIT_RANGE = (2.0, 60.0, 0.01),
+        qdamp0: float = 0.04, qbroad0: float = 0.02,
+        bg_img_file: str = None, bg_scale: float = None,
+        mask_setting: tp.Union[dict, str] = None, integ_setting: dict = None,
+        chi_plot_setting: tp.Union[dict, str] = None, img_setting: tp.Union[dict, str] = None,
+        pdf_plot_setting: tp.Union[dict, str] = None, ncpu: int = None
+):
+    """Pipeline-style qdamp, qbroad calibration.
+
+    A pipeline to do image background subtraction, auto masking, integration, PDF transformation and PDF
+    modeling to calibrate the qdamp and qbroad. Also, the accuracy of the calibration is tested by the modeling.
+    The output will be the processed data in 'iq', 'sq', 'fq', 'gr' files (depends on 'cfg' file), the fitting
+    results in 'csv' file, the refined structure in 'cif' file, the best fits data in 'fgr' file and there is a
+    folder '_pdfstream_db'containing the meta data of the FitRecipe, FitContribution and PDFGenerator of the
+    refined model in the three 'csv' files.
+
+    Parameters
+    ----------
+    poni_file : str
+        The path to the poni file. It will be read by pyFAI.
+
+    img_file : str
+        The path to the image file. It will be read by fabio.
+
+    cfg_file : str
+        The path to the PDF configuratino file. Usually, a 'cfg' file or a processed data file like 'gr' file
+        with meta data in the header. If None, use the 'Ni_gr_file.gr' in 'pdfstream/test_data'.
+
+    stru_file : str
+        The path to the structure file. Usually, a 'cif' file. If None, use the 'Ni_cif_file.cif' in
+        'pdfstream/test_data'.
+
+    output_dir : str
+        The directory to save all the outputs. Default current working directory.
+
+    fit_range : tuple
+        The rmin, rmax and rstep in the unit of angstrom.
+
+    qdamp0 : float
+        The initial value for the Q damping factor.
+
+    qbroad0 : float
+        The initial vluae for the Q broadening factor.
+
+    bg_img_file : str
+        The path to the background image file. It should have the same dimension as the data image. If None,
+        no background subtraction will be done.
+
+    bg_scale : float
+        The scale for background subtraction. If None, use 1.
+
+    mask_setting : dict
+        The auto mask setting. See _AUTO_MASK_SETTING in pdfstream.tools.integration. If None,
+        use _AUTOMASK_SETTING. To turn off the auto masking, use "OFF".
+
+    integ_setting : dict
+        The integration setting. See _INTEG_SETTING in pdfstream.tools.integration. If None, use _INTEG_SETTING.
+
+    img_setting : dict
+        The user's modification to imshow kwargs except a special key 'z_score'. If None, use use empty dict.
+        To turn off the imshow, use "OFF".
+
+    chi_plot_setting : dict
+        The kwargs of chi data plotting. See matplotlib.pyplot.plot. If 'OFF', skip visualization.
+
+    pdf_plot_setting : dict or 'OFF'
+        The kwargs of pdf data plotting. See matplotlib.pyplot.plot. If 'OFF', skip visualization.
+
+    ncpu : int
+        The number of cpu used in parallel computing. If None, no parallel computing.
+    """
+    if cfg_file is None:
+        cfg_file = resource_filename('pdfstream', 'test_data/Ni_cfg_file.cfg')
+    if stru_file is None:
+        stru_file = resource_filename('pdfstream', 'test_data/Ni_cif_file.cif')
+    ai = io.load_ai_from_poni_file(poni_file)
+    img = io.load_img(img_file)
+    pdfconfig = io.load_pdfconfig(cfg_file)
+    stru = io.load_crystal(stru_file)
+    bg_img = io.load_img(bg_img_file) if bg_img_file is not None else None
+    pdfgetter, recipe = calib.calib_pipe(
+        ai, img, pdfconfig, stru, fit_range=fit_range, qdamp0=qdamp0, qbroad0=qbroad0,
+        bg_img=bg_img, bg_scale=bg_scale, mask_setting=mask_setting, integ_setting=integ_setting,
+        chi_plot_setting=chi_plot_setting, img_setting=img_setting, pdf_plot_setting=pdf_plot_setting,
+        ncpu=ncpu
+    )
+    img_path = PurePath(img_file)
+    io.write_out(output_dir, img_path.name, pdfgetter)
+    db_path = Path(output_dir).joinpath('_pdfstream_db')
+    db_path.mkdir()
+    save = mod.gen_fs_save(
+        output_dir,
+        str(db_path.joinpath('recipe.csv')),
+        str(db_path.joinpath('contribution.csv')),
+        str(db_path.joinpath('generator.csv'))
+    )
+    save(recipe)
     return

@@ -2,6 +2,7 @@
 from collections import OrderedDict
 
 import matplotlib.pyplot as plt
+
 from pdfstream.transformation import __PDFGETX_AVAL__
 
 if __PDFGETX_AVAL__:
@@ -47,7 +48,10 @@ def visualize(pdfgetter: PDFGetter, plot_setting: dict = None):
         if len(tup) > 0:
             dct[attr] = tup
     # plot data
-    fig = plt.figure()
+    figsize = plt.rcParams['figure.figsize']
+    fig = plt.figure(
+        figsize=(figsize[0], figsize[1] / 2. * len(dct))
+    )
     grids = GridSpec(len(dct), 1)
     labels = {
         "iq": (r"Q ($\AA^{-1}$)", r"I (A. U.)"),

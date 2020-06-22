@@ -7,7 +7,8 @@ import pytest
     'args',
     [
         ['integrate', '--', '--help'],
-        ['average', '--', '--help']
+        ['average', '--', '--help'],
+        ['instrucalib', '--', '--help']
     ]
 )
 def test_commands(args):

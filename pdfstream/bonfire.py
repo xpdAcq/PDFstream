@@ -5,12 +5,18 @@ import pdfstream.cli as cli
 
 
 def integrate():
-    """The CLI to integrate images."""
+    """The CLI of 'integrate'."""
     fire.Fire(cli.integrate)
     return
 
 
 def average():
-    """The CLI to average images."""
+    """The CLI of 'average'."""
     fire.Fire(cli.average)
+    return
+
+
+def instrucalib():
+    """The CLI of 'intrucalib'."""
+    fire.Fire(cli.instrucalib)
     return

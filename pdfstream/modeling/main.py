@@ -1,7 +1,9 @@
 import inspect
 import types
 import typing
+from pathlib import Path
 
+import pandas as pd
 from diffpy.srfit.fitbase import FitResults
 from matplotlib.axes import Axes
 from pyobjcryst.crystal import Crystal
@@ -53,7 +55,8 @@ def fit_calib(stru: Crystal, data: MyParser, fit_range: FIT_RANGE, ncpu: int = N
     recipe.addVar(gen.qbroad, tag='qparams')
     optimize(
         recipe,
-        tags=['scale_G0', 'lat_G0', 'adp_G0', 'delta2_G0', 'qparams']
+        tags=['scale_G0', 'lat_G0', 'adp_G0', 'delta2_G0', 'qparams'],
+        verbose=0
     )
     report(recipe)
     view_fits(recipe)
@@ -71,8 +74,14 @@ def _add_suffix(func: types.CodeType, suffix: str):
 def multi_phase(phases: typing.Iterable[typing.Union[typing.Tuple[types.CodeType, Crystal], Crystal]],
                 data: MyParser,
                 fit_range: typing.Tuple[float, float, float],
+                default_value: dict = None,
+                bounds: dict = None,
+                add_xyz: bool = False,
                 ncpu: int = None) -> MyRecipe:
     """Make the recipe of a multiphase crystal pdf refinement.
+
+    The parameters are taged as 'scale', 'delta2', 'lat', 'adp', 'xyz' (optional) with the suffix
+    '_{the name of the generator}'. The unit depends on the structure loaded in the generator.
 
     Parameters
     ----------
@@ -87,6 +96,22 @@ def multi_phase(phases: typing.Iterable[typing.Union[typing.Tuple[types.CodeType
 
     ncpu : int
         The number of cpu used in parallel computing. If None, no parallel computing.
+
+    default_value : dict
+        The the dictionary of default values.
+        If None, the following values will be used:
+        tag     initiate value      range
+        scale   0                   (0, inf)
+        delta2  0                   (0, inf)
+        lat     par.value           (0, 2 * par.value)
+        adp     (U) 0.006 (B) 0.16  (0, inf)
+        xyz     par.value           None
+
+    bounds : dict
+        The mapping from the name of the variable to the bounds.
+
+    add_xyz
+        Whether to constrain xyz coordinates. Default False.
 
     Returns
     -------
@@ -116,7 +141,7 @@ def multi_phase(phases: typing.Iterable[typing.Union[typing.Tuple[types.CodeType
     conconfig = ConConfig(name='multi_phase', partial_eqs=eqs, parser=data, fit_range=fit_range,
                           genconfigs=genconfigs)
     recipe = make_recipe(conconfig)
-    sgconstrain_all(recipe)
+    sgconstrain_all(recipe, dv=default_value, bounds=bounds, add_xyz=add_xyz)
     return recipe
 
 
@@ -187,3 +212,46 @@ def view_fits(recipe: MyRecipe) -> typing.List[Axes]:
             plot(con)
         )
     return axes
+
+
+def gen_fs_save(folder: str, csv: str, fgr: str, cif: str):
+    """
+    Generate the function save_all to save results of recipes. The database of csv, fgr and cif will be passed
+    to the "_save_all" function. If there is no such file, it will be created as an empty csv file.
+
+    Parameters
+    ----------
+    folder
+            folder
+        Folder to save the files.
+    csv
+        The path to the csv file containing fitting results information.
+    fgr
+        The path to the csv file containing fitted PDFs information.
+    cif
+        The path to the csv file containing refined structure information.
+
+    Returns
+    -------
+    save_all
+        A function to save results.
+
+    """
+    for filepath in (csv, fgr, cif):
+        if not Path(filepath).exists():
+            pd.DataFrame().to_csv(filepath)
+
+    def save_all(recipe: MyRecipe):
+        """
+        Save fitting results, fitted PDFs and refined structures to files in one folder and save information in
+        DataFrames. The DataFrame will contain columns: 'file' (file paths), 'rw' (Rw value) and other
+        information in info.
+
+        Parameters
+        ----------
+        recipe
+            The FitRecipe.
+        """
+        return _save_all(recipe, folder, csv, fgr, cif)
+
+    return save_all

@@ -23,7 +23,7 @@ __all__ = [
     'make_generator',
     'make_recipe',
     'fit',
-    'gen_save_all',
+    '_save_all',
     'F',
     'plot',
     'constrainAsSpaceGroup',
@@ -214,7 +214,7 @@ def plot(contribution: FitContribution) -> Axes:
 
     fig = plt.figure()
     ax = fig.add_subplot(111)
-    ax = visualize(data, ax=ax, mode='fit', text=contribution.name)
+    ax = visualize(data, ax=ax, mode='fit', legend=contribution.name)
     plt.show(block=False)
     return ax
 
@@ -338,49 +338,6 @@ def save_cif(generator: Union[PDFGenerator, DebyePDFGenerator], base_name: str, 
         except AttributeError:
             raise Warning("Fail to save the structure.")
     return stru_file
-
-
-def gen_save_all(folder: str, csv: str, fgr: str, cif: str):
-    """
-    Generate the function save_all to save results of recipes. The database of csv, fgr and cif will be passed to the
-    "_save_all" function. If there is no such file, it will be created as an empty csv file.
-
-    Parameters
-    ----------
-    folder
-            folder
-        Folder to save the files.
-    csv
-        The path to the csv file containing fitting results information.
-    fgr
-        The path to the csv file containing fitted PDFs information.
-    cif
-        The path to the csv file containing refined structure information.
-
-    Returns
-    -------
-    save_all
-        A function to save results.
-
-    """
-    for filepath in (csv, fgr, cif):
-        if not os.path.isfile(filepath):
-            pd.DataFrame().to_csv(filepath)
-
-    def save_all(recipe: MyRecipe):
-        """
-        Save fitting results, fitted PDFs and refined structures to files in one folder and save information in
-        DataFrames. The DataFrame will contain columns: 'file' (file paths), 'rw' (Rw value) and other information in
-        info.
-
-        Parameters
-        ----------
-        recipe
-            The FitRecipe.
-        """
-        return _save_all(recipe, folder, csv, fgr, cif)
-
-    return save_all
 
 
 def _save_all(recipe: MyRecipe, folder: str, csv: str, fgr: str, cif: str) -> None:

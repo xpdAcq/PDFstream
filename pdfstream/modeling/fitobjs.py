@@ -268,8 +268,6 @@ class ConConfig:
             'rmin': self.fit_range[0],
             'rmax': self.fit_range[1],
             'dr': self.fit_range[2],
-            'qdamp': self.qparams[0],
-            'qbroad': self.qparams[1],
             'eq': self.eq,
             'phases': ', '.join([gen.name for gen in self.funconfigs]),
             'functions': ', '.join([fun.name for fun in self.funconfigs]),

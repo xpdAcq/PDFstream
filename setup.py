@@ -47,7 +47,8 @@ setup(
     entry_points={
         'console_scripts': [
             'integrate = pdfstream.bonfire:integrate',
-            'average = pdfstream.bonfire:average'
+            'average = pdfstream.bonfire:average',
+            'instrucalib = pdfstream.bonfire:instrucalib'
             # 'command = some.module:some_function',
         ],
     },

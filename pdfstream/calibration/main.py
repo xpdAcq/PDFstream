@@ -12,12 +12,13 @@ __all__ = [
 
 
 def calib_pipe(
-        ai: AzimuthalIntegrator, pdfconfig: PDFConfig, stru: Crystal, img: ndarray, fit_range: FIT_RANGE,
-        qdamp0: float = 0.04, qbroad0: float = 0.02, bg_img: ndarray = None, bg_scale: float = None,
+        ai: AzimuthalIntegrator, img: ndarray, pdfconfig: PDFConfig, stru: Crystal,
+        fit_range: FIT_RANGE, qdamp0: float, qbroad0: float,
+        bg_img: ndarray = None, bg_scale: float = None,
         mask_setting: dict = None, integ_setting: dict = None, img_setting: dict = None, chi_plot_setting: dict
         = None, pdf_plot_setting: dict = None, ncpu: int = None
 ) -> tp.Tuple[PDFGetter, MyRecipe]:
-    """ Pipeline-style qdamp, qbroad calibration.
+    """Pipeline-style qdamp, qbroad calibration.
 
     A pipeline to do image background subtraction, auto masking, integration, PDF transformation and PDF
     modeling to calibrate the qdamp and qbroad. Also, the accuracy of the calibration is tested by the modeling.
@@ -27,17 +28,23 @@ def calib_pipe(
     ai : AzimuthalIntegrator
         The AzimuthalIntegrator.
 
+    img : ndarray
+        The of the 2D array of the image.
+
     pdfconfig : PDFConfig
         This class stores all configuration data needed for generating PDF. See diffpy.pdfgetx.PDFConfig.
 
     stru : Crystal
         The structure of calibration material.
 
-    img : ndarray
-        The of the 2D array of the image.
-
     fit_range : tuple
         The rmin, rmax and rstep in the unit of angstrom.
+
+    qdamp0 : float
+        The initial value for the Q damping factor.
+
+    qbroad0 : float
+        The initial vluae for the Q broadening factor.
 
     bg_img : ndarray
         The 2D array of the background image. If None, no background subtraction.
@@ -77,6 +84,7 @@ def calib_pipe(
         ai, img, bg_img=bg_img, bg_scale=bg_scale, mask_setting=mask_setting, integ_setting=integ_setting,
         img_setting=img_setting, plot_setting=chi_plot_setting
     )
+    pdfconfig.update(rmin=fit_range[0], rmax=fit_range[1], rstep=fit_range[2])
     pdfgetter = get_pdf(pdfconfig, chi, plot_setting=pdf_plot_setting)
     data = MyParser()
     data.parsePDFGetter(pdfgetter, add_meta={'qdamp': qdamp0, 'qbroad': qbroad0})

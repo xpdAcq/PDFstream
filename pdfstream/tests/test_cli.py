@@ -66,3 +66,8 @@ def test_waterfall(db, keys, kwargs):
 )
 def test_visualize(db, key, kwargs):
     cli.visualize(db[key], **kwargs)
+
+
+def test_instrucalib(db):
+    with TemporaryDirectory() as temp:
+        cli.instrucalib(db['Ni_poni_file'], db['Ni_img_file'], output_dir=temp, fit_range=(2., 10., .1))

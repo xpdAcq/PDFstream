@@ -3,10 +3,19 @@ from pathlib import Path
 
 import fabio
 import pyFAI
-from diffpy.pdfgetx import PDFConfig, PDFGetter
+
+from pdfstream.transformation import __PDFGETX_AVAL__
+
+if __PDFGETX_AVAL__:
+    from diffpy.pdfgetx import PDFConfig, PDFGetter
+from pyobjcryst import loadCrystal
+from diffpy.structure import loadStructure
 from numpy import ndarray
 
 from pdfstream.utils.data import load_data
+
+load_crystal = loadCrystal
+load_structure = loadStructure
 
 
 def load_ai_from_poni_file(poni_file: str) -> pyFAI.AzimuthalIntegrator:
