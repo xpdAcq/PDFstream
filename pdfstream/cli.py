@@ -20,7 +20,7 @@ __all__ = [
 
 
 def integrate(
-        poni_file: str, img_files: tp.Union[str, tp.Iterable[str]], *, bg_img_file: str = None,
+        poni_file: str, img_files: tp.Union[str, tp.Iterable[str]], bg_img_file: str = None,
         output_dir: str = ".", bg_scale: float = None, mask_setting: tp.Union[dict, str] = None,
         integ_setting: dict = None, plot_setting: tp.Union[dict, str] = None,
         img_setting: tp.Union[dict, str] = None
@@ -98,7 +98,7 @@ def integrate(
     return chi_paths
 
 
-def average(out_file: str, img_files: tp.Union[str, tp.Iterable[str]], *, weights: tp.List[float] = None) -> None:
+def average(out_file: str, img_files: tp.Union[str, tp.Iterable[str]], weights: tp.List[float] = None) -> None:
     """Average the single channel image files with weights.
 
     Parameters
@@ -333,7 +333,8 @@ def instrucalib(
     img_path = PurePath(img_file)
     io.write_out(output_dir, img_path.name, pdfgetter)
     db_path = Path(output_dir).joinpath('_pdfstream_db')
-    db_path.mkdir()
+    if not db_path.exists():
+        db_path.mkdir()
     save = mod.gen_fs_save(
         output_dir,
         str(db_path.joinpath('recipe.csv')),
