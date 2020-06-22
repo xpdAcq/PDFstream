@@ -2,6 +2,7 @@
 import types
 from typing import Union, List, Callable, Dict, Tuple
 
+import numpy as np
 from diffpy.srfit.fitbase import FitRecipe, ProfileGenerator
 from diffpy.srfit.pdf import PDFParser
 from diffpy.structure import Structure
@@ -9,9 +10,25 @@ from numpy import ndarray
 from pyobjcryst.crystal import Crystal
 from pyobjcryst.molecule import Molecule
 
+from pdfstream.transformation import __PDFGETX_AVAL__
+
+if __PDFGETX_AVAL__:
+    from diffpy.pdfgetx import PDFGetter, PDFConfig
+
 __all__ = ["GenConfig", "FunConfig", "ConConfig", "MyRecipe", "MyParser"]
 
 Stru = Union[Crystal, Molecule, Structure]
+
+
+def _map_stype(mode: str):
+    """Map the scattering type in PDFConfig to the stype in the meta in the parser."""
+    if mode == 'xray':
+        stype = 'X'
+    elif mode == 'nray':
+        stype = 'N'
+    else:
+        raise ValueError("Scattering type not acceptable: {}".format(mode))
+    return stype
 
 
 class MyParser(PDFParser):
@@ -48,6 +65,22 @@ class MyParser(PDFParser):
             [_ for _ in data] + [None] * (4 - data.shape[0])
         )
         self._meta = meta
+        return
+
+    def parsePDFGetter(self, pdfgetter: PDFGetter, add_meta: dict = None):
+        if pdfgetter.gr is None:
+            raise ValueError('The gr in PDFGetter is None.')
+        if add_meta is None:
+            add_meta = {}
+        data = np.stack(pdfgetter.gr)
+        pdfconfig: PDFConfig = pdfgetter.config
+        meta = {
+            'stype': _map_stype(pdfconfig.mode),
+            'qmin': pdfconfig.qmin,
+            'qmax': pdfconfig.qmax,
+        }
+        meta.update(add_meta)
+        self.parseDict(data, meta=meta)
         return
 
 

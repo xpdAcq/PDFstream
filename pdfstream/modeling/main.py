@@ -17,12 +17,14 @@ __all__ = [
     'MyParser',
     'MyRecipe',
     'report',
-    'view',
-    'fit_calib'
+    'view_fits',
+    'fit_calib',
+    'FIT_RANGE'
 ]
+FIT_RANGE = typing.Tuple[float, float, float]
 
 
-def fit_calib(stru: Crystal, data: MyParser, fit_range: typing.Tuple[float, float, float], ncpu: int = None) -> \
+def fit_calib(stru: Crystal, data: MyParser, fit_range: FIT_RANGE, ncpu: int = None) -> \
         MyRecipe:
     """The fit the pdf of the calibration. Get the qdamp and qbraod.
 
@@ -54,7 +56,7 @@ def fit_calib(stru: Crystal, data: MyParser, fit_range: typing.Tuple[float, floa
         tags=['scale_G0', 'lat_G0', 'adp_G0', 'delta2_G0', 'qparams']
     )
     report(recipe)
-    view(recipe)
+    view_fits(recipe)
     return recipe
 
 
@@ -165,7 +167,7 @@ def report(recipe: MyRecipe) -> FitResults:
     return res
 
 
-def view(recipe: MyRecipe) -> typing.List[Axes]:
+def view_fits(recipe: MyRecipe) -> typing.List[Axes]:
     """View the fit curves. Each FitContribution will be a plot.
 
     Parameters

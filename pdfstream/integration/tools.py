@@ -115,7 +115,8 @@ def integrate(img: ndarray, ai: AzimuthalIntegrator, mask: ndarray = None, integ
     """
     # merge integrate setting
     _integ_setting = _INTEG_SETTING.copy()
-    _integ_setting.update({'mask': mask})
+    if mask is not None:
+        _integ_setting.update({'mask': mask})
     if integ_setting is not None:
         _integ_setting.update(integ_setting)
     # integrate
@@ -190,7 +191,7 @@ def vis_chi(chi: ndarray, plot_setting: dict = None, unit: str = None) -> Axes:
         plot_setting = dict()
     fig = plt.figure()
     ax = fig.add_subplot(111)
-    ax.plot_line(chi[0], chi[1], **plot_setting)
+    ax.plot(chi[0], chi[1], **plot_setting)
     if unit:
         ax.set_xlabel(_LABEL.get(unit))
     ax.set_ylabel('I (A. U.)')

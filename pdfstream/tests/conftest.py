@@ -2,10 +2,12 @@
 import numpy
 import pyFAI
 import pytest
-from pdfstream.transformation import __PDFGETX_AVAL__
-from pdfstream.utils.data import load_data
 from pkg_resources import resource_filename
 from pyobjcryst import loadCrystal
+
+from pdfstream.io import load_img
+from pdfstream.transformation import __PDFGETX_AVAL__
+from pdfstream.utils.data import load_data
 
 NI_PONI = resource_filename('pdfstream', 'test_data/Ni_poni_file.poni')
 NI_GR = resource_filename('pdfstream', 'test_data/Ni_gr_file.gr')
@@ -26,6 +28,7 @@ else:
 
 DB = {
     'Ni_img_file': NI_IMG,
+    'Ni_img': load_img(NI_IMG),
     'Kapton_img_file': KAPTON_IMG,
     'Ni_poni_file': NI_PONI,
     'Ni_gr_file': NI_GR,
