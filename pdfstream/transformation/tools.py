@@ -52,7 +52,7 @@ def visualize(pdfgetter: PDFGetter, plot_setting: dict = None):
     fig = plt.figure(
         figsize=(figsize[0], figsize[1] / 2. * len(dct))
     )
-    grids = GridSpec(len(dct), 1)
+    grids = GridSpec(len(dct), 1, hspace=0.25)
     labels = {
         "iq": (r"Q ($\AA^{-1}$)", r"I (A. U.)"),
         "sq": (r"Q ($\AA^{-1}$)", r"S"),
