@@ -125,7 +125,7 @@ def waterfall(
         data_files: tp.List[str], ax: Axes = None, mode: str = "line", normal: bool = True,
         stack: bool = True, gap: float = 0, texts: tp.List[str] = None, text_xy: tuple = None,
         label: str = None, minor_tick: tp.Union[int, None] = 2, legends: tp.List[str] = None,
-        show_fig: bool = True, **kwargs
+        colors: tp.Iterable = None, show_fig: bool = True, **kwargs
 ) -> Axes:
     """The visualization function to realize waterfall, and comparison plot.
 
@@ -176,6 +176,9 @@ def waterfall(
     legends : a list of str
         The legend labels for the curves.
 
+    colors : an iterable of colors
+        The color of the plots. If None, use default color cycle in rc.
+
     show_fig : bool
         If True, the figure will be pop out and shown. Else, stay in the cache.
 
@@ -189,7 +192,7 @@ def waterfall(
         label = PurePath(data_files[0]).suffix.replace('.', '')
     ax = vis.waterfall(
         dataset, ax=ax, mode=mode, normal=normal, stack=stack, gap=gap, texts=texts, text_xy=text_xy,
-        label=label, minor_tick=minor_tick, legends=legends, **kwargs
+        label=label, minor_tick=minor_tick, legends=legends, colors=colors, **kwargs
     )
     if show_fig:
         plt.show(block=False)
@@ -199,7 +202,8 @@ def waterfall(
 def visualize(
         data_file: str, ax: Axes = None, mode: str = "line", normal: bool = True,
         text: str = None, text_xy: tuple = None, label: str = None,
-        minor_tick: int = 2, legend: str = None, show_fig: bool = True, **kwargs
+        minor_tick: int = 2, legend: str = None, color: tp.Iterable = None,
+        show_fig: bool = True, **kwargs
 ) -> Axes:
     """The visualization function to realize single plot.
 
@@ -241,6 +245,9 @@ def visualize(
 
     legend : str
         The legend label for the curve.
+        
+    color : an iterable of colors
+        The color of the plots. If None, use default color cycle in rc.
 
     show_fig : bool
         If True, the figure will be pop out and shown. Else, stay in the cache.
@@ -255,7 +262,7 @@ def visualize(
         label = PurePath(data_file).suffix.replace('.', '')
     ax = vis.visualize(
         data, ax=ax, mode=mode, normal=normal, text=text, text_xy=text_xy, label=label,
-        minor_tick=minor_tick, legend=legend, **kwargs)
+        minor_tick=minor_tick, legend=legend, color=color, **kwargs)
     if show_fig:
         plt.show(block=False)
     return ax

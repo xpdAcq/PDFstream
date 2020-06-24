@@ -47,6 +47,7 @@ def test_average(db, kwargs):
         (['Ni_gr_file', 'Ni_gr_file'], {'mode': 'line', 'legends': ['Ni0', 'Ni1']}),
         (['Ni_gr_file', 'Ni_gr_file'], {'mode': 'line', 'stack': False}),
         (['Ni_gr_file', 'Ni_gr_file'], {'mode': 'line', 'xy_kwargs': {'color': 'black'}, 'texts': ['Ni0', 'Ni1']}),
+        (['Ni_gr_file', 'Ni_gr_file'], {'mode': 'line', 'colors': ['r', 'b'], 'texts': ['Ni0', 'Ni1']}),
         (['Ni_fgr_file', 'Ni_fgr_file'], {'mode': 'fit', 'texts': ['Ni0', 'Ni1']}),
         (['Ni_fgr_file', 'Ni_fgr_file'], {'mode': 'fit', 'stack': False}),
         (['Ni_fgr_file', 'Ni_fgr_file'], {'mode': 'fit', 'xy_kwargs': {'color': 'black'}})

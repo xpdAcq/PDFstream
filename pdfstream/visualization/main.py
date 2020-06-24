@@ -71,7 +71,8 @@ def _waterfall(
 def waterfall(
         dataset: tp.Iterable[ndarray], ax: Axes = None, mode: str = "line", normal: bool = True,
         stack: bool = True, gap: float = 0, texts: tp.Iterable[str] = None, text_xy: tuple = None,
-        label: str = None, minor_tick: tp.Union[int, None] = 2, legends: tp.List[str] = None, **kwargs
+        label: str = None, minor_tick: tp.Union[int, None] = 2, legends: tp.List[str] = None,
+        colors: tp.Iterable = None, **kwargs
 ) -> Axes:
     """The visualization function to realize waterfall, and comparison plot.
 
@@ -120,17 +121,35 @@ def waterfall(
 
     legends : a list of str
         The legend labels for the curves.
+
+    colors : an iterable of colors
+        The color of the plots. It will be the value for the key 'color' in 'xy_kwargs' in kwargs. If None,
+        use default color.
+
+    kwargs : dict
+        The key words for the 'plot_method'. The
+
+    Returns
+    -------
+    ax : Axes
+        The axes with the plot inside.
     """
     if ax is None:
         ax = plt.gca()
     if texts is None:
         texts = tuple()
+    if colors is None:
+        colors = tuple()
     if mode not in PLOT_METHOD:
         raise ValueError(
             "Unknown mode {}. Mode options: {}".format(mode, list(PLOT_METHOD.keys()))
         )
     text_ind = TEXT_IND.get(mode, -1)
-    for data, text in itertools.zip_longest(dataset, texts):
+    for data, text, color in itertools.zip_longest(dataset, texts, colors):
+        if 'xy_kwargs' in kwargs:
+            kwargs['xy_kwargs'].update({'color': color})
+        else:
+            kwargs['xy_kwargs'] = {'color': color}
         _waterfall(
             data, PLOT_METHOD[mode], ax=ax, normal=normal, stack=stack, gap=gap, text=text, text_xy=text_xy,
             text_ind=text_ind, **kwargs
@@ -147,7 +166,7 @@ def waterfall(
 def visualize(
         data: ndarray, ax: Axes = None, mode: str = "line", normal: bool = False,
         text: str = None, text_xy: tuple = None, label: str = None,
-        minor_tick: int = 2, legend: str = None, **kwargs
+        minor_tick: int = 2, legend: str = None, color: tp.Any = None, **kwargs
 ) -> Axes:
     """The visualization function to realize single plot.
 
@@ -189,9 +208,19 @@ def visualize(
 
     legend : str
         The legend label for the curve.
+
+    color : an iterable of colors
+        The color of the plots. If None, use default color cycle in rc.
+
+    Returns
+    -------
+    ax : Axes
+        The axes with the plot inside.
     """
+
     return waterfall(
         (data,), ax=ax, mode=mode, normal=normal, texts=(text,), text_xy=text_xy,
         label=label, minor_tick=minor_tick, stack=False,
-        legends=(legend,) if legend is not None else None, **kwargs
+        legends=(legend,) if legend is not None else None,
+        colors=(color,), **kwargs
     )
