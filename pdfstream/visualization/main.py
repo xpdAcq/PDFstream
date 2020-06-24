@@ -70,7 +70,7 @@ def _waterfall(
 
 def waterfall(
         dataset: tp.Iterable[ndarray], ax: Axes = None, mode: str = "line", normal: bool = True,
-        stack: bool = True, gap: float = 0, texts: tp.Iterable[str] = (), text_xy: tuple = None,
+        stack: bool = True, gap: float = 0, texts: tp.Iterable[str] = None, text_xy: tuple = None,
         label: str = None, minor_tick: tp.Union[int, None] = 2, legends: tp.List[str] = None, **kwargs
 ) -> Axes:
     """The visualization function to realize waterfall, and comparison plot.
@@ -123,6 +123,8 @@ def waterfall(
     """
     if ax is None:
         ax = plt.gca()
+    if texts is None:
+        texts = tuple()
     if mode not in PLOT_METHOD:
         raise ValueError(
             "Unknown mode {}. Mode options: {}".format(mode, list(PLOT_METHOD.keys()))

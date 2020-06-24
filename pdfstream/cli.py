@@ -122,7 +122,7 @@ def average(out_file: str, img_files: tp.Union[str, tp.Iterable[str]], weights: 
 
 def waterfall(
         data_files: tp.List[str], ax: Axes = None, mode: str = "line", normal: bool = True,
-        stack: bool = True, gap: float = 0, texts: tp.List[str] = (), text_xy: tuple = None,
+        stack: bool = True, gap: float = 0, texts: tp.List[str] = None, text_xy: tuple = None,
         label: str = None, minor_tick: tp.Union[int, None] = 2, legends: tp.List[str] = None, **kwargs
 ) -> Axes:
     """The visualization function to realize waterfall, and comparison plot.

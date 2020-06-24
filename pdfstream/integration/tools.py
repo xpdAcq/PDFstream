@@ -19,7 +19,7 @@ _AUTOMASK_SETTING = dict(
 _INTEG_SETTING = dict(
     npt=1480,
     correctSolidAngle=False,
-    method='splitpixel',
+    method='csr',
     unit='q_A^-1',
     safe=False
 )
@@ -87,8 +87,9 @@ def auto_mask(img: ndarray, ai: AzimuthalIntegrator, mask_setting: dict = None) 
     return mask, _mask_setting
 
 
-def integrate(img: ndarray, ai: AzimuthalIntegrator, mask: ndarray = None, integ_setting: dict = None) -> Tuple[
-    ndarray, dict]:
+def integrate(
+        img: ndarray, ai: AzimuthalIntegrator, mask: ndarray = None, integ_setting: dict = None
+) -> Tuple[ndarray, dict]:
     """Use AzimuthalIntegrator to integrate the image.
 
     Parameters
