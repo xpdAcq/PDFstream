@@ -2,6 +2,7 @@
 import typing as tp
 from pathlib import Path, PurePath
 
+import matplotlib.pyplot as plt
 from matplotlib.axes import Axes
 from pkg_resources import resource_filename
 
@@ -123,7 +124,8 @@ def average(out_file: str, img_files: tp.Union[str, tp.Iterable[str]], weights: 
 def waterfall(
         data_files: tp.List[str], ax: Axes = None, mode: str = "line", normal: bool = True,
         stack: bool = True, gap: float = 0, texts: tp.List[str] = None, text_xy: tuple = None,
-        label: str = None, minor_tick: tp.Union[int, None] = 2, legends: tp.List[str] = None, **kwargs
+        label: str = None, minor_tick: tp.Union[int, None] = 2, legends: tp.List[str] = None,
+        show_fig: bool = True, **kwargs
 ) -> Axes:
     """The visualization function to realize waterfall, and comparison plot.
 
@@ -164,7 +166,8 @@ def waterfall(
         'tools.auto_text'.
 
     label : str
-        The label type used in automatic labeling. Acceptable types are listed in 'tools._LABELS'
+        The label type used in automatic labeling. Acceptable types are listed in 'tools._LABELS'. If None,
+        the label will be guessed according to the suffix of the fist file in the list.
 
     minor_tick : int
         How many parts that the minor ticks separate the space between the two adjacent major ticks. Default 2.
@@ -173,22 +176,30 @@ def waterfall(
     legends : a list of str
         The legend labels for the curves.
 
+    show_fig : bool
+        If True, the figure will be pop out and shown. Else, stay in the cache.
+
     Returns
     -------
     ax : Axes
         The axes with the plot.
     """
     dataset = (io.load_array(_) for _ in data_files)
-    return vis.waterfall(
+    if label is None:
+        label = PurePath(data_files[0]).suffix.replace('.', '')
+    ax = vis.waterfall(
         dataset, ax=ax, mode=mode, normal=normal, stack=stack, gap=gap, texts=texts, text_xy=text_xy,
         label=label, minor_tick=minor_tick, legends=legends, **kwargs
     )
+    if show_fig:
+        plt.show(block=False)
+    return ax
 
 
 def visualize(
         data_file: str, ax: Axes = None, mode: str = "line", normal: bool = True,
         text: str = None, text_xy: tuple = None, label: str = None,
-        minor_tick: int = 2, legend: str = None, **kwargs
+        minor_tick: int = 2, legend: str = None, show_fig: bool = True, **kwargs
 ) -> Axes:
     """The visualization function to realize single plot.
 
@@ -231,15 +242,23 @@ def visualize(
     legend : str
         The legend label for the curve.
 
+    show_fig : bool
+        If True, the figure will be pop out and shown. Else, stay in the cache.
+
     Returns
     -------
     ax : Axes
         The axes with the plot.
     """
     data = io.load_array(data_file)
-    return vis.visualize(
+    if label is None:
+        label = PurePath(data_file).suffix.replace('.', '')
+    ax = vis.visualize(
         data, ax=ax, mode=mode, normal=normal, text=text, text_xy=text_xy, label=label,
         minor_tick=minor_tick, legend=legend, **kwargs)
+    if show_fig:
+        plt.show(block=False)
+    return ax
 
 
 def instrucalib(
