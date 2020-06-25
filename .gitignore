@@ -25,6 +25,7 @@ share/python-wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+!diffpy.pdfgetx-*.egg
 MANIFEST
 
 # PyInstaller
