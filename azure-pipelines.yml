@@ -23,6 +23,11 @@ steps:
 
 - bash: |
     source activate dev
+    python -m pip install .
+  displayName: 'Install pdfstream'
+
+- bash: |
+    source activate dev
     coverage run -m pytest
   displayName: 'Run the tests and check for test coverage'
 
