@@ -2,8 +2,8 @@
 pdfstream
 =========
 
-.. image:: https://img.shields.io/travis/st3107/pdfstream.svg
-        :target: https://travis-ci.org/st3107/pdfstream
+.. image:: https://dev.azure.com/taosongsheng/pdfstream/_apis/build/status/st3107.pdfstream?branchName=master
+        :target: https://dev.azure.com/taosongsheng/pdfstream/_build/latest?definitionId=2&branchName=master
 
 .. image:: https://img.shields.io/pypi/v/pdfstream.svg
         :target: https://pypi.python.org/pypi/pdfstream

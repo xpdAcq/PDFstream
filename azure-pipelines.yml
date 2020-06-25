@@ -8,29 +8,23 @@ trigger:
 
 pool:
   vmImage: 'ubuntu-latest'
-strategy:
-  matrix:
-    Python27:
-      python.version: '2.7'
-    Python35:
-      python.version: '3.5'
-    Python36:
-      python.version: '3.6'
-    Python37:
-      python.version: '3.7'
 
 steps:
-- task: UsePythonVersion@0
-  inputs:
-    versionSpec: '$(python.version)'
-  displayName: 'Use Python $(python.version)'
+- bash: echo "##vso[task.prependpath]$CONDA/bin"
+  displayName: 'Add conda to PATH'
 
-- script: |
-    python -m pip install --upgrade pip
-    pip install -r requirements.txt
-  displayName: 'Install dependencies'
+- bash: conda create --yes --quiet --force --file environment-dev.yml
+  displayName: 'Create Anaconda environment'
 
-- script: |
-    pip install pytest pytest-azurepipelines
-    pytest
-  displayName: 'pytest'
+- bash: |
+    source activate dev
+    coverage run -m pytest
+    coverage report -m
+    codecov
+  displayName: 'Run the tests and check for test coverage'
+
+- bash: |
+    source activate dev
+    flake8
+    make -C docs html
+  displayName: 'Enforce code style, build html and deploy to github.io'
