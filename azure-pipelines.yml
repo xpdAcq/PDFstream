@@ -13,18 +13,30 @@ steps:
 - bash: echo "##vso[task.prependpath]$CONDA/bin"
   displayName: 'Add conda to PATH'
 
-- bash: conda create --yes --quiet --force --file environment-dev.yml
+- bash: conda env create --yes --quiet --force --file environment-dev.yml
   displayName: 'Create Anaconda environment'
 
 - bash: |
     source activate dev
     coverage run -m pytest
-    coverage report -m
-    codecov
   displayName: 'Run the tests and check for test coverage'
 
 - bash: |
     source activate dev
+    coverage report -m
+  displayName: 'Generate test coverage report'
+
+- bash: |
+    source activate dev
+    codecov
+  displayName: 'Upload the report to codecov'
+
+- bash: |
+    source activate dev
     flake8
+  displayName: 'Enforce code style'
+
+- bash: |
+    source activate dev
     make -C docs html
-  displayName: 'Enforce code style, build html and deploy to github.io'
+  displayName: 'Build the documentation'
