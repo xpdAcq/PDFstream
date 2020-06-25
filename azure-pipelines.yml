@@ -18,6 +18,11 @@ steps:
 
 - bash: |
     source activate dev
+    easy_install diffpy.pdfgetx-2.1.0.egg
+  displayName: 'Install pdfgetx3'
+
+- bash: |
+    source activate dev
     coverage run -m pytest
   displayName: 'Run the tests and check for test coverage'
 
