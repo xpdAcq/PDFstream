@@ -12,5 +12,6 @@ def test_savefig_factory():
         savefig = savefig_factory(figure_dir=d)
         fname = 'test.png'
         path = Path(d).joinpath(fname)
-        savefig(fname)
+        savefig(str(path))
         assert path.exists()
+    plt.close()

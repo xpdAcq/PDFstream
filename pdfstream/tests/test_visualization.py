@@ -19,6 +19,7 @@ def test_waterfall(db, keys, kwargs):
     ax = fig.add_subplot(111)
     vis.waterfall((db[k] for k in keys), ax=ax, **kwargs)
     plt.show(block=False)
+    plt.close()
 
 
 @pytest.mark.parametrize(
@@ -33,3 +34,4 @@ def test_visualize(db, key, kwargs):
     ax = fig.add_subplot(111)
     vis.visualize(db[key], ax=ax, **kwargs)
     plt.show(block=False)
+    plt.close()

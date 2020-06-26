@@ -1,3 +1,5 @@
+import matplotlib.pyplot as plt
+
 from pdfstream.modeling.main import *
 
 
@@ -17,3 +19,4 @@ def test_fit_calib(db):
     parser = MyParser()
     parser.parseFile(db['Ni_gr_file'])
     fit_calib(db['Ni_stru'], parser, fit_range=(2., 8., .1))
+    plt.close()

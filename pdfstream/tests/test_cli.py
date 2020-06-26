@@ -1,6 +1,7 @@
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pytest
 
@@ -25,6 +26,7 @@ def test_integrate(db, kwargs):
         _kwargs.update(kwargs)
         cli.integrate(db['Ni_poni_file'], str(img_file), **_kwargs)
         assert chi_file.exists()
+    plt.close()
 
 
 @pytest.mark.parametrize(
@@ -56,6 +58,7 @@ def test_average(db, kwargs):
 def test_waterfall(db, keys, kwargs):
     data_files = db[keys] if isinstance(keys, str) else [db[key] for key in keys]
     cli.waterfall(data_files, **kwargs)
+    plt.close()
 
 
 @pytest.mark.parametrize(
@@ -67,8 +70,10 @@ def test_waterfall(db, keys, kwargs):
 )
 def test_visualize(db, key, kwargs):
     cli.visualize(db[key], **kwargs)
+    plt.close()
 
 
 def test_instrucalib(db):
     with TemporaryDirectory() as temp:
         cli.instrucalib(db['Ni_poni_file'], db['Ni_img_file'], output_dir=temp, fit_range=(2., 10., .1))
+    plt.close()
