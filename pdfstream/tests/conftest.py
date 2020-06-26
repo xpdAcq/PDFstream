@@ -30,6 +30,7 @@ DB = {
     'Ni_img_file': NI_IMG,
     'Ni_img': load_img(NI_IMG),
     'Kapton_img_file': KAPTON_IMG,
+    'Kapton_img': load_img(KAPTON_IMG),
     'Ni_poni_file': NI_PONI,
     'Ni_gr_file': NI_GR,
     'Ni_chi_file': NI_CHI,
