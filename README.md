@@ -1,8 +1,6 @@
 pdfstream
 =========
 
-[![Build Status](https://dev.azure.com/taosongsheng/pdfstream/_apis/build/status/st3107.pdfstream?branchName=master)](https://dev.azure.com/taosongsheng/pdfstream/_build/latest?definitionId=2&branchName=master)
-
 [![Release](https://anaconda.org/st3107/pdfstream/badges/version.svg)](https://anaconda.org/st3107/pdfstream)
 
 The data streaming PDF analysis software
