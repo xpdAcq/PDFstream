@@ -1,6 +1,7 @@
 pdfstream
 =========
 
+![test](https://github.com/st3107/pdfstream/workflows/test/badge.svg?branch=master)
 [![Release](https://anaconda.org/st3107/pdfstream/badges/version.svg)](https://anaconda.org/st3107/pdfstream)
 
 The data streaming PDF analysis software
