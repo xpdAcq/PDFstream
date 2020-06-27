@@ -2,6 +2,7 @@ pdfstream
 =========
 
 ![test](https://github.com/st3107/pdfstream/workflows/test/badge.svg?branch=master)
+[![codecov](https://codecov.io/gh/st3107/pdfstream/branch/master/graph/badge.svg?token=ZFXWWDWQW8)](https://codecov.io/gh/st3107/pdfstream)
 [![Release](https://anaconda.org/st3107/pdfstream/badges/version.svg)](https://anaconda.org/st3107/pdfstream)
 
 The data streaming PDF analysis software
