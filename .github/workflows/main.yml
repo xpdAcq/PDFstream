@@ -56,7 +56,6 @@ jobs:
         source activate dev
         coverage report -m
     
-    - name: upload the report to codecov
-      run: |
-        source activate dev
-        codecov
+    - uses: codecov/codecov-action@v1
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
