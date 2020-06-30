@@ -24,18 +24,3 @@ Install the diffpy.pdfgetx following the
 
 Install the pdfstream from the conda following the
 [webpage](https://anaconda.org/st3107/pdfstream).
-
-Features
---------
-
-### Integration
-
-It supports the azimuthal integration of the diffraction image to one
-dimensional diffraction pattern. It uses the auto masking functionality
-in the xpdtools and the integration functionality in pyFAI.
-
-It can be used in the command line interface (CLI). Try the following
-command in the terminal to learn about the usage.
-
-`integrate -- --help`
-
