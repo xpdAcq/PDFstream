@@ -9,7 +9,7 @@ from pkg_resources import resource_filename
 import pdfstream.calibration.main as calib
 import pdfstream.integration.main as integ
 import pdfstream.io as io
-import pdfstream.modeling.main as mod
+import pdfstream.modeling.csvdb as csvdb
 import pdfstream.visualization.main as vis
 
 __all__ = [
@@ -364,6 +364,6 @@ def instrucalib(
     csv_df_path = str(db_path.joinpath('recipe.csv'))
     con_df_path = str(db_path.joinpath('contribution.csv'))
     gen_df_path = str(db_path.joinpath('generator.csv'))
-    save = mod.gen_fs_save(output_dir, csv_df_path, con_df_path, gen_df_path)
+    save = csvdb.gen_fs_save(output_dir, csv_df_path, con_df_path, gen_df_path)
     save(recipe)
     return
