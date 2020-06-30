@@ -1,8 +1,7 @@
 import os
-from datetime import datetime
-import os
 import typing as tp
 from datetime import datetime
+from pathlib import Path
 from uuid import uuid4
 
 import matplotlib.pyplot as plt
@@ -15,7 +14,7 @@ from diffpy.srfit.pdf import PDFGenerator, DebyePDFGenerator
 from pdfstream.modeling.fitobjs import *
 
 __all__ = [
-    'summarize'
+    'summarize',
 ]
 
 
@@ -232,6 +231,49 @@ def update(file_path: str, info_dct: dict, id_col: str) -> int:
         newdf = df.append(row_dct, ignore_index=True, sort=False)
     newdf.to_csv(file_path, index=False)
     return row_dct[id_col]
+
+
+def gen_fs_save(folder: str, csv: str, fgr: str, cif: str):
+    """
+    Generate the function save_all to save results of recipes. The database of csv, fgr and cif will be passed
+    to the "_save_all" function. If there is no such file, it will be created as an empty csv file.
+
+    Parameters
+    ----------
+    folder
+            folder
+        Folder to save the files.
+    csv
+        The path to the csv file containing fitting results information.
+    fgr
+        The path to the csv file containing fitted PDFs information.
+    cif
+        The path to the csv file containing refined structure information.
+
+    Returns
+    -------
+    save_all
+        A function to save results.
+
+    """
+    for filepath in (csv, fgr, cif):
+        if not Path(filepath).exists():
+            pd.DataFrame().to_csv(filepath)
+
+    def save_all(recipe: MyRecipe):
+        """
+        Save fitting results, fitted PDFs and refined structures to files in one folder and save information in
+        DataFrames. The DataFrame will contain columns: 'file' (file paths), 'rw' (Rw value) and other
+        information in info.
+
+        Parameters
+        ----------
+        recipe
+            The FitRecipe.
+        """
+        return _save_all(recipe, folder, csv, fgr, cif)
+
+    return save_all
 
 
 def summarize(csv_df: pd.DataFrame, phases_col: str = "phases", file_col: str = 'csv_file', data_col: str = 'val',

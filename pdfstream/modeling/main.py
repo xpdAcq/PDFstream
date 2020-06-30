@@ -1,9 +1,7 @@
 import inspect
 import types
 import typing
-from pathlib import Path
 
-import pandas as pd
 from diffpy.srfit.fitbase import FitResults
 from matplotlib.axes import Axes
 from pyobjcryst.crystal import Crystal
@@ -212,46 +210,3 @@ def view_fits(recipe: MyRecipe) -> typing.List[Axes]:
             plot(con)
         )
     return axes
-
-
-def gen_fs_save(folder: str, csv: str, fgr: str, cif: str):
-    """
-    Generate the function save_all to save results of recipes. The database of csv, fgr and cif will be passed
-    to the "_save_all" function. If there is no such file, it will be created as an empty csv file.
-
-    Parameters
-    ----------
-    folder
-            folder
-        Folder to save the files.
-    csv
-        The path to the csv file containing fitting results information.
-    fgr
-        The path to the csv file containing fitted PDFs information.
-    cif
-        The path to the csv file containing refined structure information.
-
-    Returns
-    -------
-    save_all
-        A function to save results.
-
-    """
-    for filepath in (csv, fgr, cif):
-        if not Path(filepath).exists():
-            pd.DataFrame().to_csv(filepath)
-
-    def save_all(recipe: MyRecipe):
-        """
-        Save fitting results, fitted PDFs and refined structures to files in one folder and save information in
-        DataFrames. The DataFrame will contain columns: 'file' (file paths), 'rw' (Rw value) and other
-        information in info.
-
-        Parameters
-        ----------
-        recipe
-            The FitRecipe.
-        """
-        return _save_all(recipe, folder, csv, fgr, cif)
-
-    return save_all
