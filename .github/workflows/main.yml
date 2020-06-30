@@ -20,7 +20,7 @@ jobs:
     steps:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
-    
+
     - name: setup-conda
       uses: s-weigand/setup-conda@v1.0.3
       with:
@@ -31,31 +31,28 @@ jobs:
         # Python version which should be installed with conda (default: 'Default')
         python-version: 3.7 # optional, default is default
         # Additional channels like 'conda-forge' which can be used to install packages
-        conda-channels: conda-forge, diffpy # optional, default is 
+        conda-channels: conda-forge, diffpy # optional, default is
 
-    - name: create conda environment 'dev'
-      run: conda env create --quiet --force --file environment-dev.yml
+    - name: create conda environment 'test'
+      run: conda create -n test --file requirements/run.txt --file requirements/test.txt
 
     - name: install pdfgetx3
       run: |
-        source activate dev
+        source activate test
         easy_install diffpy.pdfgetx-2.1.0.egg
-        
+
     - name: install pdfstream
       run: |
-        source activate dev
+        source activate test
         python -m pip install .
-        
+
     - name: run the tests and check for test coverage
       run: |
-        source activate dev
+        source activate test
         coverage run -m pytest
-        
-    - name: generate test coverage report
+
+    - name: generate test coverage report and upload to codecov
       run: |
-        source activate dev
+        source activate test
         coverage report -m
-    
-    - uses: codecov/codecov-action@v1
-      with:
-        token: ${{ secrets.CODECOV_TOKEN }}
+        bash <(curl -s https://codecov.io/bash)
