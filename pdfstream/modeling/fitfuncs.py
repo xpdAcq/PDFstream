@@ -1,14 +1,11 @@
 import multiprocessing
-import os
-from datetime import datetime
 from typing import Tuple, Union, List, Dict
-from uuid import uuid4
 
 import diffpy.srfit.pdf.characteristicfunctions as F
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from diffpy.srfit.fitbase import Profile, FitContribution, FitResults
+from diffpy.srfit.fitbase import Profile, FitContribution
 from diffpy.srfit.fitbase.parameter import ParameterProxy
 from diffpy.srfit.pdf import PDFGenerator, DebyePDFGenerator
 from diffpy.srfit.structure.sgconstraints import constrainAsSpaceGroup
@@ -148,21 +145,6 @@ def make_recipe(*conconfigs: ConConfig) -> MyRecipe:
     return recipe
 
 
-def _make_df(recipe: MyRecipe) -> Tuple[pd.DataFrame, FitResults]:
-    """
-
-    :param recipe: fit recipe.
-    :return:
-    """
-    df = pd.DataFrame()
-    res = FitResults(recipe)
-    df["name"] = ["Rw", "half_chi2", "penalty"] + res.varnames
-    df["val"] = [res.rw, res.chi2 / 2, res.penalty] + res.varvals.tolist()
-    df["std"] = [np.nan, np.nan, np.nan] + res.varunc
-    df = df.set_index("name")
-    return df, res
-
-
 def fit(recipe: MyRecipe, **kwargs) -> None:
     """
     Fit the data according to recipe. parameters associated with fitting can be set in kwargs.
@@ -217,206 +199,6 @@ def plot(contribution: FitContribution) -> Axes:
     ax = visualize(data, ax=ax, mode='fit', legend=contribution.name)
     plt.show(block=False)
     return ax
-
-
-def save_csv(recipe: MyRecipe, base_name: str) -> Tuple[str, dict]:
-    """
-    Save fitting results to a csv file.
-
-    Parameters
-    ----------
-    recipe : MyRecipe
-        The fit recipe.
-
-    base_name : str
-        The base name for saving. The saving name will be "{base_name}.csv"
-
-    Returns
-    -------
-    csv_file : str
-        The path to the csv file.
-
-    goodness : dict
-        The metric of the goodness of the fit.
-    """
-    df, res = _make_df(recipe)
-    csv_file = rf"{base_name}.csv"
-    df.to_csv(csv_file)
-
-    goodness = {
-        'rw': res.rw,
-        'half_chi2': res.chi2 / 2,
-        'penalty': res.penalty
-    }
-    return csv_file, goodness
-
-
-def save_fgr(contribution: FitContribution, base_name: str, rw: float) -> str:
-    """
-    Save fitted PDFs to a four columns txt files with Rw as header.
-
-    Parameters
-    ----------
-    contribution
-        arbitrary number of Fitcontributions.
-
-    base_name
-        base name for saving. The saving name will be "{base_name}_{contribution.name}.fgr"
-
-    rw
-        value of Rw. It will be in the header as "Rw = {rw}".
-
-    Returns
-    -------
-    fgr_file : str
-        the path to the fgr file.
-    """
-    fgr_file = rf"{base_name}_{contribution.name}.fgr"
-    contribution.profile.savetxt(fgr_file, header=f"Rw = {rw}\nx ycalc y dy")
-    return fgr_file
-
-
-def calc_pgar(contribution: FitContribution, base_name: str, partial_eqs: Dict[str, str] = None) -> str:
-    """
-    Calculate the partial PDF.
-
-    Parameters
-    ----------
-    contribution
-        The FitContribution to calculate the partial PDF.
-    base_name
-        The base name for the saving file.
-    partial_eqs
-        The mapping from the phase name to their equation.
-
-    Returns
-    -------
-    pgr_file
-        The path to the partial pdf data file. It is a multi-column data file with header.
-    """
-    data = [contribution.profile.x]
-    columns = ["r"]
-    for phase_name, equation in partial_eqs.items():
-        ycalc = contribution.evaluateEquation(equation)
-        data.append(ycalc)
-        columns.append(phase_name)
-    data_array = np.column_stack(data)
-    header = " ".join(columns)
-    pgr_file = f"{base_name}_{contribution.name}.pgr"
-    np.savetxt(pgr_file, data_array, fmt="%.8e", header=header)
-    return pgr_file
-
-
-def save_cif(generator: Union[PDFGenerator, DebyePDFGenerator], base_name: str, con_name: str,
-             ext: str = "cif") -> str:
-    """
-    Save refined structure.
-
-    Parameters
-    ----------
-    generator
-        a ProfileGenerator. The structure is inside the "stru" attribute in it.
-    base_name
-        base name for saving. The saving name will be "{base_name}_{con_name}_{generator.name}."
-    con_name
-        name of the contribution that the generators belong to.
-    ext
-        extension of the structure file. It will also determine the structure file type. Default "cif". Only works
-        for diffpy structure.
-    Returns
-    -------
-        the path to the cif or xyz files.
-    """
-    stru_file = rf"{base_name}_{con_name}_{generator.name}.{ext}"
-    stru = generator.stru
-    try:
-        stru.write(stru_file, ext)
-    except AttributeError:
-        try:
-            with open(stru_file, "w") as f:
-                stru.CIFOutput(f)
-        except AttributeError:
-            raise Warning("Fail to save the structure.")
-    return stru_file
-
-
-def _save_all(recipe: MyRecipe, folder: str, csv: str, fgr: str, cif: str) -> None:
-    """
-    Save fitting results, fitted PDFs and refined structures to files in one folder and save information in DataFrames.
-    The DataFrame will contain columns: 'file' (file paths), 'rw' (Rw value) and other information in info.
-
-    Parameters
-    ----------
-    recipe
-        Refined recipe to save.
-    folder
-        Folder to save the files.
-    csv
-        The path to the csv file containing fitting results information.
-    fgr
-        The path to the csv file containing fitted PDFs information.
-    cif
-        The path to the csv file containing refined structure information.
-    """
-    print(f"Save {recipe.name} ...\n")
-    uid = str(uuid4())[:4]
-    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    name = os.path.join(folder, f"{timestamp}_{uid}")
-
-    csv_file, goodness = save_csv(recipe, name)
-    params = ", ".join(recipe.getNames())
-    csv_info = dict(recipe_name=recipe.name, **goodness, timestamp=timestamp, csv_file=csv_file,
-                    params=params)
-    recipe_id = update(csv, csv_info, id_col='recipe_id')
-
-    for con_config in recipe.configs:
-        con = getattr(recipe, con_config.name)
-        fgr_file = save_fgr(con, base_name=name, rw=goodness.get('rw', 'unknown'))
-        config_info = con_config.to_dict()
-        if con_config.partial_eqs is not None:
-            pgr_file = calc_pgar(con, name, con_config.partial_eqs)
-        else:
-            pgr_file = None
-        fgr_info = dict(recipe_id=recipe_id, **config_info, fgr_file=fgr_file, pgr_file=pgr_file)
-        con_id = update(fgr, fgr_info, id_col='con_id')
-
-        for gen_config in con_config.genconfigs:
-            gen = getattr(con, gen_config.name)
-            cif_file = save_cif(gen, base_name=name, con_name=con_config.name)
-            gconfig_info = gen_config.to_dict()
-            cif_info = dict(con_id=con_id, recipe_id=recipe_id, **gconfig_info, cif_file=cif_file)
-            update(cif, cif_info, id_col='gen_id')
-    return
-
-
-def update(file_path: str, info_dct: dict, id_col: str) -> int:
-    """
-    Update the database file (a csv file) by appending the information as a row at the end of the dataframe and return
-    a serial id of for the piece of information.
-
-    Parameters
-    ----------
-    file_path
-        The path to the csv file that stores the information.
-    info_dct
-        The dictionary of information.
-    id_col
-        The column name of the id.
-
-    Returns
-    -------
-    id_val
-        An id for the information.
-    """
-    df = pd.read_csv(file_path)
-    row_dct = {id_col: df.shape[0]}
-    row_dct.update(**info_dct)
-    if df.empty:
-        newdf = pd.DataFrame([row_dct])
-    else:
-        newdf = df.append(row_dct, ignore_index=True, sort=False)
-    newdf.to_csv(file_path, index=False)
-    return row_dct[id_col]
 
 
 def load_default(csv_file: str):

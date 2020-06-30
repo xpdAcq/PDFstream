@@ -245,7 +245,7 @@ def visualize(
 
     legend : str
         The legend label for the curve.
-        
+
     color : an iterable of colors
         The color of the plots. If None, use default color cycle in rc.
 
@@ -361,11 +361,9 @@ def instrucalib(
     db_path = Path(output_dir).joinpath('_pdfstream_db')
     if not db_path.exists():
         db_path.mkdir()
-    save = mod.gen_fs_save(
-        output_dir,
-        str(db_path.joinpath('recipe.csv')),
-        str(db_path.joinpath('contribution.csv')),
-        str(db_path.joinpath('generator.csv'))
-    )
+    csv_df_path = str(db_path.joinpath('recipe.csv'))
+    con_df_path = str(db_path.joinpath('contribution.csv'))
+    gen_df_path = str(db_path.joinpath('generator.csv'))
+    save = mod.gen_fs_save(output_dir, csv_df_path, con_df_path, gen_df_path)
     save(recipe)
     return
