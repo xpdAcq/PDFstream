@@ -14,3 +14,5 @@ include pdfstream/_version.py
 
 # If including data files in the package, add them like:
 # include path/to/data_file
+include pdfstream/test_data/Ni_cfg_file.cfg
+include pdfstream/test_data/Ni_cif_file.cif
