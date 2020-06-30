@@ -1,7 +1,6 @@
 import multiprocessing
 from typing import Tuple, Union, List, Dict
 
-import diffpy.srfit.pdf.characteristicfunctions as F
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -20,13 +19,14 @@ __all__ = [
     'make_generator',
     'make_recipe',
     'fit',
-    'F',
     'plot',
     'constrainAsSpaceGroup',
     'load_default',
     'sgconstrain',
     'cfconstrain',
-    'sgconstrain_all']
+    'sgconstrain_all',
+    'cfconstrain_all'
+]
 
 
 # functions used in fitting
@@ -218,8 +218,8 @@ def load_default(csv_file: str):
     return default_val_dict
 
 
-def cfconstrain(recipe: MyRecipe, fun_name: str, dv: Dict[str, float] = None, con_name: str = None) \
-        -> Dict[str, ParameterProxy]:
+def cfconstrain(recipe: MyRecipe, fun_name: str, dv: Dict[str, float] = None, bounds: Dict[str, tuple] = None,
+                con_name: str = None) -> Dict[str, ParameterProxy]:
     """
     Add parameters in the Characteristic functions in the FitContribution into the MyRecipe.
     Return the added variables in a dictionary.
@@ -239,25 +239,31 @@ def cfconstrain(recipe: MyRecipe, fun_name: str, dv: Dict[str, float] = None, co
     con_name
         The name of the FitContribution where the parameters are. If None, use the first one in the recipe.
 
+    bounds
+        The mapping from the name of the variable to the tuple of bounds (min, max). Defulat (0, +inf).
+
     Returns
     -------
     variables
         The dictionary mapping from the name of the variable to the variable itself.
     """
-    variables = {}
+    variables = dict()
     if dv is None:
-        _dv = {}
+        _dv = dict()
     elif isinstance(dv, str):
         _dv = load_default(dv)
     else:
         _dv = dv
+    if bounds is None:
+        bounds = dict()
 
     conconfig = get_conconfig(recipe, con_name)
     con = getattr(recipe, conconfig.name)
     funconfig = get_funconfig(conconfig, fun_name)
     for par_name in funconfig.argnames[1:]:
         par = getattr(con, par_name)
-        variables[par_name] = recipe.addVar(par, value=_dv.get(par_name, 100.), tag="cf").boundRange(0, np.inf)
+        variables[par_name] = recipe.addVar(par, value=_dv.get(par_name, 100.), tag="cf").boundRange(
+            *bounds.get(par_name, (0, np.inf)))
     return variables
 
 
@@ -311,9 +317,11 @@ def sgconstrain(recipe: MyRecipe, gen_name: str = None, con_name: str = None, sg
     variables
         The dictionary mapping from the name of the variable to the variable itself.
     """
+    # initiate variables
+    variables = dict()
     # the default of variables
     if dv is None:
-        _dv = {}
+        _dv = dict()
     elif isinstance(dv, str):
         _dv = load_default(dv)
     else:
@@ -322,14 +330,12 @@ def sgconstrain(recipe: MyRecipe, gen_name: str = None, con_name: str = None, sg
         sg = 'P1'
     # the bounds
     if bounds is None:
-        bounds = {}
+        bounds = dict()
     # get FitContribution and PDFGenerator
     con_config = get_conconfig(recipe, con_name)
     gen_config = get_genconfig(con_config, gen_name)
     con = getattr(recipe, con_config.name)
     gen = getattr(con, gen_config.name)
-    # initiate variables
-    variables = {}
     # add scale
     name = f'scale_{gen.name}'
     variables[name] = recipe.addVar(gen.scale, name=name, value=_dv.get(name, 0.)).boundRange(
@@ -375,47 +381,27 @@ def sgconstrain(recipe: MyRecipe, gen_name: str = None, con_name: str = None, sg
             variables[name] = recipe.addVar(par, name=name, value=_dv.get(name, par.value),
                                             tag=f'xyz_{gen.name}').boundWindow(
                 bounds.get(name, np.inf))
-
     return variables
 
 
 def sgconstrain_all(recipe: MyRecipe, dv: dict = None, bounds: dict = None, add_xyz: bool = False):
-    """Use space group to constrain all the generators in the recipe.
-
-    This method is only applicable to the generators initiated by objects in pyobjcryst. It does not work for
-    Structure in diffpy.structure.
-
-    Parameters
-    ----------
-    recipe
-        The recipe to add variables.
-
-    dv
-        The path to the .csv file contains the fitting results or the dictionary of values.
-        If None, the following values will be used:
-        type, initiate value, range, tag
-        scale, 0, (0, inf), scale_{gen.name}
-        delta2, 0, (0, inf), delta2_{gen.name}
-        lat, par.value, (0, 2 * par.value), lat_{gen.name}
-        adp, 0.006, (0, inf), adp_{gen.name}
-        xyz, par.value, None, xyz_{gen.name}
-
-    bounds
-        The mapping from the name of the variable to the tuple of the arguments for the bounding function.
-
-    add_xyz
-        Whether to constrain xyz coordinates. Default False.
-
-    Returns
-    -------
-    variables
-        The dictionary mapping from the name of the variable to the variable itself.
-    """
+    """Use space group to constrain all the generators in the recipe. See sgconstrain for details."""
     variables = dict()
     for conconfig in recipe.configs:
         for genconfig in conconfig.genconfigs:
             variables.update(
                 sgconstrain(recipe, genconfig.name, dv=dv, bounds=bounds, add_xyz=add_xyz)
+            )
+    return variables
+
+
+def cfconstrain_all(recipe: MyRecipe, dv: dict = None, bounds: dict = None):
+    """Constrain all the parameters in characteristic functions."""
+    variables = dict()
+    for conconfig in recipe.configs:
+        for funconfig in conconfig.funconfigs:
+            variables.update(
+                cfconstrain(recipe, funconfig.name, dv=dv, bounds=bounds)
             )
     return variables
 

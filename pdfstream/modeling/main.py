@@ -1,7 +1,7 @@
 import inspect
-import types
-import typing
+import typing as tp
 
+import diffpy.srfit.pdf.characteristicfunctions as F
 from diffpy.srfit.fitbase import FitResults
 from matplotlib.axes import Axes
 from pyobjcryst.crystal import Crystal
@@ -19,9 +19,10 @@ __all__ = [
     'report',
     'view_fits',
     'fit_calib',
-    'FIT_RANGE'
+    'FIT_RANGE',
+    'F'
 ]
-FIT_RANGE = typing.Tuple[float, float, float]
+FIT_RANGE = tp.Tuple[float, float, float]
 
 
 def fit_calib(stru: Crystal, data: MyParser, fit_range: FIT_RANGE, ncpu: int = None) -> \
@@ -61,17 +62,17 @@ def fit_calib(stru: Crystal, data: MyParser, fit_range: FIT_RANGE, ncpu: int = N
     return recipe
 
 
-def _add_suffix(func: types.CodeType, suffix: str):
+def _add_suffix(func: tp.Callable, suffix: str):
     """Add the suffix to the argument names starting at the second the argument. Return the names"""
-    args = inspect.getargs(func).args
+    args = inspect.getfullargspec(func).args
     if len(args) < 2:
         raise ValueError('The function should have at least two arguments.')
-    return [args[0]] + ['{}_{}'.format(arg, suffix) for arg in args]
+    return [args[0]] + ['{}_{}'.format(arg, suffix) for arg in args[1:]]
 
 
-def multi_phase(phases: typing.Iterable[typing.Union[typing.Tuple[types.CodeType, Crystal], Crystal]],
+def multi_phase(phases: tp.Iterable[tp.Union[tp.Tuple[tp.Callable, Crystal], Crystal]],
                 data: MyParser,
-                fit_range: typing.Tuple[float, float, float],
+                fit_range: tp.Tuple[float, float, float],
                 default_value: dict = None,
                 bounds: dict = None,
                 add_xyz: bool = False,
@@ -137,13 +138,14 @@ def multi_phase(phases: typing.Iterable[typing.Union[typing.Tuple[types.CodeType
             eq += " * " + fname
         eqs.update({gname: eq})
     conconfig = ConConfig(name='multi_phase', partial_eqs=eqs, parser=data, fit_range=fit_range,
-                          genconfigs=genconfigs)
+                          genconfigs=genconfigs, funconfigs=funconfigs)
     recipe = make_recipe(conconfig)
     sgconstrain_all(recipe, dv=default_value, bounds=bounds, add_xyz=add_xyz)
+    cfconstrain_all(recipe, dv=default_value, bounds=bounds)
     return recipe
 
 
-def optimize(recipe: MyRecipe, tags: typing.List[typing.Union[str, typing.Tuple[str, ...]]], **kwargs) -> None:
+def optimize(recipe: MyRecipe, tags: tp.List[tp.Union[str, tp.Tuple[str, ...]]], **kwargs) -> None:
     """First fix all variables and then free the variables one by one and fit the recipe.
 
     Parameters
@@ -190,7 +192,7 @@ def report(recipe: MyRecipe) -> FitResults:
     return res
 
 
-def view_fits(recipe: MyRecipe) -> typing.List[Axes]:
+def view_fits(recipe: MyRecipe) -> tp.List[Axes]:
     """View the fit curves. Each FitContribution will be a plot.
 
     Parameters

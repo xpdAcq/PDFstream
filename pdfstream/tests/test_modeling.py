@@ -20,3 +20,11 @@ def test_fit_calib(db):
     parser.parseFile(db['Ni_gr_file'])
     fit_calib(db['Ni_stru'], parser, fit_range=(2., 8., .1))
     plt.close()
+
+
+def test_multi_phase(db):
+    parser = MyParser()
+    parser.parseFile(db['Ni_gr_file'])
+    recipe = multi_phase([(F.sphericalCF, db['Ni_stru'])], parser, fit_range=(2., 8.0, .1), default_value={
+        'psize_G0': 200})
+    optimize(recipe, ['all'], xtol=1e-3, gtol=1e-3, ftol=1e-3)
