@@ -15,6 +15,7 @@ from pdfstream.modeling.fitobjs import *
 
 __all__ = [
     'summarize',
+    'gen_fs_save'
 ]
 
 
@@ -279,7 +280,7 @@ def gen_fs_save(folder: str, csv: str, fgr: str, cif: str):
 def summarize(csv_df: pd.DataFrame, phases_col: str = "phases", file_col: str = 'csv_file', data_col: str = 'val',
               name_col: str = None, exclude: tp.List[str] = None, map_phase: dict = None,
               phase_del: str = ', ', escape: bool = False, processing: tp.Callable[[pd.DataFrame], None] = None,
-              printout: bool = False, cbcopy: bool = False, output: bool = False) -> tp.Union[None, pd.DataFrame]:
+              printout: bool = True, cbcopy: bool = False, output: bool = False) -> tp.Union[None, pd.DataFrame]:
     """
     Group the results by phases. For each group data frame, read .csv files according to the csv_df. Each .csv
     file contains fitting results from a fit. Join the results into one large data frame. The index are the
