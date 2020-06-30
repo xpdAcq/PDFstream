@@ -1,0 +1,21 @@
+package:
+  name: pdfstream
+  version: ''
+
+source:
+  path: ''
+
+build:
+  noarch: python
+  number: 0
+  script: ''
+
+requirements:
+  host:
+    - python >=3.6
+    - pip
+  run: []
+
+test:
+  imports:
+    - pdfstream
