@@ -20,7 +20,6 @@ __all__ = [
     'make_generator',
     'make_recipe',
     'fit',
-    '_save_all',
     'F',
     'plot',
     'constrainAsSpaceGroup',
