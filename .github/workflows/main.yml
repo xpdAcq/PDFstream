@@ -7,6 +7,8 @@ name: test
 on:
   push:
     branches: [ master ]
+    tags:
+      - v*.*.*
   pull_request:
     branches: [ master ]
 
@@ -56,21 +58,21 @@ jobs:
         source activate test
         coverage report -m
         bash <(curl -s https://codecov.io/bash) -t ${{ secrets.CODECOV_TOKEN }}
-  
+
   publish:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-    
+
     # Only publish if a tag starting with v is pushed
     if: github.event_name == 'push' && contains(github.ref, 'refs/tags/v')
-    
+
     # Require passing the test
     needs: test
-    
+
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       - uses: actions/checkout@v2
-      
+
       - name: setup-conda
         uses: s-weigand/setup-conda@v1.0.3
         with:
@@ -80,13 +82,13 @@ jobs:
           update-conda: false # optional, default is false
           # Python version which should be installed with conda (default: 'Default')
           python-version: 3.7 # optional, default is default
-      
+
       - name: create a distribution
         run: python setup.py sdist
-        
+
       - name: prepare the meta.yaml
         run: python prep-release.py
-        
+
       - name: Publish Conda
         uses: fcakyon/conda-publish-action@v1.3
         with:
