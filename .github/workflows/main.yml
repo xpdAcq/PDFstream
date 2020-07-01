@@ -101,4 +101,4 @@ jobs:
         run: conda build conda-recipe
 
       - name: upload to conda
-        run: conda upload -t ${{ secrets.ANACONDA_TOKEN }} -u $CONDA_USER_NAME
+        run: conda upload -t ${{ secrets.ANACONDA_TOKEN }} -u $CONDA_USER_NAME --force
