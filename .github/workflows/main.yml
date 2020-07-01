@@ -98,8 +98,7 @@ jobs:
       - name: prepare for the release
         run: python prep-release.py
 
-      - name: build conda package
-        run: conda build conda-recipe
-
-      - name: upload to conda
-        run: anaconda upload -u $CONDA_USER_NAME
+      - name: build and upload conda package
+        run: |
+          conda conda config --set anaconda_upload yes
+          conda build --user $CONDA_USER_NAME conda-recipe
