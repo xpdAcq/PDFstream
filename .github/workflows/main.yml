@@ -82,6 +82,11 @@ jobs:
           update-conda: false # optional, default is false
           # Python version which should be installed with conda (default: 'Default')
           python-version: 3.7 # optional, default is default
+          # Additional channels like 'conda-forge' which can be used to install packages
+          conda-channels: conda-forge # optional, default is
+
+      - name: install requirements
+        run: conda install --file requirements/build.txt
 
       - name: create a distribution
         run: python setup.py sdist
