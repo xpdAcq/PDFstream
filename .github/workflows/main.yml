@@ -68,6 +68,9 @@ jobs:
 
     # Require passing the test
     needs: test
+    
+    env:
+      CONDA_USER_NAME: st3107
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -91,15 +94,11 @@ jobs:
       - name: create a distribution
         run: python setup.py sdist
 
-      - name: prepare the meta.yaml
+      - name: prepare for the release
         run: python prep-release.py
 
-      - name: Publish Conda
-        uses: fcakyon/conda-publish-action@v1.3
-        with:
-          # Sub-directory with conda recipe
-          subdir: conda-recipe # optional, default is .
-          # Anaconda access token
-          anacondatoken: ${{ secrets.ANACONDA_TOKEN }} # optional
-          # Platforms to publish [osx/linux/win]
-          platforms: osx linux # optional, default is osx linux
+      - name: build conda package
+        run: conda build conda-recipe
+      
+      - name: upload to conda
+        run: conda upload -t ${{ secrets.ANACONDA_TOKEN }} -u $CONDA_USER_NAME
