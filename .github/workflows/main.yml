@@ -68,7 +68,7 @@ jobs:
 
     # Require passing the test
     needs: test
-    
+
     env:
       CONDA_USER_NAME: st3107
 
@@ -86,7 +86,7 @@ jobs:
           # Python version which should be installed with conda (default: 'Default')
           python-version: 3.7 # optional, default is default
           # Additional channels like 'conda-forge' which can be used to install packages
-          conda-channels: conda-forge # optional, default is
+          conda-channels: conda-forge, diffpy # optional, default is
 
       - name: install requirements
         run: conda install --file requirements/build.txt
@@ -99,6 +99,6 @@ jobs:
 
       - name: build conda package
         run: conda build conda-recipe
-      
+
       - name: upload to conda
         run: conda upload -t ${{ secrets.ANACONDA_TOKEN }} -u $CONDA_USER_NAME
