@@ -71,7 +71,7 @@ jobs:
 
     env:
       CONDA_USER_NAME: st3107
-      ANACONDA_API_TOKEN: {{ secrets.ANACONDA_TOKEN }}
+      ANACONDA_API_TOKEN: ${{ secrets.ANACONDA_TOKEN }}
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
