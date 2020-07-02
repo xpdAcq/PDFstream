@@ -20,3 +20,13 @@ def pdf_instrucalib():
     """The CLI of 'intrucalib'."""
     fire.Fire(cli.instrucalib)
     return
+
+
+def pdf_visualize():
+    """The CLI of 'visualize'."""
+    fire.Fire(cli.visualize)
+
+
+def pdf_waterfall():
+    """The CLI of 'waterfall'."""
+    fire.Fire(cli.waterfall)
