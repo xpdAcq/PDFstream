@@ -37,11 +37,12 @@ def get_chi(ai: AzimuthalIntegrator,
         The scale for background subtraction. If None, use 1.
 
     mask_setting : dict
-        The auto mask setting. See _AUTO_MASK_SETTING in pdfstream.tools.integration. If None,
-        use _AUTOMASK_SETTING. To turn off the auto masking, use "OFF".
+        The auto mask setting.
+        If None, use _AUTOMASK_SETTING in the tools module. To turn off the auto masking, use "OFF".
 
     integ_setting : dict
-        The integration setting. See _INTEG_SETTING in pdfstream.tools.integration. If None, use _INTEG_SETTING.
+        The integration setting.
+        If None, use _INTEG_SETTING in the tools module.
 
     img_setting : dict
         The user's modification to imshow kwargs except a special key 'z_score'. If None, use use empty dict.

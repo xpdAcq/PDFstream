@@ -129,6 +129,17 @@ def waterfall(
 ) -> Axes:
     """The visualization function to realize waterfall, and comparison plot.
 
+    The data must be multi-columns matrix in a txt file. A header can be included in the file and it won't be
+    read. The plots will be stacked in a waterfall if stack = True or overlapping together if stack = False. The
+    visualization has different modes for different kinds of plotting. Currently, it supports
+
+    'line' mode
+        Each dataset is a single curve of x and y data.
+
+    'fit' mode
+        Each dataset contains three curves, one curve for data, one curve for the fit and a difference curve
+        below it.
+
     Parameters
     ----------
     data_files : a list of file paths
@@ -205,7 +216,16 @@ def visualize(
         minor_tick: int = 2, legend: str = None, color: tp.Iterable = None,
         show_fig: bool = True, **kwargs
 ) -> Axes:
-    """The visualization function to realize single plot.
+    """Visualize the data.
+
+    The data must be multi-columns matrix in a txt file. A header can be included in the file and it won't be
+    read. The visualization has different modes for different kinds of plotting. Currently, it supports
+
+    'line' mode
+        The single curve of x and y data.
+
+    'fit' mode
+        One curve for data, one curve for the fit and a difference curve below it.
 
     Parameters
     ----------
@@ -221,7 +241,7 @@ def visualize(
         'fill_kwargs', 'yzero').
 
     mode : str
-        The plotting mode. Currently support 'line', 'fit'.
+        The plotting mode.
 
     ax : Axes
         The axes to visualize the data. If None, use current axes.
@@ -322,24 +342,30 @@ def instrucalib(
         The scale for background subtraction. If None, use 1.
 
     mask_setting : dict
-        The auto mask setting. See _AUTO_MASK_SETTING in pdfstream.tools.integration. If None,
-        use _AUTOMASK_SETTING. To turn off the auto masking, use "OFF".
+        The settings for the auto-masking. See the arguments for mask_img (
+        https://xpdacq.github.io/xpdtools/xpdtools.html?highlight=mask_img#xpdtools.tools.mask_img). To turn
+        off the auto masking, enter "OFF".
 
     integ_setting : dict
-        The integration setting. See _INTEG_SETTING in pdfstream.tools.integration. If None, use _INTEG_SETTING.
+        The settings for the integration. See the arguments for integrate1d (
+        https://pyfai.readthedocs.io/en/latest/api/pyFAI.html#module-pyFAI.azimuthalIntegrator).
 
     img_setting : dict
-        The user's modification to imshow kwargs except a special key 'z_score'. If None, use use empty dict.
-        To turn off the imshow, use "OFF".
+        The keywords for the matplotlib.pyplot.imshow (
+        https://matplotlib.org/3.2.1/api/_as_gen/matplotlib.pyplot.imshow.html). Besides, there is a key
+        'z_score', which determines the range of the colormap. The range is mean +/- z_score * std in the
+        statistics of the image. To turn of the image, enter "OFF".
 
     chi_plot_setting : dict
-        The kwargs of chi data plotting. See matplotlib.pyplot.plot. If 'OFF', skip visualization.
+        The kwargs of chi data plotting. See matplotlib.pyplot.plot(
+        https://matplotlib.org/3.2.1/api/_as_gen/matplotlib.pyplot.plot.html). If 'OFF', skip visualization.
 
     pdf_plot_setting : dict or 'OFF'
-        The kwargs of pdf data plotting. See matplotlib.pyplot.plot. If 'OFF', skip visualization.
+        The kwargs of pdf data plotting. See matplotlib.pyplot.plot(
+        https://matplotlib.org/3.2.1/api/_as_gen/matplotlib.pyplot.plot.html). If 'OFF', skip visualization.
 
     ncpu : int
-        The number of cpu used in parallel computing. If None, no parallel computing.
+        The number of cpu used in parallel computing in the modeling. If None, no parallel computing.
     """
     if cfg_file is None:
         cfg_file = resource_filename('pdfstream', 'test_data/Ni_cfg_file.cfg')
