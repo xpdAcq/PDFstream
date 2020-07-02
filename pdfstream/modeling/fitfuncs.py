@@ -11,7 +11,7 @@ from diffpy.srfit.structure.sgconstraints import constrainAsSpaceGroup
 from matplotlib.axes import Axes
 from scipy.optimize import least_squares
 
-from pdfstream.modeling.fitobjs import *
+from pdfstream.modeling.fitobjs import MyParser, MyRecipe, ConConfig, FunConfig, GenConfig
 from pdfstream.visualization.main import visualize
 
 __all__ = [

@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 
 from pdfstream.transformation import __PDFGETX_AVAL__
-from pdfstream.transformation.main import *
+from pdfstream.transformation.main import get_pdf
 
 
 def test_get_pdf(db):

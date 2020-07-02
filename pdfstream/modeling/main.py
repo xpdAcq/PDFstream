@@ -6,8 +6,8 @@ from diffpy.srfit.fitbase import FitResults
 from matplotlib.axes import Axes
 from pyobjcryst.crystal import Crystal
 
-from pdfstream.modeling.fitfuncs import *
-from pdfstream.modeling.fitobjs import *
+from pdfstream.modeling.fitfuncs import make_recipe, sgconstrain_all, cfconstrain_all, fit, plot
+from pdfstream.modeling.fitobjs import MyRecipe, GenConfig, ConConfig, MyParser, FunConfig
 
 __all__ = [
     'multi_phase',
@@ -20,8 +20,10 @@ __all__ = [
     'view_fits',
     'fit_calib',
     'FIT_RANGE',
-    'F'
+    'F',
+    'Crystal'
 ]
+
 FIT_RANGE = tp.Tuple[float, float, float]
 
 

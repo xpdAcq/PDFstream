@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 
-from pdfstream.modeling.main import *
+from pdfstream.modeling.main import MyParser, multi_phase, fit_calib, optimize, F
 
 
 def test_MyParser(db):

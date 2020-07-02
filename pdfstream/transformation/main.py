@@ -1,8 +1,11 @@
 from numpy import ndarray
-from pdfstream.transformation.tools import *
+
+from pdfstream.transformation.tools import PDFConfig, PDFGetter, make_pdfgetter, use_pdfgetter, visualize
 
 __all__ = [
-    'get_pdf'
+    'get_pdf',
+    'PDFConfig',
+    'PDFGetter'
 ]
 
 

@@ -11,7 +11,7 @@ import pyperclip
 from diffpy.srfit.fitbase import FitContribution, FitResults
 from diffpy.srfit.pdf import PDFGenerator, DebyePDFGenerator
 
-from pdfstream.modeling.fitobjs import *
+from pdfstream.modeling.fitobjs import MyRecipe
 
 __all__ = [
     'summarize',
@@ -20,11 +20,7 @@ __all__ = [
 
 
 def _make_df(recipe: MyRecipe) -> tp.Tuple[pd.DataFrame, FitResults]:
-    """
-
-    :param recipe: fit recipe.
-    :return:
-    """
+    """Make the fitting result data frame."""
     df = pd.DataFrame()
     res = FitResults(recipe)
     df["name"] = ["Rw", "half_chi2", "penalty"] + res.varnames
@@ -35,8 +31,7 @@ def _make_df(recipe: MyRecipe) -> tp.Tuple[pd.DataFrame, FitResults]:
 
 
 def save_csv(recipe: MyRecipe, base_name: str) -> tp.Tuple[str, dict]:
-    """
-    Save fitting results to a csv file.
+    """Save fitting results to a csv file.
 
     Parameters
     ----------
@@ -67,8 +62,7 @@ def save_csv(recipe: MyRecipe, base_name: str) -> tp.Tuple[str, dict]:
 
 
 def save_fgr(contribution: FitContribution, base_name: str, rw: float) -> str:
-    """
-    Save fitted PDFs to a four columns txt files with Rw as header.
+    """Save fitted PDFs to a four columns txt files with Rw as header.
 
     Parameters
     ----------
@@ -92,8 +86,7 @@ def save_fgr(contribution: FitContribution, base_name: str, rw: float) -> str:
 
 
 def calc_pgar(contribution: FitContribution, base_name: str, partial_eqs: tp.Dict[str, str] = None) -> str:
-    """
-    Calculate the partial PDF.
+    """Calculate the partial PDF.
 
     Parameters
     ----------
@@ -124,8 +117,7 @@ def calc_pgar(contribution: FitContribution, base_name: str, partial_eqs: tp.Dic
 
 def save_cif(generator: tp.Union[PDFGenerator, DebyePDFGenerator], base_name: str, con_name: str,
              ext: str = "cif") -> str:
-    """
-    Save refined structure.
+    """Save refined structure.
 
     Parameters
     ----------
@@ -156,9 +148,9 @@ def save_cif(generator: tp.Union[PDFGenerator, DebyePDFGenerator], base_name: st
 
 
 def _save_all(recipe: MyRecipe, folder: str, csv: str, fgr: str, cif: str) -> None:
-    """
-    Save fitting results, fitted PDFs and refined structures to files in one folder and save information in DataFrames.
-    The DataFrame will contain columns: 'file' (file paths), 'rw' (Rw value) and other information in info.
+    """Save fitting results, fitted PDFs and refined structures to files in one folder and save information in
+    DataFrames. The DataFrame will contain columns: 'file' (file paths), 'rw' (Rw value) and other information
+    in info.
 
     Parameters
     ----------
@@ -205,9 +197,8 @@ def _save_all(recipe: MyRecipe, folder: str, csv: str, fgr: str, cif: str) -> No
 
 
 def update(file_path: str, info_dct: dict, id_col: str) -> int:
-    """
-    Update the database file (a csv file) by appending the information as a row at the end of the dataframe and return
-    a serial id of for the piece of information.
+    """Update the database file (a csv file) by appending the information as a row at the end of the dataframe
+    and return a serial id of for the piece of information.
 
     Parameters
     ----------

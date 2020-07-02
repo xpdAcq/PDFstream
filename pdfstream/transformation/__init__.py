@@ -2,6 +2,7 @@
 try:
     import diffpy.pdfgetx
     __PDFGETX_AVAL__ = True
+    del diffpy.pdfgetx
 except ImportError:
     __PDFGETX_AVAL__ = False
     print("diffpy.pdfgetx not installed. The data transformations functionality will be not available.")

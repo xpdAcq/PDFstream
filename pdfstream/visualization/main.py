@@ -5,7 +5,8 @@ import matplotlib.pyplot as plt
 from matplotlib.axes import Axes
 from numpy import ndarray
 
-from .tools import *
+from pdfstream.visualization.tools import plot_line, plot_fit, normalize, shift, auto_text, set_minor_tick, \
+    auto_label
 
 PLOT_METHOD = {
     "line": plot_line,
