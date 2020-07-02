@@ -3,13 +3,13 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-pdfstream Documentation
+PDFstream Documentation
 =======================
 
 .. toctree::
    :maxdepth: 2
 
    installation
-   usage
+   usage/index
    release-history
    min_versions

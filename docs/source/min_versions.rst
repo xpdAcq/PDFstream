@@ -4,7 +4,7 @@ Minimum Version of Python and NumPy
 
 
 - This project supports at least the minor versions of Python
-  initially released 42 months prior to a planned project release
+  initially released 12 months prior to a planned project release
   date.
 - The project will always support at least the 2 latest minor
   versions of Python.
