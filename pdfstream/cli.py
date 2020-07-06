@@ -342,7 +342,7 @@ def instrucalib(
     bg_scale : float
         The scale for background subtraction. If None, use 1.
 
-    mask_setting : dict
+    mask_setting : dict or 'OFF'
         The settings for the auto-masking. See the arguments for mask_img (
         https://xpdacq.github.io/xpdtools/xpdtools.html?highlight=mask_img#xpdtools.tools.mask_img). To turn
         off the auto masking, enter "OFF".
@@ -351,13 +351,13 @@ def instrucalib(
         The settings for the integration. See the arguments for integrate1d (
         https://pyfai.readthedocs.io/en/latest/api/pyFAI.html#module-pyFAI.azimuthalIntegrator).
 
-    img_setting : dict
+    img_setting : dict or 'OFF'
         The keywords for the matplotlib.pyplot.imshow (
         https://matplotlib.org/3.2.1/api/_as_gen/matplotlib.pyplot.imshow.html). Besides, there is a key
         'z_score', which determines the range of the colormap. The range is mean +/- z_score * std in the
         statistics of the image. To turn of the image, enter "OFF".
 
-    chi_plot_setting : dict
+    chi_plot_setting : dict or 'OFF'
         The kwargs of chi data plotting. See matplotlib.pyplot.plot(
         https://matplotlib.org/3.2.1/api/_as_gen/matplotlib.pyplot.plot.html). If 'OFF', skip visualization.
 
