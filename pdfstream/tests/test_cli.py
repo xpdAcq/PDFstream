@@ -38,7 +38,7 @@ def test_integrate(db, kwargs):
 def test_average(db, kwargs):
     with TemporaryDirectory() as tempdir:
         img_file = Path(tempdir).joinpath('average.tiff')
-        cli.average(img_file, [db['white_img_file'], db['white_img_file']], **kwargs)
+        cli.average(img_file, db['white_img_file'], db['white_img_file'], **kwargs)
         avg_img = io.load_img(img_file)
         white_img = io.load_img(db['white_img_file'])
         assert np.array_equal(avg_img, white_img)
@@ -56,8 +56,8 @@ def test_average(db, kwargs):
     ]
 )
 def test_waterfall(db, keys, kwargs):
-    data_files = db[keys] if isinstance(keys, str) else [db[key] for key in keys]
-    cli.waterfall(data_files, **kwargs)
+    data_files = (db[key] for key in keys)
+    cli.waterfall(*data_files, **kwargs)
     plt.close()
 
 

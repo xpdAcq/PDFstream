@@ -28,7 +28,7 @@ def main():
 
 
 def integrate(
-        poni_file: str, img_files: tp.Union[str, tp.Iterable[str]], bg_img_file: str = None,
+        poni_file: str, *img_files: str, bg_img_file: str = None,
         output_dir: str = ".", bg_scale: float = None, mask_setting: tp.Union[dict, str] = None,
         integ_setting: dict = None, plot_setting: tp.Union[dict, str] = None,
         img_setting: tp.Union[dict, str] = None
@@ -41,16 +41,12 @@ def integrate(
     image will be integrated again by the pyFAI. The polarization correction and pixel-splitting algorithm will
     be applied according to user settings before the integration. The results are saved as chi files.
 
-    Examples
-    --------
-    integrate diffraction_image.tiff calibrant.poni --bg_img_file background.tiff --integ_setting {npt: 2048}
-
     Parameters
     ----------
     poni_file : str
         The path to the poni file. It will be read by pyFAI.
 
-    img_files : str or an iterable of str
+    img_files : str
         The path or a list of paths to the image file. It will be read by fabio.
 
     bg_img_file : str
@@ -90,8 +86,6 @@ def integrate(
     """
     if integ_setting is None:
         integ_setting = dict()
-    if isinstance(img_files, str):
-        img_files = [img_files]
     ai = io.load_ai_from_poni_file(poni_file)
     bg_img = io.load_img(bg_img_file) if bg_img_file else None
     chi_paths = []
@@ -106,7 +100,7 @@ def integrate(
     return chi_paths
 
 
-def average(out_file: str, img_files: tp.Union[str, tp.Iterable[str]], weights: tp.List[float] = None) -> None:
+def average(out_file: str, *img_files: str, weights: tp.List[float] = None) -> None:
     """Average the single channel image files with weights.
 
     Parameters
@@ -114,7 +108,7 @@ def average(out_file: str, img_files: tp.Union[str, tp.Iterable[str]], weights: 
     out_file : str
         The output file path. It will be the type as the first image in img_files.
 
-    img_files : str or an iterable of str
+    img_files : str
         The image files to be averaged.
 
     weights : an iterable of floats
@@ -129,7 +123,7 @@ def average(out_file: str, img_files: tp.Union[str, tp.Iterable[str]], weights: 
 
 
 def waterfall(
-        data_files: tp.List[str], ax: Axes = None, mode: str = "line", normal: bool = True,
+        *data_files: str, ax: Axes = None, mode: str = "line", normal: bool = True,
         stack: bool = True, gap: float = 0, texts: tp.List[str] = None, text_xy: tuple = None,
         label: str = None, minor_tick: tp.Union[int, None] = 2, legends: tp.List[str] = None,
         colors: tp.Iterable = None, show_fig: bool = True, **kwargs
@@ -164,7 +158,7 @@ def waterfall(
         The plotting mode. Currently support 'line', 'fit'.
 
     ax : Axes
-        The axes to visualize the data. If None, use current axes.
+        The axes to visualize the data. If None, use current axes. (Not used for CLI)
 
     normal : bool
         If True, the second and the following rows in data will be normalized by (max - min). Else, do nothing.
@@ -251,7 +245,7 @@ def visualize(
         The plotting mode.
 
     ax : Axes
-        The axes to visualize the data. If None, use current axes.
+        The axes to visualize the data. If None, use current axes. (Not used for CLI)
 
     normal : bool
         If True, the second and the following rows in data will be normalized by (max - min). Else, do nothing.
