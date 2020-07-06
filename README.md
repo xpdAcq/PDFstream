@@ -1,19 +1,19 @@
-pdfstream
+PDFstream
 =========
 
 ![test](https://github.com/st3107/pdfstream/workflows/test/badge.svg?branch=master)
 [![codecov](https://codecov.io/gh/st3107/pdfstream/branch/master/graph/badge.svg?token=ZFXWWDWQW8)](https://codecov.io/gh/st3107/pdfstream)
 [![Release](https://anaconda.org/st3107/pdfstream/badges/version.svg)](https://anaconda.org/st3107/pdfstream)
 
-The data streaming PDF analysis software
+The data analysis toolbox for the study on pair distribution function (PDF).
 
 -   Free software: 3-clause BSD license
--   Documentation: (COMING SOON!) <https://st3107.github.io/pdfstream>.
+-   Documentation: <https://st3107.github.io/pdfstream>.
 
 Installation
 ------------
 
-Create a new environment.
+Create a new clean environment.
 
 `conda create -n pdfstream`
 
@@ -22,5 +22,4 @@ Create a new environment.
 Install the diffpy.pdfgetx following the
 [instructions](https://www.diffpy.org/doc/pdfgetx/2.0.0/install.html).
 
-Install the pdfstream from the conda following the
-[webpage](https://anaconda.org/st3107/pdfstream).
+Install the pdfstream according to this [anaconda webpage](https://anaconda.org/st3107/pdfstream).
