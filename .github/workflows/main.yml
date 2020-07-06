@@ -98,7 +98,7 @@ jobs:
         run: conda install --file requirements/build.txt
 
       - name: build documents
-        run:
+        run: make -C docs html
 
       - name: create a distribution
         run: python setup.py sdist
