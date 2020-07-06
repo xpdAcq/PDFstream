@@ -2,7 +2,7 @@ sphinx
 numpydoc
 sphinx-copybutton
 sphinx_rtd_theme
-pyyaml
 conda-build
 anaconda-client
 conda-verify
+ipython

@@ -95,7 +95,7 @@ jobs:
           conda-channels: conda-forge, diffpy # optional, default is
 
       - name: install requirements
-        run: conda install --file requirements/build.txt
+        run: conda install --file requirements/run.txt --file requirements/build.txt
 
       - name: install pdfstream
         run: python -m pip install .
@@ -123,4 +123,4 @@ jobs:
       - name: build and upload conda package
         run: |
           conda config --set anaconda_upload yes
-          conda build --user $CONDA_USER_NAME conda-recipe
+          conda build --user $CONDA_USER_NAME conda-recipe --force
