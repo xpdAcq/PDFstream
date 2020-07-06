@@ -225,7 +225,7 @@ def update(file_path: str, info_dct: dict, id_col: str) -> int:
     return row_dct[id_col]
 
 
-def gen_fs_save(folder: str, csv: str, fgr: str, cif: str):
+def gen_fs_save(db_folder: str, storage_folder: str):
     """
     Generate the function save_all to save results of recipes. The database of csv, fgr and cif will be passed
     to the "_save_all" function. If there is no such file, it will be created as an empty csv file.
@@ -233,7 +233,6 @@ def gen_fs_save(folder: str, csv: str, fgr: str, cif: str):
     Parameters
     ----------
     folder
-            folder
         Folder to save the files.
     csv
         The path to the csv file containing fitting results information.
@@ -248,9 +247,19 @@ def gen_fs_save(folder: str, csv: str, fgr: str, cif: str):
         A function to save results.
 
     """
-    for filepath in (csv, fgr, cif):
-        if not Path(filepath).exists():
-            pd.DataFrame().to_csv(filepath)
+    db_path = Path(db_folder)
+    if not db_path.is_dir():
+        db_path.mkdir()
+    coll_paths = []
+    for f in ('recipe.csv', 'contribution.csv', 'generator.csv'):
+        coll_path = db_path.joinpath(f)
+        if not coll_path.is_file():
+            pd.DataFrame().to_csv(str(coll_path))
+        coll_paths.append(str(coll_path))
+
+    storage_path = Path(storage_folder)
+    if not storage_path.is_dir():
+        storage_path.mkdir()
 
     def save_all(recipe: MyRecipe):
         """
@@ -263,7 +272,7 @@ def gen_fs_save(folder: str, csv: str, fgr: str, cif: str):
         recipe
             The FitRecipe.
         """
-        return _save_all(recipe, folder, csv, fgr, cif)
+        return _save_all(recipe, str(storage_folder), *coll_paths)
 
     return save_all
 

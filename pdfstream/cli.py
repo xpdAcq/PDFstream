@@ -386,11 +386,8 @@ def instrucalib(
     img_path = PurePath(img_file)
     io.write_out(output_dir, img_path.name, pdfgetter)
     db_path = Path(output_dir).joinpath('_pdfstream_db')
-    if not db_path.exists():
+    if not db_path.is_dir():
         db_path.mkdir()
-    csv_df_path = str(db_path.joinpath('recipe.csv'))
-    con_df_path = str(db_path.joinpath('contribution.csv'))
-    gen_df_path = str(db_path.joinpath('generator.csv'))
-    save = csvdb.gen_fs_save(output_dir, csv_df_path, con_df_path, gen_df_path)
+    save = csvdb.gen_fs_save(output_dir, db_path)
     save(recipe)
     return

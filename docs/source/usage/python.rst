@@ -55,9 +55,4 @@ To save the results, first generate the save function that link to db collection
 
 .. autofunction:: pdfstream.modeling.csvdb.gen_fs_save
 
-Then, use the function to save the recipe.
-
-.. code-block:: python
-
-    save = gen_fs_save("_pdfstreamdb")
-    save(recipe)
+Then, use the returned function to save the recipe.
