@@ -33,7 +33,7 @@ def integrate(
         integ_setting: dict = None, plot_setting: tp.Union[dict, str] = None,
         img_setting: tp.Union[dict, str] = None
 ) -> tp.List[str]:
-    """Azimuthal integration of the two dimensional diffraction image.
+    """Conduct azimuthal integration on the two dimensional diffraction images.
 
     The image will be first subtracted by background if background image file is given. Then, it will be binned
     in azimuthal direction according to the geometry provided by the poni file. The pixels far away from the
@@ -134,7 +134,7 @@ def waterfall(
         label: str = None, minor_tick: tp.Union[int, None] = 2, legends: tp.List[str] = None,
         colors: tp.Iterable = None, show_fig: bool = True, **kwargs
 ) -> Axes:
-    """The visualization function to realize waterfall, and comparison plot.
+    """Visualize the data in multiple data files in a waterfall or comparison plot.
 
     The data must be multi-columns matrix in a txt file. A header can be included in the file and it won't be
     read. The plots will be stacked in a waterfall if stack = True or overlapping together if stack = False. The
@@ -223,7 +223,7 @@ def visualize(
         minor_tick: int = 2, legend: str = None, color: tp.Iterable = None,
         show_fig: bool = True, **kwargs
 ) -> Axes:
-    """Visualize the data.
+    """Visualize the data in a single data file.
 
     The data must be multi-columns matrix in a txt file. A header can be included in the file and it won't be
     read. The visualization has different modes for different kinds of plotting. Currently, it supports
@@ -304,7 +304,7 @@ def instrucalib(
         chi_plot_setting: tp.Union[dict, str] = None, img_setting: tp.Union[dict, str] = None,
         pdf_plot_setting: tp.Union[dict, str] = None, ncpu: int = None
 ):
-    """Pipeline-style qdamp, qbroad calibration.
+    """Calibrate the 'qdamp' and 'qbroad' factor of the instrument in a pipeline process.
 
     A pipeline to do image background subtraction, auto masking, integration, PDF transformation and PDF
     modeling to calibrate the qdamp and qbroad. Also, the accuracy of the calibration is tested by the modeling.
