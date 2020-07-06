@@ -47,7 +47,7 @@ def integrate(
         The path to the poni file. It will be read by pyFAI.
 
     img_files : str
-        The path or a list of paths to the image file. It will be read by fabio.
+        The arbitrary number of paths to the image file. It will be read by fabio.
 
     bg_img_file : str
         The path to the background image file. It should have the same dimension as the data image. If None,
@@ -59,7 +59,7 @@ def integrate(
     bg_scale : float
         The scale of the background. Default 1
 
-    mask_setting : dict
+    mask_setting : dict or 'OFF'
         The settings for the auto-masking. See the arguments for mask_img (
         https://xpdacq.github.io/xpdtools/xpdtools.html?highlight=mask_img#xpdtools.tools.mask_img). To turn
         off the auto masking, enter "OFF".
@@ -68,12 +68,12 @@ def integrate(
         The settings for the integration. See the arguments for integrate1d (
         https://pyfai.readthedocs.io/en/latest/api/pyFAI.html#module-pyFAI.azimuthalIntegrator).
 
-    plot_setting : dict
+    plot_setting : dict or 'OFF'
         The keywords for the matplotlib.pyplot.plot (
         https://matplotlib.org/3.2.1/api/_as_gen/matplotlib.pyplot.plot.html). To turn off the plotting,
         enter "OFF".
 
-    img_setting : dict
+    img_setting : dict or 'OFF'
         The keywords for the matplotlib.pyplot.imshow (
         https://matplotlib.org/3.2.1/api/_as_gen/matplotlib.pyplot.imshow.html). Besides, there is a key
         'z_score', which determines the range of the colormap. The range is mean +/- z_score * std in the

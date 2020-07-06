@@ -2,8 +2,8 @@
 Installation
 ============
 
-Perquisites
------------
+Prerequisites
+-------------
 
 Install `Anaconda <https://docs.conda.io/projects/conda/en/latest/user-guide/install/>`_.
 

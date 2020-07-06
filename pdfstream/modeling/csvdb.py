@@ -225,24 +225,23 @@ def update(file_path: str, info_dct: dict, id_col: str) -> int:
     return row_dct[id_col]
 
 
-def gen_fs_save(db_folder: str, storage_folder: str):
+def gen_fs_save(db_folder: str, storage_folder: str) -> tp.Callable:
     """
     Generate the function save_all to save results of recipes. The database of csv, fgr and cif will be passed
     to the "_save_all" function. If there is no such file, it will be created as an empty csv file.
 
     Parameters
     ----------
-    db_folder
+    db_folder : str
         The folder where the database collection files are saved. If not exists, create one.
 
-    storage_folder
+    storage_folder : str
         The folder where the data files are saved. If not exists, create one.
 
     Returns
     -------
-    save_all
+    save_all : Callable
         A function to save results.
-
     """
     db_path = Path(db_folder)
     if not db_path.is_dir():
