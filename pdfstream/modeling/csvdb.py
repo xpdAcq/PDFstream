@@ -232,14 +232,11 @@ def gen_fs_save(db_folder: str, storage_folder: str):
 
     Parameters
     ----------
-    folder
-        Folder to save the files.
-    csv
-        The path to the csv file containing fitting results information.
-    fgr
-        The path to the csv file containing fitted PDFs information.
-    cif
-        The path to the csv file containing refined structure information.
+    db_folder
+        The folder where the database collection files are saved. If not exists, create one.
+
+    storage_folder
+        The folder where the data files are saved. If not exists, create one.
 
     Returns
     -------

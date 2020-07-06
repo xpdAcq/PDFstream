@@ -2,6 +2,7 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 
 import matplotlib.pyplot as plt
+# noinspection PyProtectedMember
 from pyperclip import PyperclipException
 
 from pdfstream.utils.jupyter import savefig_factory
