@@ -2,6 +2,7 @@
 import typing as tp
 from pathlib import Path, PurePath
 
+import fire
 import matplotlib.pyplot as plt
 from matplotlib.axes import Axes
 from pkg_resources import resource_filename
@@ -12,12 +13,18 @@ import pdfstream.io as io
 import pdfstream.modeling.csvdb as csvdb
 import pdfstream.visualization.main as vis
 
-__all__ = [
-    'integrate',
-    'average',
-    'waterfall',
-    'visualize'
-]
+
+def main():
+    """The CLI entry point. Run google-fire on the name - function mapping."""
+    fire.Fire(
+        {
+            'average': average,
+            'integrate': integrate,
+            'waterfall': waterfall,
+            'visualize': visualize,
+            'instrucalib': instrucalib
+        }
+    )
 
 
 def integrate(
