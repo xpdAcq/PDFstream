@@ -97,9 +97,12 @@ jobs:
       - name: install requirements
         run: conda install --file requirements/build.txt
 
+      - name: install pdfstream
+        run: python -m pip install .
+
       - name: build documents
         run: make -C docs html
-      
+
       - name: deploy to github pages
         uses: JamesIves/github-pages-deploy-action@3.5.7
         with:
