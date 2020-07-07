@@ -97,6 +97,11 @@ jobs:
       - name: install requirements
         run: conda install --file requirements/run.txt --file requirements/build.txt
 
+      - name: install pdfgetx3
+        run: |
+          source activate test
+          easy_install diffpy.pdfgetx-2.1.0.egg
+
       - name: install pdfstream
         run: python -m pip install .
 
