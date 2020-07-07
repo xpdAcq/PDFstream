@@ -20,47 +20,46 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
-    - name: setup-conda
-      uses: s-weigand/setup-conda@v1.0.3
-      with:
-        # Whether to activate the conda base env (Default: 'true')
-        activate-conda: true # optional, default is true
-        # If conda should be updated before running other commands (Default: 'false')
-        update-conda: false # optional, default is false
-        # Python version which should be installed with conda (default: 'Default')
-        python-version: 3.7 # optional, default is default
-        # Additional channels like 'conda-forge' which can be used to install packages
-        conda-channels: conda-forge, diffpy # optional, default is
+      - name: setup-conda
+        uses: s-weigand/setup-conda@v1.0.3
+        with:
+          # Whether to activate the conda base env (Default: 'true')
+          activate-conda: true # optional, default is true
+          # If conda should be updated before running other commands (Default: 'false')
+          update-conda: false # optional, default is false
+          # Python version which should be installed with conda (default: 'Default')
+          python-version: 3.7 # optional, default is default
+          # Additional channels like 'conda-forge' which can be used to install packages
+          conda-channels: conda-forge, diffpy # optional, default is
 
-    - uses: actions/checkout@v2
-      with:
-        repository: st3107/diffpy.pdfgetx-whl
-        token: ${{ secrets.ACCESS_TOKEN }}
+      - uses: actions/checkout@v2
+        with:
+          repository: st3107/diffpy.pdfgetx-whl
+          token: ${{ secrets.ACCESS_TOKEN }}
 
-    - name: install diffpy.pdfgetx
-      run: python -m pip install diffpy.pdfgetx-*.whl
+      - name: install diffpy.pdfgetx
+        run: python -m pip install diffpy.pdfgetx-*.whl
 
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
-    - name: isntall requirements
-      run: conda install --file requirements/run.txt --file requirements/test.txt
+      - name: isntall requirements
+        run: conda install --file requirements/run.txt --file requirements/test.txt
 
-    - name: install pdfstream
-      run: python -m pip install .
+      - name: install pdfstream
+        run: python -m pip install .
 
-    - name: run the tests and check for test coverage
-      run: coverage run -m pytest
+      - name: run the tests and check for test coverage
+        run: coverage run -m pytest
 
-    - name: generate test coverage report and upload to codecov
-      run: |
-        coverage report -m
-        bash <(curl -s https://codecov.io/bash) -t ${{ secrets.CODECOV_TOKEN }}
+      - name: generate test coverage report and upload to codecov
+        run: |
+          coverage report -m
+          bash <(curl -s https://codecov.io/bash) -t ${{ secrets.CODECOV_TOKEN }}
 
-    - name: check code style
-      run: flake8
+      - name: check code style
+        run: flake8
 
   publish:
     # The type of runner that the job will run on
@@ -91,6 +90,16 @@ jobs:
           python-version: 3.7 # optional, default is default
           # Additional channels like 'conda-forge' which can be used to install packages
           conda-channels: conda-forge, diffpy # optional, default is
+
+      - uses: actions/checkout@v2
+        with:
+          repository: st3107/diffpy.pdfgetx-whl
+          token: ${{ secrets.ACCESS_TOKEN }}
+
+      - name: install diffpy.pdfgetx
+        run: python -m pip install diffpy.pdfgetx-*.whl
+
+      - uses: actions/checkout@v2
 
       - name: install requirements
         run: conda install --file requirements/run.txt --file requirements/build.txt
