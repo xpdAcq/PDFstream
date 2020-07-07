@@ -1,0 +1,545 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Use python &mdash; pdfstream 0.0.0b documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script src="../_static/clipboard.min.js"></script>
+        <script src="../_static/copybutton.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Release History" href="../release-history.html" />
+    <link rel="prev" title="Use command line interface (CLI)" href="cli.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> pdfstream
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.0.0b
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Usage</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="cli.html">Use command line interface (CLI)</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Use python</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#average-images">Average images</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#azimuthal-integration">Azimuthal integration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#instrumental-calibration">Instrumental Calibration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#visualization">Visualization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#modeling">Modeling</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../release-history.html">Release History</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../min_versions.html">Minimum Version of Python and NumPy</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">pdfstream</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="index.html">Usage</a> &raquo;</li>
+        
+      <li>Use python</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/usage/python.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="use-python">
+<h1>Use python<a class="headerlink" href="#use-python" title="Permalink to this headline">¶</a></h1>
+<p>The data processing are done by using python functions.</p>
+<div class="section" id="average-images">
+<h2>Average images<a class="headerlink" href="#average-images" title="Permalink to this headline">¶</a></h2>
+<p>To average several diffraction images to be one image, use</p>
+<dl class="py function">
+<dt id="pdfstream.cli.average">
+<code class="sig-prename descclassname">pdfstream.cli.</code><code class="sig-name descname">average</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">out_file</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)">str</a></span></em>, <em class="sig-param"><span class="o">*</span><span class="n">img_files</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)">str</a></span></em>, <em class="sig-param"><span class="n">weights</span><span class="p">:</span> <span class="n">List<span class="p">[</span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)">float</a><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)">None</a><a class="reference internal" href="../_modules/pdfstream/cli.html#average"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdfstream.cli.average" title="Permalink to this definition">¶</a></dt>
+<dd><p>Average the single channel image files with weights.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>out_file</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – The output file path. It will be the type as the first image in img_files.</p></li>
+<li><p><strong>img_files</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – The image files to be averaged.</p></li>
+<li><p><strong>weights</strong> (<em>an iterable of floats</em>) – The weights for the images. If None, images will not be weighted when averaged.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="azimuthal-integration">
+<h2>Azimuthal integration<a class="headerlink" href="#azimuthal-integration" title="Permalink to this headline">¶</a></h2>
+<p>To integrate the diffraction image in azimuthal direction, use</p>
+<dl class="py function">
+<dt id="pdfstream.cli.integrate">
+<code class="sig-prename descclassname">pdfstream.cli.</code><code class="sig-name descname">integrate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">poni_file</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)">str</a></span></em>, <em class="sig-param"><span class="o">*</span><span class="n">img_files</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)">str</a></span></em>, <em class="sig-param"><span class="n">bg_img_file</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)">str</a></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">output_dir</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)">str</a></span> <span class="o">=</span> <span class="default_value">'.'</span></em>, <em class="sig-param"><span class="n">bg_scale</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)">float</a></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">mask_setting</span><span class="p">:</span> <span class="n">Union<span class="p">[</span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)">dict</a><span class="p">, </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)">str</a><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">integ_setting</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)">dict</a></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">plot_setting</span><span class="p">:</span> <span class="n">Union<span class="p">[</span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)">dict</a><span class="p">, </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)">str</a><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">img_setting</span><span class="p">:</span> <span class="n">Union<span class="p">[</span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)">dict</a><span class="p">, </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)">str</a><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; List<span class="p">[</span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)">str</a><span class="p">]</span><a class="reference internal" href="../_modules/pdfstream/cli.html#integrate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdfstream.cli.integrate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Conduct azimuthal integration on the two dimensional diffraction images.</p>
+<p>The image will be first subtracted by background if background image file is given. Then, it will be binned
+in azimuthal direction according to the geometry provided by the poni file. The pixels far away from the
+average in each bin will be masked. The mask will be applied on the background subtracted image and the
+image will be integrated again by the pyFAI. The polarization correction and pixel-splitting algorithm will
+be applied according to user settings before the integration. The results are saved as chi files.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>poni_file</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – The path to the poni file. It will be read by pyFAI.</p></li>
+<li><p><strong>img_files</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – The arbitrary number of paths to the image file. It will be read by fabio.</p></li>
+<li><p><strong>bg_img_file</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – The path to the background image file. It should have the same dimension as the data image. If None,
+no background subtraction will be done.</p></li>
+<li><p><strong>output_dir</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – The directory to save the chi data file. Default current working directory.</p></li>
+<li><p><strong>bg_scale</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – The scale of the background. Default 1</p></li>
+<li><p><strong>mask_setting</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a><em> or </em><em>'OFF'</em>) – The settings for the auto-masking. See the arguments for mask_img (
+<a class="reference external" href="https://xpdacq.github.io/xpdtools/xpdtools.html?highlight=mask_img#xpdtools.tools.mask_img">https://xpdacq.github.io/xpdtools/xpdtools.html?highlight=mask_img#xpdtools.tools.mask_img</a>). To turn
+off the auto masking, enter “OFF”.</p></li>
+<li><p><strong>integ_setting</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – The settings for the integration. See the arguments for integrate1d (
+<a class="reference external" href="https://pyfai.readthedocs.io/en/latest/api/pyFAI.html#module-pyFAI.azimuthalIntegrator">https://pyfai.readthedocs.io/en/latest/api/pyFAI.html#module-pyFAI.azimuthalIntegrator</a>).</p></li>
+<li><p><strong>plot_setting</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a><em> or </em><em>'OFF'</em>) – The keywords for the matplotlib.pyplot.plot (
+<a class="reference external" href="https://matplotlib.org/3.2.1/api/_as_gen/matplotlib.pyplot.plot.html">https://matplotlib.org/3.2.1/api/_as_gen/matplotlib.pyplot.plot.html</a>). To turn off the plotting,
+enter “OFF”.</p></li>
+<li><p><strong>img_setting</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a><em> or </em><em>'OFF'</em>) – The keywords for the matplotlib.pyplot.imshow (
+<a class="reference external" href="https://matplotlib.org/3.2.1/api/_as_gen/matplotlib.pyplot.imshow.html">https://matplotlib.org/3.2.1/api/_as_gen/matplotlib.pyplot.imshow.html</a>). Besides, there is a key
+‘z_score’, which determines the range of the colormap. The range is mean +/- z_score * std in the
+statistics of the image. To turn of the image, enter “OFF”.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>chi_files</strong> – The path to the output chi file.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>a list of strings</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="instrumental-calibration">
+<h2>Instrumental Calibration<a class="headerlink" href="#instrumental-calibration" title="Permalink to this headline">¶</a></h2>
+<p>To calibrate the instrumental effect on calibration, use</p>
+<dl class="py function">
+<dt id="pdfstream.cli.instrucalib">
+<code class="sig-prename descclassname">pdfstream.cli.</code><code class="sig-name descname">instrucalib</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">poni_file</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)">str</a></span></em>, <em class="sig-param"><span class="n">img_file</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)">str</a></span></em>, <em class="sig-param"><span class="n">cfg_file</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)">str</a></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">stru_file</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)">str</a></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">output_dir</span><span class="o">=</span><span class="default_value">'.'</span></em>, <em class="sig-param"><span class="n">fit_range</span><span class="p">:</span> <span class="n">Tuple<span class="p">[</span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)">float</a><span class="p">, </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)">float</a><span class="p">, </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)">float</a><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">2.0, 60.0, 0.01</span></em>, <em class="sig-param"><span class="n">qdamp0</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)">float</a></span> <span class="o">=</span> <span class="default_value">0.04</span></em>, <em class="sig-param"><span class="n">qbroad0</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)">float</a></span> <span class="o">=</span> <span class="default_value">0.02</span></em>, <em class="sig-param"><span class="n">bg_img_file</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)">str</a></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">bg_scale</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)">float</a></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">mask_setting</span><span class="p">:</span> <span class="n">Union<span class="p">[</span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)">dict</a><span class="p">, </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)">str</a><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">integ_setting</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)">dict</a></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">chi_plot_setting</span><span class="p">:</span> <span class="n">Union<span class="p">[</span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)">dict</a><span class="p">, </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)">str</a><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">img_setting</span><span class="p">:</span> <span class="n">Union<span class="p">[</span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)">dict</a><span class="p">, </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)">str</a><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">pdf_plot_setting</span><span class="p">:</span> <span class="n">Union<span class="p">[</span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)">dict</a><span class="p">, </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)">str</a><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">ncpu</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)">int</a></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pdfstream/cli.html#instrucalib"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdfstream.cli.instrucalib" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calibrate the ‘qdamp’ and ‘qbroad’ factor of the instrument in a pipeline process.</p>
+<p>A pipeline to do image background subtraction, auto masking, integration, PDF transformation and PDF
+modeling to calibrate the qdamp and qbroad. Also, the accuracy of the calibration is tested by the modeling.
+The output will be the processed data in ‘iq’, ‘sq’, ‘fq’, ‘gr’ files (depends on ‘cfg’ file), the fitting
+results in ‘csv’ file, the refined structure in ‘cif’ file, the best fits data in ‘fgr’ file and there is a
+folder ‘_pdfstream_db’containing the meta data of the FitRecipe, FitContribution and PDFGenerator of the
+refined model in the three ‘csv’ files.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>poni_file</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – The path to the poni file. It will be read by pyFAI.</p></li>
+<li><p><strong>img_file</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – The path to the image file. It will be read by fabio.</p></li>
+<li><p><strong>cfg_file</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – The path to the PDF configuratino file. Usually, a ‘cfg’ file or a processed data file like ‘gr’ file
+with meta data in the header. If None, use the ‘Ni_gr_file.gr’ in ‘pdfstream/test_data’.</p></li>
+<li><p><strong>stru_file</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – The path to the structure file. Usually, a ‘cif’ file. If None, use the ‘Ni_cif_file.cif’ in
+‘pdfstream/test_data’.</p></li>
+<li><p><strong>output_dir</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – The directory to save all the outputs. Default current working directory.</p></li>
+<li><p><strong>fit_range</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)"><em>tuple</em></a>) – The rmin, rmax and rstep in the unit of angstrom.</p></li>
+<li><p><strong>qdamp0</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – The initial value for the Q damping factor.</p></li>
+<li><p><strong>qbroad0</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – The initial vluae for the Q broadening factor.</p></li>
+<li><p><strong>bg_img_file</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – The path to the background image file. It should have the same dimension as the data image. If None,
+no background subtraction will be done.</p></li>
+<li><p><strong>bg_scale</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – The scale for background subtraction. If None, use 1.</p></li>
+<li><p><strong>mask_setting</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a><em> or </em><em>'OFF'</em>) – The settings for the auto-masking. See the arguments for mask_img (
+<a class="reference external" href="https://xpdacq.github.io/xpdtools/xpdtools.html?highlight=mask_img#xpdtools.tools.mask_img">https://xpdacq.github.io/xpdtools/xpdtools.html?highlight=mask_img#xpdtools.tools.mask_img</a>). To turn
+off the auto masking, enter “OFF”.</p></li>
+<li><p><strong>integ_setting</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – The settings for the integration. See the arguments for integrate1d (
+<a class="reference external" href="https://pyfai.readthedocs.io/en/latest/api/pyFAI.html#module-pyFAI.azimuthalIntegrator">https://pyfai.readthedocs.io/en/latest/api/pyFAI.html#module-pyFAI.azimuthalIntegrator</a>).</p></li>
+<li><p><strong>img_setting</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a><em> or </em><em>'OFF'</em>) – The keywords for the matplotlib.pyplot.imshow (
+<a class="reference external" href="https://matplotlib.org/3.2.1/api/_as_gen/matplotlib.pyplot.imshow.html">https://matplotlib.org/3.2.1/api/_as_gen/matplotlib.pyplot.imshow.html</a>). Besides, there is a key
+‘z_score’, which determines the range of the colormap. The range is mean +/- z_score * std in the
+statistics of the image. To turn of the image, enter “OFF”.</p></li>
+<li><p><strong>chi_plot_setting</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a><em> or </em><em>'OFF'</em>) – The kwargs of chi data plotting. See matplotlib.pyplot.plot(
+<a class="reference external" href="https://matplotlib.org/3.2.1/api/_as_gen/matplotlib.pyplot.plot.html">https://matplotlib.org/3.2.1/api/_as_gen/matplotlib.pyplot.plot.html</a>). If ‘OFF’, skip visualization.</p></li>
+<li><p><strong>pdf_plot_setting</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a><em> or </em><em>'OFF'</em>) – The kwargs of pdf data plotting. See matplotlib.pyplot.plot(
+<a class="reference external" href="https://matplotlib.org/3.2.1/api/_as_gen/matplotlib.pyplot.plot.html">https://matplotlib.org/3.2.1/api/_as_gen/matplotlib.pyplot.plot.html</a>). If ‘OFF’, skip visualization.</p></li>
+<li><p><strong>ncpu</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – The number of cpu used in parallel computing in the modeling. If None, no parallel computing.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="visualization">
+<h2>Visualization<a class="headerlink" href="#visualization" title="Permalink to this headline">¶</a></h2>
+<p>To visualize a single data file, use</p>
+<dl class="py function">
+<dt id="pdfstream.cli.visualize">
+<code class="sig-prename descclassname">pdfstream.cli.</code><code class="sig-name descname">visualize</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data_file</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)">str</a></span></em>, <em class="sig-param"><span class="n">ax</span><span class="p">:</span> <span class="n">matplotlib.axes._axes.Axes</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">mode</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)">str</a></span> <span class="o">=</span> <span class="default_value">'line'</span></em>, <em class="sig-param"><span class="n">normal</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)">bool</a></span> <span class="o">=</span> <span class="default_value">True</span></em>, <em class="sig-param"><span class="n">text</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)">str</a></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">text_xy</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)">tuple</a></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">label</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)">str</a></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">minor_tick</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)">int</a></span> <span class="o">=</span> <span class="default_value">2</span></em>, <em class="sig-param"><span class="n">legend</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)">str</a></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">color</span><span class="p">:</span> <span class="n">Iterable</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">show_fig</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)">bool</a></span> <span class="o">=</span> <span class="default_value">True</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span> &#x2192; matplotlib.axes._axes.Axes<a class="reference internal" href="../_modules/pdfstream/cli.html#visualize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdfstream.cli.visualize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Visualize the data in a single data file.</p>
+<p>The data must be multi-columns matrix in a txt file. A header can be included in the file and it won’t be
+read. The visualization has different modes for different kinds of plotting. Currently, it supports</p>
+<dl class="simple">
+<dt>‘line’ mode</dt><dd><p>The single curve of x and y data.</p>
+</dd>
+<dt>‘fit’ mode</dt><dd><p>One curve for data, one curve for the fit and a difference curve below it.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data_file</strong> (<em>file path</em>) – The file path. The file contains column data. The required format depends on the ‘mode’.
+If mode = ‘line’, data = (x_array, y_array)
+If mode = ‘fit’, data = (x_array, y_array, ycalc_array, ydiff_array)</p></li>
+<li><p><strong>kwargs</strong> (<em>optional</em>) – The kwargs arguments for the plotting of each data. It depends on mode.
+If mode = ‘line’, kwargs in (‘xy_kwargs’,).
+If mode = ‘fit’, kwargs in (‘xy_kwargs’, ‘xycalc_kwargs’, ‘xydiff_kwargs’, ‘xyzero_kwargs’,
+‘fill_kwargs’, ‘yzero’).</p></li>
+<li><p><strong>mode</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – The plotting mode.</p></li>
+<li><p><strong>ax</strong> (<em>Axes</em>) – The axes to visualize the data. If None, use current axes. (Not used for CLI)</p></li>
+<li><p><strong>normal</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – If True, the second and the following rows in data will be normalized by (max - min). Else, do nothing.</p></li>
+<li><p><strong>text</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – The text to annotate the curve.</p></li>
+<li><p><strong>text_xy</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)"><em>tuple</em></a>) – The tuple of x and y position of the annotation in data coordinates. If None, use the default in the
+‘tools.auto_text’.</p></li>
+<li><p><strong>label</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – The label type used in automatic labeling. Acceptable types are listed in ‘tools._LABELS’</p></li>
+<li><p><strong>minor_tick</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – How many parts that the minor ticks separate the space between the two adjacent major ticks. Default 2.
+If None, no minor ticks.</p></li>
+<li><p><strong>legend</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – The legend label for the curve.</p></li>
+<li><p><strong>color</strong> (<em>an iterable of colors</em>) – The color of the plots. If None, use default color cycle in rc.</p></li>
+<li><p><strong>show_fig</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – If True, the figure will be pop out and shown. Else, stay in the cache.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>ax</strong> – The axes with the plot.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Axes</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p>To visualize several data files, use</p>
+<dl class="py function">
+<dt id="pdfstream.cli.waterfall">
+<code class="sig-prename descclassname">pdfstream.cli.</code><code class="sig-name descname">waterfall</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">data_files</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)">str</a></span></em>, <em class="sig-param"><span class="n">ax</span><span class="p">:</span> <span class="n">matplotlib.axes._axes.Axes</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">mode</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)">str</a></span> <span class="o">=</span> <span class="default_value">'line'</span></em>, <em class="sig-param"><span class="n">normal</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)">bool</a></span> <span class="o">=</span> <span class="default_value">True</span></em>, <em class="sig-param"><span class="n">stack</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)">bool</a></span> <span class="o">=</span> <span class="default_value">True</span></em>, <em class="sig-param"><span class="n">gap</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)">float</a></span> <span class="o">=</span> <span class="default_value">0</span></em>, <em class="sig-param"><span class="n">texts</span><span class="p">:</span> <span class="n">List<span class="p">[</span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)">str</a><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">text_xy</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)">tuple</a></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">label</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)">str</a></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">minor_tick</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)">int</a><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">2</span></em>, <em class="sig-param"><span class="n">legends</span><span class="p">:</span> <span class="n">List<span class="p">[</span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)">str</a><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">colors</span><span class="p">:</span> <span class="n">Iterable</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">show_fig</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)">bool</a></span> <span class="o">=</span> <span class="default_value">True</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span> &#x2192; matplotlib.axes._axes.Axes<a class="reference internal" href="../_modules/pdfstream/cli.html#waterfall"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdfstream.cli.waterfall" title="Permalink to this definition">¶</a></dt>
+<dd><p>Visualize the data in multiple data files in a waterfall or comparison plot.</p>
+<p>The data must be multi-columns matrix in a txt file. A header can be included in the file and it won’t be
+read. The plots will be stacked in a waterfall if stack = True or overlapping together if stack = False. The
+visualization has different modes for different kinds of plotting. Currently, it supports</p>
+<dl class="simple">
+<dt>‘line’ mode</dt><dd><p>Each dataset is a single curve of x and y data.</p>
+</dd>
+<dt>‘fit’ mode</dt><dd><p>Each dataset contains three curves, one curve for data, one curve for the fit and a difference curve
+below it.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data_files</strong> (<em>a list of file paths</em>) – The file paths. Each file contains column data. The required format depends on the ‘mode’.
+If mode = ‘line’, data = (x_array, y_array)
+If mode = ‘fit’, data = (x_array, y_array, ycalc_array, ydiff_array)</p></li>
+<li><p><strong>kwargs</strong> (<em>optional</em>) – The kwargs arguments for the plotting of each data. It depends on mode.
+If mode = ‘line’, kwargs in (‘xy_kwargs’,).
+If mode = ‘fit’, kwargs in (‘xy_kwargs’, ‘xycalc_kwargs’, ‘xydiff_kwargs’, ‘xyzero_kwargs’,
+‘fill_kwargs’, ‘yzero’).</p></li>
+<li><p><strong>mode</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – The plotting mode. Currently support ‘line’, ‘fit’.</p></li>
+<li><p><strong>ax</strong> (<em>Axes</em>) – The axes to visualize the data. If None, use current axes. (Not used for CLI)</p></li>
+<li><p><strong>normal</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – If True, the second and the following rows in data will be normalized by (max - min). Else, do nothing.</p></li>
+<li><p><strong>stack</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – If True, the second and the third rows will be shifted so that there will be a gap between data (
+waterfall plot). Else, the data will be plotted without shifting (comparison plot).</p></li>
+<li><p><strong>gap</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – The gap between the adjacent curves. It is defined by the nearest points in vertical direction.</p></li>
+<li><p><strong>texts</strong> (<em>an iterable of str</em>) – The texts to annotate the curves. It has the same order as the curves.</p></li>
+<li><p><strong>text_xy</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)"><em>tuple</em></a>) – The tuple of x and y position of the annotation in data coordinates. If None, use the default in the
+‘tools.auto_text’.</p></li>
+<li><p><strong>label</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – The label type used in automatic labeling. Acceptable types are listed in ‘tools._LABELS’. If None,
+the label will be guessed according to the suffix of the fist file in the list.</p></li>
+<li><p><strong>minor_tick</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – How many parts that the minor ticks separate the space between the two adjacent major ticks. Default 2.
+If None, no minor ticks.</p></li>
+<li><p><strong>legends</strong> (<em>a list of str</em>) – The legend labels for the curves.</p></li>
+<li><p><strong>colors</strong> (<em>an iterable of colors</em>) – The color of the plots. If None, use default color cycle in rc.</p></li>
+<li><p><strong>show_fig</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – If True, the figure will be pop out and shown. Else, stay in the cache.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>ax</strong> – The axes with the plot.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Axes</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="modeling">
+<h2>Modeling<a class="headerlink" href="#modeling" title="Permalink to this headline">¶</a></h2>
+<p>To create a fit recipe, use</p>
+<dl class="py function">
+<dt id="pdfstream.modeling.main.multi_phase">
+<code class="sig-prename descclassname">pdfstream.modeling.main.</code><code class="sig-name descname">multi_phase</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">phases</span><span class="p">:</span> <span class="n">Iterable<span class="p">[</span>Union<span class="p">[</span>Tuple<span class="p">[</span>Callable<span class="p">, </span>pyobjcryst._pyobjcryst.Crystal<span class="p">]</span><span class="p">, </span>pyobjcryst._pyobjcryst.Crystal<span class="p">]</span><span class="p">]</span></span></em>, <em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">pdfstream.modeling.fitobjs.MyParser</span></em>, <em class="sig-param"><span class="n">fit_range</span><span class="p">:</span> <span class="n">Tuple<span class="p">[</span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)">float</a><span class="p">, </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)">float</a><span class="p">, </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)">float</a><span class="p">]</span></span></em>, <em class="sig-param"><span class="n">default_value</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)">dict</a></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">bounds</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)">dict</a></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">add_xyz</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)">bool</a></span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">ncpu</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)">int</a></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; pdfstream.modeling.fitobjs.MyRecipe<a class="reference internal" href="../_modules/pdfstream/modeling/main.html#multi_phase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdfstream.modeling.main.multi_phase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make the recipe of a multiphase crystal pdf refinement.</p>
+<p>The parameters are taged as ‘scale’, ‘delta2’, ‘lat’, ‘adp’, ‘xyz’ (optional) with the suffix
+‘_{the name of the generator}’. The unit depends on the structure loaded in the generator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>phases</strong> (<em>Iterable.</em>) – An iterable of structures or tuple of characteristic function and structure. The structure is the Crystal.</p></li>
+<li><p><strong>data</strong> (<em>MyParser</em>) – A parser with parsed data.</p></li>
+<li><p><strong>fit_range</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)"><em>tuple</em></a>) – The rmin, rmax and rstep in the unit of angstrom.</p></li>
+<li><p><strong>ncpu</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – The number of cpu used in parallel computing. If None, no parallel computing.</p></li>
+<li><p><strong>default_value</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – The the dictionary of default values.
+If None, the following values will be used:
+tag     initiate value      range
+scale   0                   (0, inf)
+delta2  0                   (0, inf)
+lat     par.value           (0, 2 * par.value)
+adp     (U) 0.006 (B) 0.16  (0, inf)
+xyz     par.value           None</p></li>
+<li><p><strong>bounds</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – The mapping from the name of the variable to the bounds.</p></li>
+<li><p><strong>add_xyz</strong> – Whether to constrain xyz coordinates. Default False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>recipe</strong> – The recipe with symmetrically constrained variables and without refinement.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>MyRecipe</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p>To optimize the model in the recipe, use</p>
+<dl class="py function">
+<dt id="pdfstream.modeling.main.optimize">
+<code class="sig-prename descclassname">pdfstream.modeling.main.</code><code class="sig-name descname">optimize</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">recipe</span><span class="p">:</span> <span class="n">pdfstream.modeling.fitobjs.MyRecipe</span></em>, <em class="sig-param"><span class="n">tags</span><span class="p">:</span> <span class="n">List[Union[str, Tuple[str, …]]]</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)">None</a><a class="reference internal" href="../_modules/pdfstream/modeling/main.html#optimize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdfstream.modeling.main.optimize" title="Permalink to this definition">¶</a></dt>
+<dd><p>First fix all variables and then free the variables one by one and fit the recipe.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>recipe</strong> – The recipe to fit.</p></li>
+<li><p><strong>tags</strong> – The tags of variables to free. It can be single tag or a tuple of tags.</p></li>
+<li><p><strong>kwargs</strong> – The kwargs of the ‘fit’.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<p>To report the optimization results, use</p>
+<dl class="py function">
+<dt id="pdfstream.modeling.main.report">
+<code class="sig-prename descclassname">pdfstream.modeling.main.</code><code class="sig-name descname">report</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">recipe</span><span class="p">:</span> <span class="n">pdfstream.modeling.fitobjs.MyRecipe</span></em><span class="sig-paren">)</span> &#x2192; diffpy.srfit.fitbase.fitresults.FitResults<a class="reference internal" href="../_modules/pdfstream/modeling/main.html#report"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdfstream.modeling.main.report" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print out the fitting result.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>recipe</strong> (<em>MyRecipe</em>) – The recipe after refinement.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>res</strong> – The object contains the fit results.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>FitResults</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p>To save the results, first generate the save function that link to db collections, using</p>
+<dl class="py function">
+<dt id="pdfstream.modeling.csvdb.gen_fs_save">
+<code class="sig-prename descclassname">pdfstream.modeling.csvdb.</code><code class="sig-name descname">gen_fs_save</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">db_folder</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)">str</a></span></em>, <em class="sig-param"><span class="n">storage_folder</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)">str</a></span></em><span class="sig-paren">)</span> &#x2192; Callable<a class="reference internal" href="../_modules/pdfstream/modeling/csvdb.html#gen_fs_save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdfstream.modeling.csvdb.gen_fs_save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate the function save_all to save results of recipes. The database of csv, fgr and cif will be passed
+to the “_save_all” function. If there is no such file, it will be created as an empty csv file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>db_folder</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – The folder where the database collection files are saved. If not exists, create one.</p></li>
+<li><p><strong>storage_folder</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – The folder where the data files are saved. If not exists, create one.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>save_all</strong> – A function to save results.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Callable</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p>Then, use the returned function to save the recipe.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../release-history.html" class="btn btn-neutral float-right" title="Release History" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="cli.html" class="btn btn-neutral float-left" title="Use command line interface (CLI)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Songsheng Tao
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
