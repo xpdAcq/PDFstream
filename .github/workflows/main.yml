@@ -27,7 +27,7 @@ jobs:
       uses: s-weigand/setup-conda@v1.0.3
       with:
         # Whether to activate the conda base env (Default: 'true')
-        activate-conda: false # optional, default is true
+        activate-conda: true # optional, default is true
         # If conda should be updated before running other commands (Default: 'false')
         update-conda: false # optional, default is false
         # Python version which should be installed with conda (default: 'Default')
@@ -35,34 +35,32 @@ jobs:
         # Additional channels like 'conda-forge' which can be used to install packages
         conda-channels: conda-forge, diffpy # optional, default is
 
-    - name: create conda environment 'test'
-      run: conda create -n test --file requirements/run.txt --file requirements/test.txt
+    - uses: actions/checkout@v2
+      with:
+        repository: st3107/diffpy.pdfgetx-whl
+        token: ${{ secrets.ACCESS_TOKEN }}
 
-    - name: install pdfgetx3
-      run: |
-        source activate test
-        easy_install diffpy.pdfgetx-2.1.0.egg
+    - name: install diffpy.pdfgetx
+      run: python -m pip install diffpy.pdfgetx-*.whl
+
+    - uses: actions/checkout@v2
+
+    - name: isntall requirements
+      run: conda install --file requirements/run.txt --file requirements/test.txt
 
     - name: install pdfstream
-      run: |
-        source activate test
-        python -m pip install .
+      run: python -m pip install .
 
     - name: run the tests and check for test coverage
-      run: |
-        source activate test
-        coverage run -m pytest
+      run: coverage run -m pytest
 
     - name: generate test coverage report and upload to codecov
       run: |
-        source activate test
         coverage report -m
         bash <(curl -s https://codecov.io/bash) -t ${{ secrets.CODECOV_TOKEN }}
 
     - name: check code style
-      run: |
-        source activate test
-        flake8
+      run: flake8
 
   publish:
     # The type of runner that the job will run on
@@ -96,9 +94,6 @@ jobs:
 
       - name: install requirements
         run: conda install --file requirements/run.txt --file requirements/build.txt
-
-      - name: install pdfgetx3
-        run: easy_install diffpy.pdfgetx-2.1.0.egg
 
       - name: install pdfstream
         run: python -m pip install .
