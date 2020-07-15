@@ -10,6 +10,9 @@ if __PDFGETX_AVAL__:
 from matplotlib.gridspec import GridSpec
 from numpy import ndarray
 
+PDFGetter = PDFGetter
+PDFConfig = PDFConfig
+
 __all__ = [
     'make_pdfgetter',
     'use_pdfgetter',
