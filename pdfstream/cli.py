@@ -199,6 +199,8 @@ def waterfall(
     ax : Axes
         The axes with the plot.
     """
+    if len(data_files) == 0:
+        raise ValueError("No input file.")
     dataset = (io.load_array(_) for _ in data_files)
     if label is None:
         label = PurePath(data_files[0]).suffix.replace('.', '')
