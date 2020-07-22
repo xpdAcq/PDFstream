@@ -61,6 +61,11 @@ def test_waterfall(db, keys, kwargs):
     plt.close()
 
 
+def test_waterfall_exception():
+    with pytest.raises(ValueError):
+        cli.waterfall(*tuple())
+
+
 @pytest.mark.parametrize(
     'key,kwargs', [
         ('Ni_gr_file', {'mode': 'line', 'text': 'Ni', 'xy_kwargs': {'color': 'black'}}),
