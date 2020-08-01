@@ -3,17 +3,13 @@ import types
 from typing import Union, List, Callable, Dict, Tuple
 
 import numpy as np
+from diffpy.pdfgetx import PDFGetter, PDFConfig
 from diffpy.srfit.fitbase import FitRecipe, ProfileGenerator
 from diffpy.srfit.pdf import PDFParser
 from diffpy.structure import Structure
 from numpy import ndarray
 from pyobjcryst.crystal import Crystal
 from pyobjcryst.molecule import Molecule
-
-from pdfstream.transformation import __PDFGETX_AVAL__
-
-if __PDFGETX_AVAL__:
-    from diffpy.pdfgetx import PDFGetter, PDFConfig
 
 __all__ = ["GenConfig", "FunConfig", "ConConfig", "MyRecipe", "MyParser"]
 

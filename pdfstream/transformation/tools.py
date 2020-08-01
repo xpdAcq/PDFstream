@@ -2,11 +2,7 @@
 from collections import OrderedDict
 
 import matplotlib.pyplot as plt
-
-from pdfstream.transformation import __PDFGETX_AVAL__
-
-if __PDFGETX_AVAL__:
-    from diffpy.pdfgetx import PDFGetter, PDFConfig
+from diffpy.pdfgetx import PDFGetter, PDFConfig
 from matplotlib.gridspec import GridSpec
 from numpy import ndarray
 

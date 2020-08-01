@@ -3,14 +3,10 @@ from pathlib import Path
 
 import fabio
 import pyFAI
-
-from pdfstream.transformation import __PDFGETX_AVAL__
-
-if __PDFGETX_AVAL__:
-    from diffpy.pdfgetx import PDFConfig, PDFGetter
-from pyobjcryst import loadCrystal
+from diffpy.pdfgetx import PDFConfig, PDFGetter
 from diffpy.structure import loadStructure
 from numpy import ndarray
+from pyobjcryst import loadCrystal
 
 from pdfstream.utils.data import load_data
 
