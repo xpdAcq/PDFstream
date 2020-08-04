@@ -384,13 +384,18 @@ def sgconstrain(recipe: MyRecipe, gen_name: str = None, con_name: str = None, sg
     return variables
 
 
-def sgconstrain_all(recipe: MyRecipe, dv: dict = None, bounds: dict = None, add_xyz: bool = False):
+def sgconstrain_all(recipe: MyRecipe, dv: dict = None, bounds: dict = None, add_xyz: dict = None):
     """Use space group to constrain all the generators in the recipe. See sgconstrain for details."""
+    if add_xyz is None:
+        add_xyz = dict()
     variables = dict()
     for conconfig in recipe.configs:
         for genconfig in conconfig.genconfigs:
             variables.update(
-                sgconstrain(recipe, genconfig.name, dv=dv, bounds=bounds, add_xyz=add_xyz)
+                sgconstrain(
+                    recipe, genconfig.name, dv=dv, bounds=bounds,
+                    add_xyz=add_xyz.get("{}.{}".format(conconfig.name, genconfig.name), False)
+                )
             )
     return variables
 

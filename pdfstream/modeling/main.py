@@ -77,7 +77,7 @@ def multi_phase(phases: tp.Iterable[tp.Union[tp.Tuple[tp.Callable, Crystal], Cry
                 fit_range: tp.Tuple[float, float, float],
                 default_value: dict = None,
                 bounds: dict = None,
-                add_xyz: bool = False,
+                add_xyz: dict = None,
                 ncpu: int = None) -> MyRecipe:
     """Make the recipe of a multiphase crystal pdf refinement.
 
@@ -111,8 +111,9 @@ def multi_phase(phases: tp.Iterable[tp.Union[tp.Tuple[tp.Callable, Crystal], Cry
     bounds : dict
         The mapping from the name of the variable to the bounds.
 
-    add_xyz
-        Whether to constrain xyz coordinates. Default False.
+    add_xyz : dict
+        The keys are the "{}.{}".format(ConConfig.name, GenConfig.name) and the values are the bool. If True,
+        add xyz parameters in that generator. Else, don't add.
 
     Returns
     -------
