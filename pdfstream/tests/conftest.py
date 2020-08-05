@@ -44,6 +44,6 @@ DB = {
 }
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def db():
     return DB
