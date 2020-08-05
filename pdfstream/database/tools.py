@@ -8,7 +8,7 @@ from diffpy.srfit.structure.srrealparset import SrRealParSet
 GEN = tp.Union[PDFGenerator, DebyePDFGenerator]
 
 
-def lattice_to_dict(lattice: SrRealParSet, angunits="rad"):
+def lattice_to_dict(lattice: SrRealParSet, angunits="rad") -> dict:
     """Convert lattice parameter set to dictionary. If angle is in radian, convert it to degree."""
     dct = dict(zip(lattice.getNames(), lattice.getValues()))
     if angunits == "rad":
@@ -17,7 +17,7 @@ def lattice_to_dict(lattice: SrRealParSet, angunits="rad"):
     return dct
 
 
-def atom_to_dict(atom: SrRealParSet):
+def atom_to_dict(atom: SrRealParSet) -> dict:
     """Convert atom parameter set to dictionary."""
     dct = dict(zip(atom.getNames(), atom.getValues()))
     dct.update(
@@ -29,7 +29,7 @@ def atom_to_dict(atom: SrRealParSet):
     return dct
 
 
-def structure_to_dict(phase: SrRealParSet):
+def structure_to_dict(phase: SrRealParSet) -> dict:
     """Convert structure parameter set to dictionary."""
     return {
         'lattice': lattice_to_dict(phase.getLattice(), angunits=phase.angunits),
@@ -37,7 +37,7 @@ def structure_to_dict(phase: SrRealParSet):
     }
 
 
-def conresult_to_dict(result: ContributionResults):
+def conresult_to_dict(result: ContributionResults) -> dict:
     """Convert fit contribution result to dictionary."""
     return {
         'x': result.x.tolist(),
@@ -50,7 +50,7 @@ def conresult_to_dict(result: ContributionResults):
     }
 
 
-def fitresult_to_dict(result: FitResults):
+def fitresult_to_dict(result: FitResults) -> dict:
     """Convert fit result to dictionary."""
     return {
         'varnames': result.varnames,
