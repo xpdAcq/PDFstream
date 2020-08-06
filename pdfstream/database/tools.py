@@ -1,6 +1,7 @@
 import math
 import typing as tp
 
+from diffpy.srfit.fitbase import FitRecipe
 from diffpy.srfit.fitbase.fitresults import FitResults, ContributionResults
 from diffpy.srfit.pdf import PDFGenerator, DebyePDFGenerator
 from diffpy.srfit.structure.srrealparset import SrRealParSet
@@ -35,6 +36,16 @@ def structure_to_dict(phase: SrRealParSet) -> dict:
         'lattice': lattice_to_dict(phase.getLattice(), angunits=phase.angunits),
         'atoms': [atom_to_dict(atom) for atom in phase.getScatterers()]
     }
+
+
+def gather_structures(recipe: FitRecipe) -> tp.Generator:
+    """Yield the contribution name, generator name and the dictionary expression of the structure."""
+    for con_name, con in recipe.contributions.items():
+        genresults = {
+            gen_name: structure_to_dict(gen.phase)
+            for gen_name, gen in con.generators.items()
+        }
+        yield con_name, genresults
 
 
 def conresult_to_dict(result: ContributionResults) -> dict:
@@ -74,3 +85,12 @@ def fitresult_to_dict(result: FitResults) -> dict:
             n: conresult_to_dict(r) for n, r in result.conresults.items()
         }
     }
+
+
+def recipe_to_dict(recipe: FitRecipe) -> dict:
+    """Convert the fit result in recipe to a database friendly dictionary."""
+    result = FitResults(recipe)
+    doc = fitresult_to_dict(result)
+    for con_name, genresults in gather_structures(recipe):
+        doc['conresults'][con_name]['genresults'] = genresults
+    return doc

@@ -1,7 +1,6 @@
 import pytest
-from diffpy.srfit.fitbase import FitResults
 
-from pdfstream.database.tools import fitresult_to_dict, structure_to_dict
+from pdfstream.database.tools import recipe_to_dict
 from pdfstream.modeling.main import multi_phase, MyParser, optimize
 
 
@@ -15,11 +14,6 @@ def recipe(db):
     return recipe
 
 
-def test_fitresult_to_dict(recipe):
-    result = FitResults(recipe)
-    fitresult_to_dict(result)
-
-
-def test_structure_to_dict(recipe):
-    gen = recipe.multi_phase.G0
-    structure_to_dict(gen.phase)
+def test_recipe_to_dict(recipe):
+    dct = recipe_to_dict(recipe)
+    assert isinstance(dct, dict)
