@@ -4,8 +4,9 @@ from typing import Union, List, Callable, Dict, Tuple
 
 import numpy as np
 from diffpy.pdfgetx import PDFGetter, PDFConfig
-from diffpy.srfit.fitbase import FitRecipe, ProfileGenerator
-from diffpy.srfit.pdf import PDFParser
+from diffpy.srfit.equation.builder import EquationFactory
+from diffpy.srfit.fitbase import FitRecipe, ProfileGenerator, FitContribution
+from diffpy.srfit.pdf import PDFParser, PDFGenerator, DebyePDFGenerator
 from diffpy.structure import Structure
 from numpy import ndarray
 from pyobjcryst.crystal import Crystal
@@ -273,19 +274,32 @@ class ConConfig:
         return config_dct
 
 
+class MyContribution(FitContribution):
+    """The FitContribution with augmented features."""
+
+    @property
+    def generators(self) -> Dict[str, Union[PDFGenerator, DebyePDFGenerator]]:
+        return self._generators
+
+    @property
+    def eqfactory(self) -> EquationFactory:
+        return self._eqfactory
+
+    @property
+    def xname(self) -> str:
+        return self._xname
+
+    @property
+    def yname(self) -> str:
+        return self._yname
+
+
 class MyRecipe(FitRecipe):
-    """The FitRecipe with augmented features.
+    """The FitRecipe with augmented features."""
 
-    Attributes
-    ----------
-    configs
-        single or multiple configurations to initiate the contributions in recipe.
-    """
-
-    def __init__(self, configs: Tuple[ConConfig]):
-        """Initiate the class."""
-        super().__init__()
-        self.configs = configs
+    @property
+    def contributions(self) -> Dict[str, MyContribution]:
+        return self._contributions
 
 
 def _make_list(item) -> list:

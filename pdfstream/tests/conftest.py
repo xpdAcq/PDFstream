@@ -3,6 +3,7 @@ import numpy
 import pyFAI
 import pytest
 from diffpy.pdfgetx import PDFConfig
+from diffpy.structure import loadStructure
 from pkg_resources import resource_filename
 from pyobjcryst import loadCrystal
 
@@ -20,6 +21,7 @@ BLACK_IMG = resource_filename('pdfstream', 'test_data/black_img.tiff')
 WHITE_IMG = resource_filename('pdfstream', 'test_data/white_img.tiff')
 NI_CONFIG = PDFConfig()
 NI_CONFIG.readConfig(NI_GR)
+ZrP_CIF = resource_filename('pdfstream', 'test_data/ZrP.cif')
 
 DB = {
     'Ni_img_file': NI_IMG,
@@ -40,7 +42,9 @@ DB = {
     'white_img': numpy.ones((128, 128)),
     'Ni_config': NI_CONFIG,
     'Ni_stru_file': NI_CIF,
-    'Ni_stru': loadCrystal(NI_CIF)
+    'Ni_stru': loadCrystal(NI_CIF),
+    'Ni_stru_diffpy': loadStructure(NI_CIF),
+    'ZrP_stru': loadCrystal(ZrP_CIF)
 }
 
 

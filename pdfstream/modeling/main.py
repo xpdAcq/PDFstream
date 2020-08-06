@@ -3,11 +3,13 @@ import typing as tp
 
 import diffpy.srfit.pdf.characteristicfunctions as F
 from diffpy.srfit.fitbase import FitResults
+from diffpy.srfit.pdf import PDFGenerator
+from diffpy.structure import Structure
 from matplotlib.axes import Axes
 from pyobjcryst.crystal import Crystal
 
 from pdfstream.modeling.fitfuncs import make_recipe, sgconstrain_all, cfconstrain_all, fit, plot
-from pdfstream.modeling.fitobjs import MyRecipe, GenConfig, ConConfig, MyParser, FunConfig
+from pdfstream.modeling.fitobjs import MyRecipe, GenConfig, ConConfig, MyParser, FunConfig, MyContribution
 
 __all__ = [
     'multi_phase',
@@ -21,10 +23,13 @@ __all__ = [
     'fit_calib',
     'FIT_RANGE',
     'F',
-    'Crystal'
+    'Crystal',
+    'Structure'
 ]
 
 FIT_RANGE = tp.Tuple[float, float, float]
+STRU = tp.Union[Crystal, Structure]
+PHASE = tp.Union[STRU, tp.Tuple[tp.Callable, STRU]]
 
 
 def fit_calib(stru: Crystal, data: MyParser, fit_range: FIT_RANGE, ncpu: int = None) -> \
@@ -51,7 +56,8 @@ def fit_calib(stru: Crystal, data: MyParser, fit_range: FIT_RANGE, ncpu: int = N
         The refined recipe.
     """
     recipe = multi_phase([stru], data, fit_range, ncpu=ncpu)
-    gen = recipe.multi_phase.G0  # gen: PDFGenerator
+    con: MyContribution = next(iter(recipe.contributions.values()))
+    gen: PDFGenerator = next(iter(con.generators.values()))
     recipe.addVar(gen.qdamp, tag='qparams')
     recipe.addVar(gen.qbroad, tag='qparams')
     optimize(
@@ -72,12 +78,11 @@ def _add_suffix(func: tp.Callable, suffix: str):
     return [args[0]] + ['{}_{}'.format(arg, suffix) for arg in args[1:]]
 
 
-def multi_phase(phases: tp.Iterable[tp.Union[tp.Tuple[tp.Callable, Crystal], Crystal]],
+def multi_phase(phases: tp.Iterable[PHASE],
                 data: MyParser,
                 fit_range: tp.Tuple[float, float, float],
                 default_value: dict = None,
                 bounds: dict = None,
-                add_xyz: dict = None,
                 ncpu: int = None) -> MyRecipe:
     """Make the recipe of a multiphase crystal pdf refinement.
 
@@ -105,15 +110,11 @@ def multi_phase(phases: tp.Iterable[tp.Union[tp.Tuple[tp.Callable, Crystal], Cry
         scale   0                   (0, inf)
         delta2  0                   (0, inf)
         lat     par.value           (0, 2 * par.value)
-        adp     (U) 0.006 (B) 0.16  (0, inf)
+        adp     0.05                (0, inf)
         xyz     par.value           None
 
     bounds : dict
         The mapping from the name of the variable to the bounds.
-
-    add_xyz : dict
-        The keys are the "{}.{}".format(ConConfig.name, GenConfig.name) and the values are the bool. If True,
-        add xyz parameters in that generator. Else, don't add.
 
     Returns
     -------
@@ -143,8 +144,12 @@ def multi_phase(phases: tp.Iterable[tp.Union[tp.Tuple[tp.Callable, Crystal], Cry
     conconfig = ConConfig(name='multi_phase', partial_eqs=eqs, parser=data, fit_range=fit_range,
                           genconfigs=genconfigs, funconfigs=funconfigs)
     recipe = make_recipe(conconfig)
-    sgconstrain_all(recipe, dv=default_value, bounds=bounds, add_xyz=add_xyz)
-    cfconstrain_all(recipe, dv=default_value, bounds=bounds)
+    sgconstrain_all(
+        recipe, dv=default_value, bounds=bounds
+    )
+    cfconstrain_all(
+        recipe, dv=default_value, bounds=bounds
+    )
     return recipe
 
 
