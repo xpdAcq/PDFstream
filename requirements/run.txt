@@ -2,6 +2,7 @@ pymongo
 pyyaml
 pandas
 pyperclip
-streamz
+rapidz
 diffpy-cmi
 xpdtools
+shed
