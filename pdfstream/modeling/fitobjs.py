@@ -12,7 +12,7 @@ from numpy import ndarray
 from pyobjcryst.crystal import Crystal
 from pyobjcryst.molecule import Molecule
 
-__all__ = ["GenConfig", "FunConfig", "ConConfig", "MyRecipe", "MyParser"]
+__all__ = ["GenConfig", "FunConfig", "ConConfig", "MyRecipe", "MyParser", "MyContribution"]
 
 Stru = Union[Crystal, Molecule, Structure]
 
@@ -276,7 +276,6 @@ class ConConfig:
 
 class MyContribution(FitContribution):
     """The FitContribution with augmented features."""
-
     @property
     def generators(self) -> Dict[str, Union[PDFGenerator, DebyePDFGenerator]]:
         return self._generators
@@ -296,7 +295,6 @@ class MyContribution(FitContribution):
 
 class MyRecipe(FitRecipe):
     """The FitRecipe with augmented features."""
-
     @property
     def contributions(self) -> Dict[str, MyContribution]:
         return self._contributions
