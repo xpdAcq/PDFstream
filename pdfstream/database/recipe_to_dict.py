@@ -1,10 +1,14 @@
 import math
 import typing as tp
 
-from diffpy.srfit.fitbase import FitRecipe
 from diffpy.srfit.fitbase.fitresults import FitResults, ContributionResults
 from diffpy.srfit.pdf import PDFGenerator, DebyePDFGenerator
 from diffpy.srfit.structure.srrealparset import SrRealParSet
+from diffpy.structure.structure import Structure
+from pyobjcryst.crystal import Crystal
+from pyobjcryst.spacegroup import SpaceGroup
+
+from pdfstream.modeling.main import MyRecipe
 
 GEN = tp.Union[PDFGenerator, DebyePDFGenerator]
 
@@ -30,15 +34,28 @@ def atom_to_dict(atom: SrRealParSet) -> dict:
     return dct
 
 
+def get_space_group_number(phase: SrRealParSet) -> int:
+    """Get the space group number of the structure parameter."""
+    # if symmetry is not used or the structure object is from diffpy.structure
+    if not phase.usingSymmetry() or isinstance(phase.stru, Structure):
+        return 1
+    stru: Crystal = phase.stru
+    # noinspection PyArgumentList
+    space_group: SpaceGroup = stru.GetSpaceGroup()
+    # noinspection PyArgumentList
+    return space_group.GetSpaceGroupNumber()
+
+
 def structure_to_dict(phase: SrRealParSet) -> dict:
     """Convert structure parameter set to dictionary."""
     return {
-        'lattice': lattice_to_dict(phase.getLattice(), angunits=phase.angunits),
-        'atoms': [atom_to_dict(atom) for atom in phase.getScatterers()]
+        'lattice': lattice_to_dict(phase.getLattice(), angunits=getattr(phase, 'argunits', 'deg')),
+        'atoms': [atom_to_dict(atom) for atom in phase.getScatterers()],
+        'space_group': get_space_group_number(phase)
     }
 
 
-def gather_structures(recipe: FitRecipe) -> tp.Generator:
+def gather_structures(recipe: MyRecipe) -> tp.Generator:
     """Yield the contribution name, generator name and the dictionary expression of the structure."""
     for con_name, con in recipe.contributions.items():
         genresults = {
@@ -65,7 +82,7 @@ def fitresult_to_dict(result: FitResults) -> dict:
     """Convert fit result to dictionary."""
     return {
         'varnames': result.varnames,
-        'varvals': result.varvals,
+        'varvals': result.varvals.tolist(),
         'varunc': result.varunc,
         'connames': result.connames,
         'convals': result.convals,
@@ -80,15 +97,26 @@ def fitresult_to_dict(result: FitResults) -> dict:
         'rw': result.rw,
         'precesion': result.precision,
         'derivstep': result.derivstep,
-        'strformat': result.formatResults(),
+        'string': result.formatResults(),
         'conresults': {
             n: conresult_to_dict(r) for n, r in result.conresults.items()
         }
     }
 
 
-def recipe_to_dict(recipe: FitRecipe) -> dict:
-    """Convert the fit result in recipe to a database friendly dictionary."""
+def recipe_to_dict(recipe: MyRecipe) -> dict:
+    """Convert the fit result in recipe to a database friendly dictionary.
+
+    Parameters
+    ----------
+    recipe : MyRecipe
+        The refined recipe.
+
+    Returns
+    -------
+    doc : dict
+        A nested dictionary containing fitting results, fitted data and the refined structure data.
+    """
     result = FitResults(recipe)
     doc = fitresult_to_dict(result)
     for con_name, genresults in gather_structures(recipe):

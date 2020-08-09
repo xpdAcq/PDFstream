@@ -121,7 +121,7 @@ def save(recipe: MyRecipe, base_name: str = None, folder: str = None, stru_fmt: 
 
     Parameters
     ----------
-    recipe : FitRecipe
+    recipe : MyRecipe
         The refined recipe.
 
     base_name : str
