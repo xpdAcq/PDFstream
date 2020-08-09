@@ -10,7 +10,7 @@ from pkg_resources import resource_filename
 import pdfstream.calibration.main as calib
 import pdfstream.integration.main as integ
 import pdfstream.io as io
-import pdfstream.modeling.save as csvdb
+import pdfstream.modeling.main as model
 import pdfstream.visualization.main as vis
 
 
@@ -305,9 +305,7 @@ def instrucalib(
     A pipeline to do image background subtraction, auto masking, integration, PDF transformation and PDF
     modeling to calibrate the qdamp and qbroad. Also, the accuracy of the calibration is tested by the modeling.
     The output will be the processed data in 'iq', 'sq', 'fq', 'gr' files (depends on 'cfg' file), the fitting
-    results in 'csv' file, the refined structure in 'cif' file, the best fits data in 'fgr' file and there is a
-    folder '_pdfstream_db'containing the meta data of the FitRecipe, FitContribution and PDFGenerator of the
-    refined model in the three 'csv' files.
+    results in 'res' file, the refined structure in 'cif' file, the best fits data in 'fgr' file.
 
     Parameters
     ----------
@@ -387,9 +385,5 @@ def instrucalib(
     )
     img_path = PurePath(img_file)
     io.write_out(output_dir, img_path.name, pdfgetter)
-    db_path = Path(output_dir).joinpath('_pdfstream_db')
-    if not db_path.is_dir():
-        db_path.mkdir()
-    save = csvdb.gen_fs_save(output_dir, db_path)
-    save(recipe)
+    model.save(recipe, base_name=img_path.name, folder=output_dir)
     return

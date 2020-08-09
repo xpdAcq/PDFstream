@@ -67,7 +67,9 @@ def fit_calib(stru: Crystal, data: MyParser, fit_range: FIT_RANGE, ncpu: int = N
         tags=['scale_G0', 'lat_G0', 'adp_G0', 'delta2_G0', 'qparams'],
         verbose=0
     )
+    print("\n")
     report(recipe)
+    print("\n")
     view_fits(recipe)
     return recipe
 
