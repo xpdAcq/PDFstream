@@ -1,7 +1,10 @@
+from tempfile import TemporaryDirectory
+
 import matplotlib.pyplot as plt
 import pytest
+from pyobjcryst import loadCrystal
 
-from pdfstream.modeling.main import MyParser, multi_phase, fit_calib, optimize, F
+from pdfstream.modeling.main import MyParser, multi_phase, fit_calib, optimize, F, save
 
 
 @pytest.mark.parametrize(
@@ -37,46 +40,11 @@ from pdfstream.modeling.main import MyParser, multi_phase, fit_calib, optimize, 
                 None,
                 {'x_0_G0': [-2, 2]},
                 True,
-                {'Biso_O_G0',
-                 'Biso_P_G0',
-                 'Biso_Zr_G0',
-                 'a_G0',
-                 'b_G0',
-                 'beta_G0',
-                 'c_G0',
-                 'delta2_G0',
-                 'psize_f0',
-                 'scale_G0',
-                 'x_0_G0',
-                 'x_1_G0',
-                 'x_2_G0',
-                 'x_3_G0',
-                 'x_4_G0',
-                 'x_5_G0',
-                 'x_6_G0',
-                 'x_7_G0',
-                 'x_8_G0',
-                 'x_9_G0',
-                 'y_0_G0',
-                 'y_1_G0',
-                 'y_2_G0',
-                 'y_3_G0',
-                 'y_4_G0',
-                 'y_5_G0',
-                 'y_6_G0',
-                 'y_7_G0',
-                 'y_8_G0',
-                 'y_9_G0',
-                 'z_0_G0',
-                 'z_1_G0',
-                 'z_2_G0',
-                 'z_3_G0',
-                 'z_4_G0',
-                 'z_5_G0',
-                 'z_6_G0',
-                 'z_7_G0',
-                 'z_8_G0',
-                 'z_9_G0'}
+                {'Biso_O_G0', 'Biso_P_G0', 'Biso_Zr_G0', 'a_G0', 'b_G0', 'beta_G0', 'c_G0', 'delta2_G0',
+                 'psize_f0', 'scale_G0', 'x_0_G0', 'x_1_G0', 'x_2_G0', 'x_3_G0', 'x_4_G0', 'x_5_G0', 'x_6_G0',
+                 'x_7_G0', 'x_8_G0', 'x_9_G0', 'y_0_G0', 'y_1_G0', 'y_2_G0', 'y_3_G0', 'y_4_G0',
+                 'y_5_G0', 'y_6_G0', 'y_7_G0', 'y_8_G0', 'y_9_G0', 'z_0_G0', 'z_1_G0', 'z_2_G0',
+                 'z_3_G0', 'z_4_G0', 'z_5_G0', 'z_6_G0', 'z_7_G0', 'z_8_G0', 'z_9_G0'}
         )
     ]
 )
@@ -104,12 +72,34 @@ def test_multi_phase(db, data_key, default_value, bounds, free_params, expected)
             assert actual_bounds[name] == expected_bound
 
 
-def test_optimize(db):
+@pytest.fixture(scope="function")
+def recipe(db):
     parser = MyParser()
     parser.parseFile(db['Ni_gr_file'])
-    recipe = multi_phase([(F.sphericalCF, db['Ni_stru'])], parser, fit_range=(2., 8.0, .1), default_value={
+    stru = loadCrystal(db['Ni_stru_file'])
+    recipe = multi_phase([(F.sphericalCF, stru)], parser, fit_range=(2., 8.0, .1), default_value={
         'psize_G0': 200})
+    return recipe
+
+
+def test_optimize(recipe):
+    optimize(recipe, ['all'], xtol=1e-2, gtol=1e-2, ftol=1e-2)
+
+
+@pytest.mark.parametrize(
+    "stru_fmt",
+    [
+        "cif",
+        "xyz"
+    ]
+)
+def test_save(recipe, stru_fmt):
     optimize(recipe, ['all'], xtol=1e-3, gtol=1e-3, ftol=1e-3)
+    with TemporaryDirectory() as temp_dir:
+        res_file, fgr_files, stru_files = save(recipe, base_name="test", folder=temp_dir, stru_fmt=stru_fmt)
+        assert res_file.is_file()
+        assert len(fgr_files) == 1 and fgr_files[0].is_file()
+        assert len(stru_files) == 1 and stru_files[0].is_file()
 
 
 def test_MyParser(db):

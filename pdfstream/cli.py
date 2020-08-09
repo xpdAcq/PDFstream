@@ -10,7 +10,7 @@ from pkg_resources import resource_filename
 import pdfstream.calibration.main as calib
 import pdfstream.integration.main as integ
 import pdfstream.io as io
-import pdfstream.modeling.csvdb as csvdb
+import pdfstream.modeling.save as csvdb
 import pdfstream.visualization.main as vis
 
 

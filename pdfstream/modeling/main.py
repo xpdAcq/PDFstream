@@ -10,6 +10,7 @@ from pyobjcryst.crystal import Crystal
 
 from pdfstream.modeling.fitfuncs import make_recipe, sgconstrain_all, cfconstrain_all, fit, plot
 from pdfstream.modeling.fitobjs import MyRecipe, GenConfig, ConConfig, MyParser, FunConfig, MyContribution
+from pdfstream.modeling.save import save
 
 __all__ = [
     'multi_phase',
@@ -24,7 +25,8 @@ __all__ = [
     'FIT_RANGE',
     'F',
     'Crystal',
-    'Structure'
+    'Structure',
+    'save'
 ]
 
 FIT_RANGE = tp.Tuple[float, float, float]
@@ -214,9 +216,9 @@ def view_fits(recipe: MyRecipe) -> tp.List[Axes]:
         The plots of the fits.
     """
     axes = []
-    for conconfig in recipe.configs:
-        con = getattr(recipe, conconfig.name)
+    for con in recipe.contributions.values():
+        ax = plot(con)
         axes.append(
-            plot(con)
+            ax
         )
     return axes

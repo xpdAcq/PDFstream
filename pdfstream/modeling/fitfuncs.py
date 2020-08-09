@@ -199,6 +199,7 @@ def plot(contribution: FitContribution) -> Axes:
     fig = plt.figure()
     ax = fig.add_subplot(111)
     ax = visualize(data, ax=ax, mode='fit', legend=contribution.name)
+    ax.set_title(contribution.name)
     plt.show(block=False)
     return ax
 
