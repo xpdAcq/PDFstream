@@ -12,19 +12,21 @@ from numpy import ndarray
 from pyobjcryst.crystal import Crystal
 from pyobjcryst.molecule import Molecule
 
-__all__ = ["GenConfig", "FunConfig", "ConConfig", "MyRecipe", "MyParser", "MyContribution"]
+__all__ = ["GenConfig", "FunConfig", "ConConfig", "MyRecipe", "MyParser", "MyContribution", "map_stype"]
 
 Stru = Union[Crystal, Molecule, Structure]
 
 
-def _map_stype(mode: str):
+def map_stype(mode: str):
     """Map the scattering type in PDFConfig to the stype in the meta in the parser."""
-    if mode == 'xray':
+    if mode in ('xray', 'sas'):
         stype = 'X'
-    elif mode == 'nray':
+    elif mode == 'neutron':
         stype = 'N'
     else:
-        raise ValueError("Scattering type not acceptable: {}".format(mode))
+        raise ValueError(
+            "Unknown: scattering type: {}. Allowed values: 'xray', 'neutron', 'sas'.".format(mode)
+        )
     return stype
 
 
@@ -65,14 +67,12 @@ class MyParser(PDFParser):
         return
 
     def parsePDFGetter(self, pdfgetter: PDFGetter, add_meta: dict = None):
-        if pdfgetter.gr is None:
-            raise ValueError('The gr in PDFGetter is None.')
         if add_meta is None:
             add_meta = {}
         data = np.stack(pdfgetter.gr)
         pdfconfig: PDFConfig = pdfgetter.config
         meta = {
-            'stype': _map_stype(pdfconfig.mode),
+            'stype': map_stype(pdfconfig.mode),
             'qmin': pdfconfig.qmin,
             'qmax': pdfconfig.qmax,
         }
@@ -103,11 +103,11 @@ class GenConfig:
         number of parallel computing cores for the generator. If None, no parallel. Default None.
     """
 
-    def __init__(self, name: str, structure: Stru, periodic: bool = None, debye: bool = None, ncpu: int = None):
+    def __init__(self, name: str, structure: Stru, periodic: bool = None, debye: bool = None,
+                 ncpu: int = None):
         """Initiate the GenConfig."""
         self.name = name
         self.structure = structure
-        self.stru_type = self.get_type(structure)
         self.periodic = self.is_periodic(structure) if periodic is None else periodic
         self.debye = not self.periodic if debye is None else debye
         self.ncpu = ncpu
@@ -118,37 +118,6 @@ class GenConfig:
         if isinstance(structure, Molecule):
             return False
         return True
-
-    @staticmethod
-    def get_type(structure: Stru) -> str:
-        """Get the type of the structure obj."""
-        type_dct = {
-            Crystal: 'crystal',
-            Molecule: 'molecule',
-            Structure: 'diffpy'
-        }
-        type_str = type_dct.get(type(structure))
-        if type_str is None:
-            raise TypeError("Unknown structure type: {}".format(type(structure)))
-        return type_str
-
-    def to_dict(self) -> dict:
-        """Parse the GenConfig as a dictionary. The keys include: gen_name, stru_file, debye, periodic, ncpu.
-
-        Returns
-        -------
-        config_dct
-            A dictionary of generator configuration.
-
-        """
-        config_dct = {
-            'gen_name': self.name,
-            'stru_type': self.stru_type,
-            'debye': self.debye,
-            'periodic': self.periodic,
-            'ncpu': self.ncpu,
-        }
-        return config_dct
 
 
 class FunConfig:
@@ -196,7 +165,7 @@ class ConConfig:
         An equation string for the Fitcontribution. If None, use summation of the partial equation.
 
     partial_eqs
-        The mapping from the phase name to the equation of the PDF. If None, partial PDF will not be calculated.
+        The mapping from the phase name to the equation of the PDF. If None, use the eq.
 
     genconfigs
         A single or a list of GenConfig object. Default empty tuple.
@@ -214,19 +183,21 @@ class ConConfig:
         The weight of the contribution. Default 1.
     """
 
-    def __init__(self,
-                 name: str,
-                 parser: MyParser,
-                 fit_range: Tuple[float, float, float],
-                 qparams: Tuple[float, float] = None,
-                 data_id: int = None,
-                 partial_eqs: Dict[str, str] = None,
-                 eq: str = None,
-                 genconfigs: Union[GenConfig, List[GenConfig]] = (),
-                 funconfigs: Union[FunConfig, List[FunConfig]] = (),
-                 baselines: Union[Callable, List[Callable]] = (),
-                 res_eq: str = "resv",
-                 weight: float = 1.):
+    def __init__(
+            self,
+            name: str,
+            parser: MyParser,
+            fit_range: Tuple[float, float, float],
+            qparams: Tuple[float, float] = None,
+            data_id: int = None,
+            partial_eqs: Dict[str, str] = None,
+            eq: str = None,
+            genconfigs: List[GenConfig] = None,
+            funconfigs: List[FunConfig] = None,
+            baselines: List[Callable] = None,
+            res_eq: str = "resv",
+            weight: float = 1.
+    ):
         """Initiate the instance."""
         self.name: str = name
         self.data_id: int = data_id
@@ -244,38 +215,16 @@ class ConConfig:
         else:
             self.eq = eq
             self.partial_eqs = partial_eqs
-        self.genconfigs: List[GenConfig] = _make_list(genconfigs)
-        self.funconfigs: List[FunConfig] = _make_list(funconfigs)
-        self.baselines: List[ProfileGenerator] = _make_list(baselines)
+        self.genconfigs: List[GenConfig] = genconfigs if genconfigs else list()
+        self.funconfigs: List[FunConfig] = funconfigs if funconfigs else list()
+        self.baselines: List[ProfileGenerator] = baselines if baselines else list()
         self.res_eq: str = res_eq
         self.weight = weight
-
-    def to_dict(self) -> dict:
-        """Parse the ConConfig to a dictionary. The keys will include con_name, data_id, data_file, rmin, rmax,
-        dr, qdamp, qbroad, eq, phases, functions, base_lines, res_eq.
-
-        Returns
-        -------
-        config_dct
-            A dictionary of configuration of FitContribution.
-        """
-        config_dct = {
-            'con_name': self.name,
-            'data_id': self.data_id,
-            'rmin': self.fit_range[0],
-            'rmax': self.fit_range[1],
-            'dr': self.fit_range[2],
-            'eq': self.eq,
-            'phases': ', '.join([gen.name for gen in self.funconfigs]),
-            'functions': ', '.join([fun.name for fun in self.funconfigs]),
-            'baselines': ', '.join([bl.name for bl in self.baselines]),
-            'res_eq': self.res_eq
-        }
-        return config_dct
 
 
 class MyContribution(FitContribution):
     """The FitContribution with augmented features."""
+
     @property
     def generators(self) -> Dict[str, Union[PDFGenerator, DebyePDFGenerator]]:
         return self._generators
@@ -288,22 +237,10 @@ class MyContribution(FitContribution):
     def xname(self) -> str:
         return self._xname
 
-    @property
-    def yname(self) -> str:
-        return self._yname
-
 
 class MyRecipe(FitRecipe):
     """The FitRecipe with augmented features."""
+
     @property
     def contributions(self) -> Dict[str, MyContribution]:
         return self._contributions
-
-
-def _make_list(item) -> list:
-    """If item is not a list or tuple, make it a list with only the item in it."""
-    if isinstance(item, (list, tuple)):
-        pass
-    else:
-        item = [item]
-    return item

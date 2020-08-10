@@ -2,10 +2,11 @@
 import numpy
 import pyFAI
 import pytest
-from diffpy.pdfgetx import PDFConfig
+from diffpy.pdfgetx import PDFConfig, PDFGetter
 from diffpy.structure import loadStructure
 from pkg_resources import resource_filename
 from pyobjcryst import loadCrystal
+from pyobjcryst.molecule import Molecule
 
 from pdfstream.io import load_img
 from pdfstream.utils.data import load_data
@@ -21,7 +22,11 @@ BLACK_IMG = resource_filename('pdfstream', 'test_data/black_img.tiff')
 WHITE_IMG = resource_filename('pdfstream', 'test_data/white_img.tiff')
 NI_CONFIG = PDFConfig()
 NI_CONFIG.readConfig(NI_GR)
-ZrP_CIF = resource_filename('pdfstream', 'test_data/ZrP.cif')
+NI_PDFGETTER = PDFGetter(NI_CONFIG)
+ZRP_CIF = resource_filename('pdfstream', 'test_data/ZrP.cif')
+NI_CRYSTAL = loadCrystal(NI_CIF)
+ZRP_CRYSTAL = loadCrystal(ZRP_CIF)
+NI_DIFFPY = loadStructure(NI_CIF)
 
 DB = {
     'Ni_img_file': NI_IMG,
@@ -41,10 +46,12 @@ DB = {
     'black_img': numpy.zeros((128, 128)),
     'white_img': numpy.ones((128, 128)),
     'Ni_config': NI_CONFIG,
+    'Ni_pdfgetter': NI_PDFGETTER,
     'Ni_stru_file': NI_CIF,
-    'Ni_stru': loadCrystal(NI_CIF),
-    'Ni_stru_diffpy': loadStructure(NI_CIF),
-    'ZrP_stru': loadCrystal(ZrP_CIF)
+    'Ni_stru': NI_CRYSTAL,
+    'Ni_stru_molecule': Molecule(NI_CRYSTAL),
+    'Ni_stru_diffpy': NI_DIFFPY,
+    'ZrP_stru': ZRP_CRYSTAL
 }
 
 
