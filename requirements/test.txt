@@ -1,5 +1,5 @@
 flake8
 codecov
 coverage
-pytest
+pytest==5.3
 mongomock
