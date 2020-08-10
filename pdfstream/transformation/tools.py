@@ -49,7 +49,8 @@ def visualize(pdfgetter: PDFGetter, plot_setting: dict = None):
     # plot data
     figsize = plt.rcParams['figure.figsize']
     fig = plt.figure(
-        figsize=(figsize[0], figsize[1] / 2. * len(dct))
+        figsize=(figsize[0], figsize[1] / 2. * len(dct)),
+        tight_layout=False
     )
     grids = GridSpec(len(dct), 1, hspace=0.5)
     labels = {

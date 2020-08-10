@@ -117,7 +117,7 @@ def integrate(
     # merge integrate setting
     _integ_setting = _INTEG_SETTING.copy()
     if mask is not None:
-        _integ_setting.update({'mask': mask})
+        _integ_setting.update(dict(mask=mask))
     if integ_setting is not None:
         _integ_setting.update(integ_setting)
     # integrate
@@ -150,7 +150,7 @@ def vis_img(img: ndarray, mask: ndarray = None, img_setting: dict = None) -> Axe
     if img_setting is None:
         img_setting = dict()
     fig = plt.figure()
-    ax = fig.add_subplot(111)
+    ax: Axes = fig.add_subplot(111)
     if mask is not None:
         img = np.ma.masked_array(img, mask)
     mean, std = img.mean(), img.std()
@@ -161,8 +161,7 @@ def vis_img(img: ndarray, mask: ndarray = None, img_setting: dict = None) -> Axe
     }
     kwargs.update(**img_setting)
     img_obj = ax.imshow(img, **kwargs)
-    ax.set_xticks([], [])
-    ax.set_yticks([], [])
+    ax.axis("off")
     # color bar with magical settings to make it same size as the plot
     plt.colorbar(img_obj, ax=ax, fraction=0.046, pad=0.04)
     plt.show(block=False)
