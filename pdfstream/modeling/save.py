@@ -35,7 +35,7 @@ def save_fgr(con: FitContribution, base_name: str, folder: str) -> Path:
         The path to the fgr file.
     """
     fgr_file = Path(folder) / "{}.fgr".format(base_name)
-    con.profile.savetxt(fgr_file, header=f"x ycalc y dy")
+    con.profile.savetxt(fgr_file, header="x ycalc y dy")
     return fgr_file
 
 
