@@ -11,7 +11,7 @@ def test_make_pdfgetter(db):
 
 
 def test_use_pdfgetter(db):
-    use_pdfgetter(db['Ni_chi'], db['Ni_pdfgettter'])
+    use_pdfgetter(db['Ni_chi'], db['Ni_pdfgetter'])
 
 
 @pytest.mark.parametrize(

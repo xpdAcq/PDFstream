@@ -33,7 +33,7 @@ _LABEL = {
 }
 
 
-def bg_sub(img: ndarray, bg_img: ndarray = None, bg_scale: float = None) -> ndarray:
+def bg_sub(img: ndarray, bg_img: ndarray, bg_scale: float = None) -> ndarray:
     """Subtract the background image from the data image inplace.
 
     Parameters
@@ -47,8 +47,6 @@ def bg_sub(img: ndarray, bg_img: ndarray = None, bg_scale: float = None) -> ndar
     bg_scale : float
         The scale of the the background image.
     """
-    if bg_img is None:
-        return img
     if bg_scale is None:
         bg_scale = 1.
     if bg_img.shape != img.shape:

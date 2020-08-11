@@ -10,13 +10,14 @@ import pdfstream.integration.main as integ
     [
         (None, {}),
         ('Kapton_img', {}),
-        ('Kapton_img', {'bg_scale': 0.02}),
-        ('Kapton_img', {'bg_scale': 0.02, 'mask_setting': "OFF"}),
-        ('Kapton_img', {'bg_scale': 0.02, 'integ_setting': {'npt': 1024}})
+        ('Kapton_img', {'bg_scale': 0.001}),
+        ('Kapton_img', {'bg_scale': 0.001, 'mask_setting': "OFF"}),
+        ('Kapton_img', {'bg_scale': 0.001, 'mask_setting': {"alpha": 3}}),
+        ('Kapton_img', {'bg_scale': 0.001, 'integ_setting': {'npt': 1024}}),
     ]
 )
 def test_get_chi(db, bg_img_key, kwargs):
-    integ.get_chi(db['ai'], db['Ni_img'], bg_img=db.get(bg_img_key, None))
+    integ.get_chi(db['ai'], db['Ni_img'], bg_img=db.get(bg_img_key, None), **kwargs)
     plt.close()
 
 
