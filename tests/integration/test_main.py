@@ -1,11 +1,22 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import pytest
 
 import pdfstream.integration.main as integ
 
 
-def test_get_chi(db):
-    integ.get_chi(db['ai'], db['Ni_img'], db['Kapton_img'], bg_scale=0.04)
+@pytest.mark.parametrize(
+    "bg_img_key,kwargs",
+    [
+        (None, {}),
+        ('Kapton_img', {}),
+        ('Kapton_img', {'bg_scale': 0.02}),
+        ('Kapton_img', {'bg_scale': 0.02, 'mask_setting': "OFF"}),
+        ('Kapton_img', {'bg_scale': 0.02, 'integ_setting': {'npt': 1024}})
+    ]
+)
+def test_get_chi(db, bg_img_key, kwargs):
+    integ.get_chi(db['ai'], db['Ni_img'], bg_img=db.get(bg_img_key, None))
     plt.close()
 
 

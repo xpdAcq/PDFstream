@@ -369,9 +369,9 @@ def instrucalib(
         The number of cpu used in parallel computing in the modeling. If None, no parallel computing.
     """
     if cfg_file is None:
-        cfg_file = resource_filename('pdfstream', 'test_data/Ni_cfg_file.cfg')
+        cfg_file = resource_filename('pdfstream', 'data/Ni_cfg_file.cfg')
     if stru_file is None:
-        stru_file = resource_filename('pdfstream', 'test_data/Ni_cif_file.cif')
+        stru_file = resource_filename('pdfstream', 'data/Ni_cif_file.cif')
     ai = io.load_ai_from_poni_file(poni_file)
     img = io.load_img(img_file)
     pdfconfig = io.load_pdfconfig(cfg_file)
