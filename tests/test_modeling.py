@@ -1,12 +1,16 @@
 from tempfile import TemporaryDirectory
-import numpy as np
 
 import matplotlib.pyplot as plt
+import numpy as np
 import pytest
+from diffpy.structure import loadStructure
 from pyobjcryst import loadCrystal
 
-from pdfstream.modeling.main import multi_phase, fit_calib, optimize, F, save
+import pdfstream.modeling.save as S
+from pdfstream.modeling.fitfuncs import make_generator, get_sgpars
 from pdfstream.modeling.fitobjs import map_stype, GenConfig, MyParser, ConConfig
+from pdfstream.modeling.gens import GaussianGenerator
+from pdfstream.modeling.main import multi_phase, fit_calib, optimize, F, save
 
 
 @pytest.mark.parametrize(
@@ -125,6 +129,24 @@ def test_ConConfig_error(db):
 
 
 @pytest.mark.parametrize(
+    "kwargs",
+    [
+        {"ncpu": 1}
+    ]
+)
+def test_make_generator(db, kwargs):
+    gen_config = GenConfig("G0", db['Ni_stru'], **kwargs)
+    make_generator(gen_config)
+
+
+def test_GaussianGenerator():
+    gen = GaussianGenerator("Gaussian")
+    for a in ('A', 'x0', 'sigma'):
+        assert hasattr(gen, a)
+    assert np.array_equal(np.ones(3), gen(np.zeros(3)))
+
+
+@pytest.mark.parametrize(
     "data_key,kwargs,free_params,expected",
     [
         (
@@ -217,31 +239,52 @@ def test_multi_phase(db, data_key, kwargs, free_params, expected):
             assert actual_bounds[name] == expected_bound
 
 
-@pytest.fixture(scope="function")
-def recipe(db):
+@pytest.fixture(scope="function", params=[loadCrystal, loadStructure])
+def recipe(db, request):
     parser = MyParser()
     parser.parseFile(db['Ni_gr_file'])
-    stru = loadCrystal(db['Ni_stru_file'])
+    stru = request.param(db['Ni_stru_file'])
     recipe = multi_phase([(F.sphericalCF, stru)], parser, fit_range=(2., 8.0, .1), values={
-        'psize_G0': 200})
+        'psize_G0': 200}, sg_params={'G0': 225})
     return recipe
 
 
-def test_optimize(recipe):
-    optimize(recipe, ['all'], xtol=1e-2, gtol=1e-2, ftol=1e-2)
+@pytest.mark.parametrize(
+    "arg", ["P1"]
+)
+def test_get_sgpars(recipe, arg):
+    con = next(iter(recipe.contributions.values()))
+    gen = next(iter(con.generators.values()))
+    get_sgpars(gen.phase, arg)
+
+
+def test_get_sgpars_error(recipe, db):
+    with pytest.raises(ValueError):
+        get_sgpars(db['Ni_stru'])
 
 
 @pytest.mark.parametrize(
-    "stru_fmt",
+    "kwargs",
     [
-        "cif",
-        "xyz"
+        dict(tags=['scale_G0'], xtol=1e-2, gtol=1e-2, ftol=1e-2),
+        dict(tags=[('scale_G0', 'lat_G0'), 'adp_G0'], xtol=1e-2, gtol=1e-2, ftol=1e-2)
     ]
 )
-def test_save(recipe, stru_fmt):
-    optimize(recipe, ['all'], xtol=1e-3, gtol=1e-3, ftol=1e-3)
+def test_optimize(recipe, kwargs):
+    optimize(recipe, **kwargs)
+
+
+@pytest.mark.parametrize(
+    "kwargs",
+    [
+        {"stru_fmt": "cif"},
+        {"stru_fmt": "xyz"}
+    ]
+)
+def test_save(recipe, kwargs):
+    optimize(recipe, ['scale_G0', 'lat_G0'], xtol=1e-2, gtol=1e-2, ftol=1e-2)
     with TemporaryDirectory() as temp_dir:
-        res_file, fgr_files, stru_files = save(recipe, base_name="test", folder=temp_dir, stru_fmt=stru_fmt)
+        res_file, fgr_files, stru_files = save(recipe, base_name="test", folder=temp_dir, **kwargs)
         assert res_file.is_file()
         assert len(fgr_files) == 1 and fgr_files[0].is_file()
         assert len(stru_files) == 1 and stru_files[0].is_file()
@@ -252,3 +295,8 @@ def test_fit_calib(db):
     parser.parseFile(db['Ni_gr_file'])
     fit_calib(db['Ni_stru'], parser, fit_range=(2., 8., .1))
     plt.close()
+
+
+def test_write_crystal_error(db):
+    with pytest.raises(ValueError):
+        S.write_crystal(db['Ni_stru'], 'error.mol', fmt='mol')

@@ -12,7 +12,7 @@ from diffpy.srfit.structure.sgconstraints import constrainAsSpaceGroup
 from matplotlib.axes import Axes
 from scipy.optimize import least_squares
 
-from pdfstream.modeling.fitobjs import MyParser, ConConfig, FunConfig, GenConfig, MyRecipe, MyContribution
+from pdfstream.modeling.fitobjs import MyParser, ConConfig, GenConfig, MyRecipe, MyContribution
 from pdfstream.visualization.main import visualize
 
 __all__ = [
@@ -25,7 +25,8 @@ __all__ = [
     'sgconstrain',
     'cfconstrain',
     'sgconstrain_all',
-    'cfconstrain_all'
+    'cfconstrain_all',
+    'get_sgpars'
 ]
 
 
@@ -102,9 +103,6 @@ def make_contribution(conconfig: ConConfig, xname: str = "r") -> MyContribution:
 
     for genconfig in conconfig.genconfigs:
         generator = make_generator(genconfig)
-        if conconfig.qparams is not None:
-            generator.qdamp.value = conconfig.qparams[0]
-            generator.qbroad.value = conconfig.qparams[1]
         contribution.addProfileGenerator(generator)
 
     for base_line in conconfig.baselines:
@@ -335,7 +333,7 @@ def sgconstrain(recipe: MyRecipe, con_name: str, gen_name: str, sg: Union[int, s
     variables[name] = recipe.addVar(gen.delta2, name=name, value=dv.get(name, 0.)).boundRange(
         *bounds.get(name, (0., np.inf)))
     # constrain by spacegroup
-    sgpars = _get_sgpars(gen.phase, sg)
+    sgpars = get_sgpars(gen.phase, sg)
     # add latpars
     for par in sgpars.latpars:
         name = f'{par.name}_{gen.name}'
@@ -362,7 +360,7 @@ def sgconstrain(recipe: MyRecipe, con_name: str, gen_name: str, sg: Union[int, s
     return variables
 
 
-def _get_sgpars(parset: Union[ObjCrystCrystalParSet, DiffpyStructureParSet], sg: Union[int, str]):
+def get_sgpars(parset: Union[ObjCrystCrystalParSet, DiffpyStructureParSet], sg: Union[int, str] = None):
     """Constrain the structure by space group and get the independent parameters."""
     if isinstance(parset, ObjCrystCrystalParSet):
         if sg is not None:
@@ -404,48 +402,16 @@ def sgconstrain_all(recipe: MyRecipe, dv: dict = None, bounds: dict = None) -> d
     """
     variables = dict()
     for con_name, con in recipe.contributions.items():
-        for gen_name in con.generators.keys():
-            variables.update(
-                sgconstrain(
-                    recipe, con_name, gen_name, dv=dv, bounds=bounds
+        for gen_name, gen in con.generators.items():
+            if isinstance(gen, (DebyePDFGenerator, PDFGenerator)):
+                variables.update(
+                    sgconstrain(
+                        recipe, con_name, gen_name, dv=dv, bounds=bounds
+                    )
                 )
-            )
     return variables
 
 
 def only_alpha(s: str):
     """Remove all characters other than alphabets. Use to get a valid variable name."""
     return ''.join((c for c in s if c.isalpha()))
-
-
-def get_conconfig(recipe: MyRecipe, con_name: str = None) -> ConConfig:
-    """Get the ConConfig from the MyRecipe."""
-    if con_name is None:
-        return recipe.configs[0]
-    for config in recipe.configs:
-        if config.name == con_name:
-            return config
-    else:
-        raise ValueError(f"No FitContribution names '{con_name}' in FitRecipe '{recipe.name}'.")
-
-
-def get_genconfig(con_config: ConConfig, gen_name: str = None) -> GenConfig:
-    """Get the GenConfig from the ConConfig."""
-    if gen_name is None:
-        return con_config.genconfigs[0]
-    for genconfig in con_config.genconfigs:
-        if genconfig.name == gen_name:
-            return genconfig
-    else:
-        raise ValueError(f"No ProfileGenerator names '{gen_name}' in FitContribution '{con_config.name}'.")
-
-
-def get_funconfig(con_config: ConConfig, fun_name: str = None) -> FunConfig:
-    """Get the FunConfig from the ConConfig."""
-    if fun_name is None:
-        return con_config.funconfigs[0]
-    for funconfig in con_config.funconfigs:
-        if funconfig.name == fun_name:
-            return funconfig
-    else:
-        raise ValueError(f"No CharacteristicFunction names '{fun_name}' in FitContribution '{con_config.name}'.")

@@ -76,12 +76,15 @@ def fit_calib(stru: Crystal, data: MyParser, fit_range: FIT_RANGE, ncpu: int = N
     return recipe
 
 
-def _add_suffix(func: tp.Callable, suffix: str):
+def _add_suffix(func: tp.Callable, suffix: str) -> tp.List[str]:
     """Add the suffix to the argument names starting at the second the argument. Return the names"""
     args = inspect.getfullargspec(func).args
-    if len(args) < 2:
-        raise ValueError('The function should have at least two arguments.')
-    return [args[0]] + ['{}_{}'.format(arg, suffix) for arg in args[1:]]
+    return list(
+        map(
+            lambda arg: '{}_{}'.format(arg, suffix) if arg != "r" else arg,
+            args
+        )
+    )
 
 
 def multi_phase(

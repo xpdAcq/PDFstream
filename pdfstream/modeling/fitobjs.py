@@ -158,9 +158,6 @@ class ConConfig:
     fit_range
         A tuple of (rmin, rmax, rstep) in angstrom for fitting.
 
-    qparams
-        A tuple of (qdamp, qbroad) from calibration.
-
     eq
         An equation string for the Fitcontribution. If None, use summation of the partial equation.
 
@@ -188,8 +185,6 @@ class ConConfig:
             name: str,
             parser: MyParser,
             fit_range: Tuple[float, float, float],
-            qparams: Tuple[float, float] = None,
-            data_id: int = None,
             partial_eqs: Dict[str, str] = None,
             eq: str = None,
             genconfigs: List[GenConfig] = None,
@@ -200,10 +195,8 @@ class ConConfig:
     ):
         """Initiate the instance."""
         self.name: str = name
-        self.data_id: int = data_id
         self.parser: MyParser = parser
         self.fit_range: Tuple[float, float, float] = fit_range
-        self.qparams: Tuple[float, float] = qparams
         if partial_eqs is None and eq is None:
             raise ValueError("Both partial_eqs and eq are None.")
         elif partial_eqs is None:

@@ -4,7 +4,6 @@ import typing as tp
 from pathlib import Path
 
 from diffpy.srfit.fitbase import FitContribution, FitResults, FitRecipe
-from diffpy.srfit.pdf import PDFGenerator, DebyePDFGenerator
 from diffpy.structure import Structure
 from pyobjcryst.crystal import Crystal
 from pyobjcryst.utils import writexyz
@@ -25,7 +24,7 @@ def save_fgr(con: FitContribution, base_name: str, folder: str) -> Path:
         An arbitrary number of Fitcontribution.
 
     base_name : str
-        The base name for saving. The saving name will be "{base_name}_{contribution.name}.fgr"
+        The base name for saving. The saving name will be "{base_name}.fgr"
 
     folder : str
         The folder to save the file.
@@ -35,7 +34,7 @@ def save_fgr(con: FitContribution, base_name: str, folder: str) -> Path:
     fgr_file : Path
         The path to the fgr file.
     """
-    fgr_file = Path(folder) / "{}_{}.fgr".format(base_name, con.name)
+    fgr_file = Path(folder) / "{}.fgr".format(base_name)
     con.profile.savetxt(fgr_file, header=f"x ycalc y dy")
     return fgr_file
 
@@ -48,21 +47,21 @@ def write_crystal(stru: Crystal, stru_file: str, fmt: str) -> None:
     elif fmt == "xyz":
         writexyz(stru, stru_file)
     else:
-        raise ValueError("Unknown format: {}".format(fmt))
+        raise ValueError("Unknown format: {}. Allow: 'cif', 'xyz'.".format(fmt))
     return
 
 
-def save_stru(gen: tp.Union[PDFGenerator, DebyePDFGenerator], base_name: str, folder: str, fmt: str = "cif") -> \
+def save_stru(stru: tp.Union[Crystal, Structure], base_name: str, folder: str, fmt: str = "cif") -> \
         Path:
     """Save refined structure.
 
     Parameters
     ----------
-    gen : PDFGenerator or DebyePDFGenerator
-        A ProfileGenerator. The structure is inside the "stru" attribute in it.
+    stru : Crystal or Structure
+        A structure object.
 
     base_name : str
-        The base name for saving. The saving name will be "{base_name}_{generator.name}."
+        The base name for saving. The saving name will be "{base_name}.{fmt}."
 
     folder : str
         The folder to save the file.
@@ -75,14 +74,11 @@ def save_stru(gen: tp.Union[PDFGenerator, DebyePDFGenerator], base_name: str, fo
     stru_file : Path
         The path to the saved files.
     """
-    stru_file = Path(folder) / "{}_{}.{}".format(base_name, gen.name, fmt)
-    stru = gen.stru
+    stru_file = Path(folder) / "{}.{}".format(base_name, fmt)
     if isinstance(stru, Crystal):
         write_crystal(stru, str(stru_file), fmt)
-    elif isinstance(stru, Structure):
-        stru.write(str(stru_file), format=fmt)
     else:
-        raise ValueError("Unknown structure type: {}".format(type(stru)))
+        stru.write(str(stru_file), format=fmt)
     return stru_file
 
 
@@ -153,9 +149,18 @@ def save(recipe: MyRecipe, base_name: str = None, folder: str = None, stru_fmt: 
     fgr_files = []
     stru_files = []
     for con_name, con in recipe.contributions.items():
-        fgr_file = save_fgr(con, base_name, folder)
+        fgr_file = save_fgr(
+            con,
+            "{}_{}".format(base_name, con_name),
+            folder
+        )
         fgr_files.append(fgr_file)
-        for gen in con.generators.values():
-            stru_file = save_stru(gen, "{}_{}".format(base_name, con.name), folder, fmt=stru_fmt)
+        for gen_name, gen in con.generators.items():
+            stru_file = save_stru(
+                gen.stru,
+                "{}_{}_{}".format(base_name, con_name, gen_name),
+                folder,
+                fmt=stru_fmt
+            )
             stru_files.append(stru_file)
     return res_file, fgr_files, stru_files
