@@ -51,3 +51,6 @@ To report the optimization results, use
 
 .. autofunction:: pdfstream.modeling.main.report
 
+To save the recipe in files, use
+
+.. autofunction:: pdfstream.modeling.save.save

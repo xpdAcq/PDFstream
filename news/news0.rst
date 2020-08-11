@@ -1,12 +1,5 @@
-===============
-Release History
-===============
+**Added:**
 
-Initial Release (2020-07-06)
-----------------------------
-
-Features
-^^^^^^^^
 * Azimuthal integration of diffraction image with auto masking and background subtraction.
 
 * Calculate the average of multiple diffraction image frames.

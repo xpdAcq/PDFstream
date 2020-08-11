@@ -14,7 +14,7 @@ General Installation
 
 At the command line::
 
-    $ conda install -c st3107 pdfstream
+    $ conda install -c conda-forge pdfstream
 
 Development Installation
 ------------------------
@@ -26,8 +26,7 @@ Clone the github repo and change the current directory::
 
 Install the requirements::
 
-    $ conda install -c conda-forge diffpy --file requirements/run.txt --file requirements/test.txt --file
-    requirements/build.txt
+    $ conda install -c conda-forge diffpy --file requirements/run.txt --file requirements/test.txt --file requirements/build.txt
 
 Install the pdfstream in development mode::
 

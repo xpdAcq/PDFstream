@@ -11,5 +11,4 @@ PDFstream Documentation
 
    installation
    usage/index
-   release-history
    min_versions
