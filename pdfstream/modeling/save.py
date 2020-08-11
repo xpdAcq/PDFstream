@@ -107,7 +107,7 @@ def save_res(recipe: FitRecipe, base_name: str, folder: str) -> Path:
     return res_file
 
 
-def save(recipe: MyRecipe, base_name: str = None, folder: str = None, stru_fmt: str = "cif") \
+def save(recipe: MyRecipe, base_name: str, folder: str, stru_fmt: str = "cif") \
         -> tp.Tuple[Path, tp.List[Path], tp.List[Path]]:
     """Save the results of the refined recipe.
 
@@ -141,10 +141,6 @@ def save(recipe: MyRecipe, base_name: str = None, folder: str = None, stru_fmt: 
     stru_files : List[Path]
         A list of the paths to the structure files.
     """
-    if base_name is None:
-        base_name = recipe.name
-    if folder is None:
-        folder = "."
     res_file = save_res(recipe, base_name, folder)
     fgr_files = []
     stru_files = []

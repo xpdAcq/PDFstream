@@ -3,8 +3,7 @@ import sys
 
 import pytest
 
-
-def run_tests():
+if __name__ == "__main__":
     """Run the tests using pytest."""
     # show local variables from every test function
     args = ['--showlocals']
@@ -16,7 +15,3 @@ def run_tests():
     a = args.copy() + ["tests"]
     result = pytest.main(a)
     sys.exit(result)
-
-
-if __name__ == "__main__":
-    run_tests()

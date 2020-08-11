@@ -185,7 +185,7 @@ def multi_phase(
     return recipe
 
 
-def optimize(recipe: MyRecipe, tags: tp.List[tp.Union[str, tp.Tuple[str, ...]]], **kwargs) -> None:
+def optimize(recipe: MyRecipe, tags: tp.List[tp.Union[str, tp.Iterable[str]]], **kwargs) -> None:
     """First fix all variables and then free the variables one by one and fit the recipe.
 
     Parameters
@@ -202,14 +202,11 @@ def optimize(recipe: MyRecipe, tags: tp.List[tp.Union[str, tp.Tuple[str, ...]]],
     print(f"Start {recipe.name} with all parameters fixed.")
     recipe.fix('all')
     for n, tag in enumerate(tags):
-        if isinstance(tag, tuple):
-            print("Free " + ', '.join(tag) + ' ...')
-            recipe.free(*tag)
-        elif isinstance(tag, str):
+        if isinstance(tag, str):
             print(f"Free {tag} ...")
             recipe.free(tag)
         else:
-            raise TypeError(f"Unknown tag type: {type(tag)}")
+            recipe.free(*tag)
         fit(recipe, **kwargs)
     return
 

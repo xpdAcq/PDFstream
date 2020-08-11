@@ -135,6 +135,14 @@ def waterfall(
     ax : Axes
         The axes with the plot inside.
     """
+
+    def _inject_color(_kwargs, _color):
+        if 'xy_kwargs' in _kwargs:
+            _kwargs['xy_kwargs'].update({'color': _color})
+        else:
+            _kwargs['xy_kwargs'] = {'color': _color}
+        return
+
     if ax is None:
         ax = plt.gca()
     if texts is None:
@@ -147,10 +155,8 @@ def waterfall(
         )
     text_ind = TEXT_IND.get(mode, -1)
     for data, text, color in itertools.zip_longest(dataset, texts, colors):
-        if 'xy_kwargs' in kwargs:
-            kwargs['xy_kwargs'].update({'color': color})
-        else:
-            kwargs['xy_kwargs'] = {'color': color}
+        if color:
+            _inject_color(kwargs, color)
         _waterfall(
             data, PLOT_METHOD[mode], ax=ax, normal=normal, stack=stack, gap=gap, text=text, text_xy=text_xy,
             text_ind=text_ind, **kwargs

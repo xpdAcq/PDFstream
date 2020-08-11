@@ -49,7 +49,7 @@ def get_space_group_number(phase: SrRealParSet) -> int:
 def structure_to_dict(phase: SrRealParSet) -> dict:
     """Convert structure parameter set to dictionary."""
     return {
-        'lattice': lattice_to_dict(phase.getLattice(), angunits=getattr(phase, 'argunits', 'deg')),
+        'lattice': lattice_to_dict(phase.getLattice(), angunits=getattr(phase, 'angunits', 'deg')),
         'atoms': [atom_to_dict(atom) for atom in phase.getScatterers()],
         'space_group': get_space_group_number(phase)
     }

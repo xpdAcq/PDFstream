@@ -18,6 +18,7 @@ from pdfstream.visualization.main import visualize
 __all__ = [
     'make_profile',
     'make_generator',
+    'make_contribution',
     'make_recipe',
     'fit',
     'plot',

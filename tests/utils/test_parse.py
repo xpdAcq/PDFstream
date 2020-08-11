@@ -1,6 +1,6 @@
 import numpy as np
 
-from pdfstream.utils.parse import load_poni, paths, from_db, to_db
+from pdfstream.utils.parse import load_poni, paths, from_db, to_db, to_dict
 
 
 def test_load_poni(db):
@@ -48,3 +48,7 @@ def test_from_db_and_to_db():
     dct = from_db(doc)
     assert isinstance(doc['img']['data'], Binary)
     assert np.array_equal(dct['img']['data'], original['img']['data'])
+
+
+def test_to_dict(db):
+    to_dict(db["Ni_config"])
