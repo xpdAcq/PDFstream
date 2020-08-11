@@ -1,5 +1,4 @@
 """Objects used in the fitting."""
-import types
 from typing import Union, List, Callable, Dict, Tuple
 
 import numpy as np
@@ -134,7 +133,7 @@ class FunConfig:
             If not None, it always starts with "r" when using diffpy characteristic functions. Default None.
     """
 
-    def __init__(self, name: str, func: types.CodeType, argnames: List[str] = None):
+    def __init__(self, name: str, func: Callable, argnames: List[str] = None):
         """Initiate Function object."""
         self.name = name
         self.func = func
