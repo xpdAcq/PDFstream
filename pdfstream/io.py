@@ -8,7 +8,7 @@ from diffpy.structure import loadStructure
 from numpy import ndarray
 from pyobjcryst import loadCrystal
 
-from pdfstream.utils.data import load_data
+from pdfstream.utils.parse import load_data
 
 load_crystal = loadCrystal
 load_structure = loadStructure

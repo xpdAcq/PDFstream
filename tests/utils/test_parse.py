@@ -1,6 +1,6 @@
 import numpy as np
 
-from pdfstream.utils.data import load_poni, paths, from_db, to_db
+from pdfstream.utils.parse import load_poni, paths, from_db, to_db
 
 
 def test_load_poni(db):
