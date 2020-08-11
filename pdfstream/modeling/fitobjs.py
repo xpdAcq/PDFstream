@@ -12,7 +12,7 @@ from numpy import ndarray
 from pyobjcryst.crystal import Crystal
 from pyobjcryst.molecule import Molecule
 
-__all__ = ["GenConfig", "FunConfig", "ConConfig", "MyRecipe", "MyParser", "MyContribution", "map_stype"]
+__all__ = ["GenConfig", "FunConfig", "ConConfig", "MyRecipe", "MyParser", "MyContribution"]
 
 Stru = Union[Crystal, Molecule, Structure]
 
