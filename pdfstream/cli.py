@@ -2,7 +2,6 @@
 import typing as tp
 from pathlib import Path, PurePath
 
-import fire
 import matplotlib.pyplot as plt
 from matplotlib.axes import Axes
 from pkg_resources import resource_filename
@@ -12,19 +11,6 @@ import pdfstream.integration.main as integ
 import pdfstream.io as io
 import pdfstream.modeling.main as model
 import pdfstream.visualization.main as vis
-
-
-def main():
-    """The CLI entry point. Run google-fire on the name - function mapping."""
-    fire.Fire(
-        {
-            'average': average,
-            'integrate': integrate,
-            'waterfall': waterfall,
-            'visualize': visualize,
-            'instrucalib': instrucalib
-        }
-    )
 
 
 def integrate(
@@ -100,7 +86,7 @@ def integrate(
     return chi_paths
 
 
-def average(out_file: str, *img_files: str, weights: tp.List[float] = None) -> None:
+def average(out_file: str, *img_files, weights: tp.List[float] = None) -> None:
     """Average the single channel image files with weights.
 
     Parameters
@@ -108,14 +94,13 @@ def average(out_file: str, *img_files: str, weights: tp.List[float] = None) -> N
     out_file : str
         The output file path. It will be the type as the first image in img_files.
 
-    img_files : str
+    img_files : a tuple of str
         The image files to be averaged.
 
     weights : an iterable of floats
         The weights for the images. If None, images will not be weighted when averaged.
     """
-    if isinstance(img_files, str):
-        img_files = [img_files]
+    img_files: tp.Tuple[str]
     imgs = (io.load_img(_) for _ in img_files)
     avg_img = integ.avg_imgs(imgs, weights=weights)
     io.write_img(out_file, avg_img, img_files[0])

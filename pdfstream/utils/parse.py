@@ -1,26 +1,11 @@
 """The tools to read, write, audit, transform, wash the data."""
 import pickle
-from pathlib import Path
+from typing import Any
 from typing import Callable
-from typing import Dict, Any
 from typing import Generator
 
-import yaml
 from bson.binary import Binary
-from diffpy.utils.parsers.loaddata import loadData
 from numpy import ndarray
-
-
-def load_poni(poni_file: str) -> dict:
-    """Turn the poni file to pyFAI readable dictionary."""
-    with Path(poni_file).open('r') as f:
-        geometry = yaml.safe_load(f)
-    return lower_key(geometry)
-
-
-def lower_key(dct: Dict[str, Any]) -> Dict[str, Any]:
-    """Return dictionary with all keys in lower case."""
-    return {key.lower(): value for key, value in dct.items()}
 
 
 def dump_ndarray(arr: ndarray):
@@ -72,9 +57,6 @@ def to_db(dct: dict):
         return dump_ndarray(item) if isinstance(item, ndarray) else item
 
     return iter_dct(dct, wash)
-
-
-load_data = loadData
 
 
 def to_dict(obj: object, exclude: Callable[[str], bool] = None) -> dict:

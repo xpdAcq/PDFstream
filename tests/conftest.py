@@ -8,8 +8,7 @@ from pkg_resources import resource_filename
 from pyobjcryst import loadCrystal
 from pyobjcryst.molecule import Molecule
 
-from pdfstream.io import load_img
-from pdfstream.utils.parse import load_data
+from pdfstream.io import load_img, load_data
 
 NI_PONI = resource_filename('tests', 'test_data/Ni_poni_file.poni')
 NI_GR = resource_filename('tests', 'test_data/Ni_gr_file.gr')

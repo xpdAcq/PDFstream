@@ -1,14 +1,15 @@
 """The input / output functions related to file system."""
 from pathlib import Path
+from typing import Dict, Any
 
 import fabio
 import pyFAI
+import yaml
 from diffpy.pdfgetx import PDFConfig, PDFGetter
 from diffpy.structure import loadStructure
+from diffpy.utils.parsers import loadData
 from numpy import ndarray
 from pyobjcryst import loadCrystal
-
-from pdfstream.utils.parse import load_data
 
 load_crystal = loadCrystal
 load_structure = loadStructure
@@ -68,3 +69,18 @@ def write_img(filepath: str, img: ndarray, template: str) -> None:
 def load_array(data_file: str) -> ndarray:
     """Load data columns from the .txt file and turn columns to rows and return the numpy array."""
     return load_data(data_file).T
+
+
+def load_dict_from_poni(poni_file: str) -> dict:
+    """Turn the poni file to pyFAI readable dictionary."""
+    with Path(poni_file).open('r') as f:
+        geometry = yaml.safe_load(f)
+    return _lower_key(geometry)
+
+
+def _lower_key(dct: Dict[str, Any]) -> Dict[str, Any]:
+    """Return dictionary with all keys in lower case."""
+    return {key.lower(): value for key, value in dct.items()}
+
+
+load_data = loadData
