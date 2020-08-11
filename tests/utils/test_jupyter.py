@@ -2,8 +2,6 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 
 import matplotlib.pyplot as plt
-# noinspection PyProtectedMember
-from pyperclip import PyperclipException
 
 from pdfstream.utils.jupyter import savefig_factory
 
@@ -11,12 +9,10 @@ from pdfstream.utils.jupyter import savefig_factory
 def test_savefig_factory():
     plt.figure()
     with TemporaryDirectory() as d:
-        savefig = savefig_factory(figure_dir=d)
+        figure_forlder = Path(d) / "figures"
+        savefig = savefig_factory(figure_dir=figure_forlder)
         fname = 'test.png'
-        path = Path(d).joinpath(fname)
-        try:
-            savefig(str(path))
-            assert path.exists()
-        except PyperclipException:
-            print("No mechanism for clipping.")
+        savefig(fname)
+        figure_path = figure_forlder / fname
+        assert figure_path.exists()
     plt.close()

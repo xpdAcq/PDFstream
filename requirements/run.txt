@@ -1,7 +1,6 @@
 pymongo
 pyyaml
 pandas
-pyperclip
 rapidz
 diffpy-cmi
 xpdtools

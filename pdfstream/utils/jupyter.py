@@ -2,7 +2,6 @@
 from pathlib import Path
 
 import matplotlib.pyplot as plt
-import pyperclip
 
 LATEX_REF = (
     "\\begin{{figure}}[hptb]\n"
@@ -136,8 +135,9 @@ def savefig_factory(figure_dir):
             metadata=metadata
         )
         if latex:
-            latex_ref = LATEX_REF.format(fname.name, caption, fname.stem)
-            pyperclip.copy(latex_ref)
+            print(
+                LATEX_REF.format(fname.name, caption, fname.stem)
+            )
         return
 
     return savefig
