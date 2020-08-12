@@ -4,6 +4,11 @@ pdfstream Change Log
 
 .. current developments
 
+v0.1.0
+====================
+
+
+
 vv0.0.0
 ====================
 
