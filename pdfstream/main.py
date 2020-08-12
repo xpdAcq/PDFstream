@@ -14,3 +14,7 @@ COMMANDS = {
 def main():
     """The CLI entry point. Run google-fire on the name - function mapping."""
     fire.Fire(COMMANDS)
+
+
+if __name__ == "__main__":
+    main()
