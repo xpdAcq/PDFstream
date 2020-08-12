@@ -3,8 +3,6 @@ from os import path
 
 from setuptools import setup, find_packages
 
-import versioneer
-
 # NOTE: This file must remain Python 2 compatible for the foreseeable future,
 # to ensure that we error out properly for people with outdated setuptools
 # and/or pip.
@@ -27,16 +25,9 @@ here = path.abspath(path.dirname(__file__))
 with open(path.join(here, 'README.md'), encoding='utf-8') as readme_file:
     readme = readme_file.read()
 
-with open(path.join(here, 'requirements.txt')) as requirements_file:
-    # Parse requirements.txt, ignoring any commented-out lines.
-    requirements = [line for line in requirements_file.read().splitlines()
-                    if not line.startswith('#')]
-
-
 setup(
     name='pdfstream',
-    version=versioneer.get_version(),
-    cmdclass=versioneer.get_cmdclass(),
+    version='0.0.0',
     description="The data streaming PDF analysis software",
     long_description=readme,
     author="Songsheng Tao",
@@ -59,7 +50,6 @@ setup(
             # 'path/to/data_file',
         ]
     },
-    install_requires=requirements,
     license="BSD (3-clause)",
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
