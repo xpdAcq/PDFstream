@@ -102,7 +102,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: install requirements
-        run: conda install --file requirements/run.txt --file requirements/build.txt
+        run: conda install --file requirements/build.txt --file requirements/run.txt --file requirements/docs.txt
 
       - name: install pdfstream
         run: python -m pip install .
