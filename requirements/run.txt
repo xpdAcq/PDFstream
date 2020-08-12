@@ -2,3 +2,4 @@ python>=3.6
 diffpy-cmi
 xpdtools
 pymongo
+fire
