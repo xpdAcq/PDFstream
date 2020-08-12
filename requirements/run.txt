@@ -1,7 +1,2 @@
-pymongo
-pyyaml
-pandas
-rapidz
 diffpy-cmi
 xpdtools
-shed
