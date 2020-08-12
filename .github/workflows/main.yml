@@ -18,7 +18,7 @@ jobs:
         with:
           activate-conda: false
           update-conda: false
-          conda-channels: diffpy, conda-forge
+          conda-channels: conda-forge, diffpy
 
       - name: install requirements
         run: conda create -n test --file requirements/build.txt --file requirements/run.txt --file requirements/test.txt
@@ -71,7 +71,7 @@ jobs:
         with:
           activate-conda: false
           update-conda: false
-          conda-channels: diffpy, conda-forge
+          conda-channels: conda-forge, diffpy
 
       - name: install requirements
         run: |
