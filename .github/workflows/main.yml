@@ -16,9 +16,13 @@ jobs:
       - name: setup-conda
         uses: s-weigand/setup-conda@v1.0.3
         with:
-          activate-conda: false
+          activate-conda: true
           update-conda: false
-          conda-channels: conda-forge, diffpy
+
+      - name: add conda channels
+        run: |
+          conda config --append channels diffpy
+          conda config --append channels conda-forge
 
       - name: install requirements
         run: conda create -n test --file requirements/build.txt --file requirements/run.txt --file requirements/test.txt
@@ -69,9 +73,13 @@ jobs:
       - name: setup-conda
         uses: s-weigand/setup-conda@v1.0.3
         with:
-          activate-conda: false
+          activate-conda: true
           update-conda: false
-          conda-channels: conda-forge, diffpy
+
+      - name: add conda channels
+        run: |
+          conda config --append channels diffpy
+          conda config --append channels conda-forge
 
       - name: install requirements
         run: |
