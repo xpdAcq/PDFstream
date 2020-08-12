@@ -12,7 +12,7 @@ $ACTIVITIES = [
 $VERSION_BUMP_PATTERNS = [
     ('pdfstream/__init__.py', '__version__\s*=.*', "__version__ = '$VERSION'"),
     ('setup.py', 'version\s*=.*,', "version='$VERSION',")
-    ]
+]
 
 $CHANGELOG_FILENAME = 'CHANGELOG.rst'  # Filename for the changelog
 $CHANGELOG_TEMPLATE = 'TEMPLATE.rst'  # Filename for the news template
