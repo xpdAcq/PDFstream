@@ -1,22 +1,15 @@
-# This is a basic workflow to help you get started with Actions
+name: workflow
 
-name: test
-
-# Controls when the action will run. Triggers the workflow on push or pull request
-# events but only for the master branch
 on:
   push:
     branches: [ master ]
   pull_request:
     branches: [ master ]
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   test:
-    # The type of runner that the job will run on
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       - uses: actions/checkout@v2
 
@@ -64,7 +57,7 @@ jobs:
           flake8
 
   publish:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
 
     if: github.event_name == 'push' && contains(github.ref, 'refs/tags/')
 
