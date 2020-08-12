@@ -27,11 +27,6 @@ jobs:
       - name: install requirements
         run: conda create -n test --file requirements/build.txt --file requirements/run.txt --file requirements/test.txt
 
-      - name: install pdfstream
-        run: |
-          source activate test
-          python -m pip install -e . --no-deps -vv
-
       - uses: actions/checkout@v2
         with:
           repository: st3107/diffpy.pdfgetx-whl
