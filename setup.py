@@ -27,7 +27,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as readme_file:
 
 setup(
     name='pdfstream',
-    version='0.0.0',
+    version='v0.0.0',
     description="The data streaming PDF analysis software",
     long_description=readme,
     author="Songsheng Tao",
