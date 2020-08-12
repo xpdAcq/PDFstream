@@ -1,12 +1,3 @@
-====================
-pdfstream Change Log
-====================
-
-.. current developments
-
-v0.1.0
-====================
-
 **Added:**
 
 * Azimuthal integration of diffraction image with auto masking and background subtraction.
