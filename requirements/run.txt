@@ -3,3 +3,4 @@ diffpy-cmi
 xpdtools
 pymongo
 fire
+ase
