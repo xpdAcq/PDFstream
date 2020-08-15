@@ -203,9 +203,14 @@ def optimize(recipe: MyRecipe, tags: tp.List[tp.Union[str, tp.Iterable[str]]], *
     recipe.fix('all')
     for n, tag in enumerate(tags):
         if isinstance(tag, str):
-            print(f"Free {tag} ...")
+            print("Free {} ...".format(tag))
             recipe.free(tag)
         else:
+            print(
+                "Free {} ...".format(
+                    ", ".join(tags)
+                )
+            )
             recipe.free(*tag)
         fit(recipe, **kwargs)
     return
