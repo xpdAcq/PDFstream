@@ -208,7 +208,7 @@ def optimize(recipe: MyRecipe, tags: tp.List[tp.Union[str, tp.Iterable[str]]], *
         else:
             print(
                 "Free {} ...".format(
-                    ", ".join(tags)
+                    ", ".join(tag)
                 )
             )
             recipe.free(*tag)
