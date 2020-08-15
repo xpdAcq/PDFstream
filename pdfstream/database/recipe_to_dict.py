@@ -55,14 +55,11 @@ def structure_to_dict(phase: SrRealParSet) -> dict:
     }
 
 
-def gather_structures(recipe: MyRecipe) -> tp.Generator:
+def get_genresults(recipe: MyRecipe) -> tp.Generator:
     """Yield the contribution name, generator name and the dictionary expression of the structure."""
     for con_name, con in recipe.contributions.items():
-        genresults = {
-            gen_name: structure_to_dict(gen.phase)
-            for gen_name, gen in con.generators.items()
-        }
-        yield con_name, genresults
+        for gen_name, gen in con.generators.items():
+            yield dict(name=gen_name, con_name=con_name, **structure_to_dict(gen.phase))
 
 
 def conresult_to_dict(result: ContributionResults) -> dict:
@@ -98,9 +95,10 @@ def fitresult_to_dict(result: FitResults) -> dict:
         'precesion': result.precision,
         'derivstep': result.derivstep,
         'string': result.formatResults(),
-        'conresults': {
-            n: conresult_to_dict(r) for n, r in result.conresults.items()
-        }
+        'conresults': [
+            dict(name=n, **conresult_to_dict(r))
+            for n, r in result.conresults.items()
+        ]
     }
 
 
@@ -119,6 +117,5 @@ def recipe_to_dict(recipe: MyRecipe) -> dict:
     """
     result = FitResults(recipe)
     doc = fitresult_to_dict(result)
-    for con_name, genresults in gather_structures(recipe):
-        doc['conresults'][con_name]['genresults'] = genresults
+    doc["genresults"] = list(get_genresults(recipe))
     return doc
