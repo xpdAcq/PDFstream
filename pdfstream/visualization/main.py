@@ -82,7 +82,7 @@ def waterfall(
     dataset : an iterable of ndarray
         A iterable of the data array. The requirement for dimensions depends on the mode.
         If mode = 'line', data = (x_array, y_array)
-        If mode = 'fit', data = (x_array, y_array, ycalc_array, ydiff_array)
+        If mode = 'fit', data = (x_array, y_array, ycalc_array)
 
     kwargs : optional
         The kwargs arguments for the plotting of each data. It depends on mode.
@@ -182,7 +182,7 @@ def visualize(
     data : ndarray
         A data array. The requirement for dimensions depends on the mode.
         If mode = 'line', data = (x_array, y_array)
-        If mode = 'fit', data = (x_array, y_array, ycalc_array, ydiff_array)
+        If mode = 'fit', data = (x_array, y_array, ycalc_array)
 
     kwargs : optional
         The kwargs arguments for the plotting of each data. It depends on mode.
