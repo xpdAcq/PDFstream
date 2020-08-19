@@ -1,5 +1,5 @@
 import pytest
-import pdfstream.database.tools as tools
+import pdfstream.parsers.tools as tools
 
 
 @pytest.mark.parametrize(

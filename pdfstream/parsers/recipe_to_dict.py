@@ -103,7 +103,7 @@ def fitresult_to_dict(result: FitResults) -> dict:
 
 
 def recipe_to_dict(recipe: MyRecipe) -> dict:
-    """Convert the fit result in recipe to a database friendly dictionary.
+    """Convert the fit result in recipe to a parsers friendly dictionary.
 
     Parameters
     ----------

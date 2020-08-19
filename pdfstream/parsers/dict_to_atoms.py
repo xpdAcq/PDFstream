@@ -1,6 +1,6 @@
 from ase import Atoms, Atom
 from ase.spacegroup import crystal
-import pdfstream.database.tools as tools
+import pdfstream.parsers.tools as tools
 
 
 def dict_to_atoms(dct: dict, keys: tuple, **kwargs) -> Atoms:

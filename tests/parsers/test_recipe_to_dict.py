@@ -2,7 +2,7 @@ import mongomock
 import pytest
 from mongomock.collection import Collection
 
-from pdfstream.database.recipe_to_dict import recipe_to_dict
+from pdfstream.parsers.recipe_to_dict import recipe_to_dict
 from pprint import pprint
 
 
