@@ -1,9 +1,43 @@
+import typing as tp
+
 import numpy as np
 
 import pdfstream.parsers.tools as tools
 
 
-def dict_to_array(dct: dict, keys: tuple, data_keys: tuple = ("x", "ycalc", "y"), **kwargs):
+def dicts_to_array(dcts: tp.Iterable[dict], keys: tuple = tuple(), data_keys: tuple = ("x", "ycalc", "y"),
+                   **kwargs) -> np.array:
+    """Convert a series of dictionaries of str and list pairs to a numpy array.
+
+    Parameters
+    ----------
+    dcts : Iterable[dict]
+        The a series of dictionaries, each containing a sub-dictionary of str and list pairs.
+
+    keys : tuple
+        A key chain to find the sub-dictionary of str and list pairs.
+
+    data_keys : tuple
+        A dictionary of data keys. Their corresponding value will be added into the numpy array.
+
+    kwargs : dict
+        The kwargs for the `:func:~numpy.stack`.
+
+    Returns
+    -------
+    array : ndarray
+        The numpy array of data. Axis 0 is corresponding to the dictionaries and Axis 1 is correspongding to a
+        list in the dictionary.
+    """
+    return np.stack(
+        [
+            dict_to_array(dct, keys=keys, data_keys=data_keys, **kwargs) for dct in dcts
+        ],
+        **kwargs
+    )
+
+
+def dict_to_array(dct: dict, keys: tuple = tuple(), data_keys: tuple = ("x", "ycalc", "y"), **kwargs) -> np.array:
     """Convert a dictionary of str and list pairs to a numpy array.
 
     Parameters
