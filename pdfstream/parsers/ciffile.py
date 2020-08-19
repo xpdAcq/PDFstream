@@ -14,7 +14,7 @@ def cif_to_dict(cif_file: str, mmjson: bool = False) -> tp.Generator:
     if not mmjson:
         for block_name, block_dct in dct.items():
             block_dct['name'] = block_name
-            block_dct['file_path'] = str(cif_path.absolute())
+            block_dct['cif_file'] = str(cif_path.absolute())
             yield block_dct
     else:
         yield dct
