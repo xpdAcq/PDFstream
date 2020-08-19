@@ -1,14 +1,20 @@
 from gemmi import cif
 import json
 from pathlib import Path
+import typing as tp
 
 
-def cif_to_dict(cif_file: str, mmjson: bool = False) -> dict:
+def cif_to_dict(cif_file: str, mmjson: bool = False) -> tp.Generator:
     """Convert cif file to a dictionary."""
     cif_path = Path(cif_file)
     doc = cif.read_file(str(cif_path))
-    dct = json.loads(
+    dct: dict = json.loads(
         doc.as_json(mmjson=mmjson)
     )
-    dct['file_path'] = str(cif_path.absolute())
-    return dct
+    if not mmjson:
+        for block_name, block_dct in dct.items():
+            block_dct['name'] = block_name
+            block_dct['file_path'] = str(cif_path.absolute())
+            yield block_dct
+    else:
+        yield dct

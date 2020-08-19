@@ -1,12 +1,15 @@
 import pdfstream.parsers as ctd
 from mongomock import MongoClient
+from pprint import pprint
 
 
 def test_cif_to_dict(db):
-    dct = ctd.cif_to_dict(
-        db["Ni_stru_file"]
-    )
-    # test mongo friendly
     client = MongoClient()
     coll = client.db.coll
-    coll.insert_one(dct)
+    dcts = ctd.cif_to_dict(
+        db["Ni_stru_file"]
+    )
+    for dct in dcts:
+        pprint(dct)
+        # test mongo friendly
+        coll.insert_one(dct)
