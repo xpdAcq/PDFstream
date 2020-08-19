@@ -94,7 +94,6 @@ def fitresult_to_dict(result: FitResults) -> dict:
         'rw': result.rw,
         'precesion': result.precision,
         'derivstep': result.derivstep,
-        'string': result.formatResults(),
         'conresults': [
             dict(name=n, **conresult_to_dict(r))
             for n, r in result.conresults.items()
