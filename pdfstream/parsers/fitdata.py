@@ -27,8 +27,8 @@ def dict_to_array(dct: dict, keys: tuple, data_keys: tuple = ("x", "ycalc", "y")
     """
     data_dct = tools.get_value(dct, keys)
     return np.stack(
-        (
+        [
             data_dct[key] for key in data_keys
-        ),
+        ],
         **kwargs
     )
