@@ -199,18 +199,22 @@ def optimize(recipe: MyRecipe, tags: tp.List[tp.Union[str, tp.Iterable[str]]], *
     kwargs
         The kwargs of the 'fit'.
     """
-    print(f"Start {recipe.name} with all parameters fixed.")
+    verbose = kwargs.get('verbose', 0)
+    if verbose > 0:
+        print(f"Start {recipe.name} with all parameters fixed.")
     recipe.fix('all')
     for n, tag in enumerate(tags):
         if isinstance(tag, str):
-            print("Free {} ...".format(tag))
+            if verbose > 0:
+                print("Free {} ...".format(tag))
             recipe.free(tag)
         else:
-            print(
-                "Free {} ...".format(
-                    ", ".join(tag)
+            if verbose > 0:
+                print(
+                    "Free {} ...".format(
+                        ", ".join(tag)
+                    )
                 )
-            )
             recipe.free(*tag)
         fit(recipe, **kwargs)
     return
