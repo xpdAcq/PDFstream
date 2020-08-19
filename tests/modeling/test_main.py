@@ -82,6 +82,13 @@ from pdfstream.modeling.main import multi_phase, optimize, fit_calib, F
                 True,
                 False,
                 {'scale_G0', 'a_G0', 'Biso_Ni_G0', 'delta2_G0'}
+        ),
+        (
+                "Ni_stru",
+                {},
+                True,
+                False,
+                {'scale_G0', 'a_G0', 'Biso_Ni_G0', 'delta2_G0'}
         )
     ]
 )
