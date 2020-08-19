@@ -6,7 +6,7 @@ from pdfstream.modeling.main import multi_phase, optimize, fit_calib, F
 
 
 @pytest.mark.parametrize(
-    "data_key,kwargs,free_params,expected",
+    "data_key,kwargs,free_params,use_cf,expected",
     [
         (
                 "Ni_stru",
@@ -16,6 +16,7 @@ from pdfstream.modeling.main import multi_phase, optimize, fit_calib, F
                     'bounds': {'scale_G0': [-1, 1], 'a_G0': [0, 6], 'Biso_Ni_G0': [0, 1], 'psize_f0': [2, 400],
                                'delta2_G0': [0, 5]}
                 },
+                True,
                 True,
                 {'scale_G0', 'a_G0', 'Biso_Ni_G0', 'psize_f0', 'delta2_G0'}
         ),
@@ -28,6 +29,7 @@ from pdfstream.modeling.main import multi_phase, optimize, fit_calib, F
                                'delta2_G0': [0, 5]},
                 },
                 False,
+                True,
                 {'Biso_Ni_G0', 'a_G0', 'alpha_G0', 'b_G0', 'beta_G0', 'c_G0', 'gamma_G0', 'delta2_G0',
                  'psize_f0', 'scale_G0'}
         ),
@@ -35,6 +37,7 @@ from pdfstream.modeling.main import multi_phase, optimize, fit_calib, F
                 "ZrP_stru",
                 dict(),
                 False,
+                True,
                 {'Biso_O_G0', 'Biso_P_G0', 'Biso_Zr_G0', 'a_G0', 'b_G0', 'beta_G0', 'c_G0',
                  'delta2_G0', 'psize_f0', 'scale_G0'}
         ),
@@ -43,6 +46,7 @@ from pdfstream.modeling.main import multi_phase, optimize, fit_calib, F
                 {
                     'bounds': {'x_0_G0': [-2, 2]}
                 },
+                True,
                 True,
                 {'Biso_O_G0', 'Biso_P_G0', 'Biso_Zr_G0', 'a_G0', 'b_G0', 'beta_G0', 'c_G0', 'delta2_G0',
                  'psize_f0', 'scale_G0', 'x_0_G0', 'x_1_G0', 'x_2_G0', 'x_3_G0', 'x_4_G0', 'x_5_G0', 'x_6_G0',
@@ -57,6 +61,7 @@ from pdfstream.modeling.main import multi_phase, optimize, fit_calib, F
                     'sg_params': dict()
                 },
                 True,
+                True,
                 {'psize_f0'}
         ),
         (
@@ -66,15 +71,26 @@ from pdfstream.modeling.main import multi_phase, optimize, fit_calib, F
                     'sg_params': {'G0': 225}
                 },
                 True,
+                True,
+                {'scale_G0', 'a_G0', 'Biso_Ni_G0', 'delta2_G0'}
+        ),
+        (
+                "Ni_stru_diffpy",
+                {
+                    'sg_params': {'G0': 225}
+                },
+                True,
+                False,
                 {'scale_G0', 'a_G0', 'Biso_Ni_G0', 'delta2_G0'}
         )
     ]
 )
-def test_multi_phase(db, data_key, kwargs, free_params, expected):
+def test_multi_phase(db, data_key, kwargs, free_params, use_cf, expected):
     parser = MyParser()
     parser.parseFile(db['Ni_gr_file'])
+    phase = (F.sphericalCF, db[data_key]) if use_cf else db[data_key]
     recipe = multi_phase(
-        [(F.sphericalCF, db[data_key])], parser,
+        [phase], parser,
         fit_range=(2., 8.0, .1),
         **kwargs
     )
