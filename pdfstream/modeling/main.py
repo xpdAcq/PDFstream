@@ -199,7 +199,7 @@ def optimize(recipe: MyRecipe, tags: tp.List[tp.Union[str, tp.Iterable[str]]], *
     kwargs
         The kwargs of the 'fit'.
     """
-    verbose = kwargs.get('verbose', 0)
+    verbose = kwargs.pop('verbose', 0)
     if verbose > 0:
         print(f"Start {recipe.name} with all parameters fixed.")
     recipe.fix('all')
@@ -216,7 +216,7 @@ def optimize(recipe: MyRecipe, tags: tp.List[tp.Union[str, tp.Iterable[str]]], *
                     )
                 )
             recipe.free(*tag)
-        fit(recipe, **kwargs)
+        fit(recipe, verbose=verbose, **kwargs)
     return
 
 
