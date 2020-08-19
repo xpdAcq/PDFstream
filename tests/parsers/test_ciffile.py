@@ -1,4 +1,4 @@
-import pdfstream.parsers.cif_to_dict as ctd
+import pdfstream.parsers as ctd
 from mongomock import MongoClient
 
 
