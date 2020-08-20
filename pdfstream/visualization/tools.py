@@ -93,7 +93,7 @@ def text_position(vis_data: ndarray, text_xy: tuple) -> tuple:
     fx, fy = text_xy
     x1, y1 = vis_data[:2]
     xa = (1 - fx) * np.min(x1) + fx * np.max(x1)
-    ya = (1 - fy) * np.max(y1[x1 > xa]) + fy * np.max(y1)
+    ya = (1 - fy) * np.min(y1) + fy * np.max(y1)
     return xa, ya
 
 
