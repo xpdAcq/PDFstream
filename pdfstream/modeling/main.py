@@ -24,7 +24,6 @@ __all__ = [
     'view_fits',
     'fit_calib',
     'FIT_RANGE',
-    'F',
     'Crystal',
     'Structure',
     'save'

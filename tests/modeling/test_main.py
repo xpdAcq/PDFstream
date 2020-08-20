@@ -1,8 +1,7 @@
 import pytest
 from matplotlib import pyplot as plt
 
-from pdfstream.modeling.fitobjs import MyParser
-from pdfstream.modeling.main import multi_phase, optimize, fit_calib, F
+from pdfstream.modeling import F, multi_phase, optimize, fit_calib, MyParser
 
 
 @pytest.mark.parametrize(

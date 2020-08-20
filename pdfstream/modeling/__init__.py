@@ -1,6 +1,6 @@
 from pyobjcryst import loadCrystal
 
-from pdfstream.modeling.main import F, multi_phase, optimize, view_fits, report, MyParser
+from pdfstream.modeling.main import multi_phase, optimize, view_fits, report, MyParser, fit_calib
 from pdfstream.modeling.saving import save
 
 __all__ = [
@@ -12,5 +12,6 @@ __all__ = [
     "report",
     "save",
     "loadCrystal",
-    "loadStructure"
+    "loadStructure",
+    "fit_calib"
 ]
