@@ -1,3 +1,4 @@
+import itertools
 import typing as tp
 
 import numpy as np
@@ -7,14 +8,18 @@ import pdfstream.parsers as parsers
 from pdfstream.visualization.main import waterfall
 
 
-def fitted_curves(docs: tp.Iterable[dict], keys: tuple = ('conresults', 0), data_keys: tuple = ("x", "ycalc", "y"),
-                  rw_key: str = "rw", rw_template: str = r"$R_w$ = {:.2f}", **kwargs) -> Axes:
+def fitted_curves(docs: tp.Iterable[dict], text_keys: tuple = None, keys: tuple = ('conresults', 0),
+                  data_keys: tuple = ("x", "ycalc", "y"), rw_key: str = "rw",
+                  rw_template: str = r"$R_w$ = {"r":.2f}", **kwargs) -> Axes:
     """Visualize the fitted curves from the documents.
 
     Parameters
     ----------
     docs : Iterable[dict]
         A series of documentations.
+
+    text_keys : Iterable[str]
+        The text to annotate the curves.
 
     keys : tuple
         A key chain to find the sub-dictionary of str and list pairs.
@@ -36,6 +41,13 @@ def fitted_curves(docs: tp.Iterable[dict], keys: tuple = ('conresults', 0), data
     rws = parsers.dicts_to_array(docs, keys=keys, data_keys=(rw_key,))
     rws = np.squeeze(rws)
     texts = [rw_template.format(rw) for rw in rws]
+    if text_keys:
+        raw_texts = parsers.dicts_to_array(docs, keys=(), data_keys=text_keys)
+        raw_texts = np.squeeze(raw_texts)
+        texts = [
+            '{}\n{}'.format(raw_text, text)
+            for raw_text, text in itertools.zip_longest(raw_texts, texts)
+        ]
     return waterfall(
         data, texts=texts, mode="fit", **kwargs
     )
