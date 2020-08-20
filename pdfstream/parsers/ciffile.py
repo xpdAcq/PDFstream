@@ -1,7 +1,8 @@
-from gemmi import cif
 import json
-from pathlib import Path
 import typing as tp
+from pathlib import Path
+
+from gemmi import cif
 
 
 def cif_to_dict(cif_file: str, mmjson: bool = False) -> tp.Generator:
