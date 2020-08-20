@@ -1,7 +1,6 @@
 import inspect
 import typing as tp
 
-import diffpy.srfit.pdf.characteristicfunctions as F
 from diffpy.srfit.fitbase import FitResults
 from diffpy.srfit.pdf import PDFGenerator
 from diffpy.structure import Structure
@@ -12,7 +11,7 @@ from pdfstream.modeling.fitfuncs import (
     make_recipe, sgconstrain_all, cfconstrain_all, fit, plot, sgconstrain, cfconstrain
 )
 from pdfstream.modeling.fitobjs import MyRecipe, GenConfig, ConConfig, MyParser, FunConfig, MyContribution
-from pdfstream.modeling.save import save
+from pdfstream.modeling.saving import save
 
 __all__ = [
     'multi_phase',

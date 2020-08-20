@@ -2,9 +2,9 @@ from tempfile import TemporaryDirectory
 
 import pytest
 
-from pdfstream.modeling import save as S
+import pdfstream.modeling.saving as S
 from pdfstream.modeling.main import optimize
-from pdfstream.modeling.save import save
+from pdfstream.modeling.saving import save
 
 
 @pytest.mark.parametrize(
