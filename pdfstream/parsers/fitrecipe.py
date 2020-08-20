@@ -8,7 +8,7 @@ from diffpy.structure.structure import Structure
 from pyobjcryst.crystal import Crystal
 from pyobjcryst.spacegroup import SpaceGroup
 
-from pdfstream.modeling.main import MyRecipe
+from pdfstream.modeling.fitobjs import MyRecipe
 
 GEN = tp.Union[PDFGenerator, DebyePDFGenerator]
 
