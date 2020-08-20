@@ -25,7 +25,7 @@ _LABELS = {
     "gr": (r"r ($\mathrm{\AA}$)", r"G ($\mathrm{\AA}^{-2}$)"),
     "fgr": (r"r ($\mathrm{\AA}$)", r"G ($\mathrm{\AA}^{-2}$)")
 }
-_TEXT_XY = (0.8, 0.4)
+_TEXT_XY = (0.8, 0.8)
 
 
 def normalize(vis_data: ndarray):
