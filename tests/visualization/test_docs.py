@@ -30,5 +30,5 @@ data = [
 )
 def test_fitted_curves(docs, text_keys):
     fitted_curves(docs, text_keys=text_keys)
-    plt.show()
+    plt.show(block=False)
     plt.close()
