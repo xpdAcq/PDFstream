@@ -5,6 +5,8 @@ from pdfstream.modeling.main import multi_phase, optimize, view_fits, report, My
 from pdfstream.modeling.saving import save
 
 F = F
+multi_phase = multi_phase
+MyParser = MyParser
 __all__ = [
     "F",
     "MyParser"
