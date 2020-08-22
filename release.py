@@ -28,7 +28,7 @@ def conda_recipe(rever_dir: str) -> None:
     # create meta.yaml
     meta_yaml = recipe_dir / "meta.yaml"
     with meta_yaml.open("w") as f:
-        yaml.safe_dump(conda_meta(), f, sort_keys=False)
+        yaml.safe_dump(conda_meta(rever_dir), f, sort_keys=False)
     # copy license
     shutil.copy(LICENSE, recipe_dir / LICENSE.name)
     return
@@ -42,7 +42,7 @@ def conda_build_config() -> dict:
     }
 
 
-def conda_meta() -> dict:
+def conda_meta(rever_dir: Path) -> dict:
     """Make the dictionary of conda meta information."""
     package = pkg_resources.require(PACKAGE)[0]
     name = package.project_name
@@ -104,7 +104,3 @@ def read_dependencies(txt_file: Path) -> list:
             if not line.startswith('#')
         ]
     return dependencies
-
-
-if __name__ == "__main__":
-    conda_recipe()
