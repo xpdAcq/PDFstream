@@ -50,7 +50,7 @@ def conda_meta() -> dict:
     host = read_dependencies(REQUIREMENTS / "build.txt")
     build = read_dependencies(REQUIREMENTS / "run.txt")
     tar_file_name = rf"{name}-{version}.tar.gz"
-    sha256 = get_hash(REVER_DIR / "dist" / tar_file_name)
+    sha256 = get_hash(REVER_DIR / tar_file_name)
     return {
         "package": {
             "name": name.lower(),
