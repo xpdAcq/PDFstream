@@ -4,6 +4,7 @@ from rever.activity import activity
 def conda_release():
     $PYTHON release.py
     conda build $REVER_DIR/recipe
+    conda build purge
 
 
 $PROJECT = 'pdfstream'
