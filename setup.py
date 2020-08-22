@@ -30,6 +30,7 @@ setup(
     version='0.1.1',
     description="The data analysis toolbox for the study on pair distribution function (PDF).",
     long_description=readme,
+    long_description_content_type='text/markdown',
     author="Songsheng Tao",
     author_email='st3107@columbia.edu',
     url='https://github.com/st3107/pdfstream',
