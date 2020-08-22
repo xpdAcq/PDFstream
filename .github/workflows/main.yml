@@ -59,7 +59,7 @@ jobs:
 
       - name: build documents
         run: |
-          source activate docs
+          source activate test
           make -C docs html
 
       - name: deploy to github pages if released
