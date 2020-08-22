@@ -8,17 +8,17 @@ import pkg_resources
 import yaml
 
 PACKAGE = "pdfstream"
+REVER_DIR = Path("rever")
 REQUIREMENTS = Path("requirements")
 LICENSE = Path("LICENSE")
 CONDA_CHANNEL_SOURCES = ["defaults", "diffpy", "conda-forge"]
 CONDA_CHANNEL_TARGETS = ["st3107"]
 
 
-def conda_recipe(rever_dir: str) -> None:
-    rever_dir = Path(rever_dir)
+def conda_recipe() -> None:
     """Make conda recipe."""
     # create a new director
-    recipe_dir = rever_dir / "recipe"
+    recipe_dir = REVER_DIR / "recipe"
     if not recipe_dir.is_dir():
         recipe_dir.mkdir()
     # create conda_build_config.yaml
@@ -28,7 +28,7 @@ def conda_recipe(rever_dir: str) -> None:
     # create meta.yaml
     meta_yaml = recipe_dir / "meta.yaml"
     with meta_yaml.open("w") as f:
-        yaml.safe_dump(conda_meta(rever_dir), f, sort_keys=False)
+        yaml.safe_dump(conda_meta(), f, sort_keys=False)
     # copy license
     shutil.copy(LICENSE, recipe_dir / LICENSE.name)
     return
@@ -42,7 +42,7 @@ def conda_build_config() -> dict:
     }
 
 
-def conda_meta(rever_dir: Path) -> dict:
+def conda_meta() -> dict:
     """Make the dictionary of conda meta information."""
     package = pkg_resources.require(PACKAGE)[0]
     name = package.project_name
@@ -50,7 +50,7 @@ def conda_meta(rever_dir: Path) -> dict:
     host = read_dependencies(REQUIREMENTS / "build.txt")
     build = read_dependencies(REQUIREMENTS / "run.txt")
     tar_file_name = rf"{name}-{version}.tar.gz"
-    sha256 = get_hash(rever_dir / "dist" / tar_file_name)
+    sha256 = get_hash(REVER_DIR / "dist" / tar_file_name)
     return {
         "package": {
             "name": name.lower(),
@@ -104,3 +104,7 @@ def read_dependencies(txt_file: Path) -> list:
             if not line.startswith('#')
         ]
     return dependencies
+
+
+if __name__ == "__main__":
+    conda_recipe()

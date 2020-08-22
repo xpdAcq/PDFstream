@@ -1,21 +1,20 @@
 from rever.activity import activity
-from release import conda_recipe
 
 @activity
 def conda_release():
-    conda_recipe($REVER_DIR)
+    $PYTHON release.py
     conda build $REVER_DIR/recipe
 
 
 $PROJECT = 'pdfstream'
 $ACTIVITIES = [
-#    'version_bump',
-#    'changelog',
-#    'tag',
-#    'push_tag',
-#    'ghrelease',
-#    'pypi',
-     'conda_release'
+    'version_bump',
+    'changelog',
+    'tag',
+    'push_tag',
+    'ghrelease',
+    'pypi',
+    'conda_release'
 ]
 
 $VERSION_BUMP_PATTERNS = [
