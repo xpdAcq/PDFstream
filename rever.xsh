@@ -24,6 +24,6 @@ $GITHUB_REPO = 'pdfstream'
 $GHPAGES_REPO = 'git@github.com:st3107/pdfstream.git'
 $GHPAGES_BRANCH = 'gh-pages'
 $GHPAGES_COPY = (
-    ('docs/html', '$GHPAGES_REPO_DIR'),
+    ('$SPHINX_HOST_DIR/html', '$GHPAGES_REPO_DIR'),
     ('$REVER_DIR/sphinx-build/html', '$GHPAGES_REPO_DIR'),
 )
