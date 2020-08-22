@@ -64,7 +64,7 @@ jobs:
 
       - name: deploy to github pages if released
         uses: JamesIves/github-pages-deploy-action@3.5.7
-        if: contains(github.ref, release)
+        if: contains(github.ref, 'release')
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           BRANCH: gh-pages
