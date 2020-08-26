@@ -26,7 +26,8 @@ def stru_dict_to_crystal(dct: dict, **kwargs) -> Atoms:
 def atom_dict_to_atom(dct: dict) -> Atom:
     """Parse a dictionary of atom information to an ase.Atom object."""
     return Atom(
-        symbol=dct["element"],
+        symbol=tools.only_letter(dct["element"]),
+        tag=int(tools.only_digit(dct["name"])),
         position=(dct["x"], dct["y"], dct["z"]),
     )
 
