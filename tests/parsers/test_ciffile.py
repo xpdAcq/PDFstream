@@ -1,13 +1,24 @@
-import pdfstream.parsers as ctd
-from mongomock import MongoClient
 from pprint import pprint
 
+import pytest
+from mongomock import MongoClient
 
-def test_cif_to_dict(db):
+import pdfstream.parsers as ctd
+
+
+@pytest.mark.parametrize(
+    "kwargs",
+    [
+        {"mmjson": True},
+        {"mmjson": False}
+    ]
+)
+def test_cif_to_dict(db, kwargs):
     client = MongoClient()
     coll = client.db.coll
     dcts = ctd.cif_to_dict(
-        db["Ni_stru_file"]
+        db["Ni_stru_file"],
+        **kwargs
     )
     for dct in dcts:
         pprint(dct)
