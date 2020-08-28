@@ -69,7 +69,6 @@ jobs:
 
       - name: deploy to github pages if released
         uses: JamesIves/github-pages-deploy-action@3.5.7
-        if: startsWith(github.ref, 'refs/tags/')
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           BRANCH: gh-pages
