@@ -199,7 +199,7 @@ def waterfall(
 
 
 def visualize(
-        data_file: str, ax: Axes = None, mode: str = "line", normal: bool = True,
+        data_file: str, ax: Axes = None, mode: str = "line", normal: bool = False,
         text: str = None, text_xy: tuple = None, label: str = None,
         minor_tick: int = 2, legend: str = None, color: tp.Iterable = None,
         show_fig: bool = True, **kwargs
@@ -236,6 +236,7 @@ def visualize(
 
     normal : bool
         If True, the second and the following rows in data will be normalized by (max - min). Else, do nothing.
+        Defulat False.
 
     text : str
         The text to annotate the curve.
