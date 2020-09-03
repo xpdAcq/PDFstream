@@ -88,6 +88,13 @@ from pdfstream.modeling import F, multi_phase, optimize, fit_calib, MyParser
                 True,
                 False,
                 {'scale_G0', 'a_G0', 'Biso_Ni_G0', 'delta2_G0'}
+        ),
+        (
+                "Ni_stru",
+                {"add_eq": "A * exp(- B * r ** 2) * sin(C * r)"},
+                True,
+                False,
+                {'scale_G0', 'a_G0', 'Biso_Ni_G0', 'delta2_G0', "A", "B", "C"}
         )
     ]
 )
@@ -135,4 +142,4 @@ def test_fit_calib(db):
     parser = MyParser()
     parser.parseFile(db['Ni_gr_file'])
     fit_calib(db['Ni_stru'], parser, fit_range=(2., 8., .1))
-    plt.close()
+    plt.clf()

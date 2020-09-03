@@ -249,10 +249,10 @@ def cfconstrain(recipe: MyRecipe, con_name: str, param_names: list = None, dv: D
             if arg.name != con.xname
         }
     else:
-        pars = (getattr(con, param_name) for param_name in param_names)
+        pars = {getattr(con, param_name) for param_name in param_names}
     for par in pars:
         variables[par.name] = recipe.addVar(par, value=dv.get(par.name, par.value), tag="cf").boundRange(
-            *bounds.get(par.name, (0, np.inf)))
+            *bounds.get(par.name, (-np.inf, np.inf)))
     return variables
 
 

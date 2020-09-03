@@ -93,7 +93,8 @@ def multi_phase(
         bounds: dict = None,
         ncpu: int = None,
         cf_params: tp.List[str] = None,
-        sg_params: tp.Dict[str, tp.Union[int, str]] = None
+        sg_params: tp.Dict[str, tp.Union[int, str]] = None,
+        add_eq: str = None
 ) -> MyRecipe:
     """Make the recipe of a multiphase crystal pdf refinement.
 
@@ -139,6 +140,9 @@ def multi_phase(
         in its phase. If sg_params = None, all the generators will be constrained and the parameters will be
         added to the recipe. If sg_params = {}, no generators will be contrained and no parameters will be added.
 
+    add_eq : str
+        Additional equation in the fitting.
+
     Returns
     -------
     recipe : MyRecipe
@@ -164,7 +168,10 @@ def multi_phase(
             )
             eq += " * " + fname
         eqs.update({gname: eq})
-    conconfig = ConConfig(name='multi_phase', partial_eqs=eqs, parser=data, fit_range=fit_range,
+    total_eq = " + ".join(eqs.values())
+    if add_eq:
+        total_eq = " + ".join((total_eq, add_eq))
+    conconfig = ConConfig(name='multi_phase', eq=total_eq, partial_eqs=eqs, parser=data, fit_range=fit_range,
                           genconfigs=genconfigs, funconfigs=funconfigs)
     recipe = make_recipe(conconfig)
     if cf_params is None:
