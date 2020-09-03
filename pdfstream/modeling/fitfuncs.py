@@ -223,7 +223,7 @@ def cfconstrain(recipe: MyRecipe, con_name: str, param_names: list = None, dv: D
 
     dv : dict
         The path to the .csv file contains the fitting results or the dictionary of values.
-        If None, use 100 for any parameters as default value.
+        If None, use par.value for any parameters as default value.
 
     bounds : dict
         The mapping from the name of the variable to the tuple of bounds (min, max). Defulat (0, +inf).
@@ -251,7 +251,7 @@ def cfconstrain(recipe: MyRecipe, con_name: str, param_names: list = None, dv: D
     else:
         pars = (getattr(con, param_name) for param_name in param_names)
     for par in pars:
-        variables[par.name] = recipe.addVar(par, value=dv.get(par.name, 100.), tag="cf").boundRange(
+        variables[par.name] = recipe.addVar(par, value=dv.get(par.name, par.value), tag="cf").boundRange(
             *bounds.get(par.name, (0, np.inf)))
     return variables
 
