@@ -5,3 +5,4 @@ pymongo
 fire
 ase
 gemmi
+databroker
