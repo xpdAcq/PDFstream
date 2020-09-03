@@ -9,11 +9,11 @@ from matplotlib.figure import Figure
 from matplotlib.gridspec import GridSpec
 
 __all__ = [
-    np,
-    plt,
-    xr,
-    pd,
-    GridSpec,
+    "np",
+    "plt",
+    "xr",
+    "pd",
+    "GridSpec",
     "FigExporter"
 ]
 
