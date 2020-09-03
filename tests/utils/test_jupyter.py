@@ -3,7 +3,7 @@ from tempfile import TemporaryDirectory
 
 import matplotlib.pyplot as plt
 
-from pdfstream.utils.jupyter import savefig_factory
+from pdfstream.utils.jupyter import savefig_factory, FigExporter
 
 
 def test_savefig_factory():
@@ -15,4 +15,16 @@ def test_savefig_factory():
         savefig(fname)
         figure_path = figure_forlder / fname
         assert figure_path.exists()
-    plt.close()
+    plt.clf()
+
+
+def test_FigExporter():
+    plt.figure()
+    with TemporaryDirectory() as d:
+        exporter = FigExporter(d)
+        exporter.update(dpi=40)
+        exporter("test.svg")
+        exporter.latex()
+        target = Path(d) / "test.svg"
+        assert target.is_file()
+    plt.clf()

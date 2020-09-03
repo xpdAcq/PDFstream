@@ -1,7 +1,21 @@
-"""Some useful functions when using jupyter lab."""
+"""Some useful functions and classes when using jupyter lab."""
 from pathlib import Path
 
 import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import xarray as xr
+from matplotlib.figure import Figure
+from matplotlib.gridspec import GridSpec
+
+__all__ = [
+    np,
+    plt,
+    xr,
+    pd,
+    GridSpec,
+    "FigExporter"
+]
 
 LATEX_REF = (
     "\\begin{{figure}}[hptb]\n"
@@ -141,3 +155,41 @@ def savefig_factory(figure_dir):
         return
 
     return savefig
+
+
+class FigExporter(object):
+    """A figure exporter based on matplotlib.pyplot.savefig.
+
+    Examples
+    --------
+    >>> exporter = FigExporter("my_figure_dir", dpi=600, fmt="png")
+    >>> exporter("my_figure_name.png")
+    >>> exporter.latex()
+    """
+
+    def __init__(self, figure_dir: str = ".", **kwargs):
+        """Initialize the object. kwargs are used to update the _config attribute."""
+        self._figure_dir = Path(figure_dir)
+        if not self._figure_dir.is_dir():
+            self._figure_dir.mkdir()
+        self._filepath = None
+        self._config = kwargs
+
+    def __call__(self, filename: str, fig: Figure = None, **kwargs):
+        """Save figure to directory and update the _filepath attribute."""
+        fig = fig if fig is not None else plt.gcf()
+        config = self._config.copy()
+        config.update(kwargs)
+        path = self._figure_dir.joinpath(filename)
+        fig.savefig(str(path), **config)
+        self._filepath = path
+
+    def update(self, **kwargs):
+        """Update the _config attribute."""
+        self._config.update(kwargs)
+
+    def latex(self, caption: str = ""):
+        """Print the latex string of the reference of the figure in the _filepath attribute."""
+        print(
+            LATEX_REF.format(self._filepath.name, caption, self._filepath.stem)
+        )
