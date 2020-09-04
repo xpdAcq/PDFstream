@@ -16,3 +16,20 @@ def recipe(request):
     recipe = multi_phase([(F.sphericalCF, stru)], parser, fit_range=(2., 8.0, .1), values={
         'psize_G0': 200}, sg_params={'G0': 225})
     return recipe
+
+
+@pytest.fixture
+def data(db):
+    parser = MyParser()
+    parser.parseFile(db["Ni_gr_file"], {"qdamp": 0.04, "qbroad": 0.02})
+    return parser
+
+
+@pytest.fixture
+def structures(db):
+    return {"G0": db["Ni_stru"]}
+
+
+@pytest.fixture
+def functions():
+    return {"f0": F.sphericalCF}

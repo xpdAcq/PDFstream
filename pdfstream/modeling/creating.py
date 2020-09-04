@@ -5,7 +5,8 @@ import typing as tp
 from diffpy.structure import Structure
 from pyobjcryst.crystal import Crystal
 
-from .fitobjs import FunConfig, GenConfig, ConConfig, MyParser
+from .fitfuncs import make_recipe
+from .fitobjs import FunConfig, GenConfig, ConConfig, MyParser, MyRecipe
 
 S = tp.Union[Crystal, Structure]
 
@@ -13,12 +14,12 @@ S = tp.Union[Crystal, Structure]
 def create(
         name: str,
         data: MyParser,
-        equation: str,
         arange: tp.Tuple[float, float, float],
-        structures: tp.Dict[str, S],
+        equation: str,
         functions: tp.Dict[str, tp.Callable],
+        structures: tp.Dict[str, S],
         ncpu: int = None
-):
+) -> MyRecipe:
     genconfigs = [
         GenConfig(
             name=n, structure=s, ncpu=ncpu
@@ -27,7 +28,7 @@ def create(
     ]
     funconfigs = [
         FunConfig(
-            name=n, func=f, argnames=add_suffix(func, name)
+            name=n, func=f, argnames=add_suffix(f, name)
         )
         for n, f in functions.items()
     ]
