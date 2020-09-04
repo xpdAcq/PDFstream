@@ -1,8 +1,9 @@
 import diffpy.srfit.pdf.characteristicfunctions as F
 from pyobjcryst import loadCrystal
 
-from pdfstream.modeling.main import multi_phase, optimize, view_fits, report, MyParser, fit_calib
-from pdfstream.modeling.saving import save
+from .adding import add
+from .main import multi_phase, optimize, view_fits, report, MyParser, fit_calib
+from .saving import save
 
 F = F
 multi_phase = multi_phase
@@ -17,5 +18,6 @@ __all__ = [
     "save",
     "loadCrystal",
     "loadStructure",
-    "fit_calib"
+    "fit_calib",
+    "add"
 ]

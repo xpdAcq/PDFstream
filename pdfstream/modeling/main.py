@@ -1,4 +1,3 @@
-import inspect
 import typing as tp
 
 from diffpy.srfit.fitbase import FitResults
@@ -7,6 +6,7 @@ from diffpy.structure import Structure
 from matplotlib.axes import Axes
 from pyobjcryst.crystal import Crystal
 
+from pdfstream.modeling.creating import add_suffix
 from pdfstream.modeling.fitfuncs import (
     make_recipe, sgconstrain_all, cfconstrain_all, fit, plot, sgconstrain, cfconstrain
 )
@@ -72,17 +72,6 @@ def fit_calib(stru: Crystal, data: MyParser, fit_range: FIT_RANGE, ncpu: int = N
     print("\n")
     view_fits(recipe)
     return recipe
-
-
-def _add_suffix(func: tp.Callable, suffix: str) -> tp.List[str]:
-    """Add the suffix to the argument names starting at the second the argument. Return the names"""
-    args = inspect.getfullargspec(func).args
-    return list(
-        map(
-            lambda arg: '{}_{}'.format(arg, suffix) if arg != "r" else arg,
-            args
-        )
-    )
 
 
 def multi_phase(
@@ -164,7 +153,7 @@ def multi_phase(
         if cf is not None:
             fname = "f{}".format(i)
             funconfigs.append(
-                FunConfig(name=fname, func=cf, argnames=_add_suffix(cf, fname))
+                FunConfig(name=fname, func=cf, argnames=add_suffix(cf, fname))
             )
             eq += " * " + fname
         eqs.update({gname: eq})
