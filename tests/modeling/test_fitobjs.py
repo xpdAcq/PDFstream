@@ -50,7 +50,24 @@ def test_MyParser_parseDict_error(data):
 def test_MyParser_parsePDFGetter(db, data_key, meta):
     pdfgetter = db[data_key]
     parser = MyParser()
-    parser.parsePDFGetter(pdfgetter, add_meta=meta)
+    parser.parsePDFGetter(pdfgetter, meta=meta)
+    if meta:
+        for key, value in meta.items():
+            assert parser._meta[key] == value
+
+
+@pytest.mark.parametrize(
+    "data_key",
+    ['Ni_gr_file']
+)
+@pytest.mark.parametrize(
+    "meta",
+    [None, {'qmax': 19}]
+)
+def test_MyParser_parsePDFGetter(db, data_key, meta):
+    pdfgetter = db[data_key]
+    parser = MyParser()
+    parser.parseFile(pdfgetter, meta=meta)
     if meta:
         for key, value in meta.items():
             assert parser._meta[key] == value
@@ -119,3 +136,7 @@ def test_ConConfig_error(db):
             parser=parser,
             fit_range=(0., 8., .1),
         )
+
+
+def test_parse_file():
+    assert False

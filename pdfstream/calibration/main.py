@@ -87,6 +87,6 @@ def calib_pipe(
     pdfconfig.update(rmin=fit_range[0], rmax=fit_range[1], rstep=fit_range[2])
     pdfgetter = get_pdf(pdfconfig, chi, plot_setting=pdf_plot_setting)
     data = MyParser()
-    data.parsePDFGetter(pdfgetter, add_meta={'qdamp': qdamp0, 'qbroad': qbroad0})
+    data.parsePDFGetter(pdfgetter, meta={'qdamp': qdamp0, 'qbroad': qbroad0})
     recipe = fit_calib(stru, data, fit_range, ncpu=ncpu)
     return pdfgetter, recipe

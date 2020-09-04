@@ -32,6 +32,12 @@ def map_stype(mode: str):
 class MyParser(PDFParser):
     """The parser to parse data and meta data."""
 
+    def parseFile(self, filename, meta: dict = None):
+        super().parseFile(filename)
+        if meta:
+            self._meta.update(meta)
+        return
+
     def parseDict(self, data: ndarray, meta: dict = None):
         """Parse the data and meta data from a ndarray and a dictionary.
 
@@ -65,17 +71,17 @@ class MyParser(PDFParser):
         self._meta = meta
         return
 
-    def parsePDFGetter(self, pdfgetter: PDFGetter, add_meta: dict = None):
-        if add_meta is None:
-            add_meta = {}
+    def parsePDFGetter(self, pdfgetter: PDFGetter, meta: dict = None):
+        if meta is None:
+            meta = {}
         data = np.stack(pdfgetter.gr)
         pdfconfig: PDFConfig = pdfgetter.config
-        meta = {
+        other_meta = {
             'stype': map_stype(pdfconfig.mode),
             'qmin': pdfconfig.qmin,
             'qmax': pdfconfig.qmax,
         }
-        meta.update(add_meta)
+        meta.update(other_meta)
         self.parseDict(data, meta=meta)
         return
 
