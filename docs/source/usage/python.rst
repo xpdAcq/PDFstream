@@ -39,18 +39,6 @@ To visualize several data files, use
 Modeling
 --------
 
-To create a fit recipe, use
+The tools to model the PDFs are inside `pdfstream.modeling`.
 
-.. autofunction:: pdfstream.modeling.main.multi_phase
-
-To optimize the model in the recipe, use
-
-.. autofunction:: pdfstream.modeling.main.optimize
-
-To report the optimization results, use
-
-.. autofunction:: pdfstream.modeling.main.report
-
-To save the recipe in files, use
-
-.. autofunction:: pdfstream.modeling.saving.save
+.. automodule:: pdfstream.modeling
