@@ -141,7 +141,7 @@ def make_recipe(*conconfigs: ConConfig) -> MyRecipe:
         contribution = make_contribution(conconfig)
         recipe.addContribution(contribution, conconfig.weight)
 
-    recipe.fithooks[0].verbose = 0
+    recipe.clearFitHooks()
 
     return recipe
 

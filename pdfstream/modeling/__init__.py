@@ -1,4 +1,6 @@
 import diffpy.srfit.pdf.characteristicfunctions as F
+from diffpy.srfit.fitbase import PlotFitHook
+from diffpy.srfit.pdf import PDFGenerator, DebyePDFGenerator, PDFContribution
 
 from .adding import add_gen_vars, add_con_vars, initialize
 from .creating import create
@@ -7,6 +9,10 @@ from .main import multi_phase, optimize, view_fits, report, fit_calib
 from .saving import save
 
 F = F
+PlotFitHook = PlotFitHook
+PDFGenerator = PDFGenerator
+DebyePDFGenerator = DebyePDFGenerator
+PDFContribution = PDFContribution
 create = create
 add_con_vars = add_con_vars
 add_gen_vars = add_gen_vars
