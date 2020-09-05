@@ -146,7 +146,7 @@ def add_scale(recipe: MyRecipe, gen: G, scale: bool = True) -> None:
         gen.scale,
         value=0.,
         name="{}_scale".format(gen.name),
-        tag="{}_scale".format(gen.name)
+        tags=["{}_scale".format(gen.name), "scale", gen.name]
     ).boundRange(
         lb=0.
     )
