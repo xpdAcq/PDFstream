@@ -20,6 +20,36 @@ def create(
         structures: tp.Dict[str, S],
         ncpu: int = None
 ) -> MyRecipe:
+    """Create a single-contribution recipe without any variables inside.
+
+    Parameters
+    ----------
+    name :
+        The name of the contribution.
+
+    data :
+        The parser that contains the information of the
+
+    arange :
+        The rmin, rmax, rstep (inclusive).
+
+    equation :
+        The equation of the contribution.
+
+    functions :
+        The keys are function names in the equation and the values are function objects.
+
+    structures :
+        The keys are structure name in the equation and the values are structure object.
+
+    ncpu :
+        The number of cpu used in parallel computing. If None, no parallel. Default None.
+
+    Returns
+    -------
+    recipe :
+        A single-contribution recipe without any variables inside.
+    """
     genconfigs = [
         GenConfig(
             name=n, structure=s, ncpu=ncpu
@@ -28,7 +58,7 @@ def create(
     ]
     funconfigs = [
         FunConfig(
-            name=n, func=f, argnames=add_suffix(f, name)
+            name=n, func=f, argnames=add_suffix(f, n)
         )
         for n, f in functions.items()
     ]
