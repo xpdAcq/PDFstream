@@ -1,6 +1,6 @@
 import pytest
 
-from pdfstream.modeling.io import loadData
+from pdfstream.io import load_parser
 
 
 @pytest.mark.parametrize(
@@ -12,5 +12,5 @@ from pdfstream.modeling.io import loadData
     ]
 )
 def test_load_data(db, meta):
-    parser = loadData(db["Ni_gr_file"], meta)
+    parser = load_parser(db["Ni_gr_file"], meta)
     assert parser

@@ -11,6 +11,8 @@ from diffpy.utils.parsers import loadData
 from numpy import ndarray
 from pyobjcryst import loadCrystal
 
+from pdfstream.modeling import MyParser
+
 load_crystal = loadCrystal
 load_structure = loadStructure
 
@@ -84,3 +86,24 @@ def _lower_key(dct: Dict[str, Any]) -> Dict[str, Any]:
 
 
 load_data = loadData
+
+
+def load_parser(filename: str, meta: dict) -> MyParser:
+    """Load data and metadata from the filename into a parser.
+
+    Parameters
+    ----------
+    filename :
+        The name of the data file.
+
+    meta :
+        The dictionary of the meta data, like {'qdamp': 0.04, 'qbroad': 0.02}.
+
+    Returns
+    -------
+    parser :
+        The parser that contains the data and metadata.
+    """
+    parser = MyParser()
+    parser.parseFile(filename, meta=meta)
+    return parser
