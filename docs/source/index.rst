@@ -6,4 +6,5 @@ PDFstream Documentation
 
    installation
    usage/index
+   auto_gallery/index
    min_versions
