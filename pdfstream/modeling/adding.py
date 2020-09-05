@@ -2,28 +2,76 @@
 import typing as tp
 
 from diffpy.srfit.pdf import PDFGenerator, DebyePDFGenerator
-from diffpy.srfit.structure.objcrystparset import ObjCrystAtomParSet
 
-from .fitobjs import MyRecipe
+from .fitobjs import MyRecipe, MyContribution
 
 G = tp.Union[PDFGenerator, DebyePDFGenerator]
 
 
-def add(
+def initialize(
+        recipe: MyRecipe,
+        scale: bool = True,
+        delta: tp.Union[str, None] = "2",
+        lat: tp.Union[str, None] = "s",
+        adp: tp.Union[str, None] = "a",
+        xyz: tp.Union[str, None] = "s",
+        params: tp.Union[None, str, tp.List[str]] = "ALL"
+) -> None:
+    add_con_vars(recipe, params=params)
+    add_gen_vars(recipe, scale=scale, delta=delta, lat=lat, adp=adp, xyz=xyz)
+    return
+
+
+def add_con_vars(
+        recipe: MyRecipe,
+        name: tp.Union[str, None] = None,
+        params: tp.Union[None, str, tp.List[str]] = "ALL"
+):
+    if not name:
+        for con_name in recipe.contributions.keys():
+            add_con_vars(recipe, con_name, params)
+        return
+    con = recipe.contributions[name]
+    add_params(recipe, con, params)
+    return
+
+
+def add_params(recipe: MyRecipe, con: MyContribution, params: tp.Union[None, str, tp.List[str]]) -> None:
+    if not params:
+        return
+    args = {
+        arg.name: arg
+        for eq in con.eqfactory.equations
+        if eq.name == "eq"
+        for arg in eq.args
+        if arg.name != con.xname
+    }
+    if params is "ALL":
+        pars = args.values()
+    else:
+        pars = [args[p] for p in params]
+    for par in pars:
+        recipe.addVar(par, tags=["params"])
+    return
+
+
+def add_gen_vars(
         recipe: MyRecipe,
         names: tp.Tuple[str, str] = None,
         scale: bool = True,
         delta: tp.Union[str, None] = "2",
         lat: tp.Union[str, None] = "s",
         adp: tp.Union[str, None] = "a",
-        xyz: tp.Union[str, None] = "s"
+        xyz: tp.Union[str, None] = "s",
 ) -> None:
     if not names:
-        for con_name in recipe.contributions.keys():
-            for gen_name in recipe.contributions.keys():
-                add(recipe, names=(con_name, gen_name), scale=scale, delta=delta, lat=lat, adp=adp, xyz=xyz)
+        for con_name, con in recipe.contributions.items():
+            for gen_name in con.generators.keys():
+                add_gen_vars(
+                    recipe, names=(con_name, gen_name), scale=scale, delta=delta, lat=lat, adp=adp, xyz=xyz
+                )
         return
-    gen = getattr(getattr(recipe, names[0]), names[1])
+    gen = recipe.contributions[names[0]].generators[names[1]]
     add_scale(recipe, gen, scale)
     add_delta(recipe, gen, delta)
     add_lat(recipe, gen, lat)
@@ -77,7 +125,9 @@ def add_lat(recipe: MyRecipe, gen: G, lat: tp.Union[str, None]) -> None:
         raise ValueError("Unknown lat: {}. Allowed: sg, all.".format(lat))
     for par in pars:
         recipe.addVar(
-            par, tags=["lat", gen.name, "lat_{}".format(gen.name)]
+            par,
+            name="{}_{}".format(par.name, gen.name),
+            tags=["lat", gen.name, "lat_{}".format(gen.name)]
         ).boundRange(
             lb=0.
         )
@@ -93,16 +143,16 @@ def add_adp(recipe: MyRecipe, gen: G, adp: tp.Union[str, None]) -> None:
         dct = dict()
         for element in elements:
             dct[element] = recipe.newVar(
-                f"Biso_{only_alpha(element)}_{gen.name}",
+                f"Biso_{bleach(element)}_{gen.name}",
                 value=0.05,
                 tags=["adp", gen.name, "adp_{}".format(gen.name)]
             )
         for atom in atoms:
-            recipe.constrain(atom.Biso, adp[atom.element])
+            recipe.constrain(atom.Biso, dct[atom.element])
         return
     if adp == "a":
         pars = [atom.Biso for atom in atoms]
-        names = ["Biso_{}".format(atom.name) for atom in atoms]
+        names = ["Biso_{}".format(bleach(atom.name)) for atom in atoms]
     elif adp == "s":
         pars = gen.phase.sgpars.adppars
         names = [rename_by_atom(par.name, atoms) for par in pars]
@@ -147,8 +197,12 @@ def add_xyz(recipe: MyRecipe, gen: G, xyz: tp.Union[str, None]) -> None:
     return
 
 
-def rename_by_atom(name: str, atoms: tp.List[ObjCrystAtomParSet]) -> str:
+def rename_by_atom(name: str, atoms: list) -> str:
     parts = name.split("_")
     if len(parts) > 1 and parts[1].isdigit() and -1 < int(parts[1]) < len(atoms):
         parts[1] = atoms[int(parts[1])].name
     return "_".join(parts)
+
+
+def bleach(s: str):
+    return ''.join((c for c in s if c.isalnum()))
