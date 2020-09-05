@@ -21,10 +21,11 @@ def test_savefig_factory():
 def test_FigExporter():
     plt.figure()
     with TemporaryDirectory() as d:
-        exporter = FigExporter(d)
+        figure_dir = Path(d) / "test"
+        exporter = FigExporter(str(figure_dir))
         exporter.update(dpi=40)
         exporter("test.svg")
         exporter.latex()
-        target = Path(d) / "test.svg"
+        target = figure_dir / "test.svg"
         assert target.is_file()
     plt.clf()
