@@ -15,7 +15,7 @@ def initialize(
         lat: tp.Union[str, None] = "s",
         adp: tp.Union[str, None] = "a",
         xyz: tp.Union[str, None] = "s",
-        params: tp.Union[None, str, tp.List[str]] = "ALL"
+        params: tp.Union[None, str, tp.List[str]] = "a"
 ) -> None:
     add_con_vars(recipe, params=params)
     add_gen_vars(recipe, scale=scale, delta=delta, lat=lat, adp=adp, xyz=xyz)
@@ -25,7 +25,7 @@ def initialize(
 def add_con_vars(
         recipe: MyRecipe,
         name: tp.Union[str, None] = None,
-        params: tp.Union[None, str, tp.List[str]] = "ALL"
+        params: tp.Union[None, str, tp.List[str]] = "a"
 ):
     if not name:
         for con_name in recipe.contributions.keys():
@@ -46,7 +46,7 @@ def add_params(recipe: MyRecipe, con: MyContribution, params: tp.Union[None, str
         for arg in eq.args
         if arg.name != con.xname
     }
-    if params is "ALL":
+    if params is "a":
         pars = args.values()
     else:
         pars = [args[p] for p in params]
