@@ -108,8 +108,7 @@ def test_GenConfig(db, stru_key, expect):
 @pytest.mark.parametrize(
     "kwargs,expect",
     [
-        ({'eq': 'G0'}, {'eq': 'G0', 'partial_eqs': None}),
-        ({'eq': 'G0', 'partial_eqs': {'Ni': 'G0'}}, {'eq': 'G0', 'partial_eqs': {'Ni': 'G0'}})
+        ({'res_eq': 'chiv'}, {'res_eq': 'chiv'})
     ]
 )
 def test_ConConfig(db, kwargs, expect):
@@ -121,18 +120,8 @@ def test_ConConfig(db, kwargs, expect):
         parser=parser,
         fit_range=(0., 8., .1),
         genconfigs=[GenConfig('G0', stru)],
+        eq="G0",
         **kwargs
     )
     for key, value in expect.items():
         assert getattr(con_config, key) == value
-
-
-def test_ConConfig_error(db):
-    parser = MyParser()
-    parser.parseFile(db['Ni_gr_file'])
-    with pytest.raises(ValueError):
-        ConConfig(
-            name="con",
-            parser=parser,
-            fit_range=(0., 8., .1),
-        )

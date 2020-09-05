@@ -160,7 +160,7 @@ def multi_phase(
     total_eq = " + ".join(eqs.values())
     if add_eq:
         total_eq = " + ".join((total_eq, add_eq))
-    conconfig = ConConfig(name='multi_phase', eq=total_eq, partial_eqs=eqs, parser=data, fit_range=fit_range,
+    conconfig = ConConfig(name='multi_phase', eq=total_eq, parser=data, fit_range=fit_range,
                           genconfigs=genconfigs, funconfigs=funconfigs)
     recipe = make_recipe(conconfig)
     if cf_params is None:

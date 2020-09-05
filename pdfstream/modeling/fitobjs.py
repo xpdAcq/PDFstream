@@ -189,9 +189,8 @@ class ConConfig:
             self,
             name: str,
             parser: MyParser,
+            eq: str,
             fit_range: Tuple[float, float, float],
-            partial_eqs: Dict[str, str] = None,
-            eq: str = None,
             genconfigs: List[GenConfig] = None,
             funconfigs: List[FunConfig] = None,
             baselines: List[Callable] = None,
@@ -202,17 +201,7 @@ class ConConfig:
         self.name: str = name
         self.parser: MyParser = parser
         self.fit_range: Tuple[float, float, float] = fit_range
-        if partial_eqs is None and eq is None:
-            raise ValueError("Both partial_eqs and eq are None.")
-        elif partial_eqs is None:
-            self.eq: str = eq
-            self.partial_eqs = None
-        elif eq is None:
-            self.eq: str = " + ".join(partial_eqs.values())
-            self.partial_eqs = partial_eqs
-        else:
-            self.eq = eq
-            self.partial_eqs = partial_eqs
+        self.eq: str = eq
         self.genconfigs: List[GenConfig] = genconfigs if genconfigs else list()
         self.funconfigs: List[FunConfig] = funconfigs if funconfigs else list()
         self.baselines: List[ProfileGenerator] = baselines if baselines else list()
