@@ -4,3 +4,4 @@ xpdtools
 fire
 ase
 gemmi
+pymongo
