@@ -69,7 +69,7 @@ def test_waterfall_exception():
 @pytest.mark.parametrize(
     'key,kwargs', [
         ('Ni_gr_file', {'mode': 'line', 'text': 'Ni', 'xy_kwargs': {'color': 'black'}}),
-        ('Ni_gr_file', {'mode': 'line', 'legend': 'Ni', 'xy_kwargs': {'color': 'black'}}),
+        ('Ni_gr_file', {'mode': 'line', 'legends': 'Ni', 'xy_kwargs': {'color': 'black'}}),
         ('Ni_fgr_file', {'mode': 'fit', 'text': 'Ni', 'xy_kwargs': {'color': 'black'}})
     ]
 )
