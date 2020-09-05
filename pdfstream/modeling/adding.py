@@ -19,11 +19,20 @@ def initialize(
 ) -> None:
     """Initialize a single-contribution recipe with the variables.
 
-    The variables will be constrained, created and added according to the mode indicated by the arguments. If
-    an argument is None, nothing will be done. It is assumed that the recipe only has one contribution and
-    all variables in the generators in that contribution will be initialized in the same way. To constrain
-    specific contribution and generator, please use `~pdfstream.modeling.adding.add_con_vars` and
+    The variables will be constrained, created and added according to the mode indicated by the arguments. If an
+    argument is None, nothing will be done. It is assumed that the recipe only has one contribution and all
+    variables in the generators in that contribution will be initialized in the same way. To constrain specific
+    contribution and generator, please use `~pdfstream.modeling.adding.add_con_vars` and
     `~pdfstream.modeling.adding.add_gen_vars`.
+
+    The name for each parameter follows the rule of "{generator or function name}_{variable name}". For the
+    B-factors and coordinates variables, the variable name follows the rule
+    "{atom name or element name}_{Biso, B11, B22, B33, x, y, z}".
+
+    Each parameter in generator is tagged by three tags: the catagory of the paramter ("scale", "delta",
+    "lat", "adp", "xyz"), the name of the generator (e. g. "G0") and their union (e. g. "G0_lat"). Each parameter
+    in the contribution is tagged by the name of its function if the parameter is named by
+    "{function name}_{...}".
 
     Parameters
     ----------
