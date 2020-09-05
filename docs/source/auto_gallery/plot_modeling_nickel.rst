@@ -112,7 +112,7 @@ set the initial value of "psize" parameter in "f"
  .. code-block:: none
 
 
-    <diffpy.srfit.fitbase.parameter.Parameter object at 0x7fd86a89cad0>
+    <diffpy.srfit.fitbase.parameter.Parameter object at 0x7f81bf157390>
 
 
 
@@ -133,7 +133,7 @@ set the lower bound of "psize"
  .. code-block:: none
 
 
-    <diffpy.srfit.fitbase.parameter.Parameter object at 0x7fd86a89cad0>
+    <diffpy.srfit.fitbase.parameter.Parameter object at 0x7f81bf157390>
 
 
 
@@ -236,7 +236,7 @@ report the fitting results
     corr(f_psize, G_Ni0_Biso)    0.3171
     corr(G_scale, G_Ni0_Biso)    0.3020
 
-    <diffpy.srfit.fitbase.fitresults.FitResults object at 0x7fd86aa6e550>
+    <diffpy.srfit.fitbase.fitresults.FitResults object at 0x7f81bf31fd10>
 
 
 
@@ -268,7 +268,7 @@ the refined structure will be saved in .cif file
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  1.291 seconds)
+   **Total running time of the script:** ( 0 minutes  1.269 seconds)
 
 
 .. _sphx_glr_download_auto_gallery_plot_modeling_nickel.py:

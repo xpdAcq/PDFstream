@@ -9,6 +9,8 @@ def conda_release():
 @activity
 def build_docs():
     make -C docs html
+    git add .
+    git commit -m "DOC: sphinx build"
 
 
 $PROJECT = 'pdfstream'
@@ -37,7 +39,7 @@ $GITHUB_ORG = 'st3107'
 $GITHUB_REPO = 'pdfstream'
 
 $SPHINX_HOST_DIR = 'docs/build'
-$GHPAGES_REPO = $GITHUB_REPO
+$GHPAGES_REPO = 'git@github.com:st3107/pdfstream.git'
 $GHPAGES_BRANCH = 'gh-pages'
 $GHPAGES_COPY = (
     ('$SPHINX_HOST_DIR/html', '$GHPAGES_REPO_DIR')
