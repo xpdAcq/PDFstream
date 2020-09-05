@@ -58,7 +58,7 @@ def create(
     ]
     funconfigs = [
         FunConfig(
-            name=n, func=f, argnames=add_suffix(f, n)
+            name=n, func=f, argnames=add_prefix(f, n)
         )
         for n, f in functions.items()
     ]
@@ -70,12 +70,12 @@ def create(
     return recipe
 
 
-def add_suffix(func: tp.Callable, suffix: str) -> tp.List[str]:
+def add_prefix(func: tp.Callable, prefix: str, xname: str = "r") -> tp.List[str]:
     """Add the suffix to the argument names starting at the second the argument. Return the names"""
     args = inspect.getfullargspec(func).args
     return list(
         map(
-            lambda arg: '{}_{}'.format(arg, suffix) if arg != "r" else arg,
+            lambda arg: '{}_{}'.format(prefix, arg) if arg != xname else arg,
             args
         )
     )

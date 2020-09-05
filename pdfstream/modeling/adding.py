@@ -145,8 +145,8 @@ def add_scale(recipe: MyRecipe, gen: G, scale: bool = True) -> None:
     recipe.addVar(
         gen.scale,
         value=0.,
-        name="scale_{}".format(gen.name),
-        tag="scale_{}".format(gen.name)
+        name="{}_scale".format(gen.name),
+        tag="{}_scale".format(gen.name)
     ).boundRange(
         lb=0.
     )
@@ -166,8 +166,8 @@ def add_delta(recipe: MyRecipe, gen: G, delta: tp.Union[str, None]) -> None:
     recipe.addVar(
         par,
         value=0.,
-        name="{}_{}".format(par.name, gen.name),
-        tags=["delta_{}".format(gen.name), "delta", gen.name]
+        name="{}_{}".format(gen.name, par.name),
+        tags=["{}_delta".format(gen.name), "delta", gen.name]
     ).boundRange(
         lb=0.
     )
@@ -187,8 +187,8 @@ def add_lat(recipe: MyRecipe, gen: G, lat: tp.Union[str, None]) -> None:
     for par in pars:
         recipe.addVar(
             par,
-            name="{}_{}".format(par.name, gen.name),
-            tags=["lat", gen.name, "lat_{}".format(gen.name)]
+            name="{}_{}".format(gen.name, par.name),
+            tags=["lat", gen.name, "{}_lat".format(gen.name)]
         ).boundRange(
             lb=0.
         )
@@ -208,16 +208,16 @@ def add_adp(
         dct = dict()
         for element in elements:
             dct[element] = recipe.newVar(
-                f"Biso_{bleach(element)}_{gen.name}",
+                "{}_{}_Biso".format(gen.name, bleach(element)),
                 value=0.05,
-                tags=["adp", gen.name, "adp_{}".format(gen.name)]
+                tags=["adp", gen.name, "{}_adp".format(gen.name)]
             )
         for atom in atoms:
             recipe.constrain(atom.Biso, dct[atom.element])
         return
     if adp == "a":
         pars = [atom.Biso for atom in atoms]
-        names = ["Biso_{}".format(bleach(atom.name)) for atom in atoms]
+        names = ["{}_Biso".format(bleach(atom.name)) for atom in atoms]
     elif adp == "s":
         pars = gen.phase.sgpars.adppars
         names = [
@@ -229,9 +229,9 @@ def add_adp(
     for par, name in zip(pars, names):
         recipe.addVar(
             par,
-            name="{}_{}".format(name, gen.name),
+            name="{}_{}".format(gen.name, name),
             value=par.value if par.value != 0. else 0.05,
-            tags=["adp", gen.name, "adp_{}".format(gen.name)]
+            tags=["adp", gen.name, "{}_adp".format(gen.name)]
         ).boundRange(
             lb=0.
         )
@@ -250,31 +250,39 @@ def add_xyz(recipe: MyRecipe, gen: G, xyz: tp.Union[str, None]) -> None:
         pars, names = list(), list()
         for atom in atoms:
             pars.append(atom.x)
-            names.append("x_{}".format(atom.name))
+            names.append("{}_x".format(atom.name))
             pars.append(atom.y)
-            names.append("y_{}".format(atom.name))
+            names.append("{}_y".format(atom.name))
             pars.append(atom.z)
-            names.append("z_{}".format(atom.name))
+            names.append("{}_z".format(atom.name))
     else:
         raise ValueError("Unknown xyz: {}. Allowed: s, a.".format(xyz))
     for par, name in zip(pars, names):
         recipe.addVar(
             par,
-            name="{}_{}".format(name, gen.name),
-            tags=["xyz", gen.name, "xyz_{}".format(gen.name)]
+            name="{}_{}".format(gen.name, name),
+            tags=["xyz", gen.name, "{}_xyz".format(gen.name)]
         )
     return
 
 
 def rename_by_atom(name: str, atoms: list) -> str:
     """Rename of the name of a parameter by replacing the index of the atom in the name by the label of
-    the atom. Used for the space group constrained parameters."""
+    the atom and revert the order of coordinates and atom name.
+
+    Used for the space group constrained parameters. For example, "x_0" where atom index 0 is Ni will become
+    "Ni0_x" after renamed. If the name can not renamed, return the original name.
+    """
     parts = name.split("_")
     if len(parts) > 1 and parts[1].isdigit() and -1 < int(parts[1]) < len(atoms):
         parts[1] = atoms[int(parts[1])].name
+        parts = parts[::-1]
     return "_".join(parts)
 
 
 def bleach(s: str):
-    """Strip all the characters except the number and letters."""
-    return ''.join((c for c in s if c.isalnum()))
+    """Bleach the string of the atom names and element names.
+
+    Replace '+' with 'p', '-' with 'n'. Strip all the characters except the number and letters.
+    """
+    return ''.replace("+", "p").replace("-", "n").join((c for c in s if c.isalnum()))

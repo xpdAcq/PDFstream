@@ -1,3 +1,4 @@
+import inspect
 import typing as tp
 
 from diffpy.srfit.fitbase import FitResults
@@ -6,7 +7,6 @@ from diffpy.structure import Structure
 from matplotlib.axes import Axes
 from pyobjcryst.crystal import Crystal
 
-from pdfstream.modeling.creating import add_suffix
 from pdfstream.modeling.fitfuncs import (
     make_recipe, sgconstrain_all, cfconstrain_all, fit, plot, sgconstrain, cfconstrain
 )
@@ -252,3 +252,14 @@ def view_fits(recipe: MyRecipe) -> tp.List[Axes]:
             ax
         )
     return axes
+
+
+def add_suffix(func: tp.Callable, suffix: str) -> tp.List[str]:
+    """Add the suffix to the argument names starting at the second the argument. Return the names"""
+    args = inspect.getfullargspec(func).args
+    return list(
+        map(
+            lambda arg: '{}_{}'.format(arg, suffix) if arg != "r" else arg,
+            args
+        )
+    )
