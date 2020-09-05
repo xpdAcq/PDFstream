@@ -64,10 +64,10 @@ def test_MyParser_parsePDFGetter(db, data_key, meta):
     "meta",
     [None, {'qmax': 19}]
 )
-def test_MyParser_parsePDFGetter(db, data_key, meta):
-    pdfgetter = db[data_key]
+def test_MyParser_parseFile(db, data_key, meta):
+    data_file = db[data_key]
     parser = MyParser()
-    parser.parseFile(pdfgetter, meta=meta)
+    parser.parseFile(data_file, meta=meta)
     if meta:
         for key, value in meta.items():
             assert parser._meta[key] == value
