@@ -36,7 +36,6 @@ def savefig_factory(figure_dir):
                 facecolor=None,
                 edgecolor=None,
                 orientation='portrait',
-                papertype=None,
                 fmt='pdf',
                 transparent=True,
                 bbox_inches=None,
@@ -77,11 +76,6 @@ def savefig_factory(figure_dir):
 
         orientation : {'landscape', 'portrait'}
             Currently only supported by the postscript backend.
-
-        papertype : str
-            One of 'letter', 'legal', 'executive', 'ledger', 'a0' through
-            'a10', 'b0' through 'b10'. Only supported for postscript
-            output.
 
         fmt : str
             The file format, e.g. 'png', 'pdf', 'svg', ... The behavior when
@@ -128,7 +122,6 @@ def savefig_factory(figure_dir):
             facecolor=facecolor,
             edgecolor=edgecolor,
             orientation=orientation,
-            papertype=papertype,
             format=fmt,
             transparent=transparent,
             bbox_inches=bbox_inches,
