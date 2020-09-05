@@ -5,7 +5,7 @@ import typing as tp
 from diffpy.structure import Structure
 from pyobjcryst.crystal import Crystal
 
-from .fitfuncs import make_recipe
+from .fitfuncs import make_contribution
 from .fitobjs import FunConfig, GenConfig, ConConfig, MyParser, MyRecipe
 
 S = tp.Union[Crystal, Structure]
@@ -50,6 +50,23 @@ def create(
     recipe :
         A single-contribution recipe without any variables inside.
     """
+    con = create_con(name, data, arange, equation, functions, structures, ncpu)
+    recipe = MyRecipe()
+    recipe.addContribution(con)
+    recipe.clearFitHooks()
+    return recipe
+
+
+def create_con(
+        name: str,
+        data: MyParser,
+        arange: tp.Tuple[float, float, float],
+        equation: str,
+        functions: tp.Dict[str, tp.Callable],
+        structures: tp.Dict[str, S],
+        ncpu: int = None
+) -> FitContribution:
+    """Make a contribution."""
     genconfigs = [
         GenConfig(
             name=n, structure=s, ncpu=ncpu
@@ -66,8 +83,7 @@ def create(
         name=name, eq=equation, parser=data, fit_range=arange,
         genconfigs=genconfigs, funconfigs=funconfigs
     )
-    recipe = make_recipe(conconfig)
-    return recipe
+    return make_contribution(conconfig)
 
 
 def add_prefix(func: tp.Callable, prefix: str, xname: str = "r") -> tp.List[str]:
