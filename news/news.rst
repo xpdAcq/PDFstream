@@ -1,23 +1,23 @@
 **Added:**
 
-* Fix the bug in `dict_to_atoms` when elements contain valence.
+* Add the ``parsers`` that parses the information in FitRecipe to mongo-friendly dictionary.
+
+* Add options in ``multi_phase`` that users can set what parameters they would like to refine.
+
+* Add the function ``create`` to create a recipe based on the data and model.
+
+* Add the function ``initialize`` to populate recipe with variables. Users can choose differnet modes of constraints.
+
+* Add examples for the modeling.
 
 **Changed:**
 
-* <news item>
-
-**Deprecated:**
-
-* <news item>
+* CLI ``visualize`` takes list argument ``legends`` instead of string ``legend``. Users can use legends for multiple curves.
 
 **Removed:**
 
-* <news item>
+* Remove the codes not frequently used.
 
 **Fixed:**
 
-* <news item>
-
-**Security:**
-
-* <news item>
+* Fix bugs in the modeling.
