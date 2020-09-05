@@ -1,8 +1,6 @@
 python>=3.7
 diffpy-cmi
 xpdtools
-pymongo
 fire
 ase
 gemmi
-databroker
