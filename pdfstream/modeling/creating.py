@@ -6,7 +6,7 @@ from diffpy.structure import Structure
 from pyobjcryst.crystal import Crystal
 
 from .fitfuncs import make_contribution
-from .fitobjs import FunConfig, GenConfig, ConConfig, MyParser, MyRecipe
+from .fitobjs import FunConfig, GenConfig, ConConfig, MyParser, MyRecipe, MyContribution
 
 S = tp.Union[Crystal, Structure]
 
@@ -65,7 +65,7 @@ def create_con(
         functions: tp.Dict[str, tp.Callable],
         structures: tp.Dict[str, S],
         ncpu: int = None
-) -> FitContribution:
+) -> MyContribution:
     """Make a contribution."""
     genconfigs = [
         GenConfig(

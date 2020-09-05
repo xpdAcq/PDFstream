@@ -93,7 +93,7 @@ def make_contribution(conconfig: ConConfig, xname: str = "r") -> MyContribution:
 
     Returns
     -------
-    contribution : FitContribution
+    contribution : MyContribution
         The FitContribution built from ConConfig.
     """
     contribution = MyContribution(conconfig.name)
