@@ -79,55 +79,55 @@ def waterfall(
 
     Parameters
     ----------
-    dataset : an iterable of ndarray
+    dataset :
         A iterable of the data array. The requirement for dimensions depends on the mode.
         If mode = 'line', data = (x_array, y_array)
         If mode = 'fit', data = (x_array, y_array, ycalc_array)
 
-    kwargs : optional
+    kwargs :
         The kwargs arguments for the plotting of each data. It depends on mode.
         If mode = 'line', kwargs in ('xy_kwargs',).
         If mode = 'fit', kwargs in ('xy_kwargs', 'xycalc_kwargs', 'xydiff_kwargs', 'xyzero_kwargs',
         'fill_kwargs', 'yzero').
 
-    mode : str
+    mode :
         The plotting mode. Currently support 'line', 'fit'.
 
-    ax : Axes
+    ax :
         The axes to visualize the data. If None, use current axes.
 
-    normal : bool
+    normal :
         If True, the second and the following rows in data will be normalized by (max - min). Else, do nothing.
 
-    stack : bool
+    stack :
         If True, the second and the third rows will be shifted so that there will be a gap between data (
         waterfall plot). Else, the data will be plotted without shifting (comparison plot).
 
-    gap : float
+    gap :
         The gap between the adjacent curves. It is defined by the nearest points in vertical direction.
 
-    texts : an iterable of str
+    texts :
         The texts to annotate the curves. It has the same order as the curves.
 
-    text_xy : tuple
+    text_xy :
         The tuple of x and y position of the annotation in data coordinates. If None, use the default in the
         'tools.auto_text'.
 
-    label : str
+    label :
         The label type used in automatic labeling. Acceptable types are listed in 'tools._LABELS'
 
-    minor_tick : int
+    minor_tick :
         How many parts that the minor ticks separate the space between the two adjacent major ticks. Default 2.
         If None, no minor ticks.
 
-    legends : a list of str
+    legends :
         The legend labels for the curves.
 
-    colors : an iterable of colors
+    colors :
         The color of the plots. It will be the value for the key 'color' in 'xy_kwargs' in kwargs. If None,
         use default color.
 
-    kwargs : dict
+    kwargs :
         The key words for the 'plot_method'. The
 
     Returns
@@ -173,61 +173,61 @@ def waterfall(
 def visualize(
         data: ndarray, ax: Axes = None, mode: str = "line", normal: bool = False,
         text: str = None, text_xy: tuple = None, label: str = None,
-        minor_tick: int = 2, legend: str = None, color: tp.Any = None, **kwargs
+        minor_tick: int = 2, legends: tp.List[str] = None, color: tp.Any = None, **kwargs
 ) -> Axes:
     """The visualization function to realize single plot.
 
     Parameters
     ----------
-    data : ndarray
+    data :
         A data array. The requirement for dimensions depends on the mode.
         If mode = 'line', data = (x_array, y_array)
         If mode = 'fit', data = (x_array, y_array, ycalc_array)
 
-    kwargs : optional
+    kwargs :
         The kwargs arguments for the plotting of each data. It depends on mode.
         If mode = 'line', kwargs in ('xy_kwargs',).
         If mode = 'fit', kwargs in ('xy_kwargs', 'xycalc_kwargs', 'xydiff_kwargs', 'xyzero_kwargs',
         'fill_kwargs', 'yzero').
 
-    mode : str
+    mode :
         The plotting mode. Currently support 'line', 'fit'.
 
-    ax : Axes
+    ax :
         The axes to visualize the data. If None, use current axes.
 
-    normal : bool
+    normal :
         If True, the second and the following rows in data will be normalized by (max - min). Else, do nothing.
 
-    text : str
+    text :
         The text to annotate the curve.
 
-    text_xy : tuple
+    text_xy :
         The tuple of x and y position of the annotation in data coordinates. If None, use the default in the
         'tools.auto_text'.
 
-    label : str
+    label :
         The label type used in automatic labeling. Acceptable types are listed in 'tools._LABELS'
 
     minor_tick : int
         How many parts that the minor ticks separate the space between the two adjacent major ticks. Default 2.
         If None, no minor ticks.
 
-    legend : str
+    legends :
         The legend label for the curve.
 
-    color : an iterable of colors
+    color :
         The color of the plots. If None, use default color cycle in rc.
 
     Returns
     -------
-    ax : Axes
+    ax :
         The axes with the plot inside.
     """
 
     return waterfall(
         (data,), ax=ax, mode=mode, normal=normal, texts=(text,), text_xy=text_xy,
         label=label, minor_tick=minor_tick, stack=False,
-        legends=(legend,) if legend is not None else None,
+        legends=legends if legends else None,
         colors=(color,), **kwargs
     )

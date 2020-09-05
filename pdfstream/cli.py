@@ -201,7 +201,7 @@ def waterfall(
 def visualize(
         data_file: str, ax: Axes = None, mode: str = "line", normal: bool = False,
         text: str = None, text_xy: tuple = None, label: str = None,
-        minor_tick: int = 2, legend: str = None, color: tp.Iterable = None,
+        minor_tick: int = 2, legends: tp.List[str] = None, color: tp.Iterable = None,
         show_fig: bool = True, **kwargs
 ) -> Axes:
     """Visualize the data in a single data file.
@@ -252,7 +252,7 @@ def visualize(
         How many parts that the minor ticks separate the space between the two adjacent major ticks. Default 2.
         If None, no minor ticks.
 
-    legend : str
+    legends : list
         The legend label for the curve.
 
     color : an iterable of colors
@@ -271,7 +271,7 @@ def visualize(
         label = PurePath(data_file).suffix.replace('.', '')
     ax = vis.visualize(
         data, ax=ax, mode=mode, normal=normal, text=text, text_xy=text_xy, label=label,
-        minor_tick=minor_tick, legend=legend, color=color, **kwargs)
+        minor_tick=minor_tick, legends=legends, color=color, **kwargs)
     if show_fig:
         plt.show(block=False)
     return ax

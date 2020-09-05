@@ -32,7 +32,7 @@ def test_waterfall_error(db):
 @pytest.mark.parametrize(
     'key,kwargs', [
         ('Ni_gr', {'mode': 'line', 'text': 'Ni', 'xy_kwargs': {'color': 'black'}}),
-        ('Ni_gr', {'mode': 'line', 'legend': 'Ni', 'xy_kwargs': {'color': 'black'}}),
+        ('Ni_gr', {'mode': 'line', 'legends': ['Ni'], 'xy_kwargs': {'color': 'black'}}),
         ('Ni_fgr', {'mode': 'fit', 'text': 'Ni', 'xy_kwargs': {'color': 'black'}})
     ]
 )
