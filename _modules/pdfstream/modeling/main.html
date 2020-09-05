@@ -1,19 +1,15 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pdfstream.modeling.main &mdash; pdfstream 0.0.0b documentation</title>
+  <title>pdfstream.modeling.main &mdash; pdfstream 0.1.1 documentation</title>
   
-
-  
-  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
 
   
   
@@ -21,9 +17,7 @@
   
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
+  <script type="text/javascript" src="../../../_static/js/modernizr.min.js"></script>
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
@@ -37,6 +31,11 @@
     <script type="text/javascript" src="../../../_static/js/theme.js"></script>
 
     
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
 </head>
@@ -52,7 +51,7 @@
           
 
           
-            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> pdfstream
+            <a href="../../../index.html" class="icon icon-home"> pdfstream
           
 
           
@@ -62,7 +61,7 @@
             
             
               <div class="version">
-                0.0.0b
+                0.1.1
               </div>
             
           
@@ -79,7 +78,6 @@
           
         </div>
 
-        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -90,14 +88,12 @@
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../usage/index.html">Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../release-history.html">Release History</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../min_versions.html">Minimum Version of Python and NumPy</a></li>
 </ul>
 
             
           
         </div>
-        
       </div>
     </nav>
 
@@ -136,7 +132,7 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
         
           <li><a href="../../index.html">Module code</a> &raquo;</li>
         
@@ -156,16 +152,20 @@
            <div itemprop="articleBody">
             
   <h1>Source code for pdfstream.modeling.main</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">inspect</span>
-<span class="kn">import</span> <span class="nn">typing</span> <span class="k">as</span> <span class="nn">tp</span>
+<span></span><span class="kn">import</span> <span class="nn">typing</span> <span class="k">as</span> <span class="nn">tp</span>
 
-<span class="kn">import</span> <span class="nn">diffpy.srfit.pdf.characteristicfunctions</span> <span class="k">as</span> <span class="nn">F</span>
 <span class="kn">from</span> <span class="nn">diffpy.srfit.fitbase</span> <span class="kn">import</span> <span class="n">FitResults</span>
+<span class="kn">from</span> <span class="nn">diffpy.srfit.pdf</span> <span class="kn">import</span> <span class="n">PDFGenerator</span>
+<span class="kn">from</span> <span class="nn">diffpy.structure</span> <span class="kn">import</span> <span class="n">Structure</span>
 <span class="kn">from</span> <span class="nn">matplotlib.axes</span> <span class="kn">import</span> <span class="n">Axes</span>
 <span class="kn">from</span> <span class="nn">pyobjcryst.crystal</span> <span class="kn">import</span> <span class="n">Crystal</span>
 
-<span class="kn">from</span> <span class="nn">pdfstream.modeling.fitfuncs</span> <span class="kn">import</span> <span class="n">make_recipe</span><span class="p">,</span> <span class="n">sgconstrain_all</span><span class="p">,</span> <span class="n">cfconstrain_all</span><span class="p">,</span> <span class="n">fit</span><span class="p">,</span> <span class="n">plot</span>
-<span class="kn">from</span> <span class="nn">pdfstream.modeling.fitobjs</span> <span class="kn">import</span> <span class="n">MyRecipe</span><span class="p">,</span> <span class="n">GenConfig</span><span class="p">,</span> <span class="n">ConConfig</span><span class="p">,</span> <span class="n">MyParser</span><span class="p">,</span> <span class="n">FunConfig</span>
+<span class="kn">from</span> <span class="nn">pdfstream.modeling.creating</span> <span class="kn">import</span> <span class="n">add_suffix</span>
+<span class="kn">from</span> <span class="nn">pdfstream.modeling.fitfuncs</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">make_recipe</span><span class="p">,</span> <span class="n">sgconstrain_all</span><span class="p">,</span> <span class="n">cfconstrain_all</span><span class="p">,</span> <span class="n">fit</span><span class="p">,</span> <span class="n">plot</span><span class="p">,</span> <span class="n">sgconstrain</span><span class="p">,</span> <span class="n">cfconstrain</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">pdfstream.modeling.fitobjs</span> <span class="kn">import</span> <span class="n">MyRecipe</span><span class="p">,</span> <span class="n">GenConfig</span><span class="p">,</span> <span class="n">ConConfig</span><span class="p">,</span> <span class="n">MyParser</span><span class="p">,</span> <span class="n">FunConfig</span><span class="p">,</span> <span class="n">MyContribution</span>
+<span class="kn">from</span> <span class="nn">pdfstream.modeling.saving</span> <span class="kn">import</span> <span class="n">save</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s1">&#39;multi_phase&#39;</span><span class="p">,</span>
@@ -178,11 +178,14 @@
     <span class="s1">&#39;view_fits&#39;</span><span class="p">,</span>
     <span class="s1">&#39;fit_calib&#39;</span><span class="p">,</span>
     <span class="s1">&#39;FIT_RANGE&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;F&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;Crystal&#39;</span>
+    <span class="s1">&#39;Crystal&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Structure&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;save&#39;</span>
 <span class="p">]</span>
 
 <span class="n">FIT_RANGE</span> <span class="o">=</span> <span class="n">tp</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span>
+<span class="n">STRU</span> <span class="o">=</span> <span class="n">tp</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">Crystal</span><span class="p">,</span> <span class="n">Structure</span><span class="p">]</span>
+<span class="n">PHASE</span> <span class="o">=</span> <span class="n">tp</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">STRU</span><span class="p">,</span> <span class="n">tp</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span><span class="n">tp</span><span class="o">.</span><span class="n">Callable</span><span class="p">,</span> <span class="n">STRU</span><span class="p">]]</span>
 
 
 <span class="k">def</span> <span class="nf">fit_calib</span><span class="p">(</span><span class="n">stru</span><span class="p">:</span> <span class="n">Crystal</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">MyParser</span><span class="p">,</span> <span class="n">fit_range</span><span class="p">:</span> <span class="n">FIT_RANGE</span><span class="p">,</span> <span class="n">ncpu</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> \
@@ -209,7 +212,8 @@
 <span class="sd">        The refined recipe.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">recipe</span> <span class="o">=</span> <span class="n">multi_phase</span><span class="p">([</span><span class="n">stru</span><span class="p">],</span> <span class="n">data</span><span class="p">,</span> <span class="n">fit_range</span><span class="p">,</span> <span class="n">ncpu</span><span class="o">=</span><span class="n">ncpu</span><span class="p">)</span>
-    <span class="n">gen</span> <span class="o">=</span> <span class="n">recipe</span><span class="o">.</span><span class="n">multi_phase</span><span class="o">.</span><span class="n">G0</span>  <span class="c1"># gen: PDFGenerator</span>
+    <span class="n">con</span><span class="p">:</span> <span class="n">MyContribution</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">recipe</span><span class="o">.</span><span class="n">contributions</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+    <span class="n">gen</span><span class="p">:</span> <span class="n">PDFGenerator</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">con</span><span class="o">.</span><span class="n">generators</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
     <span class="n">recipe</span><span class="o">.</span><span class="n">addVar</span><span class="p">(</span><span class="n">gen</span><span class="o">.</span><span class="n">qdamp</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="s1">&#39;qparams&#39;</span><span class="p">)</span>
     <span class="n">recipe</span><span class="o">.</span><span class="n">addVar</span><span class="p">(</span><span class="n">gen</span><span class="o">.</span><span class="n">qbroad</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="s1">&#39;qparams&#39;</span><span class="p">)</span>
     <span class="n">optimize</span><span class="p">(</span>
@@ -217,35 +221,34 @@
         <span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;scale_G0&#39;</span><span class="p">,</span> <span class="s1">&#39;lat_G0&#39;</span><span class="p">,</span> <span class="s1">&#39;adp_G0&#39;</span><span class="p">,</span> <span class="s1">&#39;delta2_G0&#39;</span><span class="p">,</span> <span class="s1">&#39;qparams&#39;</span><span class="p">],</span>
         <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span>
     <span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="n">report</span><span class="p">(</span><span class="n">recipe</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="n">view_fits</span><span class="p">(</span><span class="n">recipe</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">recipe</span>
 
 
-<span class="k">def</span> <span class="nf">_add_suffix</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">tp</span><span class="o">.</span><span class="n">Callable</span><span class="p">,</span> <span class="n">suffix</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Add the suffix to the argument names starting at the second the argument. Return the names&quot;&quot;&quot;</span>
-    <span class="n">args</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getfullargspec</span><span class="p">(</span><span class="n">func</span><span class="p">)</span><span class="o">.</span><span class="n">args</span>
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;The function should have at least two arguments.&#39;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="p">[</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">suffix</span><span class="p">)</span> <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">:]]</span>
-
-
-<div class="viewcode-block" id="multi_phase"><a class="viewcode-back" href="../../../usage/python.html#pdfstream.modeling.main.multi_phase">[docs]</a><span class="k">def</span> <span class="nf">multi_phase</span><span class="p">(</span><span class="n">phases</span><span class="p">:</span> <span class="n">tp</span><span class="o">.</span><span class="n">Iterable</span><span class="p">[</span><span class="n">tp</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">tp</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span><span class="n">tp</span><span class="o">.</span><span class="n">Callable</span><span class="p">,</span> <span class="n">Crystal</span><span class="p">],</span> <span class="n">Crystal</span><span class="p">]],</span>
-                <span class="n">data</span><span class="p">:</span> <span class="n">MyParser</span><span class="p">,</span>
-                <span class="n">fit_range</span><span class="p">:</span> <span class="n">tp</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
-                <span class="n">default_value</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                <span class="n">bounds</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                <span class="n">add_xyz</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-                <span class="n">ncpu</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MyRecipe</span><span class="p">:</span>
+<div class="viewcode-block" id="multi_phase"><a class="viewcode-back" href="../../../usage/python.html#pdfstream.modeling.main.multi_phase">[docs]</a><span class="k">def</span> <span class="nf">multi_phase</span><span class="p">(</span>
+        <span class="n">phases</span><span class="p">:</span> <span class="n">tp</span><span class="o">.</span><span class="n">Iterable</span><span class="p">[</span><span class="n">PHASE</span><span class="p">],</span>
+        <span class="n">data</span><span class="p">:</span> <span class="n">MyParser</span><span class="p">,</span>
+        <span class="n">fit_range</span><span class="p">:</span> <span class="n">tp</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
+        <span class="n">values</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">bounds</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">ncpu</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">cf_params</span><span class="p">:</span> <span class="n">tp</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">sg_params</span><span class="p">:</span> <span class="n">tp</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">tp</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">add_eq</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MyRecipe</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Make the recipe of a multiphase crystal pdf refinement.</span>
 
-<span class="sd">    The parameters are taged as &#39;scale&#39;, &#39;delta2&#39;, &#39;lat&#39;, &#39;adp&#39;, &#39;xyz&#39; (optional) with the suffix</span>
-<span class="sd">    &#39;_{the name of the generator}&#39;. The unit depends on the structure loaded in the generator.</span>
+<span class="sd">    The function assumes that the structure is the :func:`~pyobjcryst.crystal.Crystal`. The parameters</span>
+<span class="sd">    are taged as &#39;scale&#39;, &#39;delta2&#39;, &#39;lat&#39;, &#39;adp&#39;, &#39;xyz&#39; (optional) with the suffix &#39;_{the name of the</span>
+<span class="sd">    generator}&#39;. The unit depends on the structure loaded in the generator.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    phases : Iterable.</span>
-<span class="sd">        An iterable of structures or tuple of characteristic function and structure. The structure is the Crystal.</span>
+<span class="sd">        An iterable of structures or tuple of characteristic function and structure.</span>
 
 <span class="sd">    data : MyParser</span>
 <span class="sd">        A parser with parsed data.</span>
@@ -256,21 +259,32 @@
 <span class="sd">    ncpu : int</span>
 <span class="sd">        The number of cpu used in parallel computing. If None, no parallel computing.</span>
 
-<span class="sd">    default_value : dict</span>
+<span class="sd">    values : dict</span>
 <span class="sd">        The the dictionary of default values.</span>
 <span class="sd">        If None, the following values will be used:</span>
 <span class="sd">        tag     initiate value      range</span>
 <span class="sd">        scale   0                   (0, inf)</span>
 <span class="sd">        delta2  0                   (0, inf)</span>
 <span class="sd">        lat     par.value           (0, 2 * par.value)</span>
-<span class="sd">        adp     (U) 0.006 (B) 0.16  (0, inf)</span>
+<span class="sd">        adp     0.05                (0, inf)</span>
 <span class="sd">        xyz     par.value           None</span>
 
 <span class="sd">    bounds : dict</span>
 <span class="sd">        The mapping from the name of the variable to the bounds.</span>
 
-<span class="sd">    add_xyz</span>
-<span class="sd">        Whether to constrain xyz coordinates. Default False.</span>
+<span class="sd">    cf_params : list</span>
+<span class="sd">        A list of parameter names in characteristic functions to be added in the recipe. If cf_params = None,</span>
+<span class="sd">        all the parameters in all the contributions will be added. If cf_params = [], no parameters will</span>
+<span class="sd">        be added into recipe.</span>
+
+<span class="sd">    sg_params : dict</span>
+<span class="sd">        The keys are the generator names and the values are the space group notations or numbers.</span>
+<span class="sd">        If a value is None, the generator will be constrained according to the implicit space group information</span>
+<span class="sd">        in its phase. If sg_params = None, all the generators will be constrained and the parameters will be</span>
+<span class="sd">        added to the recipe. If sg_params = {}, no generators will be contrained and no parameters will be added.</span>
+
+<span class="sd">    add_eq : str</span>
+<span class="sd">        Additional equation in the fitting.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -293,19 +307,33 @@
         <span class="k">if</span> <span class="n">cf</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">fname</span> <span class="o">=</span> <span class="s2">&quot;f</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
             <span class="n">funconfigs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                <span class="n">FunConfig</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">fname</span><span class="p">,</span> <span class="n">func</span><span class="o">=</span><span class="n">cf</span><span class="p">,</span> <span class="n">argnames</span><span class="o">=</span><span class="n">_add_suffix</span><span class="p">(</span><span class="n">cf</span><span class="p">,</span> <span class="n">fname</span><span class="p">))</span>
+                <span class="n">FunConfig</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">fname</span><span class="p">,</span> <span class="n">func</span><span class="o">=</span><span class="n">cf</span><span class="p">,</span> <span class="n">argnames</span><span class="o">=</span><span class="n">add_suffix</span><span class="p">(</span><span class="n">cf</span><span class="p">,</span> <span class="n">fname</span><span class="p">))</span>
             <span class="p">)</span>
             <span class="n">eq</span> <span class="o">+=</span> <span class="s2">&quot; * &quot;</span> <span class="o">+</span> <span class="n">fname</span>
         <span class="n">eqs</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">gname</span><span class="p">:</span> <span class="n">eq</span><span class="p">})</span>
-    <span class="n">conconfig</span> <span class="o">=</span> <span class="n">ConConfig</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;multi_phase&#39;</span><span class="p">,</span> <span class="n">partial_eqs</span><span class="o">=</span><span class="n">eqs</span><span class="p">,</span> <span class="n">parser</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">fit_range</span><span class="o">=</span><span class="n">fit_range</span><span class="p">,</span>
+    <span class="n">total_eq</span> <span class="o">=</span> <span class="s2">&quot; + &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">eqs</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+    <span class="k">if</span> <span class="n">add_eq</span><span class="p">:</span>
+        <span class="n">total_eq</span> <span class="o">=</span> <span class="s2">&quot; + &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="n">total_eq</span><span class="p">,</span> <span class="n">add_eq</span><span class="p">))</span>
+    <span class="n">conconfig</span> <span class="o">=</span> <span class="n">ConConfig</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;multi_phase&#39;</span><span class="p">,</span> <span class="n">eq</span><span class="o">=</span><span class="n">total_eq</span><span class="p">,</span> <span class="n">parser</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">fit_range</span><span class="o">=</span><span class="n">fit_range</span><span class="p">,</span>
                           <span class="n">genconfigs</span><span class="o">=</span><span class="n">genconfigs</span><span class="p">,</span> <span class="n">funconfigs</span><span class="o">=</span><span class="n">funconfigs</span><span class="p">)</span>
     <span class="n">recipe</span> <span class="o">=</span> <span class="n">make_recipe</span><span class="p">(</span><span class="n">conconfig</span><span class="p">)</span>
-    <span class="n">sgconstrain_all</span><span class="p">(</span><span class="n">recipe</span><span class="p">,</span> <span class="n">dv</span><span class="o">=</span><span class="n">default_value</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="n">bounds</span><span class="p">,</span> <span class="n">add_xyz</span><span class="o">=</span><span class="n">add_xyz</span><span class="p">)</span>
-    <span class="n">cfconstrain_all</span><span class="p">(</span><span class="n">recipe</span><span class="p">,</span> <span class="n">dv</span><span class="o">=</span><span class="n">default_value</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="n">bounds</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">cf_params</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">cfconstrain_all</span><span class="p">(</span>
+            <span class="n">recipe</span><span class="p">,</span> <span class="n">dv</span><span class="o">=</span><span class="n">values</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="n">bounds</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">cfconstrain</span><span class="p">(</span><span class="n">recipe</span><span class="p">,</span> <span class="n">conconfig</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">param_names</span><span class="o">=</span><span class="n">cf_params</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">sg_params</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">sgconstrain_all</span><span class="p">(</span>
+            <span class="n">recipe</span><span class="p">,</span> <span class="n">dv</span><span class="o">=</span><span class="n">values</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="n">bounds</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">gen_name</span><span class="p">,</span> <span class="n">space_group</span> <span class="ow">in</span> <span class="n">sg_params</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">sgconstrain</span><span class="p">(</span><span class="n">recipe</span><span class="p">,</span> <span class="n">conconfig</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">gen_name</span><span class="p">,</span> <span class="n">sg</span><span class="o">=</span><span class="n">space_group</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">recipe</span></div>
 
 
-<div class="viewcode-block" id="optimize"><a class="viewcode-back" href="../../../usage/python.html#pdfstream.modeling.main.optimize">[docs]</a><span class="k">def</span> <span class="nf">optimize</span><span class="p">(</span><span class="n">recipe</span><span class="p">:</span> <span class="n">MyRecipe</span><span class="p">,</span> <span class="n">tags</span><span class="p">:</span> <span class="n">tp</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">tp</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">tp</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]]],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="optimize"><a class="viewcode-back" href="../../../usage/python.html#pdfstream.modeling.main.optimize">[docs]</a><span class="k">def</span> <span class="nf">optimize</span><span class="p">(</span><span class="n">recipe</span><span class="p">:</span> <span class="n">MyRecipe</span><span class="p">,</span> <span class="n">tags</span><span class="p">:</span> <span class="n">tp</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">tp</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">tp</span><span class="o">.</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]]],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;First fix all variables and then free the variables one by one and fit the recipe.</span>
 
 <span class="sd">    Parameters</span>
@@ -319,18 +347,24 @@
 <span class="sd">    kwargs</span>
 <span class="sd">        The kwargs of the &#39;fit&#39;.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Start </span><span class="si">{</span><span class="n">recipe</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> with all parameters fixed.&quot;</span><span class="p">)</span>
+    <span class="n">verbose</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;verbose&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">verbose</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Start </span><span class="si">{</span><span class="n">recipe</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> with all parameters fixed.&quot;</span><span class="p">)</span>
     <span class="n">recipe</span><span class="o">.</span><span class="n">fix</span><span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">tag</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tags</span><span class="p">):</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Free &quot;</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; ...&#39;</span><span class="p">)</span>
-            <span class="n">recipe</span><span class="o">.</span><span class="n">free</span><span class="p">(</span><span class="o">*</span><span class="n">tag</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Free </span><span class="si">{</span><span class="n">tag</span><span class="si">}</span><span class="s2"> ...&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">verbose</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Free </span><span class="si">{}</span><span class="s2"> ...&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tag</span><span class="p">))</span>
             <span class="n">recipe</span><span class="o">.</span><span class="n">free</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown tag type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="n">fit</span><span class="p">(</span><span class="n">recipe</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">verbose</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span>
+                    <span class="s2">&quot;Free </span><span class="si">{}</span><span class="s2"> ...&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+            <span class="n">recipe</span><span class="o">.</span><span class="n">free</span><span class="p">(</span><span class="o">*</span><span class="n">tag</span><span class="p">)</span>
+        <span class="n">fit</span><span class="p">(</span><span class="n">recipe</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="k">return</span></div>
 
 
@@ -366,10 +400,10 @@
 <span class="sd">        The plots of the fits.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">axes</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">conconfig</span> <span class="ow">in</span> <span class="n">recipe</span><span class="o">.</span><span class="n">configs</span><span class="p">:</span>
-        <span class="n">con</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">recipe</span><span class="p">,</span> <span class="n">conconfig</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">con</span> <span class="ow">in</span> <span class="n">recipe</span><span class="o">.</span><span class="n">contributions</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">plot</span><span class="p">(</span><span class="n">con</span><span class="p">)</span>
         <span class="n">axes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-            <span class="n">plot</span><span class="p">(</span><span class="n">con</span><span class="p">)</span>
+            <span class="n">ax</span>
         <span class="p">)</span>
     <span class="k">return</span> <span class="n">axes</span>
 </pre></div>
@@ -384,19 +418,11 @@
 
   <div role="contentinfo">
     <p>
-        
         &copy; Copyright 2020, Songsheng Tao
 
     </p>
   </div>
-    
-    
-    
-    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
-    
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -407,6 +433,7 @@
 
   </div>
   
+
 
   <script type="text/javascript">
       jQuery(function () {

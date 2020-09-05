@@ -51,8 +51,6 @@ To report the optimization results, use
 
 .. autofunction:: pdfstream.modeling.main.report
 
-To save the results, first generate the save function that link to db collections, using
+To save the recipe in files, use
 
-.. autofunction:: pdfstream.modeling.csvdb.gen_fs_save
-
-Then, use the returned function to save the recipe.
+.. autofunction:: pdfstream.modeling.saving.save
