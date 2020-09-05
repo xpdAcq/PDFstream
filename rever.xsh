@@ -6,14 +6,20 @@ def conda_release():
     conda build $REVER_DIR/recipe
     conda build purge
 
+@activity
+def build_docs():
+    make -C docs html
+
 
 $PROJECT = 'pdfstream'
 $ACTIVITIES = [
     'version_bump',
     'changelog',
+    'build_docs',
     'tag',
     'push_tag',
     'ghrelease',
+    'ghpages',
     'pypi',
     'conda_release'
 ]
@@ -29,3 +35,10 @@ $TAG_REMOTE = 'git@github.com:st3107/pdfstream.git'
 
 $GITHUB_ORG = 'st3107'
 $GITHUB_REPO = 'pdfstream'
+
+$SPHINX_HOST_DIR = 'docs/build'
+$GHPAGES_REPO = $GITHUB_REPO
+$GHPAGES_BRANCH = 'gh-pages'
+$GHPAGES_COPY = (
+    ('$SPHINX_HOST_DIR/html', '$GHPAGES_REPO_DIR')
+)
