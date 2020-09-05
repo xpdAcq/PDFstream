@@ -2,20 +2,7 @@
 from pathlib import Path
 
 import matplotlib.pyplot as plt
-import numpy as np
-import pandas as pd
-import xarray as xr
 from matplotlib.figure import Figure
-from matplotlib.gridspec import GridSpec
-
-__all__ = [
-    "np",
-    "plt",
-    "xr",
-    "pd",
-    "GridSpec",
-    "FigExporter"
-]
 
 LATEX_REF = (
     "\\begin{{figure}}[hptb]\n"
