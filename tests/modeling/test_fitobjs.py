@@ -136,7 +136,3 @@ def test_ConConfig_error(db):
             parser=parser,
             fit_range=(0., 8., .1),
         )
-
-
-def test_parse_file():
-    assert False

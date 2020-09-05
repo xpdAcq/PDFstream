@@ -197,7 +197,7 @@ def add_lat(recipe: MyRecipe, gen: G, lat: tp.Union[str, None]) -> None:
 
 def add_adp(
         recipe: MyRecipe, gen: G, adp: tp.Union[str, None],
-        symbols: tp.tuple[str] = ("Biso", "B11", "B22", "B33")
+        symbols: tp.Tuple[str] = ("Biso", "B11", "B22", "B33")
 ) -> None:
     """Add the atomic displacement parameter of the phase."""
     if not adp:
