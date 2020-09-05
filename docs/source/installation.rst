@@ -36,7 +36,11 @@ Change directory::
 
 Install the requirements::
 
-    $ conda install --file requirements/run.txt --file requirements/test.txt --file requirements/build.txt
+    $ conda install --file requirements/build.txt --file requirements/run.txt --file requirements/test.txt
+
+If you are the maintainer, you also need to install the packages for building docs and release::
+
+    $ conda install --file requirements/docs.txt --file requirements/release.txt
 
 Install the pdfstream in development mode::
 
