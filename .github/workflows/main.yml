@@ -19,8 +19,9 @@ jobs:
           activate-conda: true
           update-conda: false
 
-      - name: add conda channels
+      - name: set quiet and append channels
         run: |
+          conda config --quiet
           conda config --append channels diffpy
           conda config --append channels conda-forge
 
