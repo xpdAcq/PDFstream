@@ -61,8 +61,3 @@ jobs:
         run: |
           source activate test
           flake8
-
-      - name: build documents
-        run: |
-          source activate test
-          make -C docs html
