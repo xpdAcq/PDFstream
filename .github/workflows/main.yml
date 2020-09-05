@@ -27,7 +27,7 @@ jobs:
       - name: install requirements
         run: >-
           conda create -n test --file requirements/build.txt --file requirements/run.txt --file
-          requirements/test.txt --file requirements/docs.txt --quiet --yes
+          requirements/test.txt --quiet --yes
 
       - uses: actions/checkout@v2
         with:
