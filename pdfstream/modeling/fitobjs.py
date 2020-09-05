@@ -32,7 +32,19 @@ def map_stype(mode: str):
 class MyParser(PDFParser):
     """The parser to parse data and meta data."""
 
-    def parseFile(self, filename, meta: dict = None):
+    def parseFile(self, filename: str, meta: dict = None):
+        """Parse a file and set the _x, _y, _dx, _dy and _meta variables.
+
+        This wipes out the currently loaded data and selected bank number.
+
+        Parameters
+        ----------
+        filename :
+            The name of the file to parse. The meta data will be also read.
+
+        meta :
+            The additional meta data like "qdamp" and "qbroad".
+        """
         super().parseFile(filename)
         if meta:
             self._meta.update(meta)
@@ -72,6 +84,7 @@ class MyParser(PDFParser):
         return
 
     def parsePDFGetter(self, pdfgetter: PDFGetter, meta: dict = None):
+        """Parse the data and metadta from pdfgetter."""
         if meta is None:
             meta = {}
         data = np.stack(pdfgetter.gr)
