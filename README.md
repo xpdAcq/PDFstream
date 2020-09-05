@@ -1,7 +1,7 @@
 PDFstream
 =========
 
-![test](https://github.com/st3107/pdfstream/workflows/test/badge.svg?branch=master)
+[![test](https://github.com/st3107/pdfstream/workflows/test/badge.svg?branch=master)](https://github.com/st3107/pdfstream/actions?query=branch%3Amaster+workflow%3Atest)
 [![codecov](https://codecov.io/gh/st3107/pdfstream/branch/master/graph/badge.svg?token=ZFXWWDWQW8)](https://codecov.io/gh/st3107/pdfstream)
 [![Release](https://anaconda.org/st3107/pdfstream/badges/version.svg)](https://anaconda.org/st3107/pdfstream)
 
