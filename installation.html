@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Installation &mdash; pdfstream 0.1.1 documentation</title>
+  <title>Installation &mdash; pdfstream 0.1.2 documentation</title>
   
 
   
@@ -36,6 +36,9 @@
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
   <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
+  <link rel="stylesheet" href="_static/gallery.css" type="text/css" />
+  <link rel="stylesheet" href="_static/gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="_static/gallery-dataframe.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Usage" href="usage/index.html" />
@@ -63,7 +66,7 @@
             
             
               <div class="version">
-                0.1.1
+                0.1.2
               </div>
             
           
@@ -95,6 +98,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="usage/index.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="auto_gallery/index.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="min_versions.html">Minimum Version of Python and NumPy</a></li>
 </ul>
 
@@ -165,24 +169,37 @@
 <div class="section" id="prerequisites">
 <h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this headline">¶</a></h2>
 <p>Install <a class="reference external" href="https://docs.conda.io/projects/conda/en/latest/user-guide/install/">Anaconda</a>.</p>
-<p>Install <a class="reference external" href="https://www.diffpy.org/products/pdfgetx.html">PDFgetX</a> in the conda environment.</p>
+<p>After conda is installed, at the commnad line:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ conda config --append channels diffpy
+$ conda config --append channels conda-forge
+</pre></div>
+</div>
+<p>Install <a class="reference external" href="https://www.diffpy.org/products/pdfgetx.html">PDFgetX</a> in the conda environment where the pdfstream will be installed.</p>
 </div>
 <div class="section" id="general-installation">
 <h2>General Installation<a class="headerlink" href="#general-installation" title="Permalink to this headline">¶</a></h2>
 <p>At the command line:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ conda install -c conda-forge pdfstream
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ conda install pdfstream
 </pre></div>
 </div>
 </div>
 <div class="section" id="development-installation">
 <h2>Development Installation<a class="headerlink" href="#development-installation" title="Permalink to this headline">¶</a></h2>
-<p>Clone the github repo and change the current directory:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ git clone https://github.com/st3107/pdfstream
-$ cd pdfstream
+<p>Fork and clone the github repo and change the current directory:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ git clone https://github.com/&lt;your account&gt;/pdfstream
+</pre></div>
+</div>
+<p>Remember to change <cite>&lt;your account&gt;</cite> to the name of your github account.</p>
+<p>Change directory:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cd pdfstream
 </pre></div>
 </div>
 <p>Install the requirements:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ conda install -c conda-forge diffpy --file requirements/run.txt --file requirements/test.txt --file requirements/build.txt
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ conda install --file requirements/build.txt --file requirements/run.txt --file requirements/test.txt
+</pre></div>
+</div>
+<p>If you are the maintainer, you also need to install the packages for building docs and release:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ conda install --file requirements/docs.txt --file requirements/release.txt
 </pre></div>
 </div>
 <p>Install the pdfstream in development mode:</p>
