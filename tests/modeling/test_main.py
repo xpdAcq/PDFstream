@@ -131,7 +131,9 @@ def test_multi_phase(db, data_key, kwargs, free_params, use_cf, expected):
     "kwargs",
     [
         dict(tags=['scale_G0'], xtol=1e-2, gtol=1e-2, ftol=1e-2),
-        dict(tags=[('scale_G0', 'lat_G0'), 'adp_G0'], xtol=1e-2, gtol=1e-2, ftol=1e-2)
+        dict(tags=[('scale_G0', 'lat_G0'), 'adp_G0'], xtol=1e-2, gtol=1e-2, ftol=1e-2),
+        dict(tags=['scale_G0'], verbose=1, xtol=1e-2, gtol=1e-2, ftol=1e-2),
+        dict(tags=[('scale_G0', 'lat_G0'), 'adp_G0'], verbose=1, xtol=1e-2, gtol=1e-2, ftol=1e-2)
     ]
 )
 def test_optimize(recipe, kwargs):
