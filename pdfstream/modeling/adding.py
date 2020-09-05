@@ -105,7 +105,7 @@ def add_params(recipe: MyRecipe, con: MyContribution, params: tp.Union[None, str
     else:
         pars = [args[p] for p in params]
     for par in pars:
-        recipe.addVar(par, tags=["params"])
+        recipe.addVar(par, tag=par.name.split("_")[-1])
     return
 
 
