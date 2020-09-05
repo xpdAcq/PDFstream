@@ -9,22 +9,20 @@ from .io import loadData
 from .main import multi_phase, optimize, view_fits, report, fit_calib
 from .saving import save
 
-__all__ = [
-    "F",
-    "MyParser",
-    "MyContribution",
-    "MyRecipe",
-    "multi_phase",
-    "optimize",
-    "view_fits",
-    "report",
-    "save",
-    "loadCrystal",
-    "loadStructure",
-    "loadData"
-    "fit_calib",
-    "add_gen_vars",
-    "add_con_vars",
-    "initialize"
-    "create",
-]
+F = F
+loadStructure = loadStructure
+loadCrystal = loadCrystal
+loadData = loadData
+create = create
+add_con_vars = add_con_vars
+add_gen_vars = add_gen_vars
+initialize = initialize
+MyParser = MyParser
+MyContribution = MyContribution
+MyRecipe = MyRecipe
+multi_phase = multi_phase
+optimize = optimize
+view_fits = view_fits
+report = report
+fit_calib = fit_calib
+save = save

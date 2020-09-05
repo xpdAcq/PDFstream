@@ -1,4 +1,5 @@
 import pytest
+
 import pdfstream.parsers.tools as tools
 
 

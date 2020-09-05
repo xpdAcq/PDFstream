@@ -100,7 +100,7 @@ def add_params(recipe: MyRecipe, con: MyContribution, params: tp.Union[None, str
         for arg in eq.args
         if arg.name != con.xname
     }
-    if params is "a":
+    if params == "a":
         pars = args.values()
     else:
         pars = [args[p] for p in params]
@@ -256,7 +256,7 @@ def add_xyz(recipe: MyRecipe, gen: G, xyz: tp.Union[str, None]) -> None:
             pars.append(atom.z)
             names.append("z_{}".format(atom.name))
     else:
-        raise ValueError("Unknown xyz: {}. Allowed: s, a.".format(adp))
+        raise ValueError("Unknown xyz: {}. Allowed: s, a.".format(xyz))
     for par, name in zip(pars, names):
         recipe.addVar(
             par,

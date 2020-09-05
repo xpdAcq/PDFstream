@@ -1,9 +1,10 @@
+from pprint import pprint
+
 import mongomock
 import pytest
 from mongomock.collection import Collection
 
 from pdfstream.parsers.fitrecipe import recipe_to_dict
-from pprint import pprint
 
 
 @pytest.mark.parametrize(

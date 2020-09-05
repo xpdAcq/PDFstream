@@ -1,7 +1,9 @@
+from pprint import pprint
+
 import pytest
+
 from pdfstream.parsers.atoms import dict_to_atoms
 from pdfstream.parsers.fitrecipe import recipe_to_dict
-from pprint import pprint
 
 
 @pytest.mark.parametrize(

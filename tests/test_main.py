@@ -1,6 +1,7 @@
 import subprocess
-from pkg_resources import resource_filename
 from pathlib import Path
+
+from pkg_resources import resource_filename
 
 
 def test_cli_main():
