@@ -4,6 +4,7 @@ from diffpy.structure import loadStructure
 from pyobjcryst import loadCrystal
 
 from pdfstream.modeling.creating import create
+from pdfstream.modeling.adding import initialize
 from pdfstream.modeling.fitobjs import MyParser
 from pdfstream.modeling.main import multi_phase
 from tests.conftest import NI_GR, NI_CIF
@@ -39,3 +40,9 @@ def functions():
 @pytest.fixture
 def blank_recipe(data, structures, functions):
     return create("test", data, (2., 7., 0.1), "f0 * G0 + A * sin(r)", functions, structures)
+
+
+@pytest.fixture
+def filled_recipe(blank_recipe):
+    initialize(blank_recipe)
+    return blank_recipe
