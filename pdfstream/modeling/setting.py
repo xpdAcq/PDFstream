@@ -1,9 +1,8 @@
 """Set hyper parameters in the recipe."""
 import typing as tp
 
-from numpy import ndarray
-from diffpy.srfit.fitbase import Profile
 from diffpy.srfit.fitbase.parameter import Parameter
+from numpy import ndarray
 
 from .fitobjs import MyRecipe
 
