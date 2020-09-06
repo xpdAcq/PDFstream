@@ -7,6 +7,7 @@ from .creating import create
 from .fitobjs import MyParser, MyContribution, MyRecipe
 from .main import multi_phase, optimize, view_fits, report, fit_calib
 from .saving import save
+from .setting import set_range, get_range, set_values, get_values, bound_windows, bound_ranges, get_bounds
 
 F = F
 PlotFitHook = PlotFitHook
@@ -26,3 +27,10 @@ view_fits = view_fits
 report = report
 fit_calib = fit_calib
 save = save
+set_range = set_range
+get_range = get_range
+set_values = set_values
+get_values = get_values
+bound_windows = bound_windows
+bound_ranges = bound_ranges
+get_bounds = get_bounds
