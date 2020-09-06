@@ -179,7 +179,7 @@ def multi_phase(
     return recipe
 
 
-def optimize(recipe: MyRecipe, tags: tp.List[tp.Union[str, tp.Iterable[str]]], **kwargs) -> None:
+def optimize(recipe: MyRecipe, tags: tp.List[tp.Union[str, tp.Iterable[str]]], **kwargs) -> MyRecipe:
     """First fix all variables and then free the variables one by one and fit the recipe.
 
     Parameters
@@ -211,7 +211,7 @@ def optimize(recipe: MyRecipe, tags: tp.List[tp.Union[str, tp.Iterable[str]]], *
                 )
             recipe.free(*tag)
         fit(recipe, verbose=verbose, **kwargs)
-    return
+    return recipe
 
 
 def report(recipe: MyRecipe) -> FitResults:
