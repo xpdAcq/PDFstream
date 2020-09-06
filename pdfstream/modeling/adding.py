@@ -16,7 +16,7 @@ def initialize(
         adp: tp.Union[str, None] = "a",
         xyz: tp.Union[str, None] = "s",
         params: tp.Union[None, str, tp.List[str]] = "a"
-) -> None:
+) -> MyRecipe:
     """Initialize a single-contribution recipe with the variables.
 
     The variables will be constrained, created and added according to the mode indicated by the arguments. If an
@@ -73,10 +73,15 @@ def initialize(
         If list of str, add all the parameters whose names are in the list.
         If None, do nothing.
         Default "a".
+
+    Returns
+    -------
+    recipe :
+        The initialized recipe. The operation is done inplace so the recipe is the same as the input.
     """
     add_con_vars(recipe, params=params)
     add_gen_vars(recipe, scale=scale, delta=delta, lat=lat, adp=adp, xyz=xyz)
-    return
+    return recipe
 
 
 def add_con_vars(
@@ -87,7 +92,6 @@ def add_con_vars(
     """Add variables at contribution level.
 
     The name is the name of the contribution. If None, all the contribution will be searched and added.
-
     """
     if not name:
         for con_name in recipe.contributions.keys():
