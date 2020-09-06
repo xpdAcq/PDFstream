@@ -91,6 +91,11 @@ def set_values(recipe: MyRecipe, values: tp.Dict[str, float], ignore: bool = Fal
     return recipe
 
 
+def get_value_dct(recipe: MyRecipe) -> tp.Dict[str, float]:
+    """Get the values in the recipe in a dictionary."""
+    return dict(zip(recipe.getNames(), recipe.getValues()))
+
+
 def get_values(recipe: MyRecipe, names: tp.Iterable[str]) -> tp.List[tp.Union[float, None]]:
     """Get the values of the fitting parameters in the recipe.
 
@@ -107,7 +112,7 @@ def get_values(recipe: MyRecipe, names: tp.Iterable[str]) -> tp.List[tp.Union[fl
     values :
         A list of values in the same order of names. If a value is None, the name is not in the recipe.
     """
-    dct = dict(zip(recipe.getNames(), recipe.getValues()))
+    dct = get_value_dct(recipe)
     return list(map(dct.get, names))
 
 
@@ -115,6 +120,29 @@ def bound_ranges(
         recipe: MyRecipe, bounds: tp.Dict[str, tp.Union[tp.Tuple, tp.Dict]],
         ignore: bool = False, ratio: bool = False
 ) -> MyRecipe:
+    """Bound the variables in the recipe by in (lower bound, upper bound).
+
+    Parameters
+    ----------
+    recipe :
+        The recipe.
+
+    bounds :
+        A tuple of lower bound and upper bound or a dictionary with keys "lb", "ub".
+
+    ignore :
+        If True, ignore the parameter when it is not found in the recipe.
+
+    ratio :
+        If True, the bound is a ratio. The real bound will be the value of the variable * the value of bound.
+        e. g. bound (0.1, 1.1) means that the lower bound is 10% and the upper bound is 110% of the initial
+        value of the variable.
+
+    Returns
+    -------
+    recipe :
+        The input recipe with operation done in place.
+    """
     for name, bound in bounds.items():
         variable = get_variable(recipe, name, ignore=ignore)
         if variable:
@@ -123,6 +151,7 @@ def bound_ranges(
 
 
 def bound_range(variable: Parameter, bound: tp.Union[tp.Tuple, tp.Dict], ratio: bool = False) -> Parameter:
+    """Bound variable by range."""
     value = variable.getValue()
     if isinstance(bound, dict):
         if ratio:
@@ -140,6 +169,30 @@ def bound_windows(
         recipe: MyRecipe, bounds: tp.Dict[str, tp.Union[float, tp.Tuple, tp.Dict]],
         ignore: bool = False, ratio: bool = False
 ) -> MyRecipe:
+    """Bound the variables in the recipe by (variable - lower bound, variable + upper bound).
+
+
+    Parameters
+    ----------
+    recipe :
+        The recipe.
+
+    bounds :
+        A tuple of lower bound and upper bound or a dictionary with keys "lr", "lr".
+
+    ignore :
+        If True, ignore the parameter when it is not found in the recipe.
+
+    ratio :
+        If True, the bound is a ratio. The real bound will be the value of the variable * the value of bound.
+        e. g. bound (0.1, 0.2) means that the lower bound is 90% and the upper bound is 120% of the initial
+        value of the variable.
+
+    Returns
+    -------
+    recipe :
+        The input recipe with operation done in place.
+    """
     for name, bound in bounds.items():
         variable = get_variable(recipe, name, ignore=ignore)
         if variable:
@@ -147,7 +200,10 @@ def bound_windows(
     return recipe
 
 
-def bound_window(variable: Parameter, bound: tp.Union[float, tp.Tuple, tp.Dict], ratio: bool = False) -> Parameter:
+def bound_window(
+        variable: Parameter, bound: tp.Union[float, tp.Tuple, tp.Dict], ratio: bool = False
+) -> Parameter:
+    """Bound variable by window."""
     value = variable.getValue()
     if isinstance(bound, dict):
         if ratio:
@@ -165,6 +221,26 @@ def bound_window(variable: Parameter, bound: tp.Union[float, tp.Tuple, tp.Dict],
     return variable
 
 
+def get_bound_dct(recipe: MyRecipe) -> tp.Dict[str, tp.List[float]]:
+    """Get the bounds in the recipe in a dictionary."""
+    return dict(zip(recipe.getNames(), recipe.getBounds()))
+
+
 def get_bounds(recipe: MyRecipe, names: tp.Iterable[str]) -> tp.List[tp.List[float]]:
-    dct = dict(zip(recipe.getNames(), recipe.getBounds()))
+    """Get the bounds in a recipe.
+
+    Parameters
+    ----------
+    recipe :
+        The recipe.
+
+    names :
+        The names of the variables.
+
+    Returns
+    -------
+    bounds :
+        The bounds, each is a list of lower bound and upper bound. If name is not in recipe, the bound is None.
+    """
+    dct = get_bound_dct(recipe)
     return list(map(dct.get, names))
