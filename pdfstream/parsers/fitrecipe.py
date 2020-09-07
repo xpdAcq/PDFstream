@@ -46,7 +46,7 @@ def get_space_group_number(phase: SrRealParSet) -> int:
     return space_group.GetSpaceGroupNumber()
 
 
-def structure_to_dict(phase: SrRealParSet) -> dict:
+def phase_to_dict(phase: SrRealParSet) -> dict:
     """Convert structure parameter set to dictionary."""
     return {
         'lattice': lattice_to_dict(phase.getLattice(), angunits=getattr(phase, 'angunits', 'deg')),
@@ -59,7 +59,7 @@ def get_genresults(recipe: MyRecipe) -> tp.Generator:
     """Yield the contribution name, generator name and the dictionary expression of the structure."""
     for con_name, con in recipe.contributions.items():
         for gen_name, gen in con.generators.items():
-            yield dict(name=gen_name, con_name=con_name, **structure_to_dict(gen.phase))
+            yield dict(name=gen_name, con_name=con_name, **phase_to_dict(gen.phase))
 
 
 def conresult_to_dict(result: ContributionResults) -> dict:
