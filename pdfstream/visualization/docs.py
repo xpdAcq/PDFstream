@@ -44,9 +44,7 @@ def fitted_curves(docs: tp.Iterable[dict], text_keys: tuple = None, keys: tuple 
     """
     data = parsers.dicts_to_array(docs, keys=keys, data_keys=data_keys)
     rws = parsers.dicts_to_array(docs, keys=keys, data_keys=(rw_key,))
-    rws = np.squeeze(rws)
-    rws = [rws] if isinstance(rws, (int, float)) else rws
-    texts = [rw_template.format(rw) for rw in rws]
+    texts = [rw_template.format(rw) for rw in rws[:, 0]]
     if text_keys:
         raw_texts = parsers.dicts_to_array(docs, keys=text_keys[:-1], data_keys=(text_keys[-1],))
         raw_texts = np.squeeze(raw_texts)
