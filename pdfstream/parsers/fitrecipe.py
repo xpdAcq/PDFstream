@@ -1,5 +1,6 @@
 import math
 import typing as tp
+from tempfile import TemporaryDirectory
 
 from diffpy.srfit.fitbase.fitresults import FitResults, ContributionResults
 from diffpy.srfit.pdf import PDFGenerator, DebyePDFGenerator
@@ -9,6 +10,7 @@ from pyobjcryst.crystal import Crystal
 from pyobjcryst.spacegroup import SpaceGroup
 
 from pdfstream.modeling.fitobjs import MyRecipe
+from pdfstream.modeling.saving import save_stru
 
 GEN = tp.Union[PDFGenerator, DebyePDFGenerator]
 
@@ -117,4 +119,37 @@ def recipe_to_dict(recipe: MyRecipe) -> dict:
     result = FitResults(recipe)
     doc = fitresult_to_dict(result)
     doc["genresults"] = list(get_genresults(recipe))
+    return doc
+
+
+def structure_to_str(structure: tp.Union[Structure, Crystal]) -> str:
+    """Read the content structure file of the structure and return a string."""
+    with TemporaryDirectory() as temp_dir:
+        stru_file = save_stru(structure, "temp", temp_dir)
+        return stru_file.read_text()
+
+
+def get_genresults2(recipe: MyRecipe) -> tp.Generator:
+    """Yield the dictionary of generator information. The structures are serialized as string."""
+    for con_name, con in recipe.contributions.items():
+        for gen_name, gen in con.generators.items():
+            yield dict(name=gen_name, con_name=con_name, stru_str=structure_to_str(gen.stru))
+
+
+def recipe_to_dict2(recipe: MyRecipe) -> dict:
+    """Convert the fit result in recipe to a parsers friendly dictionary.
+
+    Parameters
+    ----------
+    recipe : MyRecipe
+        The refined recipe.
+
+    Returns
+    -------
+    doc : dict
+        A nested dictionary containing fitting results, fitted data and the refined structure data.
+    """
+    result = FitResults(recipe)
+    doc = fitresult_to_dict(result)
+    doc["genresults"] = list(get_genresults2(recipe))
     return doc

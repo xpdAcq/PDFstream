@@ -10,10 +10,6 @@ from pyobjcryst.utils import writexyz
 
 from pdfstream.modeling.fitobjs import MyRecipe
 
-__all__ = [
-    'save'
-]
-
 
 def save_fgr(con: FitContribution, base_name: str, folder: str) -> Path:
     """Save fitted PDFs to a four columns txt files with Rw as header.
