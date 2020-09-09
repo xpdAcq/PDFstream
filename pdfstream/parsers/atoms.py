@@ -1,9 +1,9 @@
-from tempfile import TemporaryDirectory
 from pathlib import Path
+from tempfile import TemporaryDirectory
 
+import ase.io
 from ase import Atoms, Atom
 from ase.spacegroup import crystal
-import ase.io
 from diffpy.structure import loadStructure
 
 import pdfstream.parsers.tools as tools
