@@ -2,6 +2,7 @@ import pytest
 
 import pdfstream.io as io
 import pdfstream.modeling as md
+from pdfstream.parsers.fitrecipe import recipe_to_dict2
 
 
 @pytest.fixture(scope="module")
@@ -13,3 +14,8 @@ def recipe(db):
     md.initialize(recipe)
     md.optimize(recipe, ["G_scale"], verbose=0, ftol=1e-3)
     return recipe
+
+
+@pytest.fixture(scope="module")
+def doc2(recipe):
+    return recipe_to_dict2(recipe)

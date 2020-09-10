@@ -1,8 +1,13 @@
 import json
 import typing as tp
 from pathlib import Path
+from tempfile import TemporaryDirectory
 
 from gemmi import cif
+from pyobjcryst import loadCrystal
+from pyobjcryst.crystal import Crystal
+
+from .tools import get_value
 
 
 def cif_to_dict(cif_file: str, mmjson: bool = False) -> tp.Generator:
@@ -19,3 +24,12 @@ def cif_to_dict(cif_file: str, mmjson: bool = False) -> tp.Generator:
             yield block_dct
     else:
         yield dct
+
+
+def to_crystal(dct: dict, keys=("genresults", 0, "stru_str")) -> Crystal:
+    """Load the information in the dictionary to a crystasl object. The info is a string of cif file."""
+    with TemporaryDirectory() as temp_dir:
+        cif_file = Path(temp_dir) / "temp.cif"
+        cif_file.write_text(get_value(dct, keys))
+        crystal = loadCrystal(str(cif_file))
+    return crystal
