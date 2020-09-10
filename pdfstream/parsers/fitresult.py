@@ -7,6 +7,20 @@ import xarray as xr
 from .tools import get_value
 
 
+def to_dataframe(
+        dct: dict,
+        column: tuple = ("conresults", 0, "name"),
+        index: tuple = ("varnames",),
+        data: tuple = ("varvals",),
+        index_name: str = None
+):
+    """Convert the fitting results to a dataframe"""
+    arr = to_xarray(dct, column, index, data)
+    df = arr.to_dataframe()
+    df.rename_axis(index_name, inplace=True)
+    return df
+
+
 def to_xarray(
         dct: dict, name: tuple = ("conresults", 0, "name"),
         coords: tuple = ("varnames",), data: tuple = ("varvals",), dim: str = "parameter"
@@ -92,9 +106,9 @@ def to_latex(*ndfs: tp.Tuple[str, pd.DataFrame]) -> str:
     head, df = ndfs[0]
     total.extend(to_lines(df, head)[:-3])
     for head, df in ndfs[1:-1]:
-        total.extend(to_lines(df, head)[4:-3])
+        total.extend(to_lines(df, head)[3:-3])
     head, df = ndfs[-1]
-    total.extend(to_lines(df, head)[4:])
+    total.extend(to_lines(df, head)[3:])
     return "\n".join(total)
 
 
@@ -121,5 +135,5 @@ def to_lines(df: pd.DataFrame, head: str, escape=False) -> tp.List[str]:
     origin_str = df.to_latex(escape=escape)
     lines = origin_str.split('\n')
     row = r"\multicolumn{" + str(df.shape[1]) + r"}{l}{" + head + r"}"
-    lines = lines[:4] + [r"\midrule", row] + lines[4:]
+    lines = lines[:4] + [row, r"\midrule"] + lines[4:]
     return lines

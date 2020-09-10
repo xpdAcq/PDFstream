@@ -1,15 +1,28 @@
 import pytest
 
 from pdfstream.parsers.fitrecipe import recipe_to_dict2
-from pdfstream.parsers.fitresult import to_xarray, to_latex, rename_rule
+from pdfstream.parsers.fitresult import to_dataframe, to_latex, rename_rule
 
 
 def test_to_latex(recipe):
+    expect = r"""\begin{tabular}{lr}
+\toprule
+{} &          test \\
+\midrule
+\multicolumn{1}{l}{Ni0}
+\midrule
+G_scale &  1.510116e-08 \\
+\midrule
+\multicolumn{1}{l}{Ni1}
+\midrule
+G_scale &  1.510116e-08 \\
+\bottomrule
+\end{tabular}
+"""
     dct = recipe_to_dict2(recipe)
-    result = to_xarray(dct, ("conresults", 0, "name"))
-    df = result.to_dataframe()
+    df = to_dataframe(dct, ("conresults", 0, "name"))
     latex = to_latex(("Ni0", df), ("Ni1", df))
-    print(latex)
+    assert latex == expect
 
 
 @pytest.mark.parametrize(
