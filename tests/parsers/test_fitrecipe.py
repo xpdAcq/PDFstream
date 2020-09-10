@@ -1,12 +1,8 @@
-from pprint import pprint
-
 import mongomock
-import pytest
 from mongomock.collection import Collection
 
-from pdfstream.parsers.fitrecipe import recipe_to_dict, recipe_to_dict2
 from pdfstream.parsers.atoms import dict_to_atoms, dict_to_atoms2
-from ase.visualize import view
+from pdfstream.parsers.fitrecipe import recipe_to_dict, recipe_to_dict2
 
 
 def test_recipe_to_dict(recipe):

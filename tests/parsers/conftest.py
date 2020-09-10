@@ -1,6 +1,4 @@
 import pytest
-from diffpy.structure import loadStructure
-from pyobjcryst import loadCrystal
 
 import pdfstream.io as io
 import pdfstream.modeling as md

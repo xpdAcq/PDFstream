@@ -1,8 +1,8 @@
 """Parse fit results."""
-import xarray as xr
-import pandas as pd
 import typing as tp
-import math
+
+import pandas as pd
+import xarray as xr
 
 from .tools import get_value
 

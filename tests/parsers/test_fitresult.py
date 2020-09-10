@@ -1,6 +1,7 @@
 import pytest
-from pdfstream.parsers.fitresult import to_xarray, to_latex, rename_rule
+
 from pdfstream.parsers.fitrecipe import recipe_to_dict2
+from pdfstream.parsers.fitresult import to_xarray, to_latex, rename_rule
 
 
 def test_to_latex(recipe):
