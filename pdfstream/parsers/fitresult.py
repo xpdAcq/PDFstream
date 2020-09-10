@@ -98,7 +98,7 @@ def to_latex(*ndfs: tp.Tuple[str, pd.DataFrame]) -> str:
     return "\n".join(total)
 
 
-def to_lines(df: pd.DataFrame, head: str, escape=True) -> tp.List[str]:
+def to_lines(df: pd.DataFrame, head: str, escape=False) -> tp.List[str]:
     """
     Convert the results data frame to a list of lines in the string of latex table.
 
@@ -111,7 +111,7 @@ def to_lines(df: pd.DataFrame, head: str, escape=True) -> tp.List[str]:
         The content of multicolumn row.
 
     escape
-        When set to False prevents from escaping latex special characters in column names. Default True.
+        When set to False prevents from escaping latex special characters in column names. Default False.
 
     Returns
     -------
