@@ -81,6 +81,9 @@ def rename_rule(name: str) -> str:
     for word in ("x", "y", "z"):
         if word in words:
             return rf"{word}({words[1]})" + r" ($\mathrm{\AA}$)"
+    for word in ("psize", "psig", "sthick", "thickness", "radius"):
+        if word in words:
+            return rf"{word}" + r" ($\mathrm{\AA}$)"
     return " ".join(words[1:])
 
 

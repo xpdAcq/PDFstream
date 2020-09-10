@@ -34,7 +34,8 @@ G_scale &  1.510116e-08 \\
         ("G0_a", r"a ($\mathrm{\AA}$)"),
         ("G0_alpha", r"$\alpha$ (deg)"),
         ("G0_Ni0_Biso", r"B$_{iso}$(Ni0) ($\mathrm{\AA}^2$)"),
-        ("G0_Ni0_x", r"x(Ni0) ($\mathrm{\AA}$)")
+        ("G0_Ni0_x", r"x(Ni0) ($\mathrm{\AA}$)"),
+        ("f0_psize", r"psize ($\mathrm{\AA}$)")
     ]
 )
 def test_rename_rule(name, expect):
