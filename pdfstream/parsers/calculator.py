@@ -7,7 +7,7 @@ from numpy import ndarray
 from xarray import Dataset
 
 
-def yield_name_attr(obj: object) -> tp.Generator[tp.Tuple[str, tp.Union[float, int, str], int]]:
+def yield_name_attr(obj: object) -> tp.Generator[tp.Tuple[str, tp.Union[float, int, str], int], None, None]:
     """Find float, int, str and ndarray in the attributes. Yield attribute name, value and dimension."""
     for name in dir(obj):
         if not name.startswith("_"):
