@@ -16,7 +16,7 @@
 
 **Fixed:**
 
-* <news item>
+* Fix the bug that mask is not applied to image in the integration.
 
 **Security:**
 

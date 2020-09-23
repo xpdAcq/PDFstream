@@ -114,13 +114,11 @@ def integrate(
     """
     # merge integrate setting
     _integ_setting = _INTEG_SETTING.copy()
-    if mask is not None:
-        _integ_setting.update(dict(mask=mask))
     if integ_setting is not None:
         _integ_setting.update(integ_setting)
     # integrate
     chi = np.stack(
-        ai.integrate1d(img, **_integ_setting)
+        ai.integrate1d(img, mask=mask, **_integ_setting)
     )
     return chi, _integ_setting
 
