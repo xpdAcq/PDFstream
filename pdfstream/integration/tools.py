@@ -72,7 +72,7 @@ def auto_mask(img: ndarray, ai: AzimuthalIntegrator, mask_setting: dict = None) 
     Returns
     -------
     mask : ndarray
-        The mask as a boolean array. True pixels are good pixels, False pixels are masked out.
+        The mask as a boolean array. 0 are good pixels, 1 are masked out.
 
     _mask_setting : dict
         The whole mask_setting.
@@ -81,7 +81,7 @@ def auto_mask(img: ndarray, ai: AzimuthalIntegrator, mask_setting: dict = None) 
     if mask_setting is not None:
         _mask_setting.update(mask_setting)
     binner = generate_binner(ai, img.shape)
-    mask = np.invert(mask_img(img, binner, **_mask_setting))
+    mask = np.invert(mask_img(img, binner, **_mask_setting)).astype(int)
     return mask, _mask_setting
 
 
