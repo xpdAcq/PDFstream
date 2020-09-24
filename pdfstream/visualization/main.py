@@ -19,9 +19,9 @@ TEXT_IND = {
 
 
 def _waterfall(
-        data: ndarray, plot_method: tp.Callable, ax: Axes, normal: bool = True,
-        stack: bool = True, gap: float = 0, text: tp.Union[str, None] = None, text_xy: tuple = None,
-        text_ind: int = -1, **kwargs
+    data: ndarray, plot_method: tp.Callable, ax: Axes, normal: bool = True,
+    stack: bool = True, gap: float = 0, text: tp.Union[str, None] = None, text_xy: tuple = None,
+    text_ind: int = -1, **kwargs
 ) -> None:
     """The basic visualization function to realize single, waterfall, and comparison plot.
 
@@ -70,10 +70,10 @@ def _waterfall(
 
 
 def waterfall(
-        dataset: tp.Iterable[ndarray], ax: Axes = None, mode: str = "line", normal: bool = True,
-        stack: bool = True, gap: float = 0, texts: tp.Iterable[str] = None, text_xy: tuple = None,
-        label: str = None, minor_tick: tp.Union[int, None] = 2, legends: tp.List[str] = None,
-        colors: tp.Iterable = None, **kwargs
+    dataset: tp.Iterable[ndarray], ax: Axes = None, mode: str = "line", normal: bool = True,
+    stack: bool = True, gap: float = 0, texts: tp.Iterable[str] = None, text_xy: tuple = None,
+    label: str = None, minor_tick: tp.Union[int, None] = 2, legends: tp.List[str] = None,
+    colors: tp.Iterable = None, **kwargs
 ) -> Axes:
     """The visualization function to realize waterfall, and comparison plot.
 
@@ -171,9 +171,9 @@ def waterfall(
 
 
 def visualize(
-        data: ndarray, ax: Axes = None, mode: str = "line", normal: bool = False,
-        text: str = None, text_xy: tuple = None, label: str = None,
-        minor_tick: int = 2, legends: tp.List[str] = None, color: tp.Any = None, **kwargs
+    data: ndarray, ax: Axes = None, mode: str = "line", normal: bool = False,
+    text: str = None, text_xy: tuple = None, label: str = None,
+    minor_tick: int = 2, legends: tp.List[str] = None, color: tp.Any = None, **kwargs
 ) -> Axes:
     """The visualization function to realize single plot.
 

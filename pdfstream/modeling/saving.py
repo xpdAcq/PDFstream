@@ -47,8 +47,9 @@ def write_crystal(stru: Crystal, stru_file: str, fmt: str) -> None:
     return
 
 
-def save_stru(stru: tp.Union[Crystal, Structure], base_name: str, folder: str, fmt: str = "cif") -> \
-        Path:
+def save_stru(
+    stru: tp.Union[Crystal, Structure], base_name: str, folder: str, fmt: str = "cif"
+) -> Path:
     """Save refined structure.
 
     Parameters
@@ -103,8 +104,9 @@ def save_res(recipe: FitRecipe, base_name: str, folder: str) -> Path:
     return res_file
 
 
-def save(recipe: MyRecipe, base_name: str, folder: str, stru_fmt: str = "cif") \
-        -> tp.Tuple[Path, tp.List[Path], tp.List[Path]]:
+def save(
+    recipe: MyRecipe, base_name: str, folder: str, stru_fmt: str = "cif"
+) -> tp.Tuple[Path, tp.List[Path], tp.List[Path]]:
     """Save the results of the refined recipe.
 
     The fitting results will be saved in ".res" file. It is a text file of the fitting parameter values and

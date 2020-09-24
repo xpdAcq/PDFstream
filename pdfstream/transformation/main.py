@@ -1,11 +1,10 @@
+from diffpy.pdfgetx import PDFConfig
 from numpy import ndarray
 
-from pdfstream.transformation.tools import PDFConfig, PDFGetter, make_pdfgetter, use_pdfgetter, visualize
+from pdfstream.transformation.tools import make_pdfgetter, use_pdfgetter, visualize
 
 __all__ = [
-    'get_pdf',
-    'PDFConfig',
-    'PDFGetter'
+    'get_pdf'
 ]
 
 

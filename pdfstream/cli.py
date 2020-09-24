@@ -6,18 +6,18 @@ import matplotlib.pyplot as plt
 from matplotlib.axes import Axes
 from pkg_resources import resource_filename
 
-import pdfstream.calibration.main as calib
-import pdfstream.integration.main as integ
+import pdfstream.calibration as calib
+import pdfstream.integration as integ
 import pdfstream.io as io
-import pdfstream.modeling.main as model
-import pdfstream.visualization.main as vis
+import pdfstream.modeling as model
+import pdfstream.visualization as vis
 
 
 def integrate(
-        poni_file: str, *img_files: str, bg_img_file: str = None,
-        output_dir: str = ".", bg_scale: float = None, mask_setting: tp.Union[dict, str] = None,
-        integ_setting: dict = None, plot_setting: tp.Union[dict, str] = None,
-        img_setting: tp.Union[dict, str] = None
+    poni_file: str, *img_files: str, bg_img_file: str = None,
+    output_dir: str = ".", bg_scale: float = None, mask_setting: tp.Union[dict, str] = None,
+    integ_setting: dict = None, plot_setting: tp.Union[dict, str] = None,
+    img_setting: tp.Union[dict, str] = None
 ) -> tp.List[str]:
     """Conduct azimuthal integration on the two dimensional diffraction images.
 
@@ -108,10 +108,10 @@ def average(out_file: str, *img_files, weights: tp.List[float] = None) -> None:
 
 
 def waterfall(
-        *data_files: str, ax: Axes = None, mode: str = "line", normal: bool = True,
-        stack: bool = True, gap: float = 0, texts: tp.List[str] = None, text_xy: tuple = None,
-        label: str = None, minor_tick: tp.Union[int, None] = 2, legends: tp.List[str] = None,
-        colors: tp.Iterable = None, show_fig: bool = True, **kwargs
+    *data_files: str, ax: Axes = None, mode: str = "line", normal: bool = True,
+    stack: bool = True, gap: float = 0, texts: tp.List[str] = None, text_xy: tuple = None,
+    label: str = None, minor_tick: tp.Union[int, None] = 2, legends: tp.List[str] = None,
+    colors: tp.Iterable = None, show_fig: bool = True, **kwargs
 ) -> Axes:
     """Visualize the data in multiple data files in a waterfall or comparison plot.
 
@@ -199,10 +199,10 @@ def waterfall(
 
 
 def visualize(
-        data_file: str, ax: Axes = None, mode: str = "line", normal: bool = False,
-        text: str = None, text_xy: tuple = None, label: str = None,
-        minor_tick: int = 2, legends: tp.List[str] = None, color: tp.Iterable = None,
-        show_fig: bool = True, **kwargs
+    data_file: str, ax: Axes = None, mode: str = "line", normal: bool = False,
+    text: str = None, text_xy: tuple = None, label: str = None,
+    minor_tick: int = 2, legends: tp.List[str] = None, color: tp.Iterable = None,
+    show_fig: bool = True, **kwargs
 ) -> Axes:
     """Visualize the data in a single data file.
 
@@ -278,13 +278,13 @@ def visualize(
 
 
 def instrucalib(
-        poni_file: str, img_file: str, cfg_file: str = None, stru_file: str = None, output_dir=".",
-        fit_range: calib.FIT_RANGE = (2.0, 60.0, 0.01),
-        qdamp0: float = 0.04, qbroad0: float = 0.02,
-        bg_img_file: str = None, bg_scale: float = None,
-        mask_setting: tp.Union[dict, str] = None, integ_setting: dict = None,
-        chi_plot_setting: tp.Union[dict, str] = None, img_setting: tp.Union[dict, str] = None,
-        pdf_plot_setting: tp.Union[dict, str] = None, ncpu: int = None
+    poni_file: str, img_file: str, cfg_file: str = None, stru_file: str = None, output_dir=".",
+    fit_range: tp.Tuple[float, float, float] = (2.0, 60.0, 0.01),
+    qdamp0: float = 0.04, qbroad0: float = 0.02,
+    bg_img_file: str = None, bg_scale: float = None,
+    mask_setting: tp.Union[dict, str] = None, integ_setting: dict = None,
+    chi_plot_setting: tp.Union[dict, str] = None, img_setting: tp.Union[dict, str] = None,
+    pdf_plot_setting: tp.Union[dict, str] = None, ncpu: int = None
 ):
     """Calibrate the 'qdamp' and 'qbroad' factor of the instrument in a pipeline process.
 

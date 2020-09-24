@@ -12,13 +12,13 @@ S = tp.Union[Crystal, Structure]
 
 
 def create(
-        name: str,
-        data: MyParser,
-        arange: tp.Tuple[float, float, float],
-        equation: str,
-        functions: tp.Dict[str, tp.Callable],
-        structures: tp.Dict[str, S],
-        ncpu: int = None
+    name: str,
+    data: MyParser,
+    arange: tp.Tuple[float, float, float],
+    equation: str,
+    functions: tp.Dict[str, tp.Callable],
+    structures: tp.Dict[str, S],
+    ncpu: int = None
 ) -> MyRecipe:
     """Create a single-contribution recipe without any variables inside.
 
@@ -58,13 +58,13 @@ def create(
 
 
 def create_con(
-        name: str,
-        data: MyParser,
-        arange: tp.Tuple[float, float, float],
-        equation: str,
-        functions: tp.Dict[str, tp.Callable],
-        structures: tp.Dict[str, S],
-        ncpu: int = None
+    name: str,
+    data: MyParser,
+    arange: tp.Tuple[float, float, float],
+    equation: str,
+    functions: tp.Dict[str, tp.Callable],
+    structures: tp.Dict[str, S],
+    ncpu: int = None
 ) -> MyContribution:
     """Make a contribution."""
     genconfigs = [

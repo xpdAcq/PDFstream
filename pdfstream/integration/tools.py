@@ -86,7 +86,7 @@ def auto_mask(img: ndarray, ai: AzimuthalIntegrator, mask_setting: dict = None) 
 
 
 def integrate(
-        img: ndarray, ai: AzimuthalIntegrator, mask: ndarray = None, integ_setting: dict = None
+    img: ndarray, ai: AzimuthalIntegrator, mask: ndarray = None, integ_setting: dict = None
 ) -> Tuple[ndarray, dict]:
     """Use AzimuthalIntegrator to integrate the image.
 

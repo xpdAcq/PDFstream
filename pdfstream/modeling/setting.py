@@ -8,10 +8,10 @@ from .fitobjs import MyRecipe
 
 
 def set_range(
-        recipe: MyRecipe,
-        rmin: tp.Tuple[str, float] = None,
-        rmax: tp.Tuple[str, float] = None,
-        rstep: tp.Tuple[str, float] = None
+    recipe: MyRecipe,
+    rmin: tp.Tuple[str, float] = None,
+    rmax: tp.Tuple[str, float] = None,
+    rstep: tp.Tuple[str, float] = None
 ) -> MyRecipe:
     """Set fitting range of the single contribution in the recipe.
 
@@ -117,8 +117,8 @@ def get_values(recipe: MyRecipe, names: tp.Iterable[str]) -> tp.List[tp.Union[fl
 
 
 def bound_ranges(
-        recipe: MyRecipe, bounds: tp.Dict[str, tp.Union[tp.Tuple, tp.Dict]],
-        ignore: bool = False, ratio: bool = False
+    recipe: MyRecipe, bounds: tp.Dict[str, tp.Union[tp.Tuple, tp.Dict]],
+    ignore: bool = False, ratio: bool = False
 ) -> MyRecipe:
     """Bound the variables in the recipe by in (lower bound, upper bound).
 
@@ -166,8 +166,8 @@ def bound_range(variable: Parameter, bound: tp.Union[tp.Tuple, tp.Dict], ratio: 
 
 
 def bound_windows(
-        recipe: MyRecipe, bounds: tp.Dict[str, tp.Union[float, tp.Tuple, tp.Dict]],
-        ignore: bool = False, ratio: bool = False
+    recipe: MyRecipe, bounds: tp.Dict[str, tp.Union[float, tp.Tuple, tp.Dict]],
+    ignore: bool = False, ratio: bool = False
 ) -> MyRecipe:
     """Bound the variables in the recipe by (variable - lower bound, variable + upper bound).
 
@@ -201,7 +201,7 @@ def bound_windows(
 
 
 def bound_window(
-        variable: Parameter, bound: tp.Union[float, tp.Tuple, tp.Dict], ratio: bool = False
+    variable: Parameter, bound: tp.Union[float, tp.Tuple, tp.Dict], ratio: bool = False
 ) -> Parameter:
     """Bound variable by window."""
     value = variable.getValue()

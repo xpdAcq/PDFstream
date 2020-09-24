@@ -34,8 +34,9 @@ STRU = tp.Union[Crystal, Structure]
 PHASE = tp.Union[STRU, tp.Tuple[tp.Callable, STRU]]
 
 
-def fit_calib(stru: Crystal, data: MyParser, fit_range: FIT_RANGE, ncpu: int = None) -> \
-        MyRecipe:
+def fit_calib(
+    stru: Crystal, data: MyParser, fit_range: FIT_RANGE, ncpu: int = None
+) -> MyRecipe:
     """The fit the pdf of the calibration. Get the qdamp and qbraod.
 
     Parameters
@@ -75,15 +76,15 @@ def fit_calib(stru: Crystal, data: MyParser, fit_range: FIT_RANGE, ncpu: int = N
 
 
 def multi_phase(
-        phases: tp.Iterable[PHASE],
-        data: MyParser,
-        fit_range: tp.Tuple[float, float, float],
-        values: dict = None,
-        bounds: dict = None,
-        ncpu: int = None,
-        cf_params: tp.List[str] = None,
-        sg_params: tp.Dict[str, tp.Union[int, str]] = None,
-        add_eq: str = None
+    phases: tp.Iterable[PHASE],
+    data: MyParser,
+    fit_range: tp.Tuple[float, float, float],
+    values: dict = None,
+    bounds: dict = None,
+    ncpu: int = None,
+    cf_params: tp.List[str] = None,
+    sg_params: tp.Dict[str, tp.Union[int, str]] = None,
+    add_eq: str = None
 ) -> MyRecipe:
     """Make the recipe of a multiphase crystal pdf refinement.
 
