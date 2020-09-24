@@ -19,7 +19,7 @@ _AUTOMASK_SETTING = dict(
 _INTEG_SETTING = dict(
     npt=1480,
     correctSolidAngle=False,
-    method='csr',
+    method='splitpixel',
     unit='q_A^-1',
     safe=False
 )
@@ -99,7 +99,7 @@ def integrate(
         The AzimuthalIntegrator instance.
 
     mask : ndarray
-        The mask as a boolean array. True pixels are good pixels, False pixels are masked out.
+        The mask as a 0 and 1 array. 0 pixels are good pixels, 1 pixels are masked out.
 
     integ_setting : dict
         The user's modification to integration settings.
@@ -117,9 +117,8 @@ def integrate(
     if integ_setting is not None:
         _integ_setting.update(integ_setting)
     # integrate
-    chi = np.stack(
-        ai.integrate1d(img, mask=mask, **_integ_setting)
-    )
+    xy = ai.integrate1d(img, mask=mask, **_integ_setting)
+    chi = np.stack(xy)
     return chi, _integ_setting
 
 
@@ -156,8 +155,11 @@ def vis_img(img: ndarray, mask: ndarray = None, img_setting: dict = None) -> Axe
         'vmax': mean + z_score * std
     }
     kwargs.update(**img_setting)
-    img_obj = ax.imshow(img, **kwargs)
-    ax.axis("off")
+    img_obj = ax.matshow(img, **kwargs)
+    ax.set_xticks([])
+    ax.set_yticks([])
+    ax.set_xticklabels([])
+    ax.set_yticklabels([])
     # color bar with magical settings to make it same size as the plot
     plt.colorbar(img_obj, ax=ax, fraction=0.046, pad=0.04)
     plt.show(block=False)
