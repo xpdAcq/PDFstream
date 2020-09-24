@@ -6,7 +6,7 @@ import pdfstream.parsers.tools as tools
 
 
 def dicts_to_array(dcts: tp.Iterable[dict], keys: tuple = ("conresults", 0),
-                   data_keys: tuple = ("x", "ycalc", "y"), **kwargs) -> np.array:
+                   data_keys: tuple = ("x", "y", "ycalc"), **kwargs) -> np.array:
     """Convert a series of dictionaries of str and list pairs to a numpy array.
 
     Parameters
@@ -37,7 +37,7 @@ def dicts_to_array(dcts: tp.Iterable[dict], keys: tuple = ("conresults", 0),
     )
 
 
-def dict_to_array(dct: dict, keys: tuple = tuple(), data_keys: tuple = ("x", "ycalc", "y"), **kwargs) -> np.array:
+def dict_to_array(dct: dict, keys: tuple = tuple(), data_keys: tuple = ("x", "y", "ycalc"), **kwargs) -> np.array:
     """Convert a dictionary of str and list pairs to a numpy array.
 
     Parameters
