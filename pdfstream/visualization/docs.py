@@ -9,7 +9,7 @@ from pdfstream.visualization.main import waterfall
 
 
 def fitted_curves(docs: tp.Iterable[dict], text_keys: tuple = None, keys: tuple = ('conresults', 0),
-                  data_keys: tuple = ("x", "ycalc", "y"), rw_key: str = "rw",
+                  data_keys: tuple = ("x", "y", "ycalc"), rw_key: str = "rw",
                   rw_template: str = r"$R_w$ = {"r":.2f}",
                   text_template: str = r"{}",
                   **kwargs) -> Axes:
