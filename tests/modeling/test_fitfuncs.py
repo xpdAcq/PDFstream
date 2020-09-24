@@ -1,7 +1,7 @@
 import pytest
 
 from pdfstream.modeling import F
-from pdfstream.modeling.fitfuncs import make_generator, get_sgpars, make_contribution
+from pdfstream.modeling.fitfuncs import make_generator, get_sgpars, make_contribution, plot
 from pdfstream.modeling.fitobjs import GenConfig, ConConfig, MyParser, FunConfig
 from pdfstream.modeling.gens import GaussianGenerator
 
@@ -47,3 +47,8 @@ def test_make_contribution(db):
     )
     con = make_contribution(con_config)
     assert len(con.generators) == 2
+
+
+def test_plot(filled_recipe):
+    filled_recipe.residual()
+    plot(next(iter(filled_recipe.contributions.values())))

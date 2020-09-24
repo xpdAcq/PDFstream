@@ -198,7 +198,11 @@ def plot(contribution: FitContribution) -> Axes:
     fig = plt.figure()
     ax = fig.add_subplot(111)
     ax = visualize(
-        data, ax=ax, mode='fit', legends=["observed", "calculated", "zero", "residual"]
+        data,
+        ax=ax,
+        mode='fit',
+        legends=["observed", "calculated", "zero", "residual"],
+        label="gr"
     )
     ax.set_title(contribution.name)
     plt.show(block=False)

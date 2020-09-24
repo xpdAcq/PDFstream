@@ -45,4 +45,5 @@ def blank_recipe(data, structures, functions):
 @pytest.fixture
 def filled_recipe(blank_recipe):
     initialize(blank_recipe)
+    blank_recipe.A.setValue(0.)
     return blank_recipe
