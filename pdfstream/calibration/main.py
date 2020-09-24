@@ -4,7 +4,8 @@ from numpy import ndarray
 
 from pdfstream.integration.main import get_chi, AzimuthalIntegrator
 from pdfstream.modeling.main import fit_calib, Crystal, MyParser, FIT_RANGE, MyRecipe
-from pdfstream.transformation.main import get_pdf, PDFConfig, PDFGetter
+from pdfstream.transformation.main import get_pdf
+from diffpy.pdfgetx import PDFConfig, PDFGetter
 
 __all__ = [
     'calib_pipe'
