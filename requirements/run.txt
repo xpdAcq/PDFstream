@@ -6,3 +6,4 @@ fire
 ase
 gemmi
 pymongo
+xarray
