@@ -119,6 +119,9 @@ def recipe_to_dict(recipe: MyRecipe) -> dict:
     result = FitResults(recipe)
     doc = fitresult_to_dict(result)
     doc["genresults"] = list(get_genresults(recipe))
+    for conresult in doc['conresults']:
+        con = recipe.contributions[conresult['name']]
+        conresult['eq'] = con.getEquation()
     return doc
 
 
