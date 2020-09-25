@@ -9,7 +9,7 @@ from diffpy.structure.structure import Structure
 from pyobjcryst.crystal import Crystal
 from pyobjcryst.spacegroup import SpaceGroup
 
-from pdfstream.modeling.fitobjs import MyRecipe
+from pdfstream.modeling.fitobjs import MyRecipe, MyContribution
 from pdfstream.modeling.saving import save_stru
 
 GEN = tp.Union[PDFGenerator, DebyePDFGenerator]
@@ -95,12 +95,21 @@ def fitresult_to_dict(result: FitResults) -> dict:
         'rchi2': result.rchi2,
         'rw': result.rw,
         'precesion': result.precision,
-        'derivstep': result.derivstep,
-        'conresults': [
-            dict(name=n, **conresult_to_dict(r))
-            for n, r in result.conresults.items()
-        ]
+        'derivstep': result.derivstep
     }
+
+
+def get_conresults(
+    conresults: tp.Dict[str, ContributionResults],
+    cons: tp.Dict[str, MyContribution]
+) -> tp.Generator:
+    for name, conresult in conresults.items():
+        con = cons[name]
+        yield dict(
+            name=name,
+            eq=con.getEquation(),
+            **conresult_to_dict(conresult)
+        )
 
 
 def recipe_to_dict(recipe: MyRecipe) -> dict:
@@ -118,10 +127,8 @@ def recipe_to_dict(recipe: MyRecipe) -> dict:
     """
     result = FitResults(recipe)
     doc = fitresult_to_dict(result)
+    doc['conresults'] = list(get_conresults(result.conresults, recipe.contributions))
     doc["genresults"] = list(get_genresults(recipe))
-    for i, conresult in enumerate(doc['conresults']):
-        con = recipe.contributions[conresult['name']]
-        doc['conresults'][i]['eq'] = con.getEquation()
     return doc
 
 
@@ -154,5 +161,6 @@ def recipe_to_dict2(recipe: MyRecipe) -> dict:
     """
     result = FitResults(recipe)
     doc = fitresult_to_dict(result)
+    doc['conresults'] = list(get_conresults(result.conresults, recipe.contributions))
     doc["genresults"] = list(get_genresults2(recipe))
     return doc
