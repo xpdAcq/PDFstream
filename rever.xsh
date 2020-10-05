@@ -1,16 +1,17 @@
 from rever.activity import activity
 
+
 @activity
 def conda_release():
     $PYTHON release.py
     conda build $REVER_DIR/recipe
     conda build purge
 
+
 @activity
 def build_docs():
     make -C docs html
     git add --all
-    git commit -m "DOC: sphinx build"
 
 
 $PROJECT = 'pdfstream'
