@@ -4,6 +4,10 @@ import numpy as np
 from skbeam.core.accumulators.binned_statistic import BinnedStatistic1D
 from skbeam.core.mask import margin
 
+from .jittools import mask_ring_mean, mask_ring_median
+
+mask_ring_dict = {"median": mask_ring_median, "mean": mask_ring_mean}
+
 
 def map_to_binner(pixel_map, bins, mask=None):
     """Transforms pixel map and bins into a binner
@@ -190,3 +194,51 @@ def binned_outlier(
     tmsk[removals] = False
     tmsk = tmsk.reshape(np.shape(img))
     return tmsk.astype(bool)
+
+
+def generate_map_bin(geo, img_shape):
+    """Create a q map and the pixel resolution bins
+
+    Parameters
+    ----------
+    geo : pyFAI.geometry.Geometry instance
+        The calibrated geometry
+    img_shape : tuple, optional
+        The shape of the image, if None pull from the mask. Defaults to None.
+
+    Returns
+    -------
+    q : ndarray
+        The q map
+    qbin : ndarray
+        The pixel resolution bins
+    """
+    r = geo.rArray(img_shape)
+    q = geo.qArray(img_shape) / 10  # type: np.ndarray
+    q_dq = geo.deltaQ(img_shape) / 10  # type: np.ndarray
+
+    pixel_size = [getattr(geo, a) for a in ["pixel1", "pixel2"]]
+    rres = np.hypot(*pixel_size)
+    rbins = np.arange(np.min(r) - rres / 2., np.max(r) + rres / 2., rres / 2.)
+    rbinned = BinnedStatistic1D(r.ravel(), statistic=np.max, bins=rbins)
+
+    qbin_sizes = rbinned(q_dq.ravel())
+    qbin_sizes = np.nan_to_num(qbin_sizes)
+    qbin = np.cumsum(qbin_sizes)
+    qbin[0] = np.min(q_dq)
+    if np.max(q) > qbin[-1]:
+        qbin[-1] = np.max(q)
+    return q, qbin
+
+
+def progress_decorator(func, progress=None):
+    if not progress:
+        inner = func
+    else:
+
+        def inner(*args, **kwargs):
+            out = func(*args, **kwargs)
+            progress()
+            return out
+
+    return inner
