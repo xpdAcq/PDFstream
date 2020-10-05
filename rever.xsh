@@ -9,7 +9,7 @@ def conda_release():
 @activity
 def build_docs():
     make -C docs html
-    git add .
+    git add --all
     git commit -m "DOC: sphinx build"
 
 
