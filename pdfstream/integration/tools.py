@@ -10,10 +10,6 @@ from pyFAI.azimuthalIntegrator import AzimuthalIntegrator
 
 __all__ = ['bg_sub', 'integrate', 'vis_chi', 'vis_img']
 
-# default mask_img auto mask setting
-_AUTOMASK_SETTING = dict(
-    alpha=2.0
-)
 # default pyfai integration setting
 _INTEG_SETTING = dict(
     npt=1480,

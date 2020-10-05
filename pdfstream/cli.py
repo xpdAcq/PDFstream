@@ -3,6 +3,7 @@ import typing as tp
 from pathlib import Path, PurePath
 
 import matplotlib.pyplot as plt
+import numpy as np
 from matplotlib.axes import Axes
 
 import pdfstream.integration as integ
@@ -11,10 +12,16 @@ import pdfstream.visualization as vis
 
 
 def integrate(
-    poni_file: str, *img_files: str, bg_img_file: str = None,
-    output_dir: str = ".", bg_scale: float = None, mask_setting: tp.Union[dict, str] = None,
+    poni_file: str,
+    *img_files: str,
+    bg_img_file: str = None,
+    mask_file: str = None,
+    output_dir: str = ".",
+    bg_scale: float = None,
+    mask_setting: tp.Union[dict, str] = None,
     integ_setting: dict = None, plot_setting: tp.Union[dict, str] = None,
-    img_setting: tp.Union[dict, str] = None
+    img_setting: tp.Union[dict, str] = None,
+    show_fig: bool = True
 ) -> tp.List[str]:
     """Conduct azimuthal integration on the two dimensional diffraction images.
 
@@ -35,6 +42,9 @@ def integrate(
     bg_img_file : str
         The path to the background image file. It should have the same dimension as the data image. If None,
         no background subtraction will be done.
+
+    mask_file : str
+        The .npy file of the mask array. Use pyFai convention. 1 are masked pixels, 0 are good pixels.
 
     output_dir : str
         The directory to save the chi data file. Default current working directory.
@@ -62,6 +72,9 @@ def integrate(
         'z_score', which determines the range of the colormap. The range is mean +/- z_score * std in the
         statistics of the image. To turn of the image, enter "OFF".
 
+    show_fig : bool
+        If True, the figure will be pop out and shown.
+
     Returns
     -------
     chi_files : a list of strings
@@ -71,15 +84,18 @@ def integrate(
         integ_setting = dict()
     ai = io.load_ai_from_poni_file(poni_file)
     bg_img = io.load_img(bg_img_file) if bg_img_file else None
+    mask = np.load(mask_file) if mask_file else None
     chi_paths = []
     for img_file in img_files:
         img = io.load_img(img_file)
         chi_name = Path(img_file).with_suffix('.chi').name
         chi_path = Path(output_dir).joinpath(chi_name)
         integ_setting.update({'filename': str(chi_path)})
-        integ.get_chi(ai, img, bg_img, bg_scale=bg_scale, mask_setting=mask_setting,
+        integ.get_chi(ai, img, bg_img=bg_img, mask=mask, bg_scale=bg_scale, mask_setting=mask_setting,
                       integ_setting=integ_setting, plot_setting=plot_setting, img_setting=img_setting)
         chi_paths.append(str(chi_path))
+    if show_fig:
+        plt.show()
     return chi_paths
 
 
@@ -191,7 +207,7 @@ def waterfall(
         label=label, minor_tick=minor_tick, legends=legends, colors=colors, **kwargs
     )
     if show_fig:
-        plt.show(block=False)
+        plt.show()
     return ax
 
 
@@ -270,5 +286,5 @@ def visualize(
         data, ax=ax, mode=mode, normal=normal, text=text, text_xy=text_xy, label=label,
         minor_tick=minor_tick, legends=legends, color=color, **kwargs)
     if show_fig:
-        plt.show(block=False)
+        plt.show()
     return ax

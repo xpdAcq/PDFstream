@@ -1,6 +1,6 @@
 **Added:**
 
-* <news item>
+* `integrate` allows user to supply their own mask
 
 **Changed:**
 

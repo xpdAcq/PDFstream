@@ -9,9 +9,11 @@ import pdfstream.integration.main as integ
     "bg_img_key,kwargs",
     [
         (None, {}),
-        ('Kapton_img', {'bg_scale': 0.001}),
-        ('Kapton_img', {'mask_setting': {"alpha": 3}}),
-        ('Kapton_img', {'integ_setting': {'npt': 1024}}),
+        ('Kapton_img', {'bg_scale': 0.001, 'plot_setting': 'OFF', 'img_setting': 'OFF', 'mask_setting': 'OFF'}),
+        ('Kapton_img', {'mask_setting': {"alpha": 3}, 'plot_setting': 'OFF', 'img_setting': 'OFF'}),
+        ('Kapton_img', {
+            'integ_setting': {'npt': 1024}, 'plot_setting': 'OFF', 'img_setting': 'OFF', 'mask_setting': 'OFF'
+        }),
     ]
 )
 def test_get_chi(db, bg_img_key, kwargs):

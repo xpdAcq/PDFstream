@@ -8,7 +8,6 @@ from skbeam.core.accumulators.binned_statistic import BinnedStatistic1D
 from skbeam.core.mask import margin
 
 from .jittools import mask_ring_mean, mask_ring_median
-from .tools import _AUTOMASK_SETTING
 
 mask_ring_dict = {"median": mask_ring_median, "mean": mask_ring_mean}
 
@@ -61,7 +60,7 @@ def mask_img(
     edge=30,
     lower_thresh=0.0,
     upper_thresh=None,
-    alpha=3,
+    alpha=2,
     auto_type="median",
     tmsk=None,
     pool=None,
@@ -113,9 +112,9 @@ def mask_img(
         working_mask = tmsk.copy()
     if edge:
         working_mask *= margin(np.shape(img), edge)
-    if lower_thresh:
+    if lower_thresh is not None:
         working_mask *= (img >= lower_thresh).astype(bool)
-    if upper_thresh:
+    if upper_thresh is not None:
         working_mask *= (img <= upper_thresh).astype(bool)
     if alpha:
         working_mask *= binned_outlier(
@@ -131,7 +130,7 @@ def mask_img(
 
 
 def binned_outlier(
-    img, binner, alpha=3, tmsk=None, mask_method="median", pool=None
+    img, binner, tmsk, alpha=3, mask_method="median", pool=None
 ):
     """Sigma Clipping based masking.
 
@@ -159,12 +158,7 @@ def binned_outlier(
     if pool is None:
         pool = ThreadPoolExecutor(max_workers=20)
     # skbeam 0.0.12 doesn't have argsort_index cached
-    try:
-        idx = binner.argsort_index
-    except AttributeError:
-        idx = binner.xy.argsort()
-    if tmsk is None:
-        tmsk = np.ones(np.shape(img), dtype=np.bool)
+    idx = binner.argsort_index
     tmsk = tmsk.flatten()
     tmsk2 = tmsk[idx]
     vfs = img.flatten()[idx]
@@ -179,16 +173,9 @@ def binned_outlier(
         i += k
     p_err = np.seterr(all="ignore")
     # only run tqdm on mean since it is slow
-    if mask_method == "mean":
-        import tqdm
-
-        progress = tqdm.tqdm(total=len(t))
-        pu = progress.update
-    else:
-        pu = None
     with pool as p:
         futures = [
-            p.submit(progress_decorator(mask_ring_dict[mask_method], pu), *x)
+            p.submit(mask_ring_dict[mask_method], *x)
             for x in t
         ]
     removals = []
@@ -235,20 +222,9 @@ def generate_map_bin(geo, img_shape):
     return q, qbin
 
 
-def progress_decorator(func, progress=None):
-    if not progress:
-        inner = func
-    else:
-
-        def inner(*args, **kwargs):
-            out = func(*args, **kwargs)
-            progress()
-            return out
-
-    return inner
-
-
-def auto_mask(img: ndarray, ai: AzimuthalIntegrator, mask_setting: dict = None) -> Tuple[ndarray, dict]:
+def auto_mask(
+    img: ndarray, ai: AzimuthalIntegrator, user_mask: ndarray = None, mask_setting: dict = None
+) -> Tuple[ndarray, dict]:
     """Automatically generate the mask of the image.
 
     Parameters
@@ -262,6 +238,9 @@ def auto_mask(img: ndarray, ai: AzimuthalIntegrator, mask_setting: dict = None) 
     mask_setting : dict
         The user's modification to auto-masking settings.
 
+    user_mask : ndarray
+        A mask provided by user. The auto generated mask will be multiplied by this mask.
+
     Returns
     -------
     mask : ndarray
@@ -270,9 +249,11 @@ def auto_mask(img: ndarray, ai: AzimuthalIntegrator, mask_setting: dict = None) 
     _mask_setting : dict
         The whole mask_setting.
     """
-    _mask_setting = _AUTOMASK_SETTING.copy()
     if mask_setting is not None:
-        _mask_setting.update(mask_setting)
+        _mask_setting = mask_setting
+    else:
+        _mask_setting = dict()
     binner = generate_binner(ai, img.shape)
-    mask = np.invert(mask_img(img, binner, **_mask_setting)).astype(int)
+    tmsk = np.invert(user_mask.astype(bool)) if user_mask is not None else None
+    mask = np.invert(mask_img(img, binner, tmsk=tmsk, **_mask_setting)).astype(int)
     return mask, _mask_setting

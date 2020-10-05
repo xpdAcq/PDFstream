@@ -10,21 +10,22 @@ import pdfstream.io as io
 
 
 @pytest.mark.parametrize(
-    'kwargs', [
-        {'bg_img_file': None},
-        {'mask_setting': {'alpha': 1.}},
-        {'integ_setting': {'npt': 1024}},
-        {'plot_setting': {'ls': '--'}},
-        {'img_setting': {'vmin': 0}}
+    'bg_img_file, mask_file', [
+        (None, None),
+        ('Ni_img_file', 'mask_file')
     ]
 )
-def test_integrate(db, kwargs):
+def test_integrate(db, bg_img_file, mask_file):
     with TemporaryDirectory() as tempdir:
-        img_file = Path(db['white_img_file'])
+        img_file = Path(db['Ni_img_file'])
         chi_file = Path(tempdir).joinpath(img_file.with_suffix('.chi').name)
-        _kwargs = {'bg_img_file': db['black_img_file'], 'output_dir': tempdir}
-        _kwargs.update(kwargs)
-        cli.integrate(db['Ni_poni_file'], str(img_file), **_kwargs)
+        cli.integrate(
+            db['Ni_poni_file'],
+            str(img_file),
+            bg_img_file=db.get(bg_img_file, None),
+            mask_file=db.get(mask_file, None),
+            output_dir=tempdir
+        )
         assert chi_file.exists()
     plt.close()
 

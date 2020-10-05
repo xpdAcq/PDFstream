@@ -12,6 +12,7 @@ NI_GR = resource_filename('tests', 'test_data/Ni_gr_file.gr')
 NI_CHI = resource_filename('tests', 'test_data/Ni_chi_file.chi')
 NI_FGR = resource_filename('tests', 'test_data/Ni_fgr_file.fgr')
 NI_IMG = resource_filename('tests', 'test_data/Ni_img_file.tiff')
+MASK_FILE = resource_filename("tests", "test_data/mask_file.npy")
 KAPTON_IMG = resource_filename('tests', 'test_data/Kapton_img_file.tiff')
 BLACK_IMG = resource_filename('tests', 'test_data/black_img.tiff')
 WHITE_IMG = resource_filename('tests', 'test_data/white_img.tiff')
@@ -37,7 +38,8 @@ DB = {
     'black_img': numpy.zeros((128, 128)),
     'white_img': numpy.ones((128, 128)),
     'Ni_config': NI_CONFIG,
-    'Ni_pdfgetter': NI_PDFGETTER
+    'Ni_pdfgetter': NI_PDFGETTER,
+    'mask_file': MASK_FILE
 }
 
 
