@@ -4,6 +4,19 @@ pdfstream Change Log
 
 .. current developments
 
+v0.1.3
+====================
+
+**Added:**
+
+* Set values and bounds for the variables in the recipe.
+
+**Fixed:**
+
+* Fix the bug that mask is not applied to image in the integration.
+
+
+
 v0.1.2
 ====================
 
