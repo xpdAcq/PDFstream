@@ -1,10 +1,14 @@
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from typing import Tuple
 
 import numpy as np
+from numpy.core._multiarray_umath import ndarray
+from pyFAI.azimuthalIntegrator import AzimuthalIntegrator
 from skbeam.core.accumulators.binned_statistic import BinnedStatistic1D
 from skbeam.core.mask import margin
 
 from .jittools import mask_ring_mean, mask_ring_median
+from .tools import _AUTOMASK_SETTING
 
 mask_ring_dict = {"median": mask_ring_median, "mean": mask_ring_mean}
 
@@ -242,3 +246,33 @@ def progress_decorator(func, progress=None):
             return out
 
     return inner
+
+
+def auto_mask(img: ndarray, ai: AzimuthalIntegrator, mask_setting: dict = None) -> Tuple[ndarray, dict]:
+    """Automatically generate the mask of the image.
+
+    Parameters
+    ----------
+    img : ndarray
+        The 2D diffraction image array.
+
+    ai : AzimuthalIntegrator
+        The AzimuthalIntegrator instance.
+
+    mask_setting : dict
+        The user's modification to auto-masking settings.
+
+    Returns
+    -------
+    mask : ndarray
+        The mask as a boolean array. 0 are good pixels, 1 are masked out.
+
+    _mask_setting : dict
+        The whole mask_setting.
+    """
+    _mask_setting = _AUTOMASK_SETTING.copy()
+    if mask_setting is not None:
+        _mask_setting.update(mask_setting)
+    binner = generate_binner(ai, img.shape)
+    mask = np.invert(mask_img(img, binner, **_mask_setting)).astype(int)
+    return mask, _mask_setting

@@ -8,9 +8,7 @@ from matplotlib.axes import Axes
 from numpy import ndarray
 from pyFAI.azimuthalIntegrator import AzimuthalIntegrator
 
-from .masking import mask_img, generate_binner
-
-__all__ = ['bg_sub', 'auto_mask', 'integrate', 'vis_chi', 'vis_img']
+__all__ = ['bg_sub', 'integrate', 'vis_chi', 'vis_img']
 
 # default mask_img auto mask setting
 _AUTOMASK_SETTING = dict(
@@ -54,36 +52,6 @@ def bg_sub(img: ndarray, bg_img: ndarray, bg_scale: float = None) -> ndarray:
         raise ValueError(f"Unmatched shape between bg_img and img: {bg_img.shape}, {img.shape}.")
     img = img - bg_scale * bg_img
     return img
-
-
-def auto_mask(img: ndarray, ai: AzimuthalIntegrator, mask_setting: dict = None) -> Tuple[ndarray, dict]:
-    """Automatically generate the mask of the image.
-
-    Parameters
-    ----------
-    img : ndarray
-        The 2D diffraction image array.
-
-    ai : AzimuthalIntegrator
-        The AzimuthalIntegrator instance.
-
-    mask_setting : dict
-        The user's modification to auto-masking settings.
-
-    Returns
-    -------
-    mask : ndarray
-        The mask as a boolean array. 0 are good pixels, 1 are masked out.
-
-    _mask_setting : dict
-        The whole mask_setting.
-    """
-    _mask_setting = _AUTOMASK_SETTING.copy()
-    if mask_setting is not None:
-        _mask_setting.update(mask_setting)
-    binner = generate_binner(ai, img.shape)
-    mask = np.invert(mask_img(img, binner, **_mask_setting)).astype(int)
-    return mask, _mask_setting
 
 
 def integrate(

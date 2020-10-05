@@ -2,7 +2,8 @@ import numpy as np
 import pytest
 
 import pdfstream.integration.tools as tools
-from pdfstream.integration.tools import integrate, auto_mask
+from pdfstream.integration.masking import auto_mask
+from pdfstream.integration.tools import integrate
 
 
 def test_bg_sub_error():
