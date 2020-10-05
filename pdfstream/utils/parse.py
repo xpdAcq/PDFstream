@@ -1,21 +1,7 @@
 """The tools to read, write, audit, transform, wash the data."""
-import pickle
 from typing import Any
 from typing import Callable
 from typing import Generator
-
-from bson.binary import Binary
-from numpy import ndarray
-
-
-def dump_ndarray(arr: ndarray):
-    """Pickle dump the numpy array to Binary format."""
-    return Binary(pickle.dumps(arr, protocol=2))
-
-
-def load_binary(binary: Binary):
-    """Pickle load the Binary format data."""
-    return pickle.loads(binary)
 
 
 def paths(dct: Any, path=()) -> Generator:
@@ -39,24 +25,6 @@ def iter_dct(dct: dict, operation: Callable):
         else:
             dct2[key] = operation(value)
     return dct2
-
-
-def from_db(dct: dict):
-    """Wash the data in the dictionary loaded from mongodb so that they can be in correct format."""
-
-    def wash(item):
-        return load_binary(item) if isinstance(item, Binary) else item
-
-    return iter_dct(dct, wash)
-
-
-def to_db(dct: dict):
-    """Wash the data that will go to mongodb so that they can be in correct format."""
-
-    def wash(item):
-        return dump_ndarray(item) if isinstance(item, ndarray) else item
-
-    return iter_dct(dct, wash)
 
 
 def to_dict(obj: object, exclude: Callable[[str], bool] = None) -> dict:

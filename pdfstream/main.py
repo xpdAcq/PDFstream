@@ -6,8 +6,7 @@ COMMANDS = {
     'average': cli.average,
     'integrate': cli.integrate,
     'waterfall': cli.waterfall,
-    'visualize': cli.visualize,
-    'instrucalib': cli.instrucalib
+    'visualize': cli.visualize
 }
 
 
