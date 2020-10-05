@@ -16,6 +16,8 @@
 
 * IMPORTANT: modeling, parsers, calibration sub-packages are removed.
 
+* IMPORTANT: remove the dependency on xpdtools
+
 **Fixed:**
 
 * <news item>

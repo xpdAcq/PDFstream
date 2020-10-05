@@ -7,7 +7,8 @@ import numpy as np
 from matplotlib.axes import Axes
 from numpy import ndarray
 from pyFAI.azimuthalIntegrator import AzimuthalIntegrator
-from xpdtools.tools import generate_binner, mask_img
+
+from .masking import mask_img, generate_binner
 
 __all__ = ['bg_sub', 'auto_mask', 'integrate', 'vis_chi', 'vis_img']
 
