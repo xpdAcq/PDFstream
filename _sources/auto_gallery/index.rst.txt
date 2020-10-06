@@ -10,27 +10,6 @@ Examples
 Below is a gallery of examples.
 
 
-
-.. raw:: html
-
-    <div class="sphx-glr-thumbcontainer" tooltip="A simple example of how to model a PDF using a crystal structure and a characteristic function.">
-
-.. only:: html
-
- .. figure:: /auto_gallery/images/thumb/sphx_glr_plot_modeling_nickel_thumb.png
-     :alt: Modeling of the PDF of Ni.
-
-     :ref:`sphx_glr_auto_gallery_plot_modeling_nickel.py`
-
-.. raw:: html
-
-    </div>
-
-
-.. toctree::
-   :hidden:
-
-   /auto_gallery/plot_modeling_nickel
 .. raw:: html
 
     <div class="sphx-glr-clear"></div>

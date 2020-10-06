@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Usage &mdash; pdfstream 0.2.0 documentation</title>
+  <title>Calibration &mdash; pdfstream 0.2.0 documentation</title>
   
 
   
@@ -41,8 +41,8 @@
   <link rel="stylesheet" href="../_static/gallery-dataframe.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Use command line interface (CLI)" href="cli.html" />
-    <link rel="prev" title="Installation" href="../installation.html" /> 
+    <link rel="next" title="Average" href="average.html" />
+    <link rel="prev" title="Tutorials" href="index.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -92,12 +92,14 @@
             
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Usage</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="cli.html">Use command line interface (CLI)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="python.html">Use python</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage/index.html">Usage</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Tutorials</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Calibration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="average.html">Average</a></li>
+<li class="toctree-l2"><a class="reference internal" href="integration.html">Integration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="transformation.html">Transformation</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorials/index.html">Tutorials</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../auto_gallery/index.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../min_versions.html">Minimum Version of Python and NumPy</a></li>
 </ul>
@@ -145,13 +147,15 @@
     
       <li><a href="../index.html">Docs</a> &raquo;</li>
         
-      <li>Usage</li>
+          <li><a href="index.html">Tutorials</a> &raquo;</li>
+        
+      <li>Calibration</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="../_sources/usage/index.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/tutorials/calibration.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -164,17 +168,11 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="usage">
-<h1>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h1>
-<p>PDFstream can be used in command line interface (CLI) or in python (e. g. ipython, jupyter notebook). Currently,
-it is only applicable to data from filesystems. The next step is to link the processor units to the
-databroker so that it can process the data from an event stream.</p>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="cli.html">Use command line interface (CLI)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="python.html">Use python</a></li>
-</ul>
-</div>
+  <div class="section" id="calibration">
+<h1>Calibration<a class="headerlink" href="#calibration" title="Permalink to this headline">¶</a></h1>
+<p>The <cite>pdfstream</cite> do not have the calibration tools. Please use
+<a class="reference external" href="https://pyfai.readthedocs.io/en/latest/man/pyFAI-calib2.html">pyFAI-calib2</a> to calibration the instrumental
+setup. The result will be in the .poni file.</p>
 </div>
 
 
@@ -185,10 +183,10 @@ databroker so that it can process the data from an event stream.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="cli.html" class="btn btn-neutral float-right" title="Use command line interface (CLI)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="average.html" class="btn btn-neutral float-right" title="Average" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="../installation.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="index.html" class="btn btn-neutral float-left" title="Tutorials" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

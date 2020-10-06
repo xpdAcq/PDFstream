@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pdfstream.cli &mdash; pdfstream 0.1.3 documentation</title>
+  <title>pdfstream.cli &mdash; pdfstream 0.2.0 documentation</title>
   
 
   
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                0.1.3
+                0.2.0
               </div>
             
           
@@ -91,6 +91,7 @@
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../usage/index.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/index.html">Tutorials</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../auto_gallery/index.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../min_versions.html">Minimum Version of Python and NumPy</a></li>
 </ul>
@@ -158,24 +159,31 @@
   <h1>Source code for pdfstream.cli</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;The functions used in the command line interface. The input and output are all files.&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">typing</span> <span class="k">as</span> <span class="nn">tp</span>
+<span class="kn">from</span> <span class="nn">concurrent.futures</span> <span class="kn">import</span> <span class="n">ProcessPoolExecutor</span><span class="p">,</span> <span class="n">ThreadPoolExecutor</span><span class="p">,</span> <span class="n">as_completed</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span><span class="p">,</span> <span class="n">PurePath</span>
 
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">matplotlib.axes</span> <span class="kn">import</span> <span class="n">Axes</span>
-<span class="kn">from</span> <span class="nn">pkg_resources</span> <span class="kn">import</span> <span class="n">resource_filename</span>
 
-<span class="kn">import</span> <span class="nn">pdfstream.calibration</span> <span class="k">as</span> <span class="nn">calib</span>
 <span class="kn">import</span> <span class="nn">pdfstream.integration</span> <span class="k">as</span> <span class="nn">integ</span>
 <span class="kn">import</span> <span class="nn">pdfstream.io</span> <span class="k">as</span> <span class="nn">io</span>
-<span class="kn">import</span> <span class="nn">pdfstream.modeling</span> <span class="k">as</span> <span class="nn">model</span>
 <span class="kn">import</span> <span class="nn">pdfstream.visualization</span> <span class="k">as</span> <span class="nn">vis</span>
 
 
 <div class="viewcode-block" id="integrate"><a class="viewcode-back" href="../../usage/python.html#pdfstream.cli.integrate">[docs]</a><span class="k">def</span> <span class="nf">integrate</span><span class="p">(</span>
-    <span class="n">poni_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">img_files</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">bg_img_file</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">output_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">bg_scale</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">mask_setting</span><span class="p">:</span> <span class="n">tp</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">integ_setting</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">plot_setting</span><span class="p">:</span> <span class="n">tp</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">img_setting</span><span class="p">:</span> <span class="n">tp</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">poni_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="o">*</span><span class="n">img_files</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">bg_img_file</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">mask_file</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">output_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span><span class="p">,</span>
+    <span class="n">bg_scale</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">mask_setting</span><span class="p">:</span> <span class="n">tp</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">integ_setting</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">plot_setting</span><span class="p">:</span> <span class="n">tp</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">img_setting</span><span class="p">:</span> <span class="n">tp</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">parallel</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">test</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">tp</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Conduct azimuthal integration on the two dimensional diffraction images.</span>
 
@@ -196,6 +204,9 @@
 <span class="sd">    bg_img_file : str</span>
 <span class="sd">        The path to the background image file. It should have the same dimension as the data image. If None,</span>
 <span class="sd">        no background subtraction will be done.</span>
+
+<span class="sd">    mask_file : str</span>
+<span class="sd">        The .npy file of the mask array. Use pyFai convention. 1 are masked pixels, 0 are good pixels.</span>
 
 <span class="sd">    output_dir : str</span>
 <span class="sd">        The directory to save the chi data file. Default current working directory.</span>
@@ -223,25 +234,68 @@
 <span class="sd">        &#39;z_score&#39;, which determines the range of the colormap. The range is mean +/- z_score * std in the</span>
 <span class="sd">        statistics of the image. To turn of the image, enter &quot;OFF&quot;.</span>
 
+<span class="sd">    parallel : bool</span>
+<span class="sd">        If True, run the processing in multiple process.</span>
+
+<span class="sd">    test : bool</span>
+<span class="sd">        If True, run in test mode (for developers).</span>
+
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    chi_files : a list of strings</span>
 <span class="sd">        The path to the output chi file.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">Path</span><span class="p">(</span><span class="n">output_dir</span><span class="p">)</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">parallel</span><span class="p">:</span>
+        <span class="n">executor</span> <span class="o">=</span> <span class="n">ProcessPoolExecutor</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">test</span> <span class="k">else</span> <span class="n">ThreadPoolExecutor</span><span class="p">()</span>
+        <span class="n">jobs</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">executor</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span>
+                <span class="n">_integrate</span><span class="p">,</span> <span class="n">poni_file</span><span class="p">,</span> <span class="n">img_file</span><span class="p">,</span> <span class="n">bg_img_file</span><span class="o">=</span><span class="n">bg_img_file</span><span class="p">,</span> <span class="n">mask_file</span><span class="o">=</span><span class="n">mask_file</span><span class="p">,</span>
+                <span class="n">output_dir</span><span class="o">=</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">bg_scale</span><span class="o">=</span><span class="n">bg_scale</span><span class="p">,</span> <span class="n">mask_setting</span><span class="o">=</span><span class="n">mask_setting</span><span class="p">,</span> <span class="n">integ_setting</span><span class="o">=</span><span class="n">integ_setting</span><span class="p">,</span>
+                <span class="n">plot_setting</span><span class="o">=</span><span class="n">plot_setting</span><span class="p">,</span> <span class="n">img_setting</span><span class="o">=</span><span class="n">img_setting</span><span class="p">,</span> <span class="n">test</span><span class="o">=</span><span class="n">test</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">img_file</span> <span class="ow">in</span> <span class="n">img_files</span>
+        <span class="p">]</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">job</span><span class="o">.</span><span class="n">result</span><span class="p">()</span> <span class="k">for</span> <span class="n">job</span> <span class="ow">in</span> <span class="n">as_completed</span><span class="p">(</span><span class="n">jobs</span><span class="p">)]</span>
+    <span class="k">return</span> <span class="p">[</span>
+        <span class="n">_integrate</span><span class="p">(</span>
+            <span class="n">poni_file</span><span class="p">,</span> <span class="n">img_file</span><span class="p">,</span> <span class="n">bg_img_file</span><span class="o">=</span><span class="n">bg_img_file</span><span class="p">,</span> <span class="n">mask_file</span><span class="o">=</span><span class="n">mask_file</span><span class="p">,</span>
+            <span class="n">output_dir</span><span class="o">=</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">bg_scale</span><span class="o">=</span><span class="n">bg_scale</span><span class="p">,</span> <span class="n">mask_setting</span><span class="o">=</span><span class="n">mask_setting</span><span class="p">,</span> <span class="n">integ_setting</span><span class="o">=</span><span class="n">integ_setting</span><span class="p">,</span>
+            <span class="n">img_setting</span><span class="o">=</span><span class="n">img_setting</span><span class="p">,</span> <span class="n">test</span><span class="o">=</span><span class="n">test</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">img_file</span> <span class="ow">in</span> <span class="n">img_files</span>
+    <span class="p">]</span></div>
+
+
+<span class="k">def</span> <span class="nf">_integrate</span><span class="p">(</span>
+    <span class="n">poni_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">img_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">bg_img_file</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">mask_file</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">output_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span><span class="p">,</span>
+    <span class="n">bg_scale</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">mask_setting</span><span class="p">:</span> <span class="n">tp</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">integ_setting</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">plot_setting</span><span class="p">:</span> <span class="n">tp</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">img_setting</span><span class="p">:</span> <span class="n">tp</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">test</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Sub-function for integrate.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">integ_setting</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">integ_setting</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
     <span class="n">ai</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">load_ai_from_poni_file</span><span class="p">(</span><span class="n">poni_file</span><span class="p">)</span>
     <span class="n">bg_img</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">load_img</span><span class="p">(</span><span class="n">bg_img_file</span><span class="p">)</span> <span class="k">if</span> <span class="n">bg_img_file</span> <span class="k">else</span> <span class="kc">None</span>
-    <span class="n">chi_paths</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">img_file</span> <span class="ow">in</span> <span class="n">img_files</span><span class="p">:</span>
-        <span class="n">img</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">load_img</span><span class="p">(</span><span class="n">img_file</span><span class="p">)</span>
-        <span class="n">chi_name</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">img_file</span><span class="p">)</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s1">&#39;.chi&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>
-        <span class="n">chi_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">output_dir</span><span class="p">)</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="n">chi_name</span><span class="p">)</span>
-        <span class="n">integ_setting</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;filename&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">chi_path</span><span class="p">)})</span>
-        <span class="n">integ</span><span class="o">.</span><span class="n">get_chi</span><span class="p">(</span><span class="n">ai</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">bg_img</span><span class="p">,</span> <span class="n">bg_scale</span><span class="o">=</span><span class="n">bg_scale</span><span class="p">,</span> <span class="n">mask_setting</span><span class="o">=</span><span class="n">mask_setting</span><span class="p">,</span>
-                      <span class="n">integ_setting</span><span class="o">=</span><span class="n">integ_setting</span><span class="p">,</span> <span class="n">plot_setting</span><span class="o">=</span><span class="n">plot_setting</span><span class="p">,</span> <span class="n">img_setting</span><span class="o">=</span><span class="n">img_setting</span><span class="p">)</span>
-        <span class="n">chi_paths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">chi_path</span><span class="p">))</span>
-    <span class="k">return</span> <span class="n">chi_paths</span></div>
+    <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">mask_file</span><span class="p">)</span> <span class="k">if</span> <span class="n">mask_file</span> <span class="k">else</span> <span class="kc">None</span>
+    <span class="n">img</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">load_img</span><span class="p">(</span><span class="n">img_file</span><span class="p">)</span>
+    <span class="n">chi_name</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">img_file</span><span class="p">)</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s1">&#39;.chi&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>
+    <span class="n">chi_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">output_dir</span><span class="p">)</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="n">chi_name</span><span class="p">)</span>
+    <span class="n">integ_setting</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;filename&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">chi_path</span><span class="p">)})</span>
+    <span class="n">integ</span><span class="o">.</span><span class="n">get_chi</span><span class="p">(</span>
+        <span class="n">ai</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">bg_img</span><span class="o">=</span><span class="n">bg_img</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="n">mask</span><span class="p">,</span> <span class="n">bg_scale</span><span class="o">=</span><span class="n">bg_scale</span><span class="p">,</span> <span class="n">mask_setting</span><span class="o">=</span><span class="n">mask_setting</span><span class="p">,</span>
+        <span class="n">integ_setting</span><span class="o">=</span><span class="n">integ_setting</span><span class="p">,</span> <span class="n">plot_setting</span><span class="o">=</span><span class="n">plot_setting</span><span class="p">,</span> <span class="n">img_setting</span><span class="o">=</span><span class="n">img_setting</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">test</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">chi_path</span>
 
 
 <div class="viewcode-block" id="average"><a class="viewcode-back" href="../../usage/python.html#pdfstream.cli.average">[docs]</a><span class="k">def</span> <span class="nf">average</span><span class="p">(</span><span class="n">out_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">img_files</span><span class="p">,</span> <span class="n">weights</span><span class="p">:</span> <span class="n">tp</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -352,7 +406,7 @@
         <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span> <span class="n">minor_tick</span><span class="o">=</span><span class="n">minor_tick</span><span class="p">,</span> <span class="n">legends</span><span class="o">=</span><span class="n">legends</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="n">colors</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
     <span class="p">)</span>
     <span class="k">if</span> <span class="n">show_fig</span><span class="p">:</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">block</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">ax</span></div>
 
 
@@ -431,106 +485,8 @@
         <span class="n">data</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span> <span class="n">normal</span><span class="o">=</span><span class="n">normal</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span> <span class="n">text_xy</span><span class="o">=</span><span class="n">text_xy</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span>
         <span class="n">minor_tick</span><span class="o">=</span><span class="n">minor_tick</span><span class="p">,</span> <span class="n">legends</span><span class="o">=</span><span class="n">legends</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">show_fig</span><span class="p">:</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">block</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">ax</span></div>
-
-
-<div class="viewcode-block" id="instrucalib"><a class="viewcode-back" href="../../usage/python.html#pdfstream.cli.instrucalib">[docs]</a><span class="k">def</span> <span class="nf">instrucalib</span><span class="p">(</span>
-    <span class="n">poni_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">img_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">cfg_file</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">stru_file</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">output_dir</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">,</span>
-    <span class="n">fit_range</span><span class="p">:</span> <span class="n">tp</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">60.0</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">),</span>
-    <span class="n">qdamp0</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.04</span><span class="p">,</span> <span class="n">qbroad0</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.02</span><span class="p">,</span>
-    <span class="n">bg_img_file</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">bg_scale</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">mask_setting</span><span class="p">:</span> <span class="n">tp</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">integ_setting</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">chi_plot_setting</span><span class="p">:</span> <span class="n">tp</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">img_setting</span><span class="p">:</span> <span class="n">tp</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">pdf_plot_setting</span><span class="p">:</span> <span class="n">tp</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">ncpu</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span>
-<span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Calibrate the &#39;qdamp&#39; and &#39;qbroad&#39; factor of the instrument in a pipeline process.</span>
-
-<span class="sd">    A pipeline to do image background subtraction, auto masking, integration, PDF transformation and PDF</span>
-<span class="sd">    modeling to calibrate the qdamp and qbroad. Also, the accuracy of the calibration is tested by the modeling.</span>
-<span class="sd">    The output will be the processed data in &#39;iq&#39;, &#39;sq&#39;, &#39;fq&#39;, &#39;gr&#39; files (depends on &#39;cfg&#39; file), the fitting</span>
-<span class="sd">    results in &#39;res&#39; file, the refined structure in &#39;cif&#39; file, the best fits data in &#39;fgr&#39; file.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    poni_file : str</span>
-<span class="sd">        The path to the poni file. It will be read by pyFAI.</span>
-
-<span class="sd">    img_file : str</span>
-<span class="sd">        The path to the image file. It will be read by fabio.</span>
-
-<span class="sd">    cfg_file : str</span>
-<span class="sd">        The path to the PDF configuratino file. Usually, a &#39;cfg&#39; file or a processed data file like &#39;gr&#39; file</span>
-<span class="sd">        with meta data in the header. If None, use the &#39;Ni_gr_file.gr&#39; in &#39;pdfstream/test_data&#39;.</span>
-
-<span class="sd">    stru_file : str</span>
-<span class="sd">        The path to the structure file. Usually, a &#39;cif&#39; file. If None, use the &#39;Ni_cif_file.cif&#39; in</span>
-<span class="sd">        &#39;pdfstream/test_data&#39;.</span>
-
-<span class="sd">    output_dir : str</span>
-<span class="sd">        The directory to save all the outputs. Default current working directory.</span>
-
-<span class="sd">    fit_range : tuple</span>
-<span class="sd">        The rmin, rmax and rstep in the unit of angstrom.</span>
-
-<span class="sd">    qdamp0 : float</span>
-<span class="sd">        The initial value for the Q damping factor.</span>
-
-<span class="sd">    qbroad0 : float</span>
-<span class="sd">        The initial vluae for the Q broadening factor.</span>
-
-<span class="sd">    bg_img_file : str</span>
-<span class="sd">        The path to the background image file. It should have the same dimension as the data image. If None,</span>
-<span class="sd">        no background subtraction will be done.</span>
-
-<span class="sd">    bg_scale : float</span>
-<span class="sd">        The scale for background subtraction. If None, use 1.</span>
-
-<span class="sd">    mask_setting : dict or &#39;OFF&#39;</span>
-<span class="sd">        The settings for the auto-masking. See the arguments for mask_img (</span>
-<span class="sd">        https://xpdacq.github.io/xpdtools/xpdtools.html?highlight=mask_img#xpdtools.tools.mask_img). To turn</span>
-<span class="sd">        off the auto masking, enter &quot;OFF&quot;.</span>
-
-<span class="sd">    integ_setting : dict</span>
-<span class="sd">        The settings for the integration. See the arguments for integrate1d (</span>
-<span class="sd">        https://pyfai.readthedocs.io/en/latest/api/pyFAI.html#module-pyFAI.azimuthalIntegrator).</span>
-
-<span class="sd">    img_setting : dict or &#39;OFF&#39;</span>
-<span class="sd">        The keywords for the matplotlib.pyplot.imshow (</span>
-<span class="sd">        https://matplotlib.org/3.2.1/api/_as_gen/matplotlib.pyplot.imshow.html). Besides, there is a key</span>
-<span class="sd">        &#39;z_score&#39;, which determines the range of the colormap. The range is mean +/- z_score * std in the</span>
-<span class="sd">        statistics of the image. To turn of the image, enter &quot;OFF&quot;.</span>
-
-<span class="sd">    chi_plot_setting : dict or &#39;OFF&#39;</span>
-<span class="sd">        The kwargs of chi data plotting. See matplotlib.pyplot.plot(</span>
-<span class="sd">        https://matplotlib.org/3.2.1/api/_as_gen/matplotlib.pyplot.plot.html). If &#39;OFF&#39;, skip visualization.</span>
-
-<span class="sd">    pdf_plot_setting : dict or &#39;OFF&#39;</span>
-<span class="sd">        The kwargs of pdf data plotting. See matplotlib.pyplot.plot(</span>
-<span class="sd">        https://matplotlib.org/3.2.1/api/_as_gen/matplotlib.pyplot.plot.html). If &#39;OFF&#39;, skip visualization.</span>
-
-<span class="sd">    ncpu : int</span>
-<span class="sd">        The number of cpu used in parallel computing in the modeling. If None, no parallel computing.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">cfg_file</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">cfg_file</span> <span class="o">=</span> <span class="n">resource_filename</span><span class="p">(</span><span class="s1">&#39;pdfstream&#39;</span><span class="p">,</span> <span class="s1">&#39;data/Ni_cfg_file.cfg&#39;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">stru_file</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">stru_file</span> <span class="o">=</span> <span class="n">resource_filename</span><span class="p">(</span><span class="s1">&#39;pdfstream&#39;</span><span class="p">,</span> <span class="s1">&#39;data/Ni_cif_file.cif&#39;</span><span class="p">)</span>
-    <span class="n">ai</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">load_ai_from_poni_file</span><span class="p">(</span><span class="n">poni_file</span><span class="p">)</span>
-    <span class="n">img</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">load_img</span><span class="p">(</span><span class="n">img_file</span><span class="p">)</span>
-    <span class="n">pdfconfig</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">load_pdfconfig</span><span class="p">(</span><span class="n">cfg_file</span><span class="p">)</span>
-    <span class="n">stru</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">load_crystal</span><span class="p">(</span><span class="n">stru_file</span><span class="p">)</span>
-    <span class="n">bg_img</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">load_img</span><span class="p">(</span><span class="n">bg_img_file</span><span class="p">)</span> <span class="k">if</span> <span class="n">bg_img_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
-    <span class="n">pdfgetter</span><span class="p">,</span> <span class="n">recipe</span> <span class="o">=</span> <span class="n">calib</span><span class="o">.</span><span class="n">calib_pipe</span><span class="p">(</span>
-        <span class="n">ai</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">pdfconfig</span><span class="p">,</span> <span class="n">stru</span><span class="p">,</span> <span class="n">fit_range</span><span class="o">=</span><span class="n">fit_range</span><span class="p">,</span> <span class="n">qdamp0</span><span class="o">=</span><span class="n">qdamp0</span><span class="p">,</span> <span class="n">qbroad0</span><span class="o">=</span><span class="n">qbroad0</span><span class="p">,</span>
-        <span class="n">bg_img</span><span class="o">=</span><span class="n">bg_img</span><span class="p">,</span> <span class="n">bg_scale</span><span class="o">=</span><span class="n">bg_scale</span><span class="p">,</span> <span class="n">mask_setting</span><span class="o">=</span><span class="n">mask_setting</span><span class="p">,</span> <span class="n">integ_setting</span><span class="o">=</span><span class="n">integ_setting</span><span class="p">,</span>
-        <span class="n">chi_plot_setting</span><span class="o">=</span><span class="n">chi_plot_setting</span><span class="p">,</span> <span class="n">img_setting</span><span class="o">=</span><span class="n">img_setting</span><span class="p">,</span> <span class="n">pdf_plot_setting</span><span class="o">=</span><span class="n">pdf_plot_setting</span><span class="p">,</span>
-        <span class="n">ncpu</span><span class="o">=</span><span class="n">ncpu</span>
-    <span class="p">)</span>
-    <span class="n">img_path</span> <span class="o">=</span> <span class="n">PurePath</span><span class="p">(</span><span class="n">img_file</span><span class="p">)</span>
-    <span class="n">io</span><span class="o">.</span><span class="n">write_out</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">img_path</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">pdfgetter</span><span class="p">)</span>
-    <span class="n">model</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">recipe</span><span class="p">,</span> <span class="n">base_name</span><span class="o">=</span><span class="n">img_path</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">folder</span><span class="o">=</span><span class="n">output_dir</span><span class="p">)</span>
-    <span class="k">return</span></div>
 </pre></div>
 
            </div>
