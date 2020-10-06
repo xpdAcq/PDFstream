@@ -11,7 +11,7 @@ PACKAGE = "pdfstream"
 REVER_DIR = Path("rever")
 REQUIREMENTS = Path("requirements")
 LICENSE = Path("LICENSE")
-CONDA_CHANNEL_SOURCES = ["defaults", "diffpy", "conda-forge"]
+CONDA_CHANNEL_SOURCES = ["defaults", "nsls2forge", "conda-forge"]
 CONDA_CHANNEL_TARGETS = ["st3107"]
 
 
