@@ -13,6 +13,7 @@ REQUIREMENTS = Path("requirements")
 LICENSE = Path("LICENSE")
 CONDA_CHANNEL_SOURCES = ["defaults", "nsls2forge", "conda-forge"]
 CONDA_CHANNEL_TARGETS = ["st3107"]
+TEST_IMPORTS = ["pdfstream", "pdfstream.main"]
 
 
 def conda_recipe() -> None:
@@ -47,8 +48,8 @@ def conda_meta() -> dict:
     package = pkg_resources.require(PACKAGE)[0]
     name = package.project_name
     version = package.version
-    host = read_dependencies(REQUIREMENTS / "build.txt")
-    build = read_dependencies(REQUIREMENTS / "run.txt")
+    build = read_dependencies(REQUIREMENTS / "build.txt")
+    run = read_dependencies(REQUIREMENTS / "run.txt")
     tar_file_name = rf"{name}-{version}.tar.gz"
     sha256 = get_hash(REVER_DIR / tar_file_name)
     return {
@@ -66,11 +67,11 @@ def conda_meta() -> dict:
             "script": r"{{ PYTHON }} -m pip install . --no-deps -vv"
         },
         "requirements": {
-            "host": host,
-            "build": build
+            "build": build,
+            "run": run
         },
         "test": {
-            "imports": [name]
+            "imports": [TEST_IMPORTS]
         },
         "about": {
             "home": rf"https://st3107.github.io/{name}/",
