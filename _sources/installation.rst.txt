@@ -22,7 +22,7 @@ Users can install the `pdfstream` using conda. It is suggested to create a new e
 
 At the command line::
 
-    conda create -n pdfstream_env pdfstream
+    conda create -n pdfstream_env -c st3107 pdfstream
 
 The ``pdfstream_env`` in the command is the name of the environment. It can be changed to any name.
 
@@ -68,6 +68,10 @@ Activate the environment::
 Install the `diffpy.pdfgetx` using .whl file::
 
     python -m pip install <path to .whl file>
+
+Install the `twine` for pypi release::
+
+    python -m pip install twine
 
 Change the ``<path to .whl file>`` to the path of the .whl file on your computer.
 
