@@ -118,6 +118,7 @@ def _integrate(
     img_setting: tp.Union[dict, str] = None,
     test: bool = False
 ) -> str:
+    """Sub-function for integrate."""
     if integ_setting is None:
         integ_setting = dict()
     ai = io.load_ai_from_poni_file(poni_file)
