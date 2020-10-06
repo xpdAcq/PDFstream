@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pytest
 
-import pdfstream.integration.masking as masking
+import pdfstream.integration.masking
 
 
 @pytest.fixture
@@ -25,7 +25,8 @@ def user_mask(request, db):
     indirect=["user_mask"]
 )
 def test_auto_mask(db, user_mask, mask_setting):
-    mask, _ = masking.auto_mask(db['Ni_img'], db['ai'], user_mask=user_mask, mask_setting=mask_setting)
+    mask, _ = pdfstream.integration.masking.auto_mask(db['Ni_img'], db['ai'], user_mask=user_mask,
+                                                      mask_setting=mask_setting)
     plt.matshow(mask)
     plt.colorbar()
     plt.show(block=False)

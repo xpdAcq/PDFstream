@@ -5,7 +5,8 @@ import pytest
 from diffpy.pdfgetx import PDFConfig, PDFGetter
 from pkg_resources import resource_filename
 
-from pdfstream.io import load_img, load_data
+from pdfstream.io import load_img
+from pdfstream.vend.loaddata import load_data
 
 NI_PONI = resource_filename('tests', 'test_data/Ni_poni_file.poni')
 NI_GR = resource_filename('tests', 'test_data/Ni_gr_file.gr')

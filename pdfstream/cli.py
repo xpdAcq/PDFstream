@@ -21,7 +21,7 @@ def integrate(
     mask_setting: tp.Union[dict, str] = None,
     integ_setting: dict = None, plot_setting: tp.Union[dict, str] = None,
     img_setting: tp.Union[dict, str] = None,
-    show_fig: bool = True
+    test: bool = False
 ) -> tp.List[str]:
     """Conduct azimuthal integration on the two dimensional diffraction images.
 
@@ -72,8 +72,8 @@ def integrate(
         'z_score', which determines the range of the colormap. The range is mean +/- z_score * std in the
         statistics of the image. To turn of the image, enter "OFF".
 
-    show_fig : bool
-        If True, the figure will be pop out and shown.
+    test : bool
+        If True, run in test mode (for developers).
 
     Returns
     -------
@@ -91,10 +91,12 @@ def integrate(
         chi_name = Path(img_file).with_suffix('.chi').name
         chi_path = Path(output_dir).joinpath(chi_name)
         integ_setting.update({'filename': str(chi_path)})
-        integ.get_chi(ai, img, bg_img=bg_img, mask=mask, bg_scale=bg_scale, mask_setting=mask_setting,
-                      integ_setting=integ_setting, plot_setting=plot_setting, img_setting=img_setting)
+        integ.get_chi(
+            ai, img, bg_img=bg_img, mask=mask, bg_scale=bg_scale, mask_setting=mask_setting,
+            integ_setting=integ_setting, plot_setting=plot_setting, img_setting=img_setting,
+        )
         chi_paths.append(str(chi_path))
-    if show_fig:
+    if not test:
         plt.show()
     return chi_paths
 

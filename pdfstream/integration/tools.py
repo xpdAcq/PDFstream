@@ -87,7 +87,7 @@ def integrate(
     return chi, _integ_setting
 
 
-def vis_img(img: ndarray, mask: ndarray = None, img_setting: dict = None) -> Axes:
+def vis_img(img: ndarray, mask: ndarray = None, img_setting: dict = None, show: bool = True) -> Axes:
     """Visualize the processed image. The color map will be determined by statistics of the pixel values. The color map
     is determined by mean +/- z_score * std.
 
@@ -101,6 +101,9 @@ def vis_img(img: ndarray, mask: ndarray = None, img_setting: dict = None) -> Axe
 
     img_setting : dict
         The user's modification to imshow kwargs except a special key 'z_score'.
+
+    show : bool
+        If True, show the figure.
 
     Returns
     -------
@@ -127,11 +130,12 @@ def vis_img(img: ndarray, mask: ndarray = None, img_setting: dict = None) -> Axe
     ax.set_yticklabels([])
     # color bar with magical settings to make it same size as the plot
     plt.colorbar(img_obj, ax=ax, fraction=0.046, pad=0.04)
-    plt.show(block=False)
+    if show:
+        plt.show(block=False)
     return ax
 
 
-def vis_chi(chi: ndarray, plot_setting: dict = None, unit: str = None) -> Axes:
+def vis_chi(chi: ndarray, plot_setting: dict = None, unit: str = None, show: bool = True) -> Axes:
     """Visualize the chi curve.
 
     Parameters
@@ -144,6 +148,9 @@ def vis_chi(chi: ndarray, plot_setting: dict = None, unit: str = None) -> Axes:
 
     unit: str
         The unit of the chi data. It affects the label of the plot. If None, no unit.
+
+    show : bool
+        If True, show the figure.
 
     Returns
     -------
@@ -158,5 +165,6 @@ def vis_chi(chi: ndarray, plot_setting: dict = None, unit: str = None) -> Axes:
     if unit:
         ax.set_xlabel(_LABEL.get(unit))
     ax.set_ylabel('I (A. U.)')
-    plt.show(block=False)
+    if show:
+        plt.show(block=False)
     return ax

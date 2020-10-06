@@ -17,7 +17,7 @@ def get_chi(
     mask_setting: dict = None,
     integ_setting: dict = None,
     img_setting: dict = None,
-    plot_setting: dict = None
+    plot_setting: dict = None,
 ) -> tp.Tuple[
     ndarray,
     dict,

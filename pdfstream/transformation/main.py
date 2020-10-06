@@ -24,6 +24,14 @@ def get_pdf(pdfconfig: PDFConfig, chi: ndarray, plot_setting: dict = None):
 
     plot_setting : dict or 'OFF'
         The kwargs of plotting. See matplotlib.pyplot.plot. If 'OFF', skip visualization.
+
+    test : bool
+        If True, run in test mode.
+
+    Returns
+    -------
+    pdfgetter :
+        The PDFGetter.
     """
     pdfgetter = make_pdfgetter(pdfconfig)
     use_pdfgetter(chi, pdfgetter)

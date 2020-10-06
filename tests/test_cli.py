@@ -24,7 +24,8 @@ def test_integrate(db, bg_img_file, mask_file):
             str(img_file),
             bg_img_file=db.get(bg_img_file, None),
             mask_file=db.get(mask_file, None),
-            output_dir=tempdir
+            output_dir=tempdir,
+            test=True
         )
         assert chi_file.exists()
     plt.close()
@@ -58,7 +59,7 @@ def test_average(db, kwargs):
 )
 def test_waterfall(db, keys, kwargs):
     data_files = (db[key] for key in keys)
-    cli.waterfall(*data_files, **kwargs)
+    cli.waterfall(*data_files, **kwargs, show_fig=False)
     plt.close()
 
 
@@ -75,5 +76,5 @@ def test_waterfall_exception():
     ]
 )
 def test_visualize(db, key, kwargs):
-    cli.visualize(db[key], **kwargs)
+    cli.visualize(db[key], **kwargs, show_fig=False)
     plt.close()

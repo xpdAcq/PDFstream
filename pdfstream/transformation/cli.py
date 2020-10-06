@@ -2,6 +2,8 @@ import typing
 from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor, as_completed
 from pathlib import Path
 
+import matplotlib.pyplot as plt
+
 from pdfstream.io import load_array
 from .io import load_pdfconfig, write_pdfgetter
 from .main import get_pdf
@@ -48,12 +50,16 @@ def transform(
     if parallel:
         executor = ProcessPoolExecutor() if not test else ThreadPoolExecutor()
         jobs = [
-            executor.submit(_transform, cfg_file, data_file, output_dir=output_dir, plot_setting=plot_setting)
+            executor.submit(
+                _transform, cfg_file, data_file, output_dir=output_dir, plot_setting=plot_setting, test=test
+            )
             for data_file in data_files
         ]
         return [job.result() for job in as_completed(jobs)]
     return [
-        _transform(cfg_file, data_file, output_dir=output_dir, plot_setting=plot_setting)
+        _transform(
+            cfg_file, data_file, output_dir=output_dir, plot_setting=plot_setting, test=test
+        )
         for data_file in data_files
     ]
 
@@ -62,7 +68,8 @@ def _transform(
     cfg_file: str,
     data_file: str,
     output_dir: str = ".",
-    plot_setting: typing.Union[str, dict] = None
+    plot_setting: typing.Union[str, dict] = None,
+    test: bool = False,
 ) -> typing.Dict[str, str]:
     """Transform the data."""
     pdfconfig = load_pdfconfig(cfg_file)
@@ -70,4 +77,6 @@ def _transform(
     pdfgetter = get_pdf(pdfconfig, chi, plot_setting=plot_setting)
     filename = Path(data_file).stem
     dct = write_pdfgetter(output_dir, filename, pdfgetter)
+    if not test:
+        plt.show()
     return dct

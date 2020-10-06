@@ -10,7 +10,8 @@ omit =
     *_version.py
     # ignore the modules
     pdfstream/main.py
-    pdfstream/integration/jittools.py
+    pdfstream/vend/*
 
 exclude_lines =
     if __name__ == '__main__':
+    plt.show()
