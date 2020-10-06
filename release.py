@@ -13,7 +13,6 @@ REQUIREMENTS = Path("requirements")
 LICENSE = Path("LICENSE")
 CONDA_CHANNEL_SOURCES = ["defaults", "nsls2forge", "conda-forge"]
 CONDA_CHANNEL_TARGETS = ["st3107"]
-TEST_IMPORTS = ["pdfstream", "pdfstream.main"]
 
 
 def conda_recipe() -> None:
@@ -71,15 +70,15 @@ def conda_meta() -> dict:
             "run": run
         },
         "test": {
-            "imports": [TEST_IMPORTS]
+            "imports": [name]
         },
         "about": {
             "home": rf"https://st3107.github.io/{name}/",
             "license": r"BSD-3-Clause",
             "license_file": str(LICENSE),
             "summary": r"The data analysis toolbox for the study on pair distribution function (PDF).",
-            "dev_url": r"https://github.com/st3107/pdfstream/tree/master",
-            "doc_url": r"https://st3107.github.io/pdfstream/"
+            "dev_url": rf"https://github.com/st3107/{name}/tree/master",
+            "doc_url": rf"https://st3107.github.io/{name}/"
         }
     }
 
