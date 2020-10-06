@@ -1,8 +1,10 @@
+import matplotlib.pyplot as plt
 import numpy as np
+import pdfstream.integration.masking
 import pytest
 
+import pdfstream.integration.tools
 import pdfstream.integration.tools as tools
-from pdfstream.integration.masking import auto_mask
 from pdfstream.integration.tools import integrate
 
 
@@ -24,6 +26,29 @@ def test_integrate(db, case):
         assert np.array_equal(chi[1], expect)
 
 
-def test_auto_mask(db):
-    mask, _ = auto_mask(db["Ni_img"], db["ai"])
-    assert np.array_equal(mask[0], np.ones_like(mask[0]))
+@pytest.fixture
+def user_mask(request, db):
+    if request.param == "ones":
+        return np.ones_like(db["Ni_img"])
+    if request.param == "zeros":
+        return np.zeros_like(db["Ni_img"])
+    return None
+
+
+@pytest.mark.parametrize(
+    "user_mask, mask_setting",
+    [
+        (None, None),
+        (None, {"alpha": 2, "upper_thresh": 1000}),
+        ("ones", None),
+        ("zeros", None)
+    ],
+    indirect=["user_mask"]
+)
+def test_auto_mask(db, user_mask, mask_setting):
+    mask, _ = pdfstream.integration.tools.auto_mask(db['Ni_img'], db['ai'], user_mask=user_mask,
+                                                    mask_setting=mask_setting)
+    plt.matshow(mask)
+    plt.colorbar()
+    plt.show(block=False)
+    plt.close()

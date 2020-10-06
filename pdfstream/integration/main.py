@@ -4,8 +4,7 @@ import numpy as np
 from numpy import ndarray
 from pyFAI import AzimuthalIntegrator
 
-from pdfstream.integration.masking import auto_mask
-from pdfstream.integration.tools import bg_sub, vis_img, integrate, vis_chi
+from pdfstream.integration.tools import bg_sub, vis_img, integrate, vis_chi, auto_mask
 
 
 def get_chi(
