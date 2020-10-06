@@ -3,3 +3,4 @@ pyyaml
 conda-build
 anaconda-client
 conda-verify
+twine
