@@ -68,7 +68,7 @@ def test_waterfall(db, keys, kwargs):
 def test_waterfall_exception():
     with pytest.raises(ValueError):
         cli.waterfall(*tuple())
-
+    plt.close()
 
 @pytest.mark.parametrize(
     'key,kwargs', [

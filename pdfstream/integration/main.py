@@ -13,10 +13,10 @@ def get_chi(
     bg_img: ndarray = None,
     mask: ndarray = None,
     bg_scale: float = None,
-    mask_setting: dict = None,
+    mask_setting: tp.Union[str, dict] = None,
     integ_setting: dict = None,
-    img_setting: dict = None,
-    plot_setting: dict = None,
+    img_setting: tp.Union[str, dict] = None,
+    plot_setting: tp.Union[str, dict] = None,
 ) -> tp.Tuple[
     ndarray,
     dict,
@@ -84,6 +84,8 @@ def get_chi(
         img = bg_sub(img, bg_img, bg_scale=bg_scale)
     if mask_setting != "OFF":
         final_mask, _mask_setting = auto_mask(img, ai, user_mask=mask, mask_setting=mask_setting)
+    elif mask is not None:
+        final_mask, _mask_setting = mask, {}
     else:
         final_mask, _mask_setting = None, None
     if img_setting != "OFF":
