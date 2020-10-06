@@ -4,6 +4,35 @@ pdfstream Change Log
 
 .. current developments
 
+v0.2.0
+====================
+
+**Added:**
+
+* `integrate` allows user to supply their own mask
+
+* Add `transform` cli, a simple interface to transform the .chi file to PDF.
+
+* Tutorials for users to use the tools in `pdfstream`.
+
+* `integrate` and `transform` will create the output folder if it does not exists.
+
+**Changed:**
+
+* `load_data` is vended from diffpy. `load_array` accepts `min_rows` and key word arguments.
+
+* `write_out` is renamed to `write_pdfgetter`.
+
+* All the code using `diffpy.pdfgetx` is in the transformation subpackage. Users can choose whether to install the diffpy.pdfgetx.
+
+**Removed:**
+
+* IMPORTANT: modeling, parsers, calibration sub-packages are removed.
+
+* IMPORTANT: remove the dependency on xpdtools
+
+
+
 v0.1.3
 ====================
 
