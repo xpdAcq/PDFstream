@@ -1,6 +1,5 @@
 import matplotlib.pyplot as plt
 import numpy as np
-import pdfstream.integration.masking
 import pytest
 
 import pdfstream.integration.tools

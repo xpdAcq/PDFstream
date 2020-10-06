@@ -1,3 +1,7 @@
 python>=3.7
-xpdtools
 fire
+matplotlib-base
+numpy
+numba
+pyFAI
+scikit-beam

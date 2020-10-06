@@ -1,2 +1,5 @@
 rever
 pyyaml
+conda-build
+anaconda-client
+conda-verify

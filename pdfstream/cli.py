@@ -20,7 +20,8 @@ def integrate(
     output_dir: str = ".",
     bg_scale: float = None,
     mask_setting: tp.Union[dict, str] = None,
-    integ_setting: dict = None, plot_setting: tp.Union[dict, str] = None,
+    integ_setting: dict = None,
+    plot_setting: tp.Union[dict, str] = None,
     img_setting: tp.Union[dict, str] = None,
     parallel: bool = False,
     test: bool = False
@@ -91,7 +92,7 @@ def integrate(
             executor.submit(
                 _integrate, poni_file, img_file, bg_img_file=bg_img_file, mask_file=mask_file,
                 output_dir=output_dir, bg_scale=bg_scale, mask_setting=mask_setting, integ_setting=integ_setting,
-                img_setting=img_setting, test=test
+                plot_setting=plot_setting, img_setting=img_setting, test=test
             )
             for img_file in img_files
         ]
