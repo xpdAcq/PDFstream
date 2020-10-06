@@ -1,7 +1,5 @@
 python>=3.7
 fire
-matplotlib-base
-numpy
 numba
-pyFAI
+pyfai
 scikit-beam
