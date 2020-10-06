@@ -1,5 +1,6 @@
 """The functions used in the command line interface. The input and output are all files."""
 import typing as tp
+from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor, as_completed
 from pathlib import Path, PurePath
 
 import matplotlib.pyplot as plt
@@ -21,6 +22,7 @@ def integrate(
     mask_setting: tp.Union[dict, str] = None,
     integ_setting: dict = None, plot_setting: tp.Union[dict, str] = None,
     img_setting: tp.Union[dict, str] = None,
+    parallel: bool = False,
     test: bool = False
 ) -> tp.List[str]:
     """Conduct azimuthal integration on the two dimensional diffraction images.
@@ -72,6 +74,9 @@ def integrate(
         'z_score', which determines the range of the colormap. The range is mean +/- z_score * std in the
         statistics of the image. To turn of the image, enter "OFF".
 
+    parallel : bool
+        If True, run the processing in multiple process.
+
     test : bool
         If True, run in test mode (for developers).
 
@@ -80,25 +85,55 @@ def integrate(
     chi_files : a list of strings
         The path to the output chi file.
     """
+    if parallel:
+        executor = ProcessPoolExecutor() if not test else ThreadPoolExecutor()
+        jobs = [
+            executor.submit(
+                _integrate, poni_file, img_file, bg_img_file=bg_img_file, mask_file=mask_file,
+                output_dir=output_dir, bg_scale=bg_scale, mask_setting=mask_setting, integ_setting=integ_setting,
+                img_setting=img_setting, test=test
+            )
+            for img_file in img_files
+        ]
+        return [job.result() for job in as_completed(jobs)]
+    return [
+        _integrate(
+            poni_file, img_file, bg_img_file=bg_img_file, mask_file=mask_file,
+            output_dir=output_dir, bg_scale=bg_scale, mask_setting=mask_setting, integ_setting=integ_setting,
+            img_setting=img_setting, test=test
+        )
+        for img_file in img_files
+    ]
+
+
+def _integrate(
+    poni_file: str,
+    img_file: str,
+    bg_img_file: str = None,
+    mask_file: str = None,
+    output_dir: str = ".",
+    bg_scale: float = None,
+    mask_setting: tp.Union[dict, str] = None,
+    integ_setting: dict = None, plot_setting: tp.Union[dict, str] = None,
+    img_setting: tp.Union[dict, str] = None,
+    test: bool = False
+) -> str:
     if integ_setting is None:
         integ_setting = dict()
     ai = io.load_ai_from_poni_file(poni_file)
     bg_img = io.load_img(bg_img_file) if bg_img_file else None
     mask = np.load(mask_file) if mask_file else None
-    chi_paths = []
-    for img_file in img_files:
-        img = io.load_img(img_file)
-        chi_name = Path(img_file).with_suffix('.chi').name
-        chi_path = Path(output_dir).joinpath(chi_name)
-        integ_setting.update({'filename': str(chi_path)})
-        integ.get_chi(
-            ai, img, bg_img=bg_img, mask=mask, bg_scale=bg_scale, mask_setting=mask_setting,
-            integ_setting=integ_setting, plot_setting=plot_setting, img_setting=img_setting,
-        )
-        chi_paths.append(str(chi_path))
+    img = io.load_img(img_file)
+    chi_name = Path(img_file).with_suffix('.chi').name
+    chi_path = Path(output_dir).joinpath(chi_name)
+    integ_setting.update({'filename': str(chi_path)})
+    integ.get_chi(
+        ai, img, bg_img=bg_img, mask=mask, bg_scale=bg_scale, mask_setting=mask_setting,
+        integ_setting=integ_setting, plot_setting=plot_setting, img_setting=img_setting,
+    )
     if not test:
         plt.show()
-    return chi_paths
+    return chi_path
 
 
 def average(out_file: str, *img_files, weights: tp.List[float] = None) -> None:
