@@ -6,6 +6,7 @@ try:
     import diffpy.pdfgetx
 
     PDFGETX_AVAILABLE = True
+    del diffpy.pdfgetx
 except ImportError:
     PDFGETX_AVAILABLE = False
 
