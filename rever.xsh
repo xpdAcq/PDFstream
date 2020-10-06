@@ -11,8 +11,6 @@ def conda_release():
 @activity
 def build_docs():
     make -C docs html
-    git add --all
-    git commit -m "DOC: sphinx build"
 
 
 $PROJECT = 'pdfstream'
