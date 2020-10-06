@@ -41,7 +41,7 @@ DB = {
     'ai': AI,
     'Ni_gr': NI_GR,
     'Ni_chi': NI_CHI,
-    'Ni_fgr': NI_FGR_FILE,
+    'Ni_fgr': NI_FGR,
     'black_img_file': BLACK_IMG_FILE,
     'white_img_file': WHITE_IMG_FILE,
     'black_img': BLACK_IMG,

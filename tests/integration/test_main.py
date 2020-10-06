@@ -33,7 +33,7 @@ import pdfstream.integration.main as integ
     ]
 )
 def test_get_chi(db, mask, bg_img, kwargs):
-    integ.get_chi(db['ai'], db['Ni_img'], bg_img=db.get(bg_img, None), **kwargs)
+    integ.get_chi(db['ai'], db['Ni_img'].copy(), bg_img=db.get(bg_img, None), **kwargs)
     plt.close()
 
 
@@ -48,8 +48,9 @@ def test_get_chi_sanity(db, img, bg_img):
     npt = 64
     result = integ.get_chi(
         db['ai'],
-        db.get(img, None),
+        db.get(img, None).copy(),
         bg_img=db.get(bg_img, None),
+        mask_setting="OFF",
         integ_setting={'npt': npt},
         plot_setting="OFF",
         img_setting="OFF"

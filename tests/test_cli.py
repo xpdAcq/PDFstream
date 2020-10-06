@@ -13,7 +13,7 @@ import pdfstream.io as io
     'bg_img_file, mask_file, kwargs', [
         (None, None, {}),
         ('Ni_img_file', 'mask_file', {}),
-        (None, None, {'parallel': True})
+        (None, None, {'parallel': True, 'plot_setting': 'OFF', 'img_setting': 'OFF'})
     ]
 )
 def test_integrate(db, bg_img_file, mask_file, kwargs):
@@ -68,7 +68,8 @@ def test_waterfall(db, keys, kwargs):
 def test_waterfall_exception():
     with pytest.raises(ValueError):
         cli.waterfall(*tuple())
-    plt.close()
+        plt.close()
+
 
 @pytest.mark.parametrize(
     'key,kwargs', [
