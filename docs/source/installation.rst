@@ -26,7 +26,17 @@ At the command line::
 
 The ``pdfstream_env`` in the command is the name of the environment. It can be changed to any name.
 
-Before using the `pdfstream`, activate the environment::
+Activate the environment::
+
+    conda activate pdfstream_env
+
+(Optional) Install the `diffpy.pdfgetx` using .whl file::
+
+    python -m pip install <path to .whl file>
+
+Change the ``<path to .whl file>`` to the path of the .whl file on your computer.
+
+Before using the `pdfstream`, remember to activate the environment::
 
     conda activate pdfstream_env
 
@@ -54,6 +64,12 @@ Create an environment with all the requirements::
 Activate the environment::
 
     conda activate pdfstream_env
+
+Install the `diffpy.pdfgetx` using .whl file::
+
+    python -m pip install <path to .whl file>
+
+Change the ``<path to .whl file>`` to the path of the .whl file on your computer.
 
 Install the `pdfstream` in development mode::
 
