@@ -47,6 +47,7 @@ def transform(
     dcts :
         A list of dictionaries. The keys are the output data types and the values are the output file paths.
     """
+    Path(output_dir).mkdir(parents=True, exist_ok=True)
     if parallel:
         executor = ProcessPoolExecutor() if not test else ThreadPoolExecutor()
         jobs = [

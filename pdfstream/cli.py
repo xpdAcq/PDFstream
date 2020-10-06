@@ -86,6 +86,7 @@ def integrate(
     chi_files : a list of strings
         The path to the output chi file.
     """
+    Path(output_dir).mkdir(parents=True, exist_ok=True)
     if parallel:
         executor = ProcessPoolExecutor() if not test else ThreadPoolExecutor()
         jobs = [

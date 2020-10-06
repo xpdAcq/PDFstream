@@ -4,6 +4,10 @@
 
 * Add `transform` cli, a simple interface to transform the .chi file to PDF.
 
+* Tutorials for users to use the tools in `pdfstream`.
+
+* `integrate` and `transform` will create the output folder if it does not exists.
+
 **Changed:**
 
 * `load_data` is vended from diffpy. `load_array` accepts `min_rows` and key word arguments.
