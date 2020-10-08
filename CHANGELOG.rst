@@ -1,5 +1,5 @@
 ====================
-pdfstream Change Log
+PDFstream Change Log
 ====================
 
 .. current developments
