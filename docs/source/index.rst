@@ -8,4 +8,5 @@ PDFstream Documentation
    usage/index
    tutorials/index
    auto_gallery/index
+   changelog
    min_versions
