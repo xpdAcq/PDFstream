@@ -13,9 +13,15 @@ def build_docs():
     make -C docs html
 
 
+@activity
+def install():
+    python -m pip install -e .
+
+
 $PROJECT = 'pdfstream'
 $ACTIVITIES = [
     'version_bump',
+    'install',
     'changelog',
     'build_docs',
     'tag',
