@@ -4,6 +4,15 @@ PDFstream Change Log
 
 .. current developments
 
+v0.2.2
+====================
+
+**Changed:**
+
+* Starting from 0.2.2, the package willl be released in `diffpy` channel on conda.
+
+
+
 v0.2.1
 ====================
 
