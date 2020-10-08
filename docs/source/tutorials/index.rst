@@ -1,6 +1,6 @@
 Tutorials
 =========
-Here are the tutorials of `pdfstream`.
+Here are the tutorials of `PDFstream`.
 
 
 .. toctree::

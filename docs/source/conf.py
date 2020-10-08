@@ -68,7 +68,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = 'pdfstream'
+project = 'PDFstream'
 copyright = '2020, Songsheng Tao'
 author = 'Songsheng Tao'
 
