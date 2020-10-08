@@ -4,7 +4,7 @@ from rever.activity import activity
 @activity
 def conda_release():
     $PYTHON release.py
-    conda build $REVER_DIR/recipe
+    conda build $REVER_DIR/recipe --user $CONDA_ORG
     conda build purge
 
 
@@ -33,8 +33,8 @@ $ACTIVITIES = [
 ]
 
 $VERSION_BUMP_PATTERNS = [
-    ('pdfstream/__init__.py', '__version__\s*=.*', "__version__ = '$VERSION'"),
-    ('setup.py', 'version\s*=.*,', "version='$VERSION',")
+    ('pdfstream/__init__.py', r'__version__\s*=.*', "__version__ = '$VERSION'"),
+    ('setup.py', r'version\s*=.*,', "version='$VERSION',")
 ]
 
 $CHANGELOG_FILENAME = 'CHANGELOG.rst'
@@ -43,6 +43,8 @@ $TAG_REMOTE = 'git@github.com:st3107/pdfstream.git'
 
 $GITHUB_ORG = 'st3107'
 $GITHUB_REPO = 'pdfstream'
+
+$CONDA_ORG = 'diffpy'
 
 $SPHINX_HOST_DIR = 'docs/build'
 $GHPAGES_REPO = 'git@github.com:st3107/pdfstream.git'
