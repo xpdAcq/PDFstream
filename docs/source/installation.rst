@@ -18,11 +18,11 @@ to transform the XRD data to PDF data.
 General Installation
 --------------------
 
-Users can install the `PDFstream` using conda. It is suggested to create a new environment for it.
+Users can install the `PDFstream` using conda. It is suggested to install it in a clean environment.
 
 At the command line::
 
-    conda create -n pdfstream_env -c st3107 pdfstream
+    conda create -n pdfstream_env -c diffpy pdfstream
 
 The ``pdfstream_env`` in the command is the name of the environment. It can be changed to any name.
 
