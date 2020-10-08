@@ -18,7 +18,7 @@ to transform the XRD data to PDF data.
 General Installation
 --------------------
 
-Users can install the `pdfstream` using conda. It is suggested to create a new environment for it.
+Users can install the `PDFstream` using conda. It is suggested to create a new environment for it.
 
 At the command line::
 
@@ -36,7 +36,7 @@ Activate the environment::
 
 Change the ``<path to .whl file>`` to the path of the .whl file on your computer.
 
-Before using the `pdfstream`, remember to activate the environment::
+Before using the `PDFstream`, remember to activate the environment::
 
     conda activate pdfstream_env
 
@@ -75,7 +75,7 @@ Install the `twine` for pypi release::
 
 Change the ``<path to .whl file>`` to the path of the .whl file on your computer.
 
-Install the `pdfstream` in development mode::
+Install the `PDFstream` in development mode::
 
     python -m pip install -e .
 

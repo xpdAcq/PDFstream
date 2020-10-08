@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Transformation &mdash; pdfstream 0.2.1 documentation</title>
+  <title>Transformation &mdash; PDFstream 0.2.2 documentation</title>
   
 
   
@@ -56,7 +56,7 @@
           
 
           
-            <a href="../index.html" class="icon icon-home"> pdfstream
+            <a href="../index.html" class="icon icon-home"> PDFstream
           
 
           
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                0.2.1
+                0.2.2
               </div>
             
           
@@ -107,6 +107,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../auto_gallery/index.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">PDFstream Change Log</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../min_versions.html">Minimum Version of Python and NumPy</a></li>
 </ul>
 
@@ -122,7 +123,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../index.html">pdfstream</a>
+          <a href="../index.html">PDFstream</a>
         
       </nav>
 
@@ -182,11 +183,11 @@ Run the following command for help:</p>
 </pre></div>
 </div>
 <p>The software supports interactive mode and was better for the exploration of suitable parameters for the data.
-The following section is about the transformation in <cite>pdfstream</cite>.
+The following section is about the transformation in <cite>PDFstream</cite>.
 If you are going to use <cite>diffpy.pdfgetx</cite>, please skip the following sections.</p>
 <div class="section" id="a-simple-transformation">
 <h2>A simple transformation<a class="headerlink" href="#a-simple-transformation" title="Permalink to this headline">¶</a></h2>
-<p>The <cite>pdfstream</cite> also provides a simple interface for the transformation.
+<p>The <cite>PDFstream</cite> also provides a simple interface for the transformation.
 At command line:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pdfgetx3</span> <span class="o">--</span><span class="n">createconfig</span> <span class="n">pdfconfig</span><span class="o">.</span><span class="n">cfg</span>
 </pre></div>
@@ -211,9 +212,7 @@ Close the file and run the command:</p>
 <h2>Output directory<a class="headerlink" href="#output-directory" title="Permalink to this headline">¶</a></h2>
 <p>If we would like to output the files in a specific directory called <code class="docutils literal notranslate"><span class="pre">data_folder</span></code>, we can use the key
 <code class="docutils literal notranslate"><span class="pre">output_dir</span></code>.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pdfstream.transformation.cli</span> <span class="kn">import</span> <span class="n">transform</span>
-
-<span class="n">transform</span><span class="p">(</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">transform</span><span class="p">(</span>
     <span class="s2">&quot;geometry.poni&quot;</span><span class="p">,</span>
     <span class="s2">&quot;sample_diffraction.tiff&quot;</span><span class="p">,</span>
     <span class="n">output_dir</span><span class="o">=</span><span class="s2">&quot;data_folder&quot;</span>

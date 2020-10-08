@@ -7,13 +7,13 @@ Run the following command for help::
     pdfgetx3 --help
 
 The software supports interactive mode and was better for the exploration of suitable parameters for the data.
-The following section is about the transformation in `pdfstream`.
+The following section is about the transformation in `PDFstream`.
 If you are going to use `diffpy.pdfgetx`, please skip the following sections.
 
 A simple transformation
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-The `pdfstream` also provides a simple interface for the transformation.
+The `PDFstream` also provides a simple interface for the transformation.
 At command line::
 
     pdfgetx3 --createconfig pdfconfig.cfg
@@ -43,8 +43,6 @@ If we would like to output the files in a specific directory called ``data_folde
 ``output_dir``.
 
 .. code-block:: python
-
-    from pdfstream.transformation.cli import transform
 
     transform(
         "geometry.poni",

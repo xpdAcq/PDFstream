@@ -5,7 +5,7 @@ What does integration do?
 -------------------------
 
 Integration is to calculate XRD data from diffraction image.
-There are four steps in pdfstream integration:
+There are four steps in PDFstream integration:
 background subtraction, auto masking, histogram calculation with corrections, and visualization.
 
 The background subtraction is to subtract the diffraction image from the sample by the diffraction image of the
@@ -146,7 +146,7 @@ we can use the key ``mask_file``.
         mask_file="user_mask.npy"
     )
 
-Note that `pdfstream` use the `pyFAI` convention of masking. The mask is an array of integers. The 0 pixels are
+Note that `PDFstream` use the `pyFAI` convention of masking. The mask is an array of integers. The 0 pixels are
 good and the 1 pixels are bad which will be masked out.
 
 If we don't want the auto masking, we can set the ``mask_setting`` to ``"OFF"``

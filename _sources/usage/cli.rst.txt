@@ -1,9 +1,9 @@
 Use command line interface (CLI)
 ================================
 
-PDFstream use `python-fire <https://github.com/google/python-fire>`_ to create the CLI tools. Please read
+`PDFstream` use `python-fire <https://github.com/google/python-fire>`_ to create the CLI tools. Please read
 the `guide <https://google.github.io/python-fire/guide/>`_ to know about the syntax before using the PDFstream
-CLI. Then, run the help command to look at the functionalities of pdfstream CLI::
+CLI. Then, run the help command to look at the functionalities of PDFstream CLI::
 
     pdfstream -- --help
 
@@ -31,7 +31,7 @@ Run the command for help::
 
     pdfgetx3 --help
 
-The `pdfstream` also provides a simple interface.
+The `PDFstream` also provides a simple interface.
 Run the command for help::
 
     pdfstream transform -- --help
