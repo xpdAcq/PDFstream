@@ -44,8 +44,6 @@ If we would like to output the files in a specific directory called ``data_folde
 
 .. code-block:: python
 
-    from pdfstream.transformation.cli import transform
-
     transform(
         "geometry.poni",
         "sample_diffraction.tiff",
