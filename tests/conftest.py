@@ -2,6 +2,7 @@
 import numpy
 import pyFAI
 import pytest
+from databroker import catalog
 from diffpy.pdfgetx import PDFConfig, PDFGetter
 from pkg_resources import resource_filename
 
@@ -55,4 +56,17 @@ DB = {
 
 @pytest.fixture(scope="session")
 def test_data():
+    """Test data."""
     return DB
+
+
+@pytest.fixture(scope="session")
+def db():
+    """An example data broker database."""
+    return catalog["example"]
+
+
+@pytest.fixture(scope="session")
+def run0(db):
+    """A run with calibration metadata."""
+    return db['a3e64b70-c5b9-4437-80ea-ea6a7198d397']

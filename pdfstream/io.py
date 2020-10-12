@@ -19,6 +19,8 @@ def load_ai_from_poni_file(poni_file: str) -> pyFAI.AzimuthalIntegrator:
 def load_ai_from_calib_result(calib_result: dict) -> pyFAI.AzimuthalIntegrator:
     """Initiate the AzimuthalIntegrator using calibration information."""
     ai = pyFAI.AzimuthalIntegrator()
+    if ("dist" in calib_result) and "distance" not in calib_result:
+        calib_result["distance"] = calib_result["dist"]
     ai.set_config(calib_result)
     return ai
 
