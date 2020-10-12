@@ -16,15 +16,15 @@ import pdfstream.io as io
         (None, None, {'parallel': True, 'plot_setting': 'OFF', 'img_setting': 'OFF'})
     ]
 )
-def test_integrate(db, bg_img_file, mask_file, kwargs):
+def test_integrate(test_data, bg_img_file, mask_file, kwargs):
     with TemporaryDirectory() as tempdir:
-        img_file = Path(db['Ni_img_file'])
+        img_file = Path(test_data['Ni_img_file'])
         chi_file = Path(tempdir).joinpath(img_file.with_suffix('.chi').name)
         cli.integrate(
-            db['Ni_poni_file'],
+            test_data['Ni_poni_file'],
             str(img_file),
-            bg_img_file=db.get(bg_img_file, None),
-            mask_file=db.get(mask_file, None),
+            bg_img_file=test_data.get(bg_img_file, None),
+            mask_file=test_data.get(mask_file, None),
             output_dir=tempdir,
             **kwargs,
             test=True
@@ -39,12 +39,12 @@ def test_integrate(db, bg_img_file, mask_file, kwargs):
         {'weights': [1, 1]}
     ]
 )
-def test_average(db, kwargs):
+def test_average(test_data, kwargs):
     with TemporaryDirectory() as tempdir:
         img_file = Path(tempdir).joinpath('average.tiff')
-        cli.average(img_file, db['white_img_file'], db['white_img_file'], **kwargs)
+        cli.average(img_file, test_data['white_img_file'], test_data['white_img_file'], **kwargs)
         avg_img = io.load_img(img_file)
-        white_img = io.load_img(db['white_img_file'])
+        white_img = io.load_img(test_data['white_img_file'])
         assert np.array_equal(avg_img, white_img)
 
 
@@ -59,8 +59,8 @@ def test_average(db, kwargs):
         (['Ni_fgr_file', 'Ni_fgr_file'], {'mode': 'fit', 'xy_kwargs': {'color': 'black'}})
     ]
 )
-def test_waterfall(db, keys, kwargs):
-    data_files = (db[key] for key in keys)
+def test_waterfall(test_data, keys, kwargs):
+    data_files = (test_data[key] for key in keys)
     cli.waterfall(*data_files, **kwargs, show_fig=False)
     plt.close()
 
@@ -78,6 +78,6 @@ def test_waterfall_exception():
         ('Ni_fgr_file', {'mode': 'fit', 'text': 'Ni', 'xy_kwargs': {'color': 'black'}})
     ]
 )
-def test_visualize(db, key, kwargs):
-    cli.visualize(db[key], **kwargs, show_fig=False)
+def test_visualize(test_data, key, kwargs):
+    cli.visualize(test_data[key], **kwargs, show_fig=False)
     plt.close()

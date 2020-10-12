@@ -21,8 +21,8 @@ def test_paths():
     ]
 
 
-def test_to_dict(db):
-    dct_ops.to_dict(db["Ni_config"])
+def test_to_dict(test_data):
+    dct_ops.to_dict(test_data["Ni_config"])
 
 
 @pytest.mark.parametrize(

@@ -69,9 +69,9 @@ Install the `diffpy.pdfgetx` using .whl file::
 
     python -m pip install <path to .whl file>
 
-Install the `twine` for pypi release::
+Install the necessary pypi packages::
 
-    python -m pip install twine
+    python -m pip install -r requirements/pip.txt
 
 Change the ``<path to .whl file>`` to the path of the .whl file on your computer.
 

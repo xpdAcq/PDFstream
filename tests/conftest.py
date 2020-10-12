@@ -54,5 +54,5 @@ DB = {
 
 
 @pytest.fixture(scope="session")
-def db():
+def test_data():
     return DB

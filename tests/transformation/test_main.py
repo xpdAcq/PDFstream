@@ -3,6 +3,6 @@ import matplotlib.pyplot as plt
 from pdfstream.transformation.main import get_pdf
 
 
-def test_get_pdf(db):
-    get_pdf(db['Ni_config'], db['Ni_chi'])
+def test_get_pdf(test_data):
+    get_pdf(test_data['Ni_config'], test_data['Ni_chi'])
     plt.close()

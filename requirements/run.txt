@@ -3,3 +3,6 @@ fire
 numba
 pyfai
 scikit-beam
+bluesky
+databroker
+shed

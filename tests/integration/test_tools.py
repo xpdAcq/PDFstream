@@ -15,10 +15,11 @@ def test_bg_sub_error():
 @pytest.mark.parametrize(
     "case", [0]
 )
-def test_integrate(db, case):
+def test_integrate(test_data, case):
     if case == 0:
         chi, setting = integrate(
-            db["Ni_img"], db["ai"], mask=np.ones_like(db["Ni_img"]), integ_setting={"npt": 1000}
+            test_data["Ni_img"], test_data["ai"], mask=np.ones_like(test_data["Ni_img"]),
+            integ_setting={"npt": 1000}
         )
         expect = np.zeros(1000)
         assert chi.shape == (2, 1000)
@@ -26,11 +27,11 @@ def test_integrate(db, case):
 
 
 @pytest.fixture
-def user_mask(request, db):
+def user_mask(request, test_data):
     if request.param == "ones":
-        return np.ones_like(db["Ni_img"])
+        return np.ones_like(test_data["Ni_img"])
     if request.param == "zeros":
-        return np.zeros_like(db["Ni_img"])
+        return np.zeros_like(test_data["Ni_img"])
     return None
 
 
@@ -44,8 +45,8 @@ def user_mask(request, db):
     ],
     indirect=["user_mask"]
 )
-def test_auto_mask(db, user_mask, mask_setting):
-    mask, _ = pdfstream.integration.tools.auto_mask(db['Ni_img'], db['ai'], user_mask=user_mask,
+def test_auto_mask(test_data, user_mask, mask_setting):
+    mask, _ = pdfstream.integration.tools.auto_mask(test_data['Ni_img'], test_data['ai'], user_mask=user_mask,
                                                     mask_setting=mask_setting)
     plt.matshow(mask)
     plt.colorbar()

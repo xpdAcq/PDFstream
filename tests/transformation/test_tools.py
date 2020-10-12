@@ -4,14 +4,14 @@ import pytest
 from pdfstream.transformation.tools import make_pdfgetter, use_pdfgetter
 
 
-def test_make_pdfgetter(db):
+def test_make_pdfgetter(test_data):
     make_pdfgetter(
-        db['Ni_config'], {'qmin': 1.}
+        test_data['Ni_config'], {'qmin': 1.}
     )
 
 
-def test_use_pdfgetter(db):
-    use_pdfgetter(db['Ni_chi'], db['Ni_pdfgetter'])
+def test_use_pdfgetter(test_data):
+    use_pdfgetter(test_data['Ni_chi'], test_data['Ni_pdfgetter'])
 
 
 @pytest.mark.parametrize(
@@ -21,6 +21,6 @@ def test_use_pdfgetter(db):
         numpy.zeros((5, 2))
     ]
 )
-def test_use_pdfgetter_error(db, wrong_data):
+def test_use_pdfgetter_error(test_data, wrong_data):
     with pytest.raises(ValueError):
-        use_pdfgetter(wrong_data, db['Ni_pdfgetter'])
+        use_pdfgetter(wrong_data, test_data['Ni_pdfgetter'])

@@ -16,17 +16,17 @@ import pdfstream.visualization.main as vis
         (['Ni_fgr', 'Ni_fgr'], {'mode': 'fit', 'colors': ['r', 'g']})
     ]
 )
-def test_waterfall(db, keys, kwargs):
+def test_waterfall(test_data, keys, kwargs):
     plt.figure()
-    vis.waterfall((db[k] for k in keys), **kwargs)
+    vis.waterfall((test_data[k] for k in keys), **kwargs)
     plt.show(block=False)
     plt.close()
 
 
-def test_waterfall_error(db):
+def test_waterfall_error(test_data):
     plt.figure()
     with pytest.raises(ValueError):
-        vis.waterfall(db['Ni_gr'], mode="unknown")
+        vis.waterfall(test_data['Ni_gr'], mode="unknown")
 
 
 @pytest.mark.parametrize(
@@ -36,9 +36,9 @@ def test_waterfall_error(db):
         ('Ni_fgr', {'mode': 'fit', 'text': 'Ni', 'xy_kwargs': {'color': 'black'}})
     ]
 )
-def test_visualize(db, key, kwargs):
+def test_visualize(test_data, key, kwargs):
     fig = plt.figure()
     ax = fig.add_subplot(111)
-    vis.visualize(db[key], ax=ax, **kwargs)
+    vis.visualize(test_data[key], ax=ax, **kwargs)
     plt.show(block=False)
     plt.close()

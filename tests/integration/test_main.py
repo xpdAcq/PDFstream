@@ -32,8 +32,8 @@ import pdfstream.integration.main as integ
         ),
     ]
 )
-def test_get_chi(db, mask, bg_img, kwargs):
-    integ.get_chi(db['ai'], db['Ni_img'].copy(), bg_img=db.get(bg_img, None), **kwargs)
+def test_get_chi(test_data, mask, bg_img, kwargs):
+    integ.get_chi(test_data['ai'], test_data['Ni_img'].copy(), bg_img=test_data.get(bg_img, None), **kwargs)
     plt.close()
 
 
@@ -44,12 +44,12 @@ def test_get_chi(db, mask, bg_img, kwargs):
         ("white_img", "white_img")
     ]
 )
-def test_get_chi_sanity(db, img, bg_img):
+def test_get_chi_sanity(test_data, img, bg_img):
     npt = 64
     result = integ.get_chi(
-        db['ai'],
-        db.get(img, None).copy(),
-        bg_img=db.get(bg_img, None),
+        test_data['ai'],
+        test_data.get(img, None).copy(),
+        bg_img=test_data.get(bg_img, None),
         mask_setting="OFF",
         integ_setting={'npt': npt},
         plot_setting="OFF",
@@ -60,6 +60,6 @@ def test_get_chi_sanity(db, img, bg_img):
     plt.close()
 
 
-def test_avg_imgs(db):
-    res = integ.avg_imgs([db['white_img'], db['white_img']], weights=[1, 1])
-    assert np.array_equal(res, db['white_img'])
+def test_avg_imgs(test_data):
+    res = integ.avg_imgs([test_data['white_img'], test_data['white_img']], weights=[1, 1])
+    assert np.array_equal(res, test_data['white_img'])

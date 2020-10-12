@@ -45,3 +45,11 @@ def to_dict(obj: object, exclude: Callable[[str], bool] = None) -> dict:
         if not exclude(attr_key):
             dct[attr_key] = attr_val
     return dct
+
+
+def get_value(dct: dict, keys: tuple) -> Any:
+    """Get the value by walking along a key chain."""
+    result = dct
+    for key in keys:
+        result = result[key]
+    return result
