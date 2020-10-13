@@ -10,6 +10,7 @@ from pdfstream.integration.tools import bg_sub, vis_img, integrate, vis_chi, aut
 def get_chi(
     ai: AzimuthalIntegrator,
     img: ndarray,
+    dk_img: ndarray = None,
     bg_img: ndarray = None,
     mask: ndarray = None,
     bg_scale: float = None,
@@ -38,6 +39,9 @@ def get_chi(
 
     img : ndarray
         The of the 2D array of the image.
+
+    dk_img : ndarray
+        The dark frame image. The image will be subtracted by it if provided.
 
     bg_img : ndarray
         The 2D array of the background image. If None, no background subtraction.
@@ -80,6 +84,8 @@ def get_chi(
     _mask_setting : dict or str
         The auto masking seeting.
     """
+    if dk_img is not None:
+        img = bg_sub(img, dk_img, bg_scale=1.)
     if bg_img is not None:
         img = bg_sub(img, bg_img, bg_scale=bg_scale)
     if mask_setting != "OFF":

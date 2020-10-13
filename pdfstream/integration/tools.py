@@ -47,7 +47,7 @@ def bg_sub(img: ndarray, bg_img: ndarray, bg_scale: float = None) -> ndarray:
     if bg_scale is None:
         bg_scale = 1.
     if bg_img.shape != img.shape:
-        raise ValueError(f"Unmatched shape between bg_img and img: {bg_img.shape}, {img.shape}.")
+        raise ValueError(f"Unmatched shape between two images: {bg_img.shape}, {img.shape}.")
     img = img - bg_scale * bg_img
     return img
 

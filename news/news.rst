@@ -6,6 +6,8 @@
 
 * The functions to query the necessary data from the databroker
 
+* The wrappers of the data processing functions that can be used in pipeline.
+
 **Changed:**
 
 * <news item>

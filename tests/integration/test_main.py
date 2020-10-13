@@ -29,7 +29,7 @@ import pdfstream.integration.main as integ
             {
                 'integ_setting': {'npt': 1024}, 'plot_setting': 'OFF', 'img_setting': 'OFF', 'mask_setting': 'OFF'
             }
-        ),
+        )
     ]
 )
 def test_get_chi(test_data, mask, bg_img, kwargs):
@@ -38,17 +38,19 @@ def test_get_chi(test_data, mask, bg_img, kwargs):
 
 
 @pytest.mark.parametrize(
-    "img, bg_img",
+    "img, bg_img, dk_img",
     [
-        ("black_img", None),
-        ("white_img", "white_img")
+        ("black_img", None, None),
+        ("white_img", "white_img", None),
+        ("white_img", None, "white_img"),
     ]
 )
-def test_get_chi_sanity(test_data, img, bg_img):
+def test_get_chi_sanity(test_data, img, bg_img, dk_img):
     npt = 64
     result = integ.get_chi(
         test_data['ai'],
-        test_data.get(img, None).copy(),
+        test_data.get(img, None),
+        dk_img=test_data.get(dk_img, None),
         bg_img=test_data.get(bg_img, None),
         mask_setting="OFF",
         integ_setting={'npt': npt},
