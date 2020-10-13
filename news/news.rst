@@ -4,7 +4,7 @@
 
 * A pipeline to process the streaming x-ray diffraction data
 
-* A function to query the necessary data from the databroker
+* The functions to query the necessary data from the databroker
 
 **Changed:**
 
