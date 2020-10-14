@@ -31,7 +31,7 @@ def process_img_to_pdf(
     mask_setting: typing.Union[str, dict] = None,
     integ_setting: dict = None,
     **kwargs
-) -> typing.Tuple[DATA, DATA, DATA, DATA, DATA, DATA, DATA]:
+) -> typing.Tuple[DATA, DATA, DATA, DATA, DATA, DATA]:
     """Process the image to PDF. Used in pipeline."""
     _chi, _integ_setting, img, final_mask, _ = reduce(
         img=img, ai=ai, dk_img=dk_img, bg_img=bg_img, mask=mask, bg_scale=bg_scale, mask_setting=mask_setting,
@@ -43,13 +43,11 @@ def process_img_to_pdf(
     pdfgetter = transform(chi=_chi, config=config, **kwargs)
     image = {"image": img}
     masked_img = {"masked_image": numpy.ma.masked_array(img, final_mask)}
-    x = dataformat if dataformat else "x"
-    chi = {x: _chi[0], "I": _chi[1]}
     iq = {"Q": pdfgetter.iq[0], "I": pdfgetter.iq[1]}
     sq = {"Q": pdfgetter.sq[0], "S": pdfgetter.sq[1]}
     fq = {"Q": pdfgetter.fq[0], "F": pdfgetter.fq[1]}
     gr = {"r": pdfgetter.gr[0], "G": pdfgetter.gr[1]}
-    return image, masked_img, chi, iq, sq, fq, gr
+    return image, masked_img, iq, sq, fq, gr
 
 
 def get_dataformat(_integ_setting: dict) -> typing.Union[None, str]:

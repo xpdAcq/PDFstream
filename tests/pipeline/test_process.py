@@ -41,7 +41,7 @@ def kwargs(request, test_data):
 
 
 def test_process_img_to_pdf(kwargs, test_data):
-    image, masked_image, chi, iq, sq, fq, gr = mod.process_img_to_pdf(
+    image, masked_image, iq, sq, fq, gr = mod.process_img_to_pdf(
         test_data["Ni_img"],
         test_data["ai"],
         dk_img=None,
@@ -54,7 +54,7 @@ def test_process_img_to_pdf(kwargs, test_data):
         plt.clf()
         plt.matshow(next(iter(img.values())))
         plt.show(block=False)
-    for dct in (chi, iq, sq, fq, gr):
+    for dct in (iq, sq, fq, gr):
         plt.clf()
         plt.plot(*dct.values())
         plt.show(block=False)
