@@ -133,3 +133,11 @@ def get_img_from_run(run: BlueskyRunFromGenerator, det_name: str) -> ndarray:
 def get_start_of_run(run: BlueskyRunFromGenerator):
     """Read the start document of a run (databroker v2)."""
     return run.metadata['start']
+
+
+def query_config(start: typing.Dict[str, typing.Any], composition_key: str):
+    """Query the necessary information for the PDFGetter."""
+    config = {}
+    if composition_key in start:
+        config.update({"composition": start[composition_key]})
+    return config

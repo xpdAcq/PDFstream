@@ -1,12 +1,13 @@
 import numpy as np
 import pytest
+from diffpy.pdfgetx import PDFConfig
 
-import pdfstream.pipeline.query as query
+import pdfstream.pipeline.from_start as mod
 
 
 def test_query_ai(run0, test_data):
-    start = query.get_start_of_run(run0)
-    ai = query.query_ai(start)
+    start = mod.get_start_of_run(run0)
+    ai = mod.query_ai(start)
     print(ai)
 
 
@@ -18,7 +19,7 @@ def test_query_ai(run0, test_data):
     ]
 )
 def test_get_img_from_run(run0, det_name, shape):
-    img = query.get_img_from_run(run0, det_name)
+    img = mod.get_img_from_run(run0, det_name)
     assert img.shape == shape
 
 
@@ -30,10 +31,21 @@ def test_get_img_from_run(run0, det_name, shape):
     ]
 )
 def test_query_dark(run0, db, dk_id_key, shape):
-    dk_start = query.get_start_of_run(run0)
-    dk_img = query.query_dark(dk_start, det_name="pe1_image", db=db, dk_id_key=dk_id_key)
+    dk_start = mod.get_start_of_run(run0)
+    dk_img = mod.query_dark(dk_start, det_name="pe1_image", db=db, dk_id_key=dk_id_key)
     if shape:
         assert isinstance(dk_img, np.ndarray)
         assert dk_img.shape == shape
     else:
         assert dk_img is None
+
+
+@pytest.mark.parametrize(
+    "args",
+    [
+        ({'sample_composition': {'Ni': 1.0}}, 'sample_composition')
+    ]
+)
+def test_query_config(args):
+    config = mod.query_config(*args)
+    PDFConfig(**config)

@@ -32,6 +32,7 @@ def process_img_to_pdf(
     integ_setting: dict = None,
     **kwargs
 ) -> typing.Tuple[DataArray, DataArray, DataArray, DataArray, DataArray]:
+    """Process the image to PDF. Used in pipeline."""
     chi, _integ_setting, img, final_mask, _ = reduce(
         img=img, ai=ai, dk_img=dk_img, bg_img=bg_img, mask=mask, bg_scale=bg_scale, mask_setting=mask_setting,
         integ_setting=integ_setting, **kwargs

@@ -1,7 +1,7 @@
 import numpy
 import pytest
 
-import pdfstream.pipeline.read as mod
+import pdfstream.pipeline.from_event as mod
 
 EVENT0 = {
     'time': [0.0],
