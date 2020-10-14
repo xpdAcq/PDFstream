@@ -6,13 +6,12 @@ from databroker.core import BlueskyRunFromGenerator
 from numpy import ndarray
 
 import pdfstream.io as io
-import pdfstream.utils.dct_ops as dct_ops
 
 
 def query_ai(
     start: typing.Dict[str, typing.Any],
-    keys: tuple = ('calibration_md',),
-) -> typing.Dict[str, typing.Any]:
+    calibration_md_key: str = 'calibration_md',
+) -> typing.Union[None, typing.Dict[str, typing.Any]]:
     """Query the azimuthal integrator from the start document.
 
     If the poni_file is provided, use the poni file instead and ignore the information in start document.
@@ -22,7 +21,7 @@ def query_ai(
     start :
         The start document.
 
-    keys :
+    calibration_md_key :
         The key chain to find the calibration metadata.
 
     Returns
@@ -30,8 +29,9 @@ def query_ai(
     ai :
         The azimuthal integrator.
     """
-    calibration_md = dct_ops.get_value(start, keys)
-    return io.load_ai_from_calib_result(calibration_md)
+    if calibration_md_key not in start:
+        return None
+    return io.load_ai_from_calib_result(start[calibration_md_key])
 
 
 def query_bg_img(

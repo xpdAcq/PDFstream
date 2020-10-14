@@ -38,3 +38,15 @@ def test_to_dict(test_data):
 def test_iter_dct(dct, op, expect):
     dct1 = dct_ops.iter_dct(dct, op)
     assert dct1 == expect
+
+
+@pytest.mark.parametrize(
+    "dct, keys, expect",
+    [
+        ({"k": {"k1": "v"}}, ("k", "k1"), "v"),
+        ({"k": "v"}, tuple(), {"k": "v"}),
+    ]
+)
+def test_get_value(dct, keys, expect):
+    value = dct_ops.get_value(dct, keys=keys)
+    assert value == expect
