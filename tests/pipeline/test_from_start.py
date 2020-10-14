@@ -30,9 +30,9 @@ def test_get_img_from_run(run0, det_name, shape):
         ("a_key_not_existing", None)
     ]
 )
-def test_query_dark(run0, db, dk_id_key, shape):
+def test_query_dk_img(run0, db, dk_id_key, shape):
     dk_start = mod.get_start_of_run(run0)
-    dk_img = mod.query_dark(dk_start, det_name="pe1_image", db=db, dk_id_key=dk_id_key)
+    dk_img = mod.query_dk_img(dk_start, det_name="pe1_image", db=db, dk_id_key=dk_id_key)
     if shape:
         assert isinstance(dk_img, np.ndarray)
         assert dk_img.shape == shape

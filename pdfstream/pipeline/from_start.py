@@ -75,11 +75,11 @@ def query_bg_img(
     bg_run: BlueskyRunFromGenerator = db[bg_id_key]
     img = get_img_from_run(bg_run, det_name=det_name)
     bg_start = get_start_of_run(bg_run)
-    dk_img = query_dark(bg_start, det_name=det_name, db=db, dk_id_key=dk_id_key) if dk_id_key else None
+    dk_img = query_dk_img(bg_start, det_name=det_name, db=db, dk_id_key=dk_id_key) if dk_id_key else None
     return numpy.subtract(img, dk_img) if dk_img is not None else img
 
 
-def query_dark(
+def query_dk_img(
     start: typing.Dict[str, typing.Any],
     det_name: str,
     db: Broker,
