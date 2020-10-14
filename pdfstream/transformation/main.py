@@ -1,4 +1,6 @@
-from diffpy.pdfgetx import PDFConfig
+import typing
+
+from diffpy.pdfgetx import PDFConfig, PDFGetter
 from numpy import ndarray
 
 from pdfstream.transformation.tools import make_pdfgetter, use_pdfgetter, visualize
@@ -8,7 +10,7 @@ __all__ = [
 ]
 
 
-def get_pdf(pdfconfig: PDFConfig, chi: ndarray, plot_setting: dict = None):
+def get_pdf(pdfconfig: PDFConfig, chi: ndarray, plot_setting: typing.Union[str, dict] = None) -> PDFGetter:
     """Get the PDF from the chi data.
 
     The pdfgetter will be initiated by pdfconfig. It takes the chi data and does the calculation. The results
