@@ -1,6 +1,6 @@
-import typing
-
+"""Get data from event."""
 import numpy
+import typing
 
 
 def get_image_from_event(

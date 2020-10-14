@@ -1,6 +1,6 @@
-import typing
-
+"""Process the information."""
 import numpy
+import typing
 from diffpy.pdfgetx import PDFConfig, PDFGetter
 from numpy import ndarray
 from pyFAI import AzimuthalIntegrator
