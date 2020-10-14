@@ -27,41 +27,37 @@ def test_reduce(test_data, img, bg_img, dk_img):
     assert np.array_equal(chi[1], np.zeros(npt))
 
 
-@pytest.fixture
+@pytest.fixture(
+    params=["stream", "user"]
+)
 def kwargs(request, test_data):
     if request.param == "stream":
         return {}
     if request.param == "user":
         return {
             "user_ai": test_data["ai"],
-            "user_config": {"composition": "Ni", "qmax": 20}
+            "user_config": {"composition": "Ni", "qmaxinst": 22, "qmax": 20}
         }
 
 
-@pytest.mark.parametrize(
-    "kwargs",
-    [
-        "stream",
-        "user"
-    ],
-    indirect=True
-)
 def test_process_img_to_pdf(kwargs, test_data):
-    image, iq, sq, fq, gr = mod.process_img_to_pdf(
+    image, masked_image, chi, iq, sq, fq, gr = mod.process_img_to_pdf(
         test_data["Ni_img"],
         test_data["ai"],
-        None,
-        None,
-        {"composition": "Ni"},
+        dk_img=None,
+        bg_img=None,
+        config={"composition": "Ni", "qmaxinst": 22, "qmax": 20},
         **kwargs
     )
     # visualize
-    plt.figure()
-    image.plot()
-    for arr in (iq, sq, fq, gr):
-        plt.figure()
-        arr.plot()
-    plt.show(block=False)
+    for img in (image, masked_image):
+        plt.clf()
+        plt.matshow(next(iter(img.values())))
+        plt.show(block=False)
+    for dct in (chi, iq, sq, fq, gr):
+        plt.clf()
+        plt.plot(*dct.values())
+        plt.show(block=False)
     plt.close()
 
 
