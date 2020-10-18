@@ -15,7 +15,9 @@ _DATAFORMAT = {
 }
 _DEFAULT_CONFIG = {
     "dataformat": "QA",
-    "outputtypes": []
+    "outputtypes": [],
+    "qmax": 22,
+    "qmaxinst": 24
 }
 DATA = typing.Dict[str, ndarray]
 
@@ -30,24 +32,27 @@ def process_img_to_pdf(
     bg_scale: float = None,
     mask_setting: typing.Union[str, dict] = None,
     integ_setting: dict = None,
+    pdf_setting: dict = None,
     **kwargs
-) -> typing.Tuple[DATA, DATA, DATA, DATA, DATA, DATA]:
+) -> typing.Tuple[DATA, DATA, DATA, DATA, DATA, DATA, DATA, DATA]:
     """Process the image to PDF. Used in pipeline."""
-    _chi, _integ_setting, img, final_mask, _ = reduce(
+    chi, bg_sub_img, dk_sub_img, img, final_mask, _integ_setting, _mask_setting = reduce(
         img=img, ai=ai, dk_img=dk_img, bg_img=bg_img, mask=mask, bg_scale=bg_scale, mask_setting=mask_setting,
         integ_setting=integ_setting, **kwargs
     )
     dataformat = get_dataformat(_integ_setting)
     if dataformat:
         config.update({"dataformat": dataformat})
-    pdfgetter = transform(chi=_chi, config=config, **kwargs)
-    image = {"image": img}
-    masked_img = {"masked_image": numpy.ma.masked_array(img, final_mask)}
+    pdfgetter = transform(chi=chi, config=config, pdf_setting=pdf_setting, **kwargs)
+    raw_image = {"raw_img": img}
+    dk_sub_image = {"dk_sub_img": dk_sub_img}
+    bg_sub_image = {"bg_sub_img": bg_sub_img}
+    masked_image = {"masked_image": numpy.ma.masked_array(data=img, mask=final_mask)}
     iq = {"Q": pdfgetter.iq[0], "I": pdfgetter.iq[1]}
     sq = {"Q": pdfgetter.sq[0], "S": pdfgetter.sq[1]}
     fq = {"Q": pdfgetter.fq[0], "F": pdfgetter.fq[1]}
     gr = {"r": pdfgetter.gr[0], "G": pdfgetter.gr[1]}
-    return image, masked_img, iq, sq, fq, gr
+    return raw_image, dk_sub_image, bg_sub_image, masked_image, iq, sq, fq, gr
 
 
 def get_dataformat(_integ_setting: dict) -> typing.Union[None, str]:
@@ -75,9 +80,11 @@ def reduce(
     **kwargs
 ) -> typing.Tuple[
     ndarray,
-    dict,
+    ndarray,
+    ndarray,
     ndarray,
     typing.Union[None, ndarray],
+    dict,
     typing.Union[str, dict]
 ]:
     """A wrapper for the `~pdfstream.integration.get_chi`. See the function for details."""
@@ -93,10 +100,14 @@ def reduce(
 def transform(
     chi: ndarray,
     config: dict,
+    pdf_setting: dict = None,
     **kwargs
 ) -> PDFGetter:
     """A wrapper for the `~pdfstream.transformation.get_pdf`. See the function for details."""
+    if not pdf_setting:
+        pdf_setting = {}
     _config = _DEFAULT_CONFIG.copy()
+    _config.update(pdf_setting)
     if "user_config" in kwargs:
         config = kwargs["user_config"]
     _config.update(config)

@@ -1,1 +1,0 @@
-"""A streaming pipeline factory."""

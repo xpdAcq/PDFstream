@@ -1,19 +1,15 @@
 """The functions used in the integration pipelines. All functions consume namespace and return the modified
 namespace. """
-from typing import Tuple
-
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.axes import Axes
-from numpy.core._multiarray_umath import ndarray
+from numpy import ndarray
 from pyFAI.azimuthalIntegrator import AzimuthalIntegrator
+from typing import Tuple
 
-__all__ = ['bg_sub', 'integrate', 'vis_chi', 'vis_img']
-
-# default pyfai integration setting
 from pdfstream.vend.masking import generate_binner, mask_img
 
-_INTEG_SETTING = dict(
+INTEG_SETTING = dict(
     npt=1480,
     correctSolidAngle=False,
     method='splitpixel',
@@ -80,7 +76,7 @@ def integrate(
         The whole integration setting.
     """
     # merge integrate setting
-    _integ_setting = _INTEG_SETTING.copy()
+    _integ_setting = INTEG_SETTING.copy()
     if integ_setting is not None:
         _integ_setting.update(integ_setting)
     # integrate
@@ -173,7 +169,10 @@ def vis_chi(chi: ndarray, plot_setting: dict = None, unit: str = None, show: boo
 
 
 def auto_mask(
-    img: ndarray, ai: AzimuthalIntegrator, user_mask: ndarray = None, mask_setting: dict = None
+    img: ndarray,
+    ai: AzimuthalIntegrator,
+    user_mask: ndarray = None,
+    mask_setting: dict = None
 ) -> Tuple[ndarray, dict]:
     """Automatically generate the mask of the image.
 
@@ -189,12 +188,12 @@ def auto_mask(
         The user's modification to auto-masking settings.
 
     user_mask : ndarray
-        A mask provided by user. The auto generated mask will be multiplied by this mask.
+        A mask provided by user. It is an integer array. 0 are good pixels, 1 are masked out.
 
     Returns
     -------
     mask : ndarray
-        The mask as a boolean array. 0 are good pixels, 1 are masked out.
+        The mask as an integer array. 0 are good pixels, 1 are masked out.
 
     _mask_setting : dict
         The whole mask_setting.
@@ -205,5 +204,6 @@ def auto_mask(
         _mask_setting = dict()
     binner = generate_binner(ai, img.shape)
     tmsk = np.invert(user_mask.astype(bool)) if user_mask is not None else None
-    mask = np.invert(mask_img(img, binner, tmsk=tmsk, **_mask_setting)).astype(int)
+    mask = mask_img(img, binner, tmsk=tmsk, **_mask_setting)
+    mask = np.invert(mask).astype(int)
     return mask, _mask_setting

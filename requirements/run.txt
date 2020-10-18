@@ -6,3 +6,5 @@ scikit-beam
 bluesky
 databroker
 shed
+xpdview
+xray-vision

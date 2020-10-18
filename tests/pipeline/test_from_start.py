@@ -7,7 +7,7 @@ import pdfstream.pipeline.from_start as mod
 
 def test_query_ai(run0, test_data):
     start = mod.get_start_of_run(run0)
-    ai = mod.query_ai(start)
+    ai = mod.query_ai(start, "calibration_md")
     print(ai)
 
 
@@ -41,11 +41,23 @@ def test_query_dk_img(run0, db, dk_id_key, shape):
 
 
 @pytest.mark.parametrize(
-    "args",
+    "start, composition_key, wavelength_key, expect",
     [
-        ({'sample_composition': {'Ni': 1.0}}, 'sample_composition')
+        (
+            {'sample_composition': {'Ni': 1.0}},
+            'sample_composition',
+            'bt_wavelength',
+            ({'Ni': 1.0}, None)
+        ),
+        (
+            {'bt_wavelength': 0.16},
+            'sample_composition',
+            'bt_wavelength',
+            ('', 0.16)
+        )
     ]
 )
-def test_query_config(args):
-    config = mod.query_config(*args)
-    PDFConfig(**config)
+def test_query_bt_info(start, composition_key, wavelength_key, expect):
+    config = mod.query_bt_info(start, composition_key=composition_key, wavelength_key=wavelength_key)
+    pdfconfig = PDFConfig(**config)
+    assert (pdfconfig.composition, pdfconfig.wavelength) == expect

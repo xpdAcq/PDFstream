@@ -10,7 +10,7 @@ import pdfstream.io as io
 
 def query_ai(
     start: typing.Dict[str, typing.Any],
-    calibration_md_key: str = 'calibration_md',
+    calibration_md_key: str,
 ) -> typing.Union[None, typing.Dict[str, typing.Any]]:
     """Query the azimuthal integrator from the start document.
 
@@ -82,8 +82,8 @@ def query_bg_img(
 def query_dk_img(
     start: typing.Dict[str, typing.Any],
     det_name: str,
-    db: Broker,
-    dk_id_key: str
+    db: Broker = None,
+    dk_id_key: str = None
 ) -> typing.Union[ndarray, None]:
     """Find the dark image according to the start document of a run.
 
@@ -110,7 +110,7 @@ def query_dk_img(
     dk_img :
         The raw dark image. If not found, None.
     """
-    if dk_id_key not in start:
+    if db is None or dk_id_key not in start:
         return None
     dk_id = start[dk_id_key]
     dk_run = db[dk_id]
@@ -135,9 +135,16 @@ def get_start_of_run(run: BlueskyRunFromGenerator):
     return run.metadata['start']
 
 
-def query_config(start: typing.Dict[str, typing.Any], composition_key: str):
+def query_bt_info(start: typing.Dict[str, typing.Any], composition_key: str, wavelength_key: str):
     """Query the necessary information for the PDFGetter."""
     config = {}
     if composition_key in start:
         config.update({"composition": start[composition_key]})
+    if wavelength_key in start:
+        config.update({"wavelength": start[wavelength_key]})
     return config
+
+
+def strip_basics(start: dict) -> dict:
+    """Strip the time, uid and hints from the start document."""
+    return {key: value for key, value in start.items() if key not in ("time", "uid", "hints")}

@@ -1,6 +1,5 @@
-import typing as tp
-
 import numpy as np
+import typing as tp
 from numpy import ndarray
 from pyFAI import AzimuthalIntegrator
 
@@ -20,9 +19,11 @@ def get_chi(
     plot_setting: tp.Union[str, dict] = None,
 ) -> tp.Tuple[
     ndarray,
-    dict,
+    ndarray,
+    ndarray,
     ndarray,
     tp.Union[None, ndarray],
+    dict,
     tp.Union[str, dict]
 ]:
     """Process the diffraction image to get I(Q).
@@ -72,24 +73,34 @@ def get_chi(
     chi : ndarray
         The 2D array of integrated results. The first row is the Q and the second row is the I.
 
-    _integ_setting: dict
-        The integration setting used.
+    bg_sub_img : ndarray
+        The background subtracted image. If no background subtraction, it is the dk_sub_image.
+
+    dk_sub_img : ndarray
+        The dark subtracted image. If no dark subtraction, it is the input img.
 
     img : ndarray
-        The background subtrated image. If no background subtraction, return the input image.
+        The input image.
 
     final_mask : ndarray or None
         The final_mask array. If no auto_masking, return None.
 
+    _integ_setting: dict
+        The integration setting used.
+
     _mask_setting : dict or str
-        The auto masking seeting.
+        The auto masking setting.
     """
     if dk_img is not None:
-        img = bg_sub(img, dk_img, bg_scale=1.)
+        dk_sub_img = bg_sub(img, dk_img, bg_scale=1.)
+    else:
+        dk_sub_img = img
     if bg_img is not None:
-        img = bg_sub(img, bg_img, bg_scale=bg_scale)
+        bg_sub_img = bg_sub(dk_sub_img, bg_img, bg_scale=bg_scale)
+    else:
+        bg_sub_img = img
     if mask_setting != "OFF":
-        final_mask, _mask_setting = auto_mask(img, ai, user_mask=mask, mask_setting=mask_setting)
+        final_mask, _mask_setting = auto_mask(bg_sub_img, ai, user_mask=mask, mask_setting=mask_setting)
     elif mask is not None:
         final_mask, _mask_setting = mask, {}
     else:
@@ -99,7 +110,7 @@ def get_chi(
     chi, _integ_setting = integrate(img, ai, mask=final_mask, integ_setting=integ_setting)
     if plot_setting != "OFF":
         vis_chi(chi, plot_setting=plot_setting, unit=_integ_setting.get('unit'))
-    return chi, _integ_setting, img, final_mask, _mask_setting
+    return chi, bg_sub_img, dk_sub_img, img, final_mask, _integ_setting, _mask_setting
 
 
 def avg_imgs(imgs: tp.Iterable[ndarray], weights: tp.Iterable[float] = None) -> ndarray:

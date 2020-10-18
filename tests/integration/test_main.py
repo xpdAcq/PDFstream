@@ -6,14 +6,16 @@ import pdfstream.integration.main as integ
 
 
 @pytest.mark.parametrize(
-    "mask, bg_img, kwargs",
+    "mask, dk_img, bg_img, kwargs",
     [
-        (None, None, {}),
+        (None, None, None, {}),
         (
+            None,
             None,
             'Kapton_img',
             {'bg_scale': 0.001, 'plot_setting': 'OFF', 'img_setting': 'OFF', 'mask_setting': 'OFF'}),
         (
+            None,
             None,
             None,
             {'mask_setting': {"alpha": 3}, 'plot_setting': 'OFF', 'img_setting': 'OFF'}
@@ -21,10 +23,20 @@ import pdfstream.integration.main as integ
         (
             'mask',
             None,
+            None,
             {'mask_setting': "OFF", 'plot_setting': 'OFF', 'img_setting': 'OFF'}
         ),
         (
             None,
+            None,
+            None,
+            {
+                'integ_setting': {'npt': 1024}, 'plot_setting': 'OFF', 'img_setting': 'OFF', 'mask_setting': 'OFF'
+            }
+        ),
+        (
+            None,
+            'Ni_img',
             None,
             {
                 'integ_setting': {'npt': 1024}, 'plot_setting': 'OFF', 'img_setting': 'OFF', 'mask_setting': 'OFF'
@@ -32,8 +44,14 @@ import pdfstream.integration.main as integ
         )
     ]
 )
-def test_get_chi(test_data, mask, bg_img, kwargs):
-    integ.get_chi(test_data['ai'], test_data['Ni_img'].copy(), bg_img=test_data.get(bg_img, None), **kwargs)
+def test_get_chi(test_data, mask, dk_img, bg_img, kwargs):
+    integ.get_chi(
+        test_data['ai'],
+        test_data['Ni_img'].copy(),
+        dk_img=test_data.get(dk_img, None),
+        bg_img=test_data.get(bg_img, None),
+        **kwargs
+    )
     plt.close()
 
 
