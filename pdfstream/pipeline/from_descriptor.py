@@ -1,10 +1,9 @@
 from .errors import ValueNotFoundError
 
 
-def find_one_array(data_keys: dict, ndim: int = 2) -> str:
+def find_one_array(data_keys: dict) -> str:
+    """Fina one array in the data."""
     for key, value in data_keys.items():
-        if value["dtype"] == "array" or (
-            value["dtype"] in ("number", "integar") and len(value["shape"]) == ndim
-        ):
+        if value["dtype"] == "array":
             return key
-    raise ValueNotFoundError("2D array not found in {}".format(data_keys.keys()))
+    raise ValueNotFoundError("Array not found in {}".format(data_keys.keys()))

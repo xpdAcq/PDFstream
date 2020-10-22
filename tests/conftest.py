@@ -1,7 +1,10 @@
 """Configuration of pytest."""
+import multiprocessing
 import numpy
 import pyFAI
 import pytest
+import time
+from bluesky.callbacks.zmq import Proxy
 from databroker import catalog
 from diffpy.pdfgetx import PDFConfig, PDFGetter
 from pkg_resources import resource_filename
@@ -70,3 +73,17 @@ def db():
 def run0(db):
     """A run with calibration metadata."""
     return db['a3e64b70-c5b9-4437-80ea-ea6a7198d397']
+
+
+def start_proxy():
+    Proxy(5567, 5568).start()
+
+
+@pytest.fixture(scope="session")
+def proxy():
+    proxy_proc = multiprocessing.Process(target=start_proxy, daemon=True)
+    proxy_proc.start()
+    time.sleep(3)  # Give this plenty of time to start up.
+    yield "127.0.0.1:5567", "127.0.0.1:5568"
+    proxy_proc.terminate()
+    proxy_proc.join()
