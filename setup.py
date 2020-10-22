@@ -1,6 +1,6 @@
-import sys
 from os import path
 
+import sys
 from setuptools import setup, find_packages
 
 # NOTE: This file must remain Python 2 compatible for the foreseeable future,
@@ -38,7 +38,8 @@ setup(
     packages=find_packages(exclude=['docs', 'tests']),
     entry_points={
         'console_scripts': [
-            'pdfstream = pdfstream.main:main'
+            'pdfstream = pdfstream.main:main',
+            'server_start = pdfstream.main:server_start'
             # 'command = some.module:some_function',
         ],
     },

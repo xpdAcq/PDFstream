@@ -1,8 +1,9 @@
+"""The analysis server. Process raw image to PDF."""
 import rapidz as rz
-import typing as tp
 from bluesky.callbacks.zmq import Publisher
 from bluesky.callbacks.zmq import RemoteDispatcher
 from configparser import ConfigParser
+from databroker.v2 import Broker
 from event_model import RunRouter
 from pkg_resources import resource_filename
 
@@ -70,29 +71,30 @@ class AnalysisServerConfig(ConfigParser):
 
     @property
     def in_address(self):
-        return self.get("PROXY", "in_address")
-
-    @property
-    def out_address(self):
-        return self.get("PROXY", "out_address")
+        return self.get("DISPATCHER", "address")
 
     @property
     def in_prefix(self):
-        return self.get("PROXY", "in_prefix").encode()
+        return self.get("DISPATCHER", "prefix").encode()
+
+    @property
+    def out_address(self):
+        return self.get("PUBLISHER", "address")
 
     @property
     def out_prefix(self):
-        return self.get("PROXY", "out_prefix").encode()
+        return self.get("PUBLISHER", "prefix").encode()
 
 
 def make_pipeline(
     config: AnalysisServerConfig,
-    publishers: tp.List[tp.Callable] = None
+    db: Broker = None
 ) -> rz.Stream:
     """The streaming pipeline of analysis. The data will be published by publisher. If None, create one.
     Return the input node.
     """
     source = rz.Stream(stream_name="document")
+    rz.starsink(source, callbacks.StartStopCallback())
     pipeline = [
         callbacks.DarkSubtraction(),
         callbacks.AutoMasking(
@@ -115,37 +117,46 @@ def make_pipeline(
         )
     ]
     nodes = streams.linked_list(source, pipeline)
-    if publishers is None:
-        publishers = [Publisher(config.out_address, prefix=config.out_prefix) for _ in range(len(nodes))]
-    for node, publisher in zip(nodes, publishers):
-        rz.starsink(node, publisher)
+    for node in nodes:
+        rz.starsink(node, Publisher(config.out_address, prefix=config.out_prefix))
+    node1 = streams.combine_streams(source, nodes)
+    if db is not None:
+        rz.starsink(node1, db.v1.insert)
     return source
 
 
-def make_router(config: AnalysisServerConfig, publishers: tp.List[tp.Callable] = None) -> RunRouter:
+def make_router(config: AnalysisServerConfig, db: Broker = None) -> RunRouter:
     """Make the analysis router based on the pipeline."""
-    source = make_pipeline(config, publishers=publishers)
+    source = make_pipeline(config, db=db)
     cb = callbacks.AnalysisCallback(source)
     return not_dark_numpy_reg_router([cb])
-
-
-def make_dispatcher(cfg_file: str = None, publishers: tp.List[tp.Callable] = None) -> RemoteDispatcher:
-    """Make the remote dispatcher."""
-    if cfg_file is None:
-        cfg_file = DEFAULT_CFG_FILE
-    config = AnalysisServerConfig()
-    config.read(cfg_file)
-    router = make_router(config, publishers=publishers)
-    dispatcher = RemoteDispatcher(config.in_address, prefix=config.in_prefix)
-    dispatcher.subscribe(router)
-    return dispatcher
 
 
 DEFAULT_CFG_FILE = resource_filename("pdfstream", "data/analysis_server.ini")
 
 
-def make_and_run(cfg_file: str = None):
+def make_dispatcher(cfg_file: str = None, db: Broker = None) -> RemoteDispatcher:
+    """Make the remote dispatcher."""
+    if cfg_file is None:
+        cfg_file = DEFAULT_CFG_FILE
+    config = AnalysisServerConfig()
+    config.read(cfg_file)
+    router = make_router(config, db=db)
+    dispatcher = RemoteDispatcher(config.in_address, prefix=config.in_prefix)
+    dispatcher.subscribe(router)
+    return dispatcher
+
+
+def make_and_run(cfg_file: str = None, db_name: str = None):
     """Make an analysis server and run it."""
-    dispatcher = make_dispatcher(cfg_file)
+    if db_name:
+        from databroker import catalog
+        db = catalog[db_name]
+    else:
+        db = None
+    dispatcher = make_dispatcher(cfg_file, db=db)
     print("Start analysis server ...")
-    dispatcher.start()
+    try:
+        dispatcher.start()
+    except KeyboardInterrupt:
+        print("Terminate analysis server ...")

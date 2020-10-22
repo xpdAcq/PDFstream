@@ -1,7 +1,15 @@
 import rapidz as rz
+import shed
 import typing as tp
 
 import pdfstream.pipeline.preprocess as pp
+from pdfstream.pipeline.callbacks import StripDepVar
+
+
+def combine_streams(source: rz.Stream, nodes: tp.List[rz.Stream]) -> rz.Stream:
+    """Combine multiple analysis nodes outputs with the independent variables and output in one node."""
+    node0 = rz.starmap(source, StripDepVar())
+    return shed.AlignEventStreams(*nodes, node0)
 
 
 def linked_list(source: rz.Stream, cbs: tp.List[tp.Callable]) -> tp.List[rz.Stream]:

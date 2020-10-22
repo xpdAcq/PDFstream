@@ -147,4 +147,8 @@ def query_bt_info(start: typing.Dict[str, typing.Any], composition_key: str, wav
 
 def strip_basics(start: dict) -> dict:
     """Strip the time, uid and hints from the start document."""
-    return {key: value for key, value in start.items() if key not in ("time", "uid", "hints")}
+    dct = {key: value for key, value in start.items() if key not in ("time", "uid", "hints")}
+    dct["original_start"] = start["uid"]
+    dct["original_time"] = start["time"]
+    dct["original_hints"] = start["hints"]
+    return dct

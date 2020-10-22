@@ -17,15 +17,23 @@ COMMANDS = {
     'visualize': cli.visualize
 }
 
+SERVERS = {}
+
 if PDFGETX_AVAILABLE:
     import pdfstream.transformation.cli
+    import pdfstream.servers.analysis_server as analysis_server
 
     COMMANDS.update({'transform': pdfstream.transformation.cli.transform})
+    SERVERS.update({'analysis': analysis_server.make_and_run})
 
 
 def main():
     """The CLI entry point. Run google-fire on the name - function mapping."""
     fire.Fire(COMMANDS)
+
+
+def server_start():
+    fire.Fire(SERVERS)
 
 
 if __name__ == "__main__":

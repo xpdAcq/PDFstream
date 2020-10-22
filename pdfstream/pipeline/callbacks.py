@@ -20,6 +20,45 @@ except ImportError:
     pass
 
 
+class StartStopCallback(CallbackBase):
+    """Print the time for analysis"""
+
+    def __init__(self):
+        super().__init__()
+        self.t0 = 0
+        self.event_t0 = None
+        self.total_analysis_time = 0
+        self.n_events = 1
+
+    def start(self, doc):
+        self.t0 = time.time()
+        self.total_analysis_time = 0
+        self.n_events = 0
+        print("START ANALYSIS ON {}".format(doc["uid"]))
+
+    def event(self, doc):
+        self.n_events += 1
+        if not self.event_t0:
+            self.event_t0 = time.time()
+        else:
+            self.total_analysis_time += time.time() - self.event_t0
+            print(
+                "Single Event Analysis time {}".format(
+                    time.time() - self.event_t0
+                )
+            )
+            self.event_t0 = time.time()
+
+    def stop(self, doc):
+        print("FINISH ANALYSIS ON {}".format(doc.get("run_start", "NA")))
+        print(
+            "Average Event analysis time {}".format(
+                self.total_analysis_time / self.n_events
+            )
+        )
+        print("Analysis time {}".format(time.time() - self.t0))
+
+
 class StripDepVar(CallbackBase):
     """Strip the dependent variables from a data stream. This creates a
     stream with only the independent variables, allowing the stream to be
@@ -99,6 +138,8 @@ class DarkSubtraction(CallbackBase):
 
     def start(self, doc):
         metadata = fs.strip_basics(doc)
+        metadata["hints"] = {}
+        metadata["analysis_stage"] = DarkSubtraction.__name__
         self.crb = event_model.compose_run(metadata=metadata)
         self.start_doc = doc
         return self.crb.start_doc
@@ -148,6 +189,7 @@ class AutoMasking(CallbackBase):
         metadata = fs.strip_basics(doc)
         metadata[self.mask_config_key] = self.mask_setting
         metadata["hints"] = {}
+        metadata["analysis_stage"] = AutoMasking.__name__
         self.crb = event_model.compose_run(metadata=metadata)
         self.calibration_md = doc.get(self.calibration_md_key)
         return self.crb.start_doc
@@ -224,6 +266,7 @@ class AzimuthalIntegration(CallbackBase):
         metadata = fs.strip_basics(doc)
         metadata[self.integ_config_key] = self.integ_setting
         metadata["hints"] = {"dimensions": [([self.x_name], "primary")]}
+        metadata["analysis_stage"] = AzimuthalIntegration.__name__
         self.calibration_md = doc.get(self.calibration_md_key)
         if not self.calibration_md:
             raise ValueNotFoundError(
@@ -338,6 +381,7 @@ class TransformIQtoFQ(CallbackBase):
         self.getter.transformations = self.getter.transformations[:-2]
         metadata[self.pdf_config_key] = config
         metadata["hints"] = {"dimensions": [(["Q"], "primary")]}
+        metadata["analysis_stage"] = TransformIQtoFQ.__name__
         self.crb = event_model.compose_run(metadata=metadata)
         return self.crb.start_doc
 
@@ -431,6 +475,7 @@ class TransformFQtoGr(CallbackBase):
         self.getter.transformations = self.getter.transformations[-2:]
         metadata[self.pdf_config_key] = config
         metadata["hints"] = {"dimensions": [(["r"], "primary")]}
+        metadata["analysis_stage"] = TransformFQtoGr.__name__
         self.crb = event_model.compose_run(metadata=metadata)
         return self.crb.start_doc
 
