@@ -151,17 +151,20 @@ class AnalysisStream(LiveDispatcher):
         )
         pdfgetter = trans.get_pdf(pdfconfig, chi, plot_setting="OFF")
         keys = self.config.data_keys
-        data = {
-            keys["masked_image"]: np.ma.masked_array(final_image, final_mask),
-            keys["iq"][0]: pdfgetter.iq[0],
-            keys["iq"][1]: pdfgetter.iq[1],
-            keys["sq"][0]: pdfgetter.sq[0],
-            keys["sq"][1]: pdfgetter.sq[1],
-            keys["fq"][0]: pdfgetter.fq[0],
-            keys["fq"][1]: pdfgetter.fq[1],
-            keys["gr"][0]: pdfgetter.gr[0],
-            keys["gr"][1]: pdfgetter.gr[1]
-        }
+        data = doc["data"]
+        data.update(
+            {
+                keys["masked_image"]: np.ma.masked_array(final_image, final_mask),
+                keys["iq"][0]: pdfgetter.iq[0],
+                keys["iq"][1]: pdfgetter.iq[1],
+                keys["sq"][0]: pdfgetter.sq[0],
+                keys["sq"][1]: pdfgetter.sq[1],
+                keys["fq"][0]: pdfgetter.fq[0],
+                keys["fq"][1]: pdfgetter.fq[1],
+                keys["gr"][0]: pdfgetter.gr[0],
+                keys["gr"][1]: pdfgetter.gr[1]
+            }
+        )
         self.process_event(EventDoc(data=data, descriptor=doc["descriptor"]))
 
     def stop(self, doc, _md=None):
@@ -171,7 +174,11 @@ class AnalysisStream(LiveDispatcher):
 
 
 class EventDoc(dict):
-    """A simplified event document for pipeline. It only contains two necessary key: data and descriptor."""
+    """A simplified event document for pipeline.
+
+    It only contains two necessary key: data and descriptor. The data is the dictionary of data key and data
+    value and the descriptor is the uid of the descriptor from the original event.
+    """
 
     def __init__(self, data: dict, descriptor: str, **kwargs):
         super().__init__(data=data, descriptor=descriptor, **kwargs)
