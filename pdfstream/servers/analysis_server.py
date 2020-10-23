@@ -132,7 +132,7 @@ def make_router(config: AnalysisServerConfig, db: Broker = None) -> RunRouter:
     return not_dark_numpy_reg_router([cb])
 
 
-DEFAULT_CFG_FILE = resource_filename("pdfstream", "data/analysis_server.ini")
+DEFAULT_CFG_FILE = resource_filename("pdfstream", "data/analysis.ini")
 
 
 def make_dispatcher(cfg_file: str = None, db: Broker = None) -> RemoteDispatcher:

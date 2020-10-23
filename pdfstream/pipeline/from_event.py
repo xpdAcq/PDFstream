@@ -3,6 +3,8 @@ import numpy
 import typing
 from numpy import ndarray
 
+from .errors import ValueNotFoundError
+
 
 def get_image_from_event(
     event: typing.Dict[str, typing.Any],
@@ -25,6 +27,16 @@ def get_image_from_event(
     """
     data = event['data'][det_name]
     return squeeze_to_image(data)
+
+
+def find_one_image(event: typing.Dict[str, dict]) -> typing.Tuple[str, ndarray]:
+    """Find an array that can be squeezed to 2d array in the event data."""
+    for key, data in event["data"].items():
+        if numpy.ndim(data) >= 2:
+            img = numpy.squeeze(numpy.asarray(data))
+            if img.ndim == 2:
+                return key, img
+    raise ValueNotFoundError("Image not found in event.")
 
 
 def squeeze_to_image(

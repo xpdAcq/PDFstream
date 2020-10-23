@@ -98,7 +98,7 @@ def get_chi(
     if bg_img is not None:
         bg_sub_img = bg_sub(dk_sub_img, bg_img, bg_scale=bg_scale)
     else:
-        bg_sub_img = img
+        bg_sub_img = dk_sub_img
     if mask_setting != "OFF":
         final_mask, _mask_setting = auto_mask(bg_sub_img, ai, user_mask=mask, mask_setting=mask_setting)
     elif mask is not None:

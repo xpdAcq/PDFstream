@@ -110,11 +110,18 @@ def query_dk_img(
     dk_img :
         The raw dark image. If not found, None.
     """
-    if db is None or dk_id_key not in start:
+    dk_run = get_dk_run(start, db, dk_id_key)
+    if dk_run is None:
         return None
-    dk_id = start[dk_id_key]
-    dk_run = db[dk_id]
     return get_img_from_run(dk_run, det_name)
+
+
+def get_dk_run(start: dict, db: Broker, dk_id_key: str) -> typing.Union[BlueskyRunFromGenerator, None]:
+    """Get the dark image run id. If not found, return None."""
+    if db and dk_id_key and dk_id_key in start:
+        dk_id = start[dk_id_key]
+        return db[dk_id]
+    return None
 
 
 def get_img_from_run(run: BlueskyRunFromGenerator, det_name: str) -> ndarray:
@@ -135,9 +142,14 @@ def get_start_of_run(run: BlueskyRunFromGenerator):
     return run.metadata['start']
 
 
-def query_bt_info(start: typing.Dict[str, typing.Any], composition_key: str, wavelength_key: str):
+def query_bt_info(
+    start: typing.Dict[str, typing.Any],
+    composition_key: str,
+    wavelength_key: str,
+    default_composition: str = "Ni"
+):
     """Query the necessary information for the PDFGetter."""
-    config = {}
+    config = {"composition": default_composition}
     if composition_key in start:
         config.update({"composition": start[composition_key]})
     if wavelength_key in start:
