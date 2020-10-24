@@ -80,6 +80,9 @@ class AnalysisConfig(ConfigParser):
             "rstep": section.getfloat("rstep")
         }
 
+    def to_dict(self):
+        return {s: dict(self.items(s)) for s in self.sections()}
+
 
 class AnalysisStream(LiveDispatcher):
     """The secondary stream for data analysis."""
@@ -91,13 +94,6 @@ class AnalysisStream(LiveDispatcher):
         self.db = catalog[self.config.db_name] if self.config.db_name else None
 
     def start(self, doc, _md=None):
-        """
-        Create the stream after seeing the start document
-
-        The callback looks for the 'average' key in the start document to
-        configure itself.
-        """
-        # the input node
         self.cache["start"] = doc
         self.cache["ai"] = from_start.query_ai(
             doc,
@@ -110,7 +106,7 @@ class AnalysisStream(LiveDispatcher):
             default_composition="Ni"
         )
         self.cache["indeps"] = from_start.get_indeps(doc, exclude={"time"})
-        super().start(doc)
+        super().start(dict(**doc, an_config=self.config.to_dict()))
 
     def event_page(self, doc):
         for doc in event_model.unpack_event_page(doc):
@@ -127,7 +123,6 @@ class AnalysisStream(LiveDispatcher):
         super().descriptor(doc)
 
     def event(self, doc, _md=None):
-        """Send an Event through the stream"""
         raw_img = from_event.get_image_from_event(doc, det_name=self.cache["det_name"])
         indep_data = {key: doc["data"][key] for key in self.cache["indeps"]}
         an_data = process(
@@ -142,7 +137,6 @@ class AnalysisStream(LiveDispatcher):
         self.process_event(EventDoc(data=data, descriptor=doc["descriptor"]))
 
     def stop(self, doc, _md=None):
-        """Delete the stream when run stops"""
         self.cache = {}
         super().stop(doc)
 
@@ -168,7 +162,8 @@ def process(
     iq, sq, fq, gr = pdfgetter.iq, pdfgetter.sq, pdfgetter.fq, pdfgetter.gr
     gr_max_ind = np.argmax(gr[1])
     return {
-        "masked_image": np.ma.masked_array(final_image, final_mask),
+        "dk_sub_image": final_image,
+        "mask": final_mask,
         "chi_Q": x,
         "chi_I": y,
         "iq_Q": iq[0],

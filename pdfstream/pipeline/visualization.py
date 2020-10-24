@@ -12,10 +12,28 @@ from pdfstream.pipeline.units import LABELS
 def gen_vis_cbs() -> tp.Generator:
     """Generate the visualization callbacks for the Visualizer of analyzed data."""
     yield BestEffortCallback(table_enabled=False)
-    yield LiveImage("masked_image", cmap="viridis")
+    yield LiveMaskedImage("dk_sub_image", "mask", cmap="viridis")
     yield LiveWaterfall("chi_Q", "chi_I", labels=LABELS.chi)
     yield LiveWaterfall("fq_Q", "fq_F", labels=LABELS.fq)
     yield LiveWaterfall("gr_r", "gr_G", labels=LABELS.gr)
+
+
+class LiveMaskedImage(LiveImage):
+    """Live image show of a image with a mask."""
+
+    def __init__(self, field: str, msk_field: str, *, cmap: str, norm: tp.Callable = None,
+                 limit_func: tp.Callable = None, auto_draw: bool = True, interpolation: str = None,
+                 window_title: str = None):
+        self.msk_field = msk_field
+        super(LiveMaskedImage, self).__init__(
+            field, cmap=cmap, norm=norm, limit_func=limit_func,
+            auto_redraw=auto_draw, interpolation=interpolation, window_title=window_title
+        )
+
+    def event(self, doc):
+        super(LiveImage, self).event(doc)
+        data = np.ma.masked_array(doc["data"][self.field], doc["data"][self.msk_field])
+        self.update(data)
 
 
 class LiveWaterfall(CallbackBase):
