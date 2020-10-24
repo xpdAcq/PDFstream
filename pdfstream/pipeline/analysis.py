@@ -158,24 +158,31 @@ def process(
     final_image = raw_img - dk_img if dk_img is not None else raw_img
     final_mask, _ = integ.auto_mask(final_image, ai, mask_setting=mask_setting)
     x, y = ai.integrate1d(final_image, mask=final_mask, **integ_setting)
+    chi_max_ind = np.argmax(y)
     pdfconfig = PDFConfig(
         dataformat="QA",
         **pdfgetx_setting
     )
     pdfgetter = PDFGetter(pdfconfig)
     pdfgetter(x, y)
+    iq, sq, fq, gr = pdfgetter.iq, pdfgetter.sq, pdfgetter.fq, pdfgetter.gr
+    gr_max_ind = np.argmax(gr[1])
     return {
         "masked_image": np.ma.masked_array(final_image, final_mask),
         "chi_Q": x,
         "chi_I": y,
-        "iq_Q": pdfgetter.iq[0],
-        "iq_I": pdfgetter.iq[1],
-        "sq_Q": pdfgetter.sq[0],
-        "sq_S": pdfgetter.sq[1],
-        "fq_Q": pdfgetter.fq[0],
-        "fq_F": pdfgetter.fq[1],
-        "gr_r": pdfgetter.gr[0],
-        "gr_G": pdfgetter.gr[1]
+        "iq_Q": iq[0],
+        "iq_I": iq[1],
+        "sq_Q": sq[0],
+        "sq_S": sq[1],
+        "fq_Q": fq[0],
+        "fq_F": fq[1],
+        "gr_r": gr[0],
+        "gr_G": gr[1],
+        "chi_max": y[chi_max_ind],
+        "chi_argmax": x[chi_max_ind],
+        "gr_max": gr[1][gr_max_ind],
+        "gr_argmax": gr[0][gr_max_ind]
     }
 
 
