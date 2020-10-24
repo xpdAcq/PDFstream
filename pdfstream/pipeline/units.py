@@ -1,3 +1,5 @@
+from collections import namedtuple
+
 A = r"$\mathrm{\AA}$"
 INV_A = r"$\mathrm{\AA}^{-1}$"
 INV_SQ_A = r"$\mathrm{\AA}^{-2}$"
@@ -6,6 +8,15 @@ MM = "mm"
 DEG = r"deg"
 RAD = r"rad"
 ARB = "a. u."
+
+LABELS = namedtuple("LABELS", ["xy", "chi", "iq", "sq", "fq", "fgr"])
+LABELS.xy = (r"Q ($\mathrm{\AA}^{-1}$)", r"I (A. U.)")
+LABELS.chi = (r"Q ($\mathrm{\AA}^{-1}$)", r"I (A. U.)")
+LABELS.iq = (r"Q ($\mathrm{\AA}^{-1}$)", r"I (A. U.)")
+LABELS.sq = (r"Q ($\mathrm{\AA}^{-1}$)", r"S")
+LABELS.fq = (r"Q ($\mathrm{\AA}^{-1}$)", r"F ($\mathrm{\AA}^{-1}$)")
+LABELS.gr = (r"r ($\mathrm{\AA}$)", r"G ($\mathrm{\AA}^{-2}$)")
+LABELS.fgr = (r"r ($\mathrm{\AA}$)", r"G ($\mathrm{\AA}^{-2}$)")
 
 MAP_PYFAI_TO_MPL = {
     "q_nm^-1": INV_NM,

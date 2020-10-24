@@ -7,7 +7,7 @@ from configparser import ConfigParser
 from event_model import RunRouter
 from xpdview.waterfall import Waterfall
 
-import pdfstream.pipeline.units as un
+from pdfstream.pipeline.units import LABELS
 
 
 class VisConfig(ConfigParser):
@@ -30,9 +30,9 @@ class VisRunRouter(RunRouter):
                 "masked_image",
                 cmap=config.masked_image_setting["cmap"]
             ),
-            LiveWaterfall("chi_Q", "chi_I", units=(un.INV_A, un.ARB)),
-            LiveWaterfall("fq_Q", "fq_F", units=(un.INV_A, un.INV_A)),
-            LiveWaterfall("gr_r", "gr_G", units=(un.A, un.INV_SQ_A))
+            LiveWaterfall("chi_Q", "chi_I", labels=LABELS.chi),
+            LiveWaterfall("fq_Q", "fq_F", labels=LABELS.fq),
+            LiveWaterfall("gr_r", "gr_G", labels=LABELS.gr)
         ]
         super().__init__([lambda *x: (self.cb_lst, [])], handler_registry=handler_registry)
 
@@ -40,7 +40,7 @@ class VisRunRouter(RunRouter):
 class LiveWaterfall(CallbackBase):
     """A live water plot for the one dimensional data."""
 
-    def __init__(self, x: str, y: str, *, units: tp.Tuple[str, str], **kwargs):
+    def __init__(self, x: str, y: str, *, labels: tp.Tuple[str, str], **kwargs):
         """Initiate the instance.
 
         Parameters
@@ -51,8 +51,8 @@ class LiveWaterfall(CallbackBase):
         y :
             The key of the dependent variable.
 
-        units :
-            The tuple of the units of x and y shown in the figure.
+        labels :
+            The tuple of the labels of x and y shown in the figure.
 
         kwargs :
             The kwargs for the matplotlib.pyplot.plot.
@@ -61,12 +61,12 @@ class LiveWaterfall(CallbackBase):
         self.x = x
         self.y = y
         self.kwargs = kwargs
-        self.units = units
+        self.labels = labels
         self.waterfall = None
 
     def start(self, doc):
         fig = plt.figure()
-        self.waterfall = Waterfall(fig=fig, unit=self.units, **self.kwargs)
+        self.waterfall = Waterfall(fig=fig, unit=self.labels, **self.kwargs)
 
     def event(self, doc):
         x_data = doc["data"][self.x]
