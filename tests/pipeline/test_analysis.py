@@ -10,5 +10,6 @@ def test_AnalysisStream(run0):
     config = an.AnalysisConfig()
     config.read(fn)
     ld = an.AnalysisStream(config)
+    ld.subscribe(lambda *x: print(x[0], ", ".join(x[1].keys())))
     for name, doc in basic_doc_stream(run0):
         ld(name, doc)

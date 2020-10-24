@@ -30,7 +30,7 @@ class VisRunRouter(RunRouter):
                 "masked_image",
                 cmap=config.masked_image_setting["cmap"]
             ),
-            LiveWaterfall("chi_x", "chi_y", units=(un.INV_A, un.ARB)),
+            LiveWaterfall("chi_Q", "chi_I", units=(un.INV_A, un.ARB)),
             LiveWaterfall("fq_Q", "fq_F", units=(un.INV_A, un.INV_A)),
             LiveWaterfall("gr_r", "gr_G", units=(un.A, un.INV_SQ_A))
         ]

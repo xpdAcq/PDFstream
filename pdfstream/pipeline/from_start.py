@@ -1,4 +1,5 @@
 """Get data from the start and database."""
+import itertools
 import numpy
 import typing
 from databroker import Broker
@@ -160,7 +161,13 @@ def query_bt_info(
 def strip_basics(start: dict) -> dict:
     """Strip the time, uid and hints from the start document."""
     dct = {key: value for key, value in start.items() if key not in ("time", "uid", "hints")}
-    dct["original_start"] = start["uid"]
-    dct["original_time"] = start["time"]
-    dct["original_hints"] = start["hints"]
     return dct
+
+
+def get_indeps(start: dict, exclude: set = frozenset()) -> set:
+    """Get independent variables from the hints in start."""
+    return set(
+        itertools.chain.from_iterable(
+            [n for n, s in start.get("hints", {}).get("dimensions", [])]
+        )
+    ) - exclude

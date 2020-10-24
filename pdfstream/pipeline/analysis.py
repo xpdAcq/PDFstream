@@ -3,18 +3,22 @@ import numpy as np
 from bluesky.callbacks.stream import LiveDispatcher
 from configparser import ConfigParser
 from databroker import catalog
-from diffpy.pdfgetx import PDFConfig
+from pyFAI.azimuthalIntegrator import AzimuthalIntegrator
 
-import pdfstream.integration as integ
+import pdfstream.integration.tools as integ
 import pdfstream.pipeline.from_descriptor as from_desc
 import pdfstream.pipeline.from_event as from_event
 import pdfstream.pipeline.from_start as from_start
-import pdfstream.pipeline.units as units
-import pdfstream.transformation as trans
+
+try:
+    from diffpy.pdfgetx import PDFConfig, PDFGetter
+except ImportError:
+    pass
 
 
 class AnalysisConfig(ConfigParser):
     """The configuration for analysis pipeline."""
+
     @property
     def db_name(self):
         return self.get("RAW DB", "name")
@@ -45,12 +49,9 @@ class AnalysisConfig(ConfigParser):
             "correctSolidAngle": section.getboolean("correctSolidAngle"),
             "polarization_factor": section.getfloat("polarization_factor"),
             "method": section.get("method"),
-            "normalization_factor": section.getfloat("normalization_factor")
+            "normalization_factor": section.getfloat("normalization_factor"),
+            "unit": "q_A^-1"
         }
-
-    @property
-    def pyfai_unit(self):
-        return self.get("INTEGRATION SETTING", "unit")
 
     @property
     def composition_key(self):
@@ -108,6 +109,7 @@ class AnalysisStream(LiveDispatcher):
             wavelength_key=self.config.wavelength_key,
             default_composition="Ni"
         )
+        self.cache["indeps"] = from_start.get_indeps(doc, exclude={"time"})
         super().start(doc)
 
     def event_page(self, doc):
@@ -127,40 +129,54 @@ class AnalysisStream(LiveDispatcher):
     def event(self, doc, _md=None):
         """Send an Event through the stream"""
         raw_img = from_event.get_image_from_event(doc, det_name=self.cache["det_name"])
-        chi, final_image, _, _, final_mask, _, _ = integ.get_chi(
-            self.cache["ai"], raw_img, dk_img=self.cache["dk_img"], bg_img=None, mask=None, bg_scale=None,
-            mask_setting=self.config.mask_setting, integ_setting=self.config.integ_setting,
-            img_setting="OFF", plot_setting="OFF"
+        indep_data = {key: doc["data"][key] for key in self.cache["indeps"]}
+        an_data = process(
+            raw_img,
+            self.cache["dk_img"],
+            self.cache["ai"],
+            self.config.integ_setting,
+            self.config.mask_setting,
+            dict(**self.cache["bt_info"], **self.config.trans_setting, **self.config.grid_config)
         )
-        pdfconfig = PDFConfig(
-            dataformat=units.MAP_PYFAI_TO_DATAFORMAT[self.config.pyfai_unit],
-            **self.cache["bt_info"],
-            **self.config.trans_setting,
-            **self.config.grid_config
-        )
-        pdfgetter = trans.get_pdf(pdfconfig, chi, plot_setting="OFF")
-        data = {}
-        data.update(
-            {
-                "masked_image": np.ma.masked_array(final_image, final_mask),
-                "chi_x": chi[0],
-                "chi_y": chi[1],
-                "iq_Q": pdfgetter.iq[0],
-                "iq_I": pdfgetter.iq[1],
-                "sq_Q": pdfgetter.sq[0],
-                "sq_S": pdfgetter.sq[1],
-                "fq_Q": pdfgetter.fq[0],
-                "fq_F": pdfgetter.fq[1],
-                "gr_r": pdfgetter.gr[0],
-                "gr_G": pdfgetter.gr[1]
-            }
-        )
+        data = dict(**indep_data, **an_data)
         self.process_event(EventDoc(data=data, descriptor=doc["descriptor"]))
 
     def stop(self, doc, _md=None):
         """Delete the stream when run stops"""
         self.cache = {}
         super().stop(doc)
+
+
+def process(
+    raw_img: np.ndarray,
+    dk_img: np.ndarray,
+    ai: AzimuthalIntegrator,
+    integ_setting: dict,
+    mask_setting: dict,
+    pdfgetx_setting: dict,
+) -> dict:
+    final_image = raw_img - dk_img if dk_img is not None else raw_img
+    final_mask, _ = integ.auto_mask(final_image, ai, mask_setting=mask_setting)
+    x, y = ai.integrate1d(final_image, mask=final_mask, **integ_setting)
+    pdfconfig = PDFConfig(
+        dataformat="QA",
+        **pdfgetx_setting
+    )
+    pdfgetter = PDFGetter(pdfconfig)
+    pdfgetter(x, y)
+    return {
+        "masked_image": np.ma.masked_array(final_image, final_mask),
+        "chi_Q": x,
+        "chi_I": y,
+        "iq_Q": pdfgetter.iq[0],
+        "iq_I": pdfgetter.iq[1],
+        "sq_Q": pdfgetter.sq[0],
+        "sq_S": pdfgetter.sq[1],
+        "fq_Q": pdfgetter.fq[0],
+        "fq_F": pdfgetter.fq[1],
+        "gr_r": pdfgetter.gr[0],
+        "gr_G": pdfgetter.gr[1]
+    }
 
 
 class EventDoc(dict):
