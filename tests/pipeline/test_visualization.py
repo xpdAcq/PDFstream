@@ -7,7 +7,6 @@ from pdfstream.pipeline.preprocess import basic_doc_stream
 from pdfstream.pipeline.visualization import LiveWaterfall
 
 fn = resource_filename("tests", "configs/analysis.ini")
-fn1 = resource_filename("tests", "configs/vis.ini")
 
 
 def see_image(live_image: LiveImage):
@@ -21,18 +20,17 @@ def see_figure(live_waterfall: LiveWaterfall):
         fig.show()
 
 
-def test_Visualizer(run0):
+def test_gen_vis_cbs(run0):
     config = an.AnalysisConfig()
     config.read(fn)
     ld = an.AnalysisStream(config)
-    config1 = vis.VisConfig()
-    config1.read(fn1)
-    lv = vis.Visualizer(config1)
-    ld.subscribe(lv)
+    cbs = list(vis.gen_vis_cbs())
+    for cb in cbs:
+        ld.subscribe(cb)
     for name, doc in basic_doc_stream(run0):
         ld(name, doc)
         if name == "event":
-            see_image(lv.cb_lst[0])
-            see_figure(lv.cb_lst[1])
-            see_figure(lv.cb_lst[2])
-            see_figure(lv.cb_lst[3])
+            see_image(cbs[1])
+            see_figure(cbs[2])
+            see_figure(cbs[3])
+            see_figure(cbs[4])

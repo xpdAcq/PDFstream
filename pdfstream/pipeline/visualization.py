@@ -1,40 +1,21 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import typing as tp
+from bluesky.callbacks.best_effort import BestEffortCallback
 from bluesky.callbacks.broker import LiveImage
 from bluesky.callbacks.core import CallbackBase
-from configparser import ConfigParser
-from event_model import RunRouter
 from xpdview.waterfall import Waterfall
 
 from pdfstream.pipeline.units import LABELS
 
 
-class VisConfig(ConfigParser):
-    """The configuration for the visualization."""
-
-    @property
-    def masked_image_setting(self):
-        section = self["MASKED IMAGE VISUALIZATION"]
-        return {
-            "cmap": section.get("cmap")
-        }
-
-
-class Visualizer(RunRouter):
-    """A run router for visualization of the analyzed data"""
-
-    def __init__(self, config: VisConfig, handler_registry: dict = None):
-        self.cb_lst = [
-            LiveImage(
-                "masked_image",
-                cmap=config.masked_image_setting["cmap"]
-            ),
-            LiveWaterfall("chi_Q", "chi_I", labels=LABELS.chi),
-            LiveWaterfall("fq_Q", "fq_F", labels=LABELS.fq),
-            LiveWaterfall("gr_r", "gr_G", labels=LABELS.gr)
-        ]
-        super().__init__([lambda *x: (self.cb_lst, [])], handler_registry=handler_registry)
+def gen_vis_cbs() -> tp.Generator:
+    """Generate the visualization callbacks for the Visualizer of analyzed data."""
+    yield BestEffortCallback(table_enabled=False)
+    yield LiveImage("masked_image", cmap="viridis")
+    yield LiveWaterfall("chi_Q", "chi_I", labels=LABELS.chi)
+    yield LiveWaterfall("fq_Q", "fq_F", labels=LABELS.fq)
+    yield LiveWaterfall("gr_r", "gr_G", labels=LABELS.gr)
 
 
 class LiveWaterfall(CallbackBase):
