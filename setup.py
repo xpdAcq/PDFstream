@@ -28,7 +28,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as readme_file:
 setup(
     name='pdfstream',
     version='0.2.2',
-    description="The data analysis toolbox for the study on pair distribution function (PDF).",
+    description="The configs analysis toolbox for the study on pair distribution function (PDF).",
     long_description=readme,
     long_description_content_type='text/markdown',
     author="Songsheng Tao",
@@ -46,7 +46,7 @@ setup(
     include_package_data=True,
     package_data={
         'pdfstream': [
-            'data/*'
+            'configs/*'
             # When adding files here, remember to update MANIFEST.in as well,
             # or else they will not be included in the distribution on PyPI!
             # 'path/to/data_file',

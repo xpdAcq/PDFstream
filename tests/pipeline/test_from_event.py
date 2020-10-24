@@ -9,7 +9,7 @@ EVENT0 = {
     'seq_num': [1],
     'descriptor': '7711ee16-4b89-483b-9e96-94eb661cd4ee',
     'filled': {'pe1_image': ['d82442a7-6691-48bc-9c09-ae1c30e0aee4/0']},
-    'data': {
+    'configs': {
         'pe1_image': [numpy.ones((3, 3))],
         'pe1_stats1_total': [9.0]
     }

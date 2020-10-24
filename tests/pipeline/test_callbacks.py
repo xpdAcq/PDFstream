@@ -1,6 +1,5 @@
 import matplotlib.pyplot as plt
 import pytest
-import rapidz as rz
 from bluesky.callbacks.broker import LiveImage
 from xpdview.callbacks import LiveWaterfall
 
@@ -107,39 +106,3 @@ def test_TransformFQtoGr(run0):
         name, doc = cb(name, doc)
         vis(name, doc)
     see_wafterfall(vis)
-
-
-@pytest.mark.parametrize(
-    "filters, unpack, expect",
-    [
-        (
-            frozenset([
-                "start", "descriptor", "datum", "datum_page", "event", "event_page", "stop"
-            ]),
-            False,
-            ["start", "descriptor", "datum_page", "event_page", "stop"]
-        ),
-        (
-            frozenset([
-                "start", "descriptor", "datum", "datum_page", "event", "event_page", "stop"
-            ]),
-            True,
-            ["start", "descriptor", "datum", "event", "stop"]
-        ),
-        (
-            frozenset([
-                "start", "descriptor", "event", "event_page", "stop"
-            ]),
-            True,
-            ["start", "descriptor", "event", "stop"]
-        )
-    ]
-)
-def test_AnalysisCallback(run0, filters, unpack, expect):
-    source = rz.Stream()
-    node = rz.starmap(source, lambda *x: x[0])
-    lst = node.sink_to_list()
-    cb = mod.AnalysisCallback(source, filters=filters, unpack=unpack)
-    for name, doc in run0.canonical(fill="no"):
-        cb(name, doc)
-    assert lst == expect

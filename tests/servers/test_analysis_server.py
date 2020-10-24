@@ -11,8 +11,8 @@ from threading import Thread
 
 import pdfstream.servers.analysis_server as an
 
-fn = resource_filename("pdfstream", "data/analysis.ini")
-fn1 = resource_filename("pdfstream", "data/viz_server.ini")
+fn = resource_filename("pdfstream", "configs/analysis.ini")
+fn1 = resource_filename("pdfstream", "configs/vis.ini")
 
 
 def test_AnalysisServerConfig():

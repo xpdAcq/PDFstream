@@ -4,7 +4,6 @@ import numpy as np
 import time
 from bluesky.callbacks import CallbackBase
 from databroker import catalog
-from rapidz import Stream
 
 import pdfstream.io as io
 import pdfstream.pipeline.from_descriptor as fd
@@ -521,67 +520,3 @@ class TransformFQtoGr(CallbackBase):
 
     def stop(self, doc):
         return self.crb.compose_stop()
-
-
-class AnalysisCallback(CallbackBase):
-    """A callback initiated from a streaming data analysis pipeline. It will send the data into the stream."""
-
-    def __init__(self, source: Stream, *, unpack: bool = True,
-                 filters: frozenset = frozenset(["start", "descriptor", "event", "event_page", "stop"])):
-        """Initiate the class.
-
-        Parameters
-        ----------
-        source :
-            The input node of the stream.
-
-        unpack :
-            If True, unpack the datum page and event page.
-
-        filters :
-            Only document type in the filters set will be passed to the stream.
-        """
-        super().__init__()
-        self.source = source
-        self.unpack = unpack
-        self.filters = filters
-
-    def start(self, doc):
-        if "start" in self.filters:
-            self.source.emit(("start", doc))
-
-    def descriptor(self, doc):
-        if "descriptor" in self.filters:
-            self.source.emit(("descriptor", doc))
-
-    def resource(self, doc):
-        if "resource" in self.filters:
-            self.source.emit(("resource", doc))
-
-    def datum(self, doc):
-        if "datum" in self.filters:
-            self.source.emit(("datum", doc))
-
-    def datum_page(self, doc):
-        if "datum_page" in self.filters:
-            if self.unpack:
-                for _doc in event_model.unpack_datum_page(doc):
-                    self.source.emit(("datum", _doc))
-            else:
-                self.source.emit(("datum_page", doc))
-
-    def event(self, doc):
-        if "event" in self.filters:
-            self.source.emit(("event", doc))
-
-    def event_page(self, doc):
-        if "event_page" in self.filters:
-            if self.unpack:
-                for _doc in event_model.unpack_event_page(doc):
-                    self.source.emit(("event", _doc))
-            else:
-                self.source.emit(("event_page", doc))
-
-    def stop(self, doc):
-        if "stop" in self.filters:
-            self.source.emit(("stop", doc))

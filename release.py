@@ -1,11 +1,10 @@
 """Used in release procedure."""
+import pkg_resources
 import shutil
 import subprocess
 import sys
-from pathlib import Path
-
-import pkg_resources
 import yaml
+from pathlib import Path
 
 PACKAGE = "pdfstream"
 REVER_DIR = Path("rever")
@@ -76,7 +75,7 @@ def conda_meta() -> dict:
             "home": rf"https://st3107.github.io/{name}/",
             "license": r"BSD-3-Clause",
             "license_file": str(LICENSE),
-            "summary": r"The data analysis toolbox for the study on pair distribution function (PDF).",
+            "summary": r"The configs analysis toolbox for the study on pair distribution function (PDF).",
             "dev_url": rf"https://github.com/st3107/{name}/tree/master",
             "doc_url": rf"https://st3107.github.io/{name}/"
         }

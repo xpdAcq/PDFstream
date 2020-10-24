@@ -1,4 +1,3 @@
-"""A streaming pipeline factory."""
 import event_model
 import numpy as np
 from bluesky.callbacks.stream import LiveDispatcher
@@ -15,6 +14,7 @@ import pdfstream.transformation as trans
 
 
 class AnalysisConfig(ConfigParser):
+    """The configuration for analysis pipeline."""
     @property
     def db_name(self):
         return self.get("RAW DB", "name")
@@ -79,17 +79,6 @@ class AnalysisConfig(ConfigParser):
             "rstep": section.getfloat("rstep")
         }
 
-    @property
-    def data_keys(self):
-        section = self["DATA KEYS"]
-        return {
-            "masked_image": section.get("masked_image"),
-            "iq": section.get("iq").split(","),
-            "sq": section.get("sq").split(","),
-            "fq": section.get("fq").split(","),
-            "gr": section.get("gr").split(",")
-        }
-
 
 class AnalysisStream(LiveDispatcher):
     """The secondary stream for data analysis."""
@@ -150,19 +139,20 @@ class AnalysisStream(LiveDispatcher):
             **self.config.grid_config
         )
         pdfgetter = trans.get_pdf(pdfconfig, chi, plot_setting="OFF")
-        keys = self.config.data_keys
-        data = doc["data"]
+        data = {}
         data.update(
             {
-                keys["masked_image"]: np.ma.masked_array(final_image, final_mask),
-                keys["iq"][0]: pdfgetter.iq[0],
-                keys["iq"][1]: pdfgetter.iq[1],
-                keys["sq"][0]: pdfgetter.sq[0],
-                keys["sq"][1]: pdfgetter.sq[1],
-                keys["fq"][0]: pdfgetter.fq[0],
-                keys["fq"][1]: pdfgetter.fq[1],
-                keys["gr"][0]: pdfgetter.gr[0],
-                keys["gr"][1]: pdfgetter.gr[1]
+                "masked_image": np.ma.masked_array(final_image, final_mask),
+                "chi_x": chi[0],
+                "chi_y": chi[1],
+                "iq_Q": pdfgetter.iq[0],
+                "iq_I": pdfgetter.iq[1],
+                "sq_Q": pdfgetter.sq[0],
+                "sq_S": pdfgetter.sq[1],
+                "fq_Q": pdfgetter.fq[0],
+                "fq_F": pdfgetter.fq[1],
+                "gr_r": pdfgetter.gr[0],
+                "gr_G": pdfgetter.gr[1]
             }
         )
         self.process_event(EventDoc(data=data, descriptor=doc["descriptor"]))

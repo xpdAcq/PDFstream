@@ -59,13 +59,13 @@ DB = {
 
 @pytest.fixture(scope="session")
 def test_data():
-    """Test data."""
+    """Test configs."""
     return DB
 
 
 @pytest.fixture(scope="session")
 def db():
-    """An example data broker database."""
+    """An example configs broker database."""
     return catalog["example"]
 
 

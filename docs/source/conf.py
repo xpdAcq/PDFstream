@@ -183,7 +183,7 @@ man_pages = [
 #  dir menu entry, description, category)
 texinfo_documents = [
     (master_doc, 'pdfstream', 'pdfstream Documentation',
-     author, 'pdfstream', 'The data streaming PDF analysis software',
+     author, 'pdfstream', 'The configs streaming PDF analysis software',
      'Miscellaneous'),
 ]
 
