@@ -21,7 +21,7 @@ class VisConfig(ConfigParser):
         }
 
 
-class VisRunRouter(RunRouter):
+class Visualizer(RunRouter):
     """A run router for visualization of the analyzed data"""
 
     def __init__(self, config: VisConfig, handler_registry: dict = None):

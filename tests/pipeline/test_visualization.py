@@ -21,13 +21,13 @@ def see_figure(live_waterfall: LiveWaterfall):
         fig.show()
 
 
-def test_VisRunRouter(run0):
+def test_Visualizer(run0):
     config = an.AnalysisConfig()
     config.read(fn)
     ld = an.AnalysisStream(config)
     config1 = vis.VisConfig()
     config1.read(fn1)
-    lv = vis.VisRunRouter(config1)
+    lv = vis.Visualizer(config1)
     ld.subscribe(lv)
     for name, doc in basic_doc_stream(run0):
         ld(name, doc)
