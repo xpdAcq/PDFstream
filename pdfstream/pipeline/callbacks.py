@@ -1,7 +1,8 @@
-import event_model
 import itertools
-import numpy as np
 import time
+
+import event_model
+import numpy as np
 from bluesky.callbacks import CallbackBase
 from databroker import catalog
 
@@ -25,36 +26,13 @@ class StartStopCallback(CallbackBase):
     def __init__(self):
         super().__init__()
         self.t0 = 0
-        self.event_t0 = None
-        self.total_analysis_time = 0
-        self.n_events = 1
 
     def start(self, doc):
         self.t0 = time.time()
-        self.total_analysis_time = 0
-        self.n_events = 0
         print("START ANALYSIS ON {}".format(doc["uid"]))
-
-    def event(self, doc):
-        self.n_events += 1
-        if not self.event_t0:
-            self.event_t0 = time.time()
-        else:
-            self.total_analysis_time += time.time() - self.event_t0
-            print(
-                "Single Event Analysis time {}".format(
-                    time.time() - self.event_t0
-                )
-            )
-            self.event_t0 = time.time()
 
     def stop(self, doc):
         print("FINISH ANALYSIS ON {}".format(doc.get("run_start", "NA")))
-        print(
-            "Average Event analysis time {}".format(
-                self.total_analysis_time / self.n_events
-            )
-        )
         print("Analysis time {}".format(time.time() - self.t0))
 
 

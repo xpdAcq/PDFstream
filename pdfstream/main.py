@@ -24,7 +24,7 @@ if PDFGETX_AVAILABLE:
     import pdfstream.servers.xpd_server as xpd_server
 
     COMMANDS.update({'transform': pdfstream.transformation.cli.transform})
-    SERVERS.update({'xpd': xpd_server.make_and_run})
+    SERVERS.update({'analysis': xpd_server.make_and_run})
 
 
 def main():
@@ -32,7 +32,8 @@ def main():
     fire.Fire(COMMANDS)
 
 
-def server_start():
+def bsrun():
+    """The CLI entry point. Run the server."""
     fire.Fire(SERVERS)
 
 
