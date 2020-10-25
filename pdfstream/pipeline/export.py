@@ -36,26 +36,23 @@ class ExportConfig(ConfigParser):
     @property
     def tiff_setting(self):
         section = self["TIFF SETTING"]
-        return {
-            "template": section.get("template"),
-            "enable": section.getboolean("enable", fallback=True)
-        }
+        if not section.getboolean("enable", fallback=True):
+            return None
+        return {"file_prefix": section.get("file_prefix")}
 
     @property
     def json_setting(self):
         section = self["JSON SETTING"]
-        return {
-            "template": section.get("template"),
-            "enable": section.getboolean("enable", fallback=True)
-        }
+        if not section.getboolean("enable", fallback=True):
+            return None
+        return {"file_prefix": section.get("file_prefix")}
 
     @property
     def csv_setting(self):
         section = self["CSV SETTING"]
-        return {
-            "template": section.get("template"),
-            "enable": section.getboolean("enable", fallback=True)
-        }
+        if not section.getboolean("enable", fallback=True):
+            return None
+        return {"file_prefix": section.get("file_prefix")}
 
 
 class Exporter(RunRouter):
@@ -83,22 +80,22 @@ class ExporterFactory:
         dir_name = self.config.run_template.format(start=doc)
         base_dir = self.config.tiff_base.joinpath(dir_name)
         cb_lst = []
-        if self.config.tiff_setting["enable"]:
+        if self.config.tiff_setting is not None:
             cb = TiffSerializer(
                 str(base_dir.joinpath("images")),
-                file_prefix=self.config.tiff_setting["template"]
+                **self.config.tiff_setting
             )
             cb_lst.append(cb)
-        if self.config.json_setting["enable"]:
+        if self.config.json_setting is not None:
             cb = JsonSerializer(
                 str(base_dir.joinpath("metadata")),
-                file_prefix=self.config.json_setting["template"]
+                **self.config.json_setting
             )
             cb_lst.append(cb)
-        if self.config.csv_setting["enable"]:
+        if self.config.csv_setting is not None:
             cb = CSVSerializer(
                 str(base_dir.joinpath("datasheets")),
-                file_prefix=self.config.csv_setting["template"]
+                **self.config.csv_setting
             )
             cb_lst.append(cb)
         return cb_lst, []

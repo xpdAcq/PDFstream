@@ -85,7 +85,10 @@ class AnalysisConfig(ConfigParser):
 
 
 class AnalysisStream(LiveDispatcher):
-    """The secondary stream for data analysis."""
+    """The secondary stream for data analysis.
+
+    It inject the configuration into start document and emit processed data to the subscribers.
+    """
 
     def __init__(self, config: AnalysisConfig):
         self.config = config
