@@ -6,6 +6,7 @@ import pytest
 import time
 from bluesky.callbacks.zmq import Proxy
 from databroker import catalog
+from databroker.core import BlueskyRun
 from diffpy.pdfgetx import PDFConfig, PDFGetter
 from pkg_resources import resource_filename
 
@@ -70,7 +71,7 @@ def db():
 
 
 @pytest.fixture(scope="session")
-def run0(db):
+def run0(db) -> BlueskyRun:
     """A run with calibration metadata."""
     return db['a3e64b70-c5b9-4437-80ea-ea6a7198d397']
 

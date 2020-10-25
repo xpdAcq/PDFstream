@@ -28,6 +28,10 @@ class AnalysisConfig(ConfigParser):
         return None
 
     @property
+    def dark_identifier(self):
+        return self.get("METADATA", "dk_identifier")
+
+    @property
     def dk_id_key(self):
         return self.get("METADATA", "dk_id_key")
 

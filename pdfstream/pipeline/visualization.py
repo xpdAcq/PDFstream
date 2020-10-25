@@ -171,16 +171,16 @@ class LiveWaterfall(CallbackBase):
         super().__init__()
         self.x = x
         self.y = y
-        self.kwargs = kwargs
-        self.labels = (xlabel, ylabel)
-        self.waterfall = None
-
-    def start(self, doc):
         fig = plt.figure()
-        self.waterfall = Waterfall(fig=fig, unit=self.labels, **self.kwargs)
+        self.waterfall = Waterfall(fig=fig, unit=(xlabel, ylabel), **kwargs)
         fig.show()
 
+    def start(self, doc):
+        super(LiveWaterfall, self).start(doc)
+        self.waterfall.clear()
+
     def event(self, doc):
+        super(LiveWaterfall, self).event(doc)
         x_data = doc["data"][self.x]
         y_data = doc["data"][self.y]
         key = doc['seq_num']
@@ -188,6 +188,3 @@ class LiveWaterfall(CallbackBase):
 
     def update(self, key: str, int_data: tp.Tuple[np.ndarray, np.ndarray]):
         self.waterfall.update(key_list=[key], int_data_list=[int_data])
-
-    def stop(self, doc):
-        self.waterfall = None
