@@ -9,7 +9,7 @@ from databroker.v2 import temp
 from pkg_resources import resource_filename
 from threading import Thread
 
-import pdfstream.servers.analysis_server as an
+import pdfstream.servers.xpd_server as an
 
 fn = resource_filename("pdfstream", "configs/analysis.ini")
 fn1 = resource_filename("pdfstream", "configs/vis.ini")

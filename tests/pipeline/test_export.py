@@ -1,3 +1,4 @@
+import databroker
 from pkg_resources import resource_filename
 
 import pdfstream.pipeline.analysis as an
@@ -15,7 +16,8 @@ def test_Exporter(run0, tmpdir):
     config1 = mod.ExportConfig()
     config1.read(fn1)
     config1.set("FILE SYSTEM", "tiff_base", str(tmpdir))
-    ep = mod.Exporter(config1)
+    db = databroker.v2.temp()
+    ep = mod.Exporter(config1, test_db=db)
     ld.subscribe(ep)
     for name, doc in basic_doc_stream(run0):
         ld(name, doc)
@@ -26,3 +28,4 @@ def test_Exporter(run0, tmpdir):
     assert len(run_dirs[0].join("metadata").listdir()) == 1
     assert len(run_dirs[0].join("images").listdir()) == 2
     assert len(run_dirs[0].join("datasheets").listdir()) == 1
+    assert db[-1]

@@ -13,10 +13,8 @@ class ExportConfig(ConfigParser):
     """The configuration of exporter."""
 
     @property
-    def db(self):
+    def an_db(self):
         section = self["ANALYSIS DATABASE"]
-        if section.getboolean("test", fallback=False):
-            return databroker.v2.temp()
         name = section.get("name")
         if name:
             return databroker.catalog[name]
@@ -58,21 +56,17 @@ class ExportConfig(ConfigParser):
 class Exporter(RunRouter):
     """Export the processed data to file systems, including."""
 
-    def __init__(self, config: ExportConfig):
-        factory = ExporterFactory(config)
+    def __init__(self, config: ExportConfig, *, test_db: Broker = None):
+        factory = ExporterFactory(config, test_db=test_db)
         super().__init__([factory])
-
-
-class DBDumper:
-    """Dump the data into analysis database."""
-    pass
 
 
 class ExporterFactory:
     """The factory for the exporter run router."""
 
-    def __init__(self, config: ExportConfig):
+    def __init__(self, config: ExportConfig, *, test_db: Broker = None):
         self.config = config
+        self.an_db = self.config.an_db if test_db is None else test_db
 
     def __call__(self, name: str, doc: dict) -> tp.Tuple[list, list]:
         if name != "start":
@@ -80,6 +74,8 @@ class ExporterFactory:
         dir_name = self.config.run_template.format(start=doc)
         base_dir = self.config.tiff_base.joinpath(dir_name)
         cb_lst = []
+        if self.an_db is not None:
+            cb_lst.append(self.an_db.v1.insert)
         if self.config.tiff_setting is not None:
             cb = TiffSerializer(
                 str(base_dir.joinpath("images")),

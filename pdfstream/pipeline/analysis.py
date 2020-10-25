@@ -1,8 +1,8 @@
+import databroker
 import event_model
 import numpy as np
 from bluesky.callbacks.stream import LiveDispatcher
 from configparser import ConfigParser
-from databroker import catalog
 from pyFAI.azimuthalIntegrator import AzimuthalIntegrator
 
 import pdfstream.integration.tools as integ
@@ -20,8 +20,12 @@ class AnalysisConfig(ConfigParser):
     """The configuration for analysis pipeline."""
 
     @property
-    def db_name(self):
-        return self.get("RAW DB", "name")
+    def raw_db(self):
+        section = self["RAW DATABASE"]
+        name = section.get("name")
+        if name:
+            return databroker.catalog[name]
+        return None
 
     @property
     def dk_id_key(self):
@@ -94,7 +98,7 @@ class AnalysisStream(LiveDispatcher):
         self.config = config
         super().__init__()
         self.cache = {}
-        self.db = catalog[self.config.db_name] if self.config.db_name else None
+        self.db = config.raw_db
 
     def start(self, doc, _md=None):
         self.cache["start"] = doc
