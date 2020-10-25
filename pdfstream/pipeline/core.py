@@ -28,14 +28,11 @@ class XPDFactory:
 
     def __init__(self, config: XPDConfig):
         self.config = config
-        an = AnalysisStream(config)
-        ep = Exporter(config)
-        vs = Visualizer(config)
-        an.subscribe(ep)
-        an.subscribe(vs)
-        self.callback = an
+        self.dispatcher = AnalysisStream(config)
+        self.dispatcher.subscribe(Exporter(config))
+        self.dispatcher.subscribe(Visualizer(config))
 
     def __call__(self, name: str, doc: dict) -> tp.Tuple[list, list]:
-        if name == "start" and doc.get(self.config.dark_identifier, False):
-            return [self.callback], []
-        return [], []
+        if name != "start" or doc.get(self.config.dark_identifier, False):
+            return [], []
+        return [self.dispatcher], []

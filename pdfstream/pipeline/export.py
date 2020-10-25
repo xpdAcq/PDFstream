@@ -1,6 +1,7 @@
 import databroker
 import typing as tp
 from configparser import ConfigParser
+from configparser import Error
 from databroker.v2 import Broker
 from event_model import RunRouter
 from pathlib import Path
@@ -23,9 +24,16 @@ class ExportConfig(ConfigParser):
     @property
     def tiff_base(self):
         section = self["FILE SYSTEM"]
-        path = Path(section.get("tiff_base"))
+        dir_path = section.get("tiff_base")
+        if not dir_path:
+            raise Error("Missing tiff_base in configuration.")
+        path = Path(dir_path)
         path.mkdir(exist_ok=True)
         return path
+
+    @tiff_base.setter
+    def tiff_base(self, value: str):
+        self.set("FILE SYSTEM", "tiff_base", value)
 
     @property
     def run_template(self):
