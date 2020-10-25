@@ -4,6 +4,7 @@ import typing as tp
 from bluesky.callbacks.broker import LiveImage
 from bluesky.callbacks.core import CallbackBase
 from configparser import ConfigParser
+from event_model import RunRouter
 from xpdview.waterfall import Waterfall
 
 from pdfstream.pipeline.units import LABELS
@@ -33,7 +34,7 @@ class VisConfig(ConfigParser):
         section = self["VIS DK SUB IMAGE"]
         if not section.getboolean("enable", fallback=True):
             return None
-        return {"cmap": section.get("cmap")}
+        return {"cmap": section.get("cmap", fallback="viridis")}
 
     @property
     def vis_chi(self):
@@ -77,13 +78,21 @@ class VisConfig(ConfigParser):
 
     @property
     def vis_gr(self):
-        section = self["VIS CHI"]
+        section = self["VIS GR"]
         if not section.getboolean("enable", fallback=True):
             return None
         return {
             "xlabel": section.get("xlabel", fallback=LABELS.gr[0]),
             "ylabel": section.get("ylabel", fallback=LABELS.gr[1])
         }
+
+
+class Visualizer(RunRouter):
+    """Visualize the analyzed data. It can be subscribed to a live dispatcher."""
+
+    def __init__(self, config: VisConfig):
+        factory = VisFactory(config)
+        super(Visualizer, self).__init__([factory])
 
 
 class VisFactory:
@@ -103,8 +112,8 @@ class VisFactory:
         for xfield, yfield, vis_config in [
             ("chi_Q", "chi_I", self.config.vis_chi),
             ("iq_Q", "iq_I", self.config.vis_iq),
-            ("sq_Q", "sq_I", self.config.vis_sq),
-            ("fq_Q", "fq_I", self.config.vis_fq),
+            ("sq_Q", "sq_S", self.config.vis_sq),
+            ("fq_Q", "fq_F", self.config.vis_fq),
             ("gr_r", "gr_G", self.config.vis_gr)
         ]:
             if vis_config is not None:
@@ -169,6 +178,7 @@ class LiveWaterfall(CallbackBase):
     def start(self, doc):
         fig = plt.figure()
         self.waterfall = Waterfall(fig=fig, unit=self.labels, **self.kwargs)
+        fig.show()
 
     def event(self, doc):
         x_data = doc["data"][self.x]
