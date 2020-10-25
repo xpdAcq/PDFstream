@@ -1,8 +1,9 @@
+from configparser import ConfigParser
+
 import databroker
 import event_model
 import numpy as np
 from bluesky.callbacks.stream import LiveDispatcher
-from configparser import ConfigParser
 from pyFAI.azimuthalIntegrator import AzimuthalIntegrator
 
 import pdfstream.integration.tools as integ
@@ -137,12 +138,12 @@ class AnalysisStream(LiveDispatcher):
         raw_img = from_event.get_image_from_event(doc, det_name=self.cache["det_name"])
         indep_data = {key: doc["data"][key] for key in self.cache["indeps"]}
         an_data = process(
-            raw_img,
-            self.cache["dk_img"],
-            self.cache["ai"],
-            self.config.integ_setting,
-            self.config.mask_setting,
-            dict(**self.cache["bt_info"], **self.config.trans_setting, **self.config.grid_config)
+            raw_img=raw_img,
+            dk_img=self.cache["dk_img"],
+            ai=self.cache["ai"],
+            integ_setting=self.config.integ_setting,
+            mask_setting=self.config.mask_setting,
+            pdfgetx_setting=dict(**self.cache["bt_info"], **self.config.trans_setting, **self.config.grid_config)
         )
         data = dict(**indep_data, **an_data)
         self.process_event(EventDoc(data=data, descriptor=doc["descriptor"]))
@@ -153,14 +154,17 @@ class AnalysisStream(LiveDispatcher):
 
 
 def process(
+    *,
     raw_img: np.ndarray,
-    dk_img: np.ndarray,
-    ai: AzimuthalIntegrator,
-    integ_setting: dict,
-    mask_setting: dict,
-    pdfgetx_setting: dict,
+    dk_img: np.ndarray = None,
+    ai: AzimuthalIntegrator = None,
+    integ_setting: dict = None,
+    mask_setting: dict = None,
+    pdfgetx_setting: dict = None,
 ) -> dict:
     final_image = raw_img - dk_img if dk_img is not None else raw_img
+    if ai is None:
+        return {"dk_sub_image": final_image}
     final_mask, _ = integ.auto_mask(final_image, ai, mask_setting=mask_setting)
     x, y = ai.integrate1d(final_image, mask=final_mask, **integ_setting)
     chi_max_ind = np.argmax(y)
