@@ -1,10 +1,10 @@
-import databroker
 import typing as tp
 from configparser import ConfigParser
 from configparser import Error
+from pathlib import Path
+
 from databroker.v2 import Broker
 from event_model import RunRouter
-from pathlib import Path
 from suitcase.csv import Serializer as CSVSerializer
 from suitcase.json_metadata import Serializer as JsonSerializer
 from suitcase.tiff_series import Serializer as TiffSerializer
@@ -12,15 +12,6 @@ from suitcase.tiff_series import Serializer as TiffSerializer
 
 class ExportConfig(ConfigParser):
     """The configuration of exporter."""
-
-    @property
-    def an_db(self):
-        section = self["ANALYSIS DATABASE"]
-        name = section.get("name")
-        if name:
-            return databroker.catalog[name]
-        return None
-
     @property
     def tiff_base(self):
         section = self["FILE SYSTEM"]
@@ -64,17 +55,17 @@ class ExportConfig(ConfigParser):
 class Exporter(RunRouter):
     """Export the processed data to file systems, including."""
 
-    def __init__(self, config: ExportConfig, *, test_db: Broker = None):
-        factory = ExporterFactory(config, test_db=test_db)
+    def __init__(self, config: ExportConfig, *, db: Broker = None):
+        factory = ExporterFactory(config, db=db)
         super().__init__([factory])
 
 
 class ExporterFactory:
     """The factory for the exporter run router."""
 
-    def __init__(self, config: ExportConfig, *, test_db: Broker = None):
+    def __init__(self, config: ExportConfig, *, db: Broker = None):
         self.config = config
-        self.an_db = self.config.an_db if test_db is None else test_db
+        self.an_db = db
 
     def __call__(self, name: str, doc: dict) -> tp.Tuple[list, list]:
         if name != "start":

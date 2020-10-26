@@ -1,5 +1,6 @@
 import typing as tp
 
+from databroker.v2 import Broker
 from event_model import RunRouter
 from ophyd.sim import NumpySeqHandler
 
@@ -17,8 +18,8 @@ class XPDConfig(AnalysisConfig, VisConfig, ExportConfig):
 class XPDRouter(RunRouter):
     """A router that contains the callbacks for the xpd data reduction."""
 
-    def __init__(self, config: XPDConfig):
-        factory = XPDFactory(config)
+    def __init__(self, config: XPDConfig, *, raw_db: Broker = None, an_db: Broker = None):
+        factory = XPDFactory(config, raw_db=raw_db, an_db=an_db)
         super(XPDRouter, self).__init__(
             [factory],
             handler_registry={"NPY_SEQ": NumpySeqHandler}
@@ -28,11 +29,11 @@ class XPDRouter(RunRouter):
 class XPDFactory:
     """The factory to generate callback for xpd data reduction."""
 
-    def __init__(self, config: XPDConfig):
+    def __init__(self, config: XPDConfig, *, raw_db: Broker = None, an_db: Broker = None):
         self.config = config
-        self.dispatcher = AnalysisStream(config)
+        self.dispatcher = AnalysisStream(config, db=raw_db)
         self.dispatcher.subscribe(StartStopCallback())
-        self.dispatcher.subscribe(Exporter(config))
+        self.dispatcher.subscribe(Exporter(config, db=an_db))
         self.dispatcher.subscribe(Visualizer(config))
 
     def __call__(self, name: str, doc: dict) -> tp.Tuple[list, list]:

@@ -1,9 +1,11 @@
+import typing as tp
+from configparser import ConfigParser
+
 import matplotlib.pyplot as plt
 import numpy as np
-import typing as tp
 from bluesky.callbacks.broker import LiveImage
 from bluesky.callbacks.core import CallbackBase
-from configparser import ConfigParser
+from databroker.v2 import Broker
 from event_model import RunRouter
 from xpdview.waterfall import Waterfall
 
@@ -132,11 +134,11 @@ class LiveMaskedImage(LiveImage):
 
     def __init__(self, field: str, msk_field: str, *, cmap: str, norm: tp.Callable = None,
                  limit_func: tp.Callable = None, auto_draw: bool = True, interpolation: str = None,
-                 window_title: str = None):
+                 window_title: str = None, db: Broker = None):
         self.msk_field = msk_field
         super(LiveMaskedImage, self).__init__(
             field, cmap=cmap, norm=norm, limit_func=limit_func,
-            auto_redraw=auto_draw, interpolation=interpolation, window_title=window_title
+            auto_redraw=auto_draw, interpolation=interpolation, window_title=window_title, db=db
         )
 
     def event(self, doc):

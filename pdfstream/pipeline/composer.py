@@ -1,18 +1,22 @@
 """Event model run composer from files."""
 import time
 import typing as tp
+import uuid
 
 import numpy as np
 from event_model import compose_run, ComposeDescriptorBundle
 
 
-def gen_stream(data_lst: tp.List[dict], metadata: dict) -> tp.Generator[tp.Tuple[str, dict], None, str]:
+def gen_stream(
+    data_lst: tp.List[dict],
+    metadata: dict,
+    uid: str = None
+) -> tp.Generator[tp.Tuple[str, dict], None, None]:
     """Generate a fake doc stream from data and metadata."""
-    crb = compose_run(metadata=metadata)
+    crb = compose_run(metadata=metadata, uid=uid if uid else str(uuid.uuid4()))
     yield "start", crb.start_doc
     if len(data_lst) == 0:
         yield "stop", crb.compose_stop()
-        return crb.start_doc["uid"]
     cdb: ComposeDescriptorBundle = crb.compose_descriptor(
         name="primary",
         data_keys=compose_data_keys(data_lst[0])
@@ -21,7 +25,6 @@ def gen_stream(data_lst: tp.List[dict], metadata: dict) -> tp.Generator[tp.Tuple
     for data in data_lst:
         yield "event", cdb.compose_event(data=data, timestamps=compose_timestamps(data))
     yield "stop", crb.compose_stop()
-    return crb.start_doc["uid"]
 
 
 def compose_data_keys(data: tp.Dict[str, tp.Any]) -> tp.Dict[str, dict]:
