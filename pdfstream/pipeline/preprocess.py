@@ -1,5 +1,6 @@
-import event_model
 import typing
+
+import event_model
 from databroker.core import BlueskyRun
 
 
@@ -24,7 +25,7 @@ def is_allowed_type(doc_tup: tuple, doc_types: frozenset) -> bool:
 
 def basic_doc_stream(run: BlueskyRun) -> typing.Generator:
     """Unpack the docs from a run and yield the type in start, descriptor, event and stop."""
-    for name, doc in run.canonical(fill="yes"):
+    for name, doc in run.canonical(fill="yes", strict_order=True):
         for _name, _doc in unpack_pages(name, doc):
             if _name in ["start", "descriptor", "event", "stop"]:
                 yield _name, _doc

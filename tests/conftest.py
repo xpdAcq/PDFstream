@@ -71,9 +71,10 @@ def db():
     return catalog["example"]
 
 
-@pytest.fixture(scope="session")
-def run0(db) -> BlueskyRun:
+@pytest.fixture(scope="function")
+def run0() -> BlueskyRun:
     """A run with calibration metadata."""
+    db = catalog["example"]
     return db['a3e64b70-c5b9-4437-80ea-ea6a7198d397']
 
 
