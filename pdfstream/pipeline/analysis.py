@@ -19,6 +19,15 @@ except ImportError:
 
 class AnalysisConfig(ConfigParser):
     """The configuration for analysis pipeline."""
+
+    @property
+    def raw_db(self):
+        name = self.get("DATABASE", "raw_db", fallback=None)
+        if name:
+            from databroker import catalog
+            return catalog[name]
+        return None
+
     @property
     def dark_identifier(self):
         return self.get("METADATA", "dk_identifier")
@@ -94,7 +103,7 @@ class AnalysisStream(LiveDispatcher):
         super().__init__()
         self.config = config
         self.cache = {}
-        self.db = db
+        self.db = config.raw_db if db is None else db
 
     def start(self, doc, _md=None):
         self.cache["start"] = doc

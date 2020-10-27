@@ -12,6 +12,15 @@ from suitcase.tiff_series import Serializer as TiffSerializer
 
 class ExportConfig(ConfigParser):
     """The configuration of exporter."""
+
+    @property
+    def an_db(self):
+        name = self.get("DATABASE", "an_db", fallback=None)
+        if name:
+            from databroker import catalog
+            return catalog[name]
+        return None
+
     @property
     def tiff_base(self):
         section = self["FILE SYSTEM"]
@@ -65,7 +74,7 @@ class ExporterFactory:
 
     def __init__(self, config: ExportConfig, *, db: Broker = None):
         self.config = config
-        self.an_db = db
+        self.an_db = config.an_db if db is None else db
 
     def __call__(self, name: str, doc: dict) -> tp.Tuple[list, list]:
         if name != "start":
