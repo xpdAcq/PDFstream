@@ -3,6 +3,7 @@ from bluesky.callbacks.zmq import RemoteDispatcher
 from databroker.v2 import Broker
 from pkg_resources import resource_filename
 
+from pdfstream.pipeline.callbacks import StartStopCallback
 from pdfstream.pipeline.core import XPDConfig
 from pdfstream.pipeline.core import XPDRouter
 from pdfstream.vend.qt_kicker import install_qt_kicker
@@ -24,6 +25,7 @@ class XPDServer(RemoteDispatcher):
     def __init__(self, config: XPDServerConfig, *, raw_db: Broker = None, an_db: Broker = None):
         super(XPDServer, self).__init__(config.address, prefix=config.prefix)
         self.subscribe(XPDRouter(config, raw_db=raw_db, an_db=an_db))
+        self.subscribe(StartStopCallback())
 
 
 def make_and_run(cfg: str, *, test_tiff_base: str = None, test_raw_db: Broker = None, test_an_db: Broker = None):

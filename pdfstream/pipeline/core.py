@@ -5,7 +5,6 @@ from event_model import RunRouter
 from ophyd.sim import NumpySeqHandler
 
 from .analysis import AnalysisConfig, AnalysisStream
-from .callbacks import StartStopCallback
 from .export import ExportConfig, Exporter
 from .visualization import VisConfig, Visualizer
 
@@ -32,7 +31,6 @@ class XPDFactory:
     def __init__(self, config: XPDConfig, *, raw_db: Broker = None, an_db: Broker = None):
         self.config = config
         self.dispatcher = AnalysisStream(config, db=raw_db)
-        self.dispatcher.subscribe(StartStopCallback())
         self.dispatcher.subscribe(Exporter(config, db=an_db))
         self.dispatcher.subscribe(Visualizer(config))
 

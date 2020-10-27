@@ -40,8 +40,8 @@ def test_XPDServerConfig():
 def test_make_and_run(db_with_dark_and_light, proxy, tmpdir):
     raw_db = db_with_dark_and_light
     an_db = databroker.v2.temp()
-    process = Process(target=experiment, args=(raw_db[-1], 1, proxy[0], b'raw'), daemon=True)
-    thread = Thread(target=interrupt, args=(8,))
+    process = Process(target=experiment, args=(raw_db[-1], 2, proxy[0], b'raw'), daemon=True)
+    thread = Thread(target=interrupt, args=(10,))
     thread.start()
     process.start()
     mod.make_and_run(fn, test_tiff_base=str(tmpdir), test_an_db=an_db, test_raw_db=raw_db)
