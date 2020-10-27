@@ -5,11 +5,13 @@ from pkg_resources import resource_filename
 
 from pdfstream.pipeline.core import XPDConfig
 from pdfstream.pipeline.core import XPDRouter
+from pdfstream.vend.qt_kicker import install_qt_kicker
 from .tools import ServerConfig, run_server
 
 CFG = {
     "XPD": resource_filename("pdfstream", "configs/pdf_xpdserver.ini"),
-    "PDF": resource_filename("pdfstream", "configs/xpd_xpdserver.ini")
+    "PDF": resource_filename("pdfstream", "configs/xpd_xpdserver.ini"),
+    "TEST": resource_filename("pdfstream", "configs/test_xpdserver.ini"),
 }
 
 
@@ -34,7 +36,7 @@ def make_and_run(cfg: str, *, test_tiff_base: str = None, test_raw_db: Broker = 
     ----------
     cfg :
         The path to configuration .ini file. It also accept a name of default configuration for a specific
-        beam line. 'XPD' for xpd beam line, 'PDF' for pdf beam line.
+        beam line. 'XPD' for xpd beam line, 'PDF' for pdf beam line, 'TEST' for functional test.
 
     test_tiff_base :
         A test tiff base option for developers.
@@ -51,4 +53,5 @@ def make_and_run(cfg: str, *, test_tiff_base: str = None, test_raw_db: Broker = 
     if test_tiff_base:
         config.tiff_base = test_tiff_base
     server = XPDServer(config, raw_db=test_raw_db, an_db=test_an_db)
+    install_qt_kicker(server.loop)
     run_server(server)

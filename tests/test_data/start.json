@@ -33,16 +33,6 @@
     "detectors": [],
     "num": 1
   },
-  "hints": {
-    "dimensions": [
-      [
-        [
-          "time"
-        ],
-        "primary"
-      ]
-    ]
-  },
   "sp_time_per_frame": 0.2,
   "sp_num_frames": 25.0,
   "sp_requested_exposure": 5,
