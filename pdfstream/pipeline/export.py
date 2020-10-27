@@ -8,6 +8,8 @@ from suitcase.csv import Serializer as CSVSerializer
 from suitcase.json_metadata import Serializer as JsonSerializer
 from suitcase.tiff_series import Serializer as TiffSerializer
 
+from pdfstream.vend.formatters import SpecialStr
+
 
 class ExportConfig(ConfigParser):
     """The configuration of exporter."""
@@ -35,28 +37,28 @@ class ExportConfig(ConfigParser):
 
     @property
     def run_template(self):
-        return self.get("DIR SETTING", "template")
+        return SpecialStr(self.get("DIR SETTING", "template"))
 
     @property
     def tiff_setting(self):
         section = self["TIFF SETTING"]
         if not section.getboolean("enable", fallback=True):
             return None
-        return {"file_prefix": section.get("file_prefix")}
+        return {"file_prefix": SpecialStr(section.get("file_prefix"))}
 
     @property
     def json_setting(self):
         section = self["JSON SETTING"]
         if not section.getboolean("enable", fallback=True):
             return None
-        return {"file_prefix": section.get("file_prefix")}
+        return {"file_prefix": SpecialStr(section.get("file_prefix"))}
 
     @property
     def csv_setting(self):
         section = self["CSV SETTING"]
         if not section.getboolean("enable", fallback=True):
             return None
-        return {"file_prefix": section.get("file_prefix")}
+        return {"file_prefix": SpecialStr(section.get("file_prefix"))}
 
 
 class Exporter(RunRouter):
