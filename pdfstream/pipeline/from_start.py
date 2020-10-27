@@ -1,7 +1,8 @@
 """Get data from the start and database."""
 import itertools
-import numpy
 import typing
+
+import numpy
 from databroker import Broker
 from databroker.core import BlueskyRunFromGenerator
 from numpy import ndarray
@@ -152,9 +153,16 @@ def query_bt_info(
     """Query the necessary information for the PDFGetter."""
     config = {"composition": default_composition}
     if composition_key in start:
-        config.update({"composition": start[composition_key]})
+        composition = start[composition_key]
+        if isinstance(composition, dict):
+            composition_str = "".join(["{}{}".format(k, v) for k, v in composition.items()])
+        elif isinstance(composition, str):
+            composition_str = composition
+        else:
+            raise ValueError("Cannot parse composition: {}".format(type(composition)))
+        config.update({"composition": composition_str})
     if wavelength_key in start:
-        config.update({"wavelength": start[wavelength_key]})
+        config.update({"wavelength": float(start[wavelength_key])})
     return config
 
 

@@ -50,13 +50,19 @@ def test_query_dk_img(db_with_dark_and_light, dk_id_key, shape):
             {'sample_composition': {'Ni': 1.0}},
             'sample_composition',
             'bt_wavelength',
-            ({'Ni': 1.0}, None)
+            ('Ni1.0', None)
         ),
         (
             {'bt_wavelength': 0.16},
             'sample_composition',
             'bt_wavelength',
             ('Ni', 0.16)
+        ),
+        (
+            {'sample_composition': 'C60'},
+            'sample_composition',
+            'bt_wavelength',
+            ('C60', None)
         )
     ]
 )

@@ -14,7 +14,7 @@
     "beamstop": "W"
   },
   "bt_piLast": "Billinge",
-  "bt_safN": "306132",
+  "bt_sfN": "306132",
   "bt_experimenters": [
     "Songsheng",
     "Tao"
@@ -90,6 +90,9 @@
       0.427347771314
     ],
     "calibrant_name": "undefined"
+  },
+  "sample_composition": {
+    "Ni": 1
   },
   "xpdacq_md_version": 0.1,
   "analysis_stage": "raw",
