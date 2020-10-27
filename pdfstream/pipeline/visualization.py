@@ -105,9 +105,11 @@ class VisFactory:
         self.config = config
         self.cb_lst = []
         if self.config.vis_best_effort is not None:
-            self.cb_lst.append(
-                BestEffortCallback(table_enabled=False)
-            )
+            cb = BestEffortCallback()
+            cb.disable_table()
+            cb.disable_baseline()
+            cb.disable_heading()
+            self.cb_lst.append(cb)
         if self.config.vis_dk_sub_image is not None:
             self.cb_lst.append(
                 LiveImage("dk_sub_image", **self.config.vis_dk_sub_image)

@@ -28,7 +28,14 @@ class XPDServer(RemoteDispatcher):
         self.subscribe(StartStopCallback())
 
 
-def make_and_run(cfg: str, *, test_tiff_base: str = None, test_raw_db: Broker = None, test_an_db: Broker = None):
+def make_and_run(
+    cfg: str,
+    *,
+    suppress_warning: bool = True,
+    test_tiff_base: str = None,
+    test_raw_db: Broker = None,
+    test_an_db: Broker = None
+):
     """Run the xpd data reduction server.
 
     The server will receive message from proxy and process the data in the message. The processed data will be
@@ -40,6 +47,9 @@ def make_and_run(cfg: str, *, test_tiff_base: str = None, test_raw_db: Broker = 
         The path to configuration .ini file. It also accept a name of default configuration for a specific
         beam line. 'XPD' for xpd beam line, 'PDF' for pdf beam line, 'TEST' for functional test.
 
+    suppress_warning :
+        If True, all warning will be suppressed. Turn it to False when running in a test.
+
     test_tiff_base :
         A test tiff base option for developers.
 
@@ -49,6 +59,9 @@ def make_and_run(cfg: str, *, test_tiff_base: str = None, test_raw_db: Broker = 
     test_an_db :
         A test database option for developers.
     """
+    if suppress_warning:
+        import warnings
+        warnings.simplefilter("ignore")
     cfg_file = CFG.get(cfg, cfg)
     config = XPDServerConfig()
     config.read(cfg_file)
