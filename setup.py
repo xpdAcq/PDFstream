@@ -1,6 +1,6 @@
+import sys
 from os import path
 
-import sys
 from setuptools import setup, find_packages
 
 # NOTE: This file must remain Python 2 compatible for the foreseeable future,
@@ -39,7 +39,7 @@ setup(
     entry_points={
         'console_scripts': [
             'pdfstream = pdfstream.main:main',
-            'server_start = pdfstream.main:server_start'
+            'bsrun = pdfstream.main:bsrun'
             # 'command = some.module:some_function',
         ],
     },

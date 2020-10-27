@@ -1,8 +1,9 @@
+from configparser import ConfigParser
+
 import event_model
 import numpy as np
 from bluesky.callbacks.stream import LiveDispatcher
-from configparser import ConfigParser
-from databroker import catalog
+from databroker.v2 import Broker
 from pyFAI.azimuthalIntegrator import AzimuthalIntegrator
 
 import pdfstream.integration.tools as integ
@@ -20,8 +21,16 @@ class AnalysisConfig(ConfigParser):
     """The configuration for analysis pipeline."""
 
     @property
-    def db_name(self):
-        return self.get("RAW DB", "name")
+    def raw_db(self):
+        name = self.get("DATABASE", "raw_db", fallback=None)
+        if name:
+            from databroker import catalog
+            return catalog[name]
+        return None
+
+    @property
+    def dark_identifier(self):
+        return self.get("METADATA", "dk_identifier")
 
     @property
     def dk_id_key(self):
@@ -90,11 +99,11 @@ class AnalysisStream(LiveDispatcher):
     It inject the configuration into start document and emit processed data to the subscribers.
     """
 
-    def __init__(self, config: AnalysisConfig):
-        self.config = config
+    def __init__(self, config: AnalysisConfig, *, db: Broker = None):
         super().__init__()
+        self.config = config
         self.cache = {}
-        self.db = catalog[self.config.db_name] if self.config.db_name else None
+        self.db = config.raw_db if db is None else db
 
     def start(self, doc, _md=None):
         self.cache["start"] = doc
@@ -129,12 +138,12 @@ class AnalysisStream(LiveDispatcher):
         raw_img = from_event.get_image_from_event(doc, det_name=self.cache["det_name"])
         indep_data = {key: doc["data"][key] for key in self.cache["indeps"]}
         an_data = process(
-            raw_img,
-            self.cache["dk_img"],
-            self.cache["ai"],
-            self.config.integ_setting,
-            self.config.mask_setting,
-            dict(**self.cache["bt_info"], **self.config.trans_setting, **self.config.grid_config)
+            raw_img=raw_img,
+            dk_img=self.cache["dk_img"],
+            ai=self.cache["ai"],
+            integ_setting=self.config.integ_setting,
+            mask_setting=self.config.mask_setting,
+            pdfgetx_setting=dict(**self.cache["bt_info"], **self.config.trans_setting, **self.config.grid_config)
         )
         data = dict(**indep_data, **an_data)
         self.process_event(EventDoc(data=data, descriptor=doc["descriptor"]))
@@ -145,43 +154,45 @@ class AnalysisStream(LiveDispatcher):
 
 
 def process(
+    *,
     raw_img: np.ndarray,
-    dk_img: np.ndarray,
-    ai: AzimuthalIntegrator,
-    integ_setting: dict,
-    mask_setting: dict,
-    pdfgetx_setting: dict,
+    dk_img: np.ndarray = None,
+    ai: AzimuthalIntegrator = None,
+    integ_setting: dict = None,
+    mask_setting: dict = None,
+    pdfgetx_setting: dict = None,
 ) -> dict:
-    final_image = raw_img - dk_img if dk_img is not None else raw_img
+    data = dict()
+    # dark subtraction
+    if dk_img is None:
+        dk_img = np.zeros_like(raw_img)
+    else:
+        data.update({"dk_image": dk_img})
+    final_image = np.subtract(raw_img, dk_img)
+    data.update({"dk_sub_image": final_image})
+    # return the data if no calibration metadata
+    if ai is None:
+        return data
+    # auto masking
     final_mask, _ = integ.auto_mask(final_image, ai, mask_setting=mask_setting)
+    data.update({"mask": final_mask})
+    # integration
     x, y = ai.integrate1d(final_image, mask=final_mask, **integ_setting)
     chi_max_ind = np.argmax(y)
-    pdfconfig = PDFConfig(
-        dataformat="QA",
-        **pdfgetx_setting
-    )
+    data.update({"chi_Q": x, "chi_I": y, "chi_max": y[chi_max_ind], "chi_argmax": x[chi_max_ind]})
+    # transformation
+    pdfconfig = PDFConfig(dataformat="QA", **pdfgetx_setting)
     pdfgetter = PDFGetter(pdfconfig)
     pdfgetter(x, y)
     iq, sq, fq, gr = pdfgetter.iq, pdfgetter.sq, pdfgetter.fq, pdfgetter.gr
     gr_max_ind = np.argmax(gr[1])
-    return {
-        "dk_sub_image": final_image,
-        "mask": final_mask,
-        "chi_Q": x,
-        "chi_I": y,
-        "iq_Q": iq[0],
-        "iq_I": iq[1],
-        "sq_Q": sq[0],
-        "sq_S": sq[1],
-        "fq_Q": fq[0],
-        "fq_F": fq[1],
-        "gr_r": gr[0],
-        "gr_G": gr[1],
-        "chi_max": y[chi_max_ind],
-        "chi_argmax": x[chi_max_ind],
-        "gr_max": gr[1][gr_max_ind],
-        "gr_argmax": gr[0][gr_max_ind]
-    }
+    data.update(
+        {
+            "iq_Q": iq[0], "iq_I": iq[1], "sq_Q": sq[0], "sq_S": sq[1], "fq_Q": fq[0], "fq_F": fq[1],
+            "gr_r": gr[0], "gr_G": gr[1], "gr_max": gr[1][gr_max_ind], "gr_argmax": gr[0][gr_max_ind]
+        }
+    )
+    return data
 
 
 class EventDoc(dict):

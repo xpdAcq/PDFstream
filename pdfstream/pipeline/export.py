@@ -1,58 +1,64 @@
-import databroker
 import typing as tp
 from configparser import ConfigParser
-from databroker.v2 import Broker
-from event_model import RunRouter
+from configparser import Error
 from pathlib import Path
+
+from event_model import RunRouter
 from suitcase.csv import Serializer as CSVSerializer
 from suitcase.json_metadata import Serializer as JsonSerializer
 from suitcase.tiff_series import Serializer as TiffSerializer
+
+from pdfstream.vend.formatters import SpecialStr
 
 
 class ExportConfig(ConfigParser):
     """The configuration of exporter."""
 
     @property
-    def db(self):
-        section = self["ANALYSIS DATABASE"]
-        if section.getboolean("test", fallback=False):
-            return databroker.v2.temp()
-        name = section.get("name")
+    def an_db(self):
+        name = self.get("DATABASE", "an_db", fallback=None)
         if name:
-            return databroker.catalog[name]
+            from databroker import catalog
+            return catalog[name]
         return None
 
     @property
     def tiff_base(self):
         section = self["FILE SYSTEM"]
-        path = Path(section.get("tiff_base"))
-        path.mkdir(exist_ok=True)
+        dir_path = section.get("tiff_base")
+        if not dir_path:
+            raise Error("Missing tiff_base in configuration.")
+        path = Path(dir_path)
         return path
+
+    @tiff_base.setter
+    def tiff_base(self, value: str):
+        self.set("FILE SYSTEM", "tiff_base", value)
 
     @property
     def run_template(self):
-        return self.get("DIR SETTING", "template")
+        return SpecialStr(self.get("DIR SETTING", "template"))
 
     @property
     def tiff_setting(self):
         section = self["TIFF SETTING"]
         if not section.getboolean("enable", fallback=True):
             return None
-        return {"file_prefix": section.get("file_prefix")}
+        return {"file_prefix": SpecialStr(section.get("file_prefix"))}
 
     @property
     def json_setting(self):
         section = self["JSON SETTING"]
         if not section.getboolean("enable", fallback=True):
             return None
-        return {"file_prefix": section.get("file_prefix")}
+        return {"file_prefix": SpecialStr(section.get("file_prefix"))}
 
     @property
     def csv_setting(self):
         section = self["CSV SETTING"]
         if not section.getboolean("enable", fallback=True):
             return None
-        return {"file_prefix": section.get("file_prefix")}
+        return {"file_prefix": SpecialStr(section.get("file_prefix"))}
 
 
 class Exporter(RunRouter):
@@ -63,16 +69,12 @@ class Exporter(RunRouter):
         super().__init__([factory])
 
 
-class DBDumper:
-    """Dump the data into analysis database."""
-    pass
-
-
 class ExporterFactory:
     """The factory for the exporter run router."""
 
     def __init__(self, config: ExportConfig):
         self.config = config
+        self.config.tiff_base.mkdir(exist_ok=True)
 
     def __call__(self, name: str, doc: dict) -> tp.Tuple[list, list]:
         if name != "start":

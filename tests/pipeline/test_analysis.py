@@ -1,15 +1,17 @@
+import pytest
 from pkg_resources import resource_filename
 
 import pdfstream.pipeline.analysis as an
-from pdfstream.pipeline.preprocess import basic_doc_stream
 
 fn = resource_filename("tests", "configs/analysis.ini")
 
 
-def test_AnalysisStream(run0):
+@pytest.mark.parametrize("use_db", [True, False])
+def test_AnalysisStream(db_with_dark_and_light, use_db):
+    db = db_with_dark_and_light
     config = an.AnalysisConfig()
     config.read(fn)
-    ld = an.AnalysisStream(config)
-    ld.subscribe(lambda *x: print(x[0], ", ".join(x[1].keys())))
-    for name, doc in basic_doc_stream(run0):
+    ld = an.AnalysisStream(config, db=db if use_db else None)
+    ld.subscribe(print)
+    for name, doc in db[-1].canonical(fill="yes", strict_order=True):
         ld(name, doc)

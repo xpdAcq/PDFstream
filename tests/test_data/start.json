@@ -1,0 +1,102 @@
+{
+  "beamline_id": "28-id-2",
+  "group": "XPD",
+  "facility": "NSLS-II",
+  "beamline_config": {
+    "Filters": [
+      "1Cu",
+      "2Cu",
+      "3Cu",
+      "4Cu"
+    ],
+    "Verification time": "2020-08-31 10:00:38",
+    "Verified by": "jmb",
+    "beamstop": "W"
+  },
+  "bt_piLast": "Billinge",
+  "bt_safN": "306132",
+  "bt_experimenters": [
+    "Songsheng",
+    "Tao"
+  ],
+  "bt_wavelength": 0.1917,
+  "bt_uid": "058a0121",
+  "scan_id": 11,
+  "plan_type": "generator",
+  "plan_name": "count",
+  "detectors": [
+    "pe1"
+  ],
+  "num_points": 1,
+  "num_intervals": 0,
+  "plan_args": {
+    "detectors": [],
+    "num": 1
+  },
+  "sp_time_per_frame": 0.2,
+  "sp_num_frames": 25.0,
+  "sp_requested_exposure": 5,
+  "sp_computed_exposure": 5.0,
+  "sp_type": "ct",
+  "sp_uid": "13ee5089-1049-4c38-b1df-dffc0097bc2b",
+  "sp_plan_name": "ct",
+  "detector_calibration_client_uid": "f69a2cb9-c254-4f41-987e-911f6c63f79e",
+  "calibration_md": {
+    "detector": "Perkin detector",
+    "pixel1": 0.0002,
+    "pixel2": 0.0002,
+    "max_shape": [
+      4096,
+      4096
+    ],
+    "dist": 0.24877604283795038,
+    "poni1": 0.2053424178138206,
+    "poni2": 0.2009801660742436,
+    "rot1": -0.00023710649304047285,
+    "rot2": -0.00037576003023777056,
+    "rot3": -8.871356199200895e-12,
+    "wavelength": 1.671e-11,
+    "pixelX": 200.0,
+    "pixelY": 200.0,
+    "splineFile": null,
+    "tilt": 0.18056899760065334,
+    "tiltPlanRotation": -42.002533601112376,
+    "poni_file_name": "/tmp/tmp9pmgku53/from_calib_func.poni",
+    "time": "20200831-121346",
+    "dSpacing": [
+      2.03458234862,
+      1.761935,
+      1.24592214845,
+      1.06252597829,
+      1.01729117431,
+      0.881,
+      0.80846104616,
+      0.787990355271,
+      0.719333487797,
+      0.678194116208,
+      0.622961074225,
+      0.595664718733,
+      0.587333333333,
+      0.557193323722,
+      0.537404961852,
+      0.531262989146,
+      0.508645587156,
+      0.493458701611,
+      0.488690872874,
+      0.47091430825,
+      0.458785722296,
+      0.4405,
+      0.430525121912,
+      0.427347771314
+    ],
+    "calibrant_name": "undefined"
+  },
+  "xpdacq_md_version": 0.1,
+  "analysis_stage": "raw",
+  "filter_positions": {
+    "flt1": "Out",
+    "flt2": "Out",
+    "flt3": "Out",
+    "flt4": "Out"
+  }
+}

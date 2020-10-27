@@ -1,9 +1,12 @@
+import typing as tp
+from configparser import ConfigParser
+
 import matplotlib.pyplot as plt
 import numpy as np
-import typing as tp
+from bluesky.callbacks.best_effort import BestEffortCallback
 from bluesky.callbacks.broker import LiveImage
 from bluesky.callbacks.core import CallbackBase
-from configparser import ConfigParser
+from databroker.v2 import Broker
 from event_model import RunRouter
 from xpdview.waterfall import Waterfall
 
@@ -101,6 +104,12 @@ class VisFactory:
     def __init__(self, config: VisConfig):
         self.config = config
         self.cb_lst = []
+        if self.config.vis_best_effort is not None:
+            cb = BestEffortCallback()
+            cb.disable_table()
+            cb.disable_baseline()
+            cb.disable_heading()
+            self.cb_lst.append(cb)
         if self.config.vis_dk_sub_image is not None:
             self.cb_lst.append(
                 LiveImage("dk_sub_image", **self.config.vis_dk_sub_image)
@@ -132,11 +141,11 @@ class LiveMaskedImage(LiveImage):
 
     def __init__(self, field: str, msk_field: str, *, cmap: str, norm: tp.Callable = None,
                  limit_func: tp.Callable = None, auto_draw: bool = True, interpolation: str = None,
-                 window_title: str = None):
+                 window_title: str = None, db: Broker = None):
         self.msk_field = msk_field
         super(LiveMaskedImage, self).__init__(
             field, cmap=cmap, norm=norm, limit_func=limit_func,
-            auto_redraw=auto_draw, interpolation=interpolation, window_title=window_title
+            auto_redraw=auto_draw, interpolation=interpolation, window_title=window_title, db=db
         )
 
     def event(self, doc):
@@ -171,16 +180,16 @@ class LiveWaterfall(CallbackBase):
         super().__init__()
         self.x = x
         self.y = y
-        self.kwargs = kwargs
-        self.labels = (xlabel, ylabel)
-        self.waterfall = None
-
-    def start(self, doc):
         fig = plt.figure()
-        self.waterfall = Waterfall(fig=fig, unit=self.labels, **self.kwargs)
+        self.waterfall = Waterfall(fig=fig, unit=(xlabel, ylabel), **kwargs)
         fig.show()
 
+    def start(self, doc):
+        super(LiveWaterfall, self).start(doc)
+        self.waterfall.clear()
+
     def event(self, doc):
+        super(LiveWaterfall, self).event(doc)
         x_data = doc["data"][self.x]
         y_data = doc["data"][self.y]
         key = doc['seq_num']
@@ -188,6 +197,3 @@ class LiveWaterfall(CallbackBase):
 
     def update(self, key: str, int_data: tp.Tuple[np.ndarray, np.ndarray]):
         self.waterfall.update(key_list=[key], int_data_list=[int_data])
-
-    def stop(self, doc):
-        self.waterfall = None

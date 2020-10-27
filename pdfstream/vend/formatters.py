@@ -1,8 +1,7 @@
-import string
-from collections import defaultdict
-
 import datetime
 import re
+import string
+from collections import defaultdict
 from pathlib import Path
 
 
@@ -135,3 +134,11 @@ def timestampstr(timestamp):
         "%Y%m%d-%H%M%S"
     )
     return timestring
+
+
+class SpecialStr(str):
+    """A special string with a formatter that ignores the key error."""
+    CF = CleanFormatter()
+
+    def format(self, *args: object, **kwargs: object) -> str:
+        return self.CF.format(self, *args, **kwargs)
