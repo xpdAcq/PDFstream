@@ -1,7 +1,6 @@
 from configparser import Error
 from pathlib import Path
 
-import databroker
 import pytest
 from pkg_resources import resource_filename
 
@@ -24,11 +23,10 @@ def test_Exporter(db_with_dark_and_scan, tmpdir):
     config = an.AnalysisConfig()
     config.read(fn)
     ld = an.AnalysisStream(config)
-    db = databroker.v2.temp()
     ep_config = mod.ExportConfig()
     ep_config.read(fn1)
     ep_config.tiff_base = str(tmpdir)
-    ep = mod.Exporter(ep_config, db=db)
+    ep = mod.Exporter(ep_config)
     ld.subscribe(ep)
     for name, doc in raw_db[-1].canonical(fill="yes", strict_order=True):
         ld(name, doc)
@@ -36,4 +34,3 @@ def test_Exporter(db_with_dark_and_scan, tmpdir):
     assert len(list(tiff_base.rglob("*.tiff"))) > 0
     assert len(list(tiff_base.rglob("*.csv"))) > 0
     assert len(list(tiff_base.rglob("*.json"))) > 0
-    assert len(list(db)) > 0

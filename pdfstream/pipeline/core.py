@@ -31,7 +31,8 @@ class XPDFactory:
     def __init__(self, config: XPDConfig, *, raw_db: Broker = None, an_db: Broker = None):
         self.config = config
         self.dispatcher = AnalysisStream(config, db=raw_db)
-        self.dispatcher.subscribe(Exporter(config, db=an_db))
+        self.dispatcher.subscribe(an_db.v1.insert)
+        self.dispatcher.subscribe(Exporter(config))
         self.dispatcher.subscribe(Visualizer(config))
 
     def __call__(self, name: str, doc: dict) -> tp.Tuple[list, list]:

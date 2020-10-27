@@ -3,7 +3,6 @@ from configparser import ConfigParser
 from configparser import Error
 from pathlib import Path
 
-from databroker.v2 import Broker
 from event_model import RunRouter
 from suitcase.csv import Serializer as CSVSerializer
 from suitcase.json_metadata import Serializer as JsonSerializer
@@ -28,7 +27,6 @@ class ExportConfig(ConfigParser):
         if not dir_path:
             raise Error("Missing tiff_base in configuration.")
         path = Path(dir_path)
-        path.mkdir(exist_ok=True)
         return path
 
     @tiff_base.setter
@@ -64,17 +62,17 @@ class ExportConfig(ConfigParser):
 class Exporter(RunRouter):
     """Export the processed data to file systems, including."""
 
-    def __init__(self, config: ExportConfig, *, db: Broker = None):
-        factory = ExporterFactory(config, db=db)
+    def __init__(self, config: ExportConfig):
+        factory = ExporterFactory(config)
         super().__init__([factory])
 
 
 class ExporterFactory:
     """The factory for the exporter run router."""
 
-    def __init__(self, config: ExportConfig, *, db: Broker = None):
+    def __init__(self, config: ExportConfig):
         self.config = config
-        self.an_db = config.an_db if db is None else db
+        self.config.tiff_base.mkdir(exist_ok=True)
 
     def __call__(self, name: str, doc: dict) -> tp.Tuple[list, list]:
         if name != "start":
@@ -82,8 +80,6 @@ class ExporterFactory:
         dir_name = self.config.run_template.format(start=doc)
         base_dir = self.config.tiff_base.joinpath(dir_name)
         cb_lst = []
-        if self.an_db is not None:
-            cb_lst.append(self.an_db.v1.insert)
         if self.config.tiff_setting is not None:
             cb = TiffSerializer(
                 str(base_dir.joinpath("images")),

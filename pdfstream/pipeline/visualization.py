@@ -3,6 +3,7 @@ from configparser import ConfigParser
 
 import matplotlib.pyplot as plt
 import numpy as np
+from bluesky.callbacks.best_effort import BestEffortCallback
 from bluesky.callbacks.broker import LiveImage
 from bluesky.callbacks.core import CallbackBase
 from databroker.v2 import Broker
@@ -103,6 +104,10 @@ class VisFactory:
     def __init__(self, config: VisConfig):
         self.config = config
         self.cb_lst = []
+        if self.config.vis_best_effort is not None:
+            self.cb_lst.append(
+                BestEffortCallback(table_enabled=False)
+            )
         if self.config.vis_dk_sub_image is not None:
             self.cb_lst.append(
                 LiveImage("dk_sub_image", **self.config.vis_dk_sub_image)
