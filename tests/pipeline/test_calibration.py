@@ -1,0 +1,15 @@
+from pkg_resources import resource_filename
+
+import pdfstream.pipeline.calibration as mod
+
+fn = resource_filename("tests", "configs/xpd.ini")
+
+
+def test_Calibration(db_with_dark_and_calib, tmpdir):
+    db = db_with_dark_and_calib
+    config = mod.CalibrationConfig()
+    config.read(fn)
+    config.tiff_base = str(tmpdir)
+    cb = mod.Calibration(config, test=True, raw_db=db)
+    for name, doc in db[-1].canonical(fill="yes"):
+        cb(name, doc)

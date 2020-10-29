@@ -122,3 +122,25 @@ def db_with_dark_and_scan() -> Broker:
     for name, doc in gen_stream(light_data, dict(**START_DOC, sc_dk_field_uid=dark_uid)):
         db.v1.insert(name, doc)
     return db
+
+
+@pytest.fixture(scope="session")
+def db_with_dark_and_calib() -> Broker:
+    """A database with a dark run and a light run inside. The last one is light and the first one is dark."""
+    db = databroker.v2.temp()
+    dark_data = [{"pe1_image": np.zeros_like(NI_IMG)}]
+    dark_uid = str(uuid.uuid4())
+    for name, doc in gen_stream(dark_data, {"dark_frame": True}, uid=dark_uid):
+        db.v1.insert(name, doc)
+    light_data = [{"pe1_image": NI_IMG}]
+    for name, doc in gen_stream(
+        light_data, dict(
+            sample_composition="Ni",
+            sc_dk_field_uid=dark_uid,
+            detector="perkin_elmer",
+            calibration=True,
+            bt_wavelength=0.1917
+        )
+    ):
+        db.v1.insert(name, doc)
+    return db

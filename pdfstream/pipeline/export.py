@@ -11,16 +11,8 @@ from suitcase.tiff_series import Serializer as TiffSerializer
 from pdfstream.vend.formatters import SpecialStr
 
 
-class ExportConfig(ConfigParser):
-    """The configuration of exporter."""
-
-    @property
-    def an_db(self):
-        name = self.get("DATABASE", "an_db", fallback=None)
-        if name:
-            from databroker import catalog
-            return catalog[name]
-        return None
+class BasicExportConfig(ConfigParser):
+    """Basic configuration that is shared by export and calibration."""
 
     @property
     def tiff_base(self):
@@ -34,6 +26,18 @@ class ExportConfig(ConfigParser):
     @tiff_base.setter
     def tiff_base(self, value: str):
         self.set("FILE SYSTEM", "tiff_base", value)
+
+
+class ExportConfig(BasicExportConfig):
+    """The configuration of exporter."""
+
+    @property
+    def an_db(self):
+        name = self.get("DATABASE", "an_db", fallback=None)
+        if name:
+            from databroker import catalog
+            return catalog[name]
+        return None
 
     @property
     def run_template(self):

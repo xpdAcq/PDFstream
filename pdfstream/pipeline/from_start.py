@@ -149,9 +149,8 @@ def query_bt_info(
     composition_key: str,
     wavelength_key: str,
     default_composition: str = "Ni"
-):
+) -> dict:
     """Query the necessary information for the PDFGetter."""
-    config = {"composition": default_composition}
     if composition_key in start:
         composition = start[composition_key]
         if isinstance(composition, dict):
@@ -160,10 +159,16 @@ def query_bt_info(
             composition_str = composition
         else:
             raise ValueError("Cannot parse composition: {}".format(type(composition)))
-        config.update({"composition": composition_str})
+    else:
+        composition_str = default_composition
     if wavelength_key in start:
-        config.update({"wavelength": float(start[wavelength_key])})
-    return config
+        wavelength = float(start[wavelength_key])
+    else:
+        wavelength = None
+    return {
+        "composition": composition_str,
+        "wavelength": wavelength
+    }
 
 
 def strip_basics(start: dict) -> dict:
@@ -179,3 +184,17 @@ def get_indeps(start: dict, exclude: set = frozenset()) -> set:
             [n for n, s in start.get("hints", {}).get("dimensions", [])]
         )
     ) - exclude
+
+
+def get_calib_info(
+    start: typing.Dict[str, typing.Any],
+    detector_key: str,
+    wavelength_key: str,
+    calibrant_key: str
+) -> typing.Dict[str, str]:
+    """Get the information for pyfail calib2 gui in the start. If no such key, return empty string."""
+    return {
+        "detector": str(start.get(detector_key, "")),
+        "wavelength": str(start.get(wavelength_key, "")),
+        "calibrant": str(start.get(calibrant_key, ""))
+    }

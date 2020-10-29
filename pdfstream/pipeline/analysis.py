@@ -17,8 +17,8 @@ except ImportError:
     pass
 
 
-class AnalysisConfig(ConfigParser):
-    """The configuration for analysis pipeline."""
+class BasicConfig(ConfigParser):
+    """The basic configuration that is shared by analysis and calibration."""
 
     @property
     def raw_db(self):
@@ -35,6 +35,18 @@ class AnalysisConfig(ConfigParser):
     @property
     def dk_id_key(self):
         return self.get("METADATA", "dk_id_key")
+
+    @property
+    def composition_key(self):
+        return self.get("METADATA", "composition_key")
+
+    @property
+    def wavelength_key(self):
+        return self.get("METADATA", "wavelength_key")
+
+
+class AnalysisConfig(BasicConfig):
+    """The configuration for analysis pipeline."""
 
     @property
     def calibration_md_key(self):
@@ -63,14 +75,6 @@ class AnalysisConfig(ConfigParser):
         }
 
     @property
-    def composition_key(self):
-        return self.get("METADATA", "composition_key")
-
-    @property
-    def wavelength_key(self):
-        return self.get("METADATA", "wavelength_key")
-
-    @property
     def trans_setting(self):
         section = self["TRANSFORMATION SETTING"]
         return {
@@ -90,6 +94,7 @@ class AnalysisConfig(ConfigParser):
         }
 
     def to_dict(self):
+        """Convert the configuration to a dictionary."""
         return {s: dict(self.items(s)) for s in self.sections()}
 
 
@@ -106,6 +111,7 @@ class AnalysisStream(LiveDispatcher):
         self.db = config.raw_db if db is None else db
 
     def start(self, doc, _md=None):
+        self.cache = dict()
         self.cache["start"] = doc
         self.cache["ai"] = from_start.query_ai(
             doc,
@@ -121,8 +127,8 @@ class AnalysisStream(LiveDispatcher):
         super().start(dict(**doc, an_config=self.config.to_dict()))
 
     def event_page(self, doc):
-        for doc in event_model.unpack_event_page(doc):
-            self.event(doc)
+        for event_doc in event_model.unpack_event_page(doc):
+            self.event(event_doc)
 
     def descriptor(self, doc):
         self.cache["det_name"] = from_desc.find_one_image(doc)
@@ -143,7 +149,11 @@ class AnalysisStream(LiveDispatcher):
             ai=self.cache["ai"],
             integ_setting=self.config.integ_setting,
             mask_setting=self.config.mask_setting,
-            pdfgetx_setting=dict(**self.cache["bt_info"], **self.config.trans_setting, **self.config.grid_config)
+            pdfgetx_setting=dict(
+                self.cache["bt_info"],
+                **self.config.trans_setting,
+                **self.config.grid_config
+            )
         )
         data = dict(**indep_data, **an_data)
         self.process_event(EventDoc(data=data, descriptor=doc["descriptor"]))
@@ -162,6 +172,7 @@ def process(
     mask_setting: dict = None,
     pdfgetx_setting: dict = None,
 ) -> dict:
+    """The function to process the data from event."""
     data = dict()
     # dark subtraction
     if dk_img is None:
