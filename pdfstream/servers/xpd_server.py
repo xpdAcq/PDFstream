@@ -23,9 +23,20 @@ class XPDServerConfig(XPDConfig, ServerConfig):
 
 class XPDServer(RemoteDispatcher):
     def __init__(self, config: XPDServerConfig, *, raw_db: Broker = None, an_db: Broker = None):
-        super(XPDServer, self).__init__(config.address, prefix=config.prefix)
+        super(XPDServer, self).__init__(config.dispatcher_address, prefix=config.prefix)
         self.subscribe(XPDRouter(config, raw_db=raw_db, an_db=an_db))
         self.subscribe(StartStopCallback())
+        install_qt_kicker(self.loop)
+
+
+def load_config(cfg_file: str, test_file_base: str = None) -> XPDServerConfig:
+    """Load configuration with test settings."""
+    config = XPDServerConfig()
+    config.read(cfg_file)
+    if test_file_base:
+        config.tiff_base = test_file_base
+        config.calib_base = test_file_base
+    return config
 
 
 def make_and_run(
@@ -61,11 +72,6 @@ def make_and_run(
     if suppress_warning:
         import warnings
         warnings.simplefilter("ignore")
-    config = XPDServerConfig()
-    config.read(cfg_file)
-    if test_file_base:
-        config.tiff_base = test_file_base
-        config.calib_base = test_file_base
+    config = load_config(cfg_file, test_file_base=test_file_base)
     server = XPDServer(config, raw_db=test_raw_db, an_db=test_an_db)
-    install_qt_kicker(server.loop)
     run_server(server)

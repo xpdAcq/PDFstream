@@ -34,12 +34,11 @@ def experiment(run: BlueskyRun, delay: float, address: str, prefix: bytes):
 
 
 def test_XPDServerConfig():
-    config = mod.XPDServerConfig()
-    config.read(fn)
+    config = mod.load_config(fn)
     assert len(config.sections()) > 0
 
 
-def test_make_and_run(db_with_dark_and_light, proxy, tmpdir):
+def test_make_and_run_with_proxy(db_with_dark_and_light, proxy, tmpdir):
     raw_db = db_with_dark_and_light
     an_db = databroker.v2.temp()
     process = Process(target=experiment, args=(raw_db[-1], 4, proxy[0], b'raw'), daemon=True)

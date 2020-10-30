@@ -84,7 +84,7 @@ def start_proxy():
 def proxy():
     proxy_proc = multiprocessing.Process(target=start_proxy, daemon=True)
     proxy_proc.start()
-    time.sleep(2)  # Give this plenty of time to start up.
+    time.sleep(4)  # Give this plenty of time to start up.
     yield "127.0.0.1:5567", "127.0.0.1:5568"
     proxy_proc.terminate()
     proxy_proc.join()
