@@ -78,7 +78,7 @@ class ExporterFactory:
 
     def __init__(self, config: ExportConfig):
         self.config = config
-        self.config.tiff_base.mkdir(exist_ok=True)
+        self.config.tiff_base.mkdir(exist_ok=True, parents=True)
 
     def __call__(self, name: str, doc: dict) -> tp.Tuple[list, list]:
         if name != "start":
