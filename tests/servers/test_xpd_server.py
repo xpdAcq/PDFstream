@@ -51,3 +51,4 @@ def test_make_and_run(db_with_dark_and_light, proxy, tmpdir):
     assert len(list(folder.rglob("*.tiff"))) > 0
     assert len(list(folder.rglob("*.csv"))) > 0
     assert len(list(folder.rglob("*.json"))) > 0
+    assert len(list(an_db)) > 0
