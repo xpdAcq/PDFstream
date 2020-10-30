@@ -1,5 +1,6 @@
 import subprocess
 import typing as tp
+from configparser import Error
 from pathlib import Path
 
 import event_model

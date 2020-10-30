@@ -104,11 +104,11 @@ class AnalysisStream(LiveDispatcher):
     It inject the configuration into start document and emit processed data to the subscribers.
     """
 
-    def __init__(self, config: AnalysisConfig, *, db: Broker = None):
+    def __init__(self, config: AnalysisConfig, *, raw_db: Broker = None):
         super().__init__()
         self.config = config
         self.cache = {}
-        self.db = config.raw_db if db is None else db
+        self.db = config.raw_db if raw_db is None else raw_db
 
     def start(self, doc, _md=None):
         self.cache = dict()

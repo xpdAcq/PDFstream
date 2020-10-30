@@ -11,7 +11,7 @@ def test_Visualizer(db_with_dark_and_light):
     db = db_with_dark_and_light
     config = an.AnalysisConfig()
     config.read(fn)
-    ld = an.AnalysisStream(config, db=db)
+    ld = an.AnalysisStream(config, raw_db=db)
     config1 = vis.VisConfig()
     config1.read(fn1)
     cb = vis.Visualizer(config1)
