@@ -29,7 +29,7 @@ class XPDServer(RemoteDispatcher):
 
 
 def make_and_run(
-    cfg: str,
+    cfg_file: str = "~/.config/acq/xpd_server.ini",
     *,
     suppress_warning: bool = True,
     test_file_base: str = None,
@@ -43,9 +43,8 @@ def make_and_run(
 
     Parameters
     ----------
-    cfg :
-        The path to configuration .ini file. It also accept a name of default configuration for a specific
-        beam line. 'XPD' for xpd beam line, 'PDF' for pdf beam line, 'TEST' for functional test.
+    cfg_file :
+        The path to configuration .ini file. The default path is "~/.config/acq/xpd_server.ini".
 
     suppress_warning :
         If True, all warning will be suppressed. Turn it to False when running in a test.
@@ -62,7 +61,6 @@ def make_and_run(
     if suppress_warning:
         import warnings
         warnings.simplefilter("ignore")
-    cfg_file = CFG.get(cfg, cfg)
     config = XPDServerConfig()
     config.read(cfg_file)
     if test_file_base:

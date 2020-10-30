@@ -18,7 +18,7 @@ class ServerConfig(ConfigParser):
 def run_server(dispatcher: RemoteDispatcher):
     """Run the server."""
     try:
-        print("Start the server. Press 'CTRL + C' to terminate the server.")
+        print("Start the server. To terminate the server, press 'CTRL + C'.")
         dispatcher.start()
     except KeyboardInterrupt:
         print("Terminate the server.")

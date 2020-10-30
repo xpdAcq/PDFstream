@@ -6,6 +6,7 @@ import uuid
 from pathlib import Path
 
 import databroker
+import matplotlib.pyplot as plt
 import numpy
 import numpy as np
 import pyFAI
@@ -17,6 +18,8 @@ from pkg_resources import resource_filename
 
 from pdfstream.io import load_img, load_array
 from pdfstream.pipeline.composer import gen_stream
+
+plt.ioff()
 
 NI_PONI_FILE = resource_filename('tests', 'test_data/Ni_poni_file.poni')
 NI_GR_FILE = resource_filename('tests', 'test_data/Ni_gr_file.gr')
