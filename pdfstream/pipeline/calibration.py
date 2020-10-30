@@ -11,7 +11,6 @@ from tifffile import TiffWriter
 import pdfstream.pipeline.from_descriptor as fd
 import pdfstream.pipeline.from_event as fe
 import pdfstream.pipeline.from_start as fs
-from pdfstream.vend.formatters import SpecialStr
 from .analysis import BasicConfig
 from .export import BasicExportConfig
 
@@ -36,13 +35,26 @@ class CalibrationConfig(BasicConfig, BasicExportConfig):
         return self.get("METADATA", "calibrant_key")
 
     @property
-    def calib_dir(self):
-        folder = self.get("CALIBRATION", "calib_dir")
-        return self.tiff_base.joinpath(folder)
+    def calib_base(self):
+        section = self["CALIBRATION"]
+        dir_path = section.get("calib_base")
+        if not dir_path:
+            raise Error("Missing tiff_base in configuration.")
+        path = Path(dir_path)
+        return path
+
+    @calib_base.setter
+    def calib_base(self, value: str):
+        self.set("CALIBRATION", "calib_base", value)
 
     @property
-    def file_name(self):
-        return SpecialStr(self.get("CALIBRATION", "file_name"))
+    def calib_tiff_dir(self):
+        dir_path = self.tiff_base.joinpath("calib")
+        return dir_path
+
+    @property
+    def poni_file(self):
+        return self.get("CALIBRATION", "poni_file")
 
 
 class Calibration(CallbackBase):
@@ -54,7 +66,8 @@ class Calibration(CallbackBase):
         self.cache = dict()
         self.db = self.config.raw_db if raw_db is None else raw_db
         self.test = test
-        self.config.calib_dir.mkdir()
+        self.config.calib_tiff_dir.mkdir(exist_ok=True, parents=True)
+        self.config.calib_base.mkdir(exist_ok=True, parents=True)
 
     def start(self, doc):
         super(Calibration, self).start(doc)
@@ -91,10 +104,8 @@ class Calibration(CallbackBase):
 
     def stop(self, doc):
         super(Calibration, self).stop(doc)
-        tiff_path = self.config.calib_dir.joinpath(
-            self.config.file_name.format(start=self.cache["start"])
-        ).with_suffix(".tiff")
-        poni_path = tiff_path.with_suffix(".poni")
+        poni_path = self.config.calib_base.joinpath(self.config.poni_file)
+        tiff_path = self.config.calib_tiff_dir.joinpath("{}-calib.tiff".format(self.cache["start"]["uid"]))
         calc_image_and_save(
             self.cache["img_sum"],
             self.cache["img_num"],
@@ -103,7 +114,6 @@ class Calibration(CallbackBase):
         )
         run_calibration_gui(
             tiff_path,
-            self.config.calib_dir,
             poni_path,
             **self.cache["calib_info"],
             test=self.test
@@ -124,8 +134,7 @@ def calc_image_and_save(img_sum: np.ndarray, img_num: int, dk_img: tp.Union[None
 
 def run_calibration_gui(
     tiff_file: Path,
-    directory: Path,
-    filename: Path,
+    poni_file: Path,
     *,
     wavelength: float = "",
     calibrant: str = "",
@@ -133,14 +142,14 @@ def run_calibration_gui(
     test: bool = False
 ) -> int:
     """Run the gui of calibration."""
-    args = ["pyFAI-calib2", "--poni", str(directory.joinpath(filename))]
+    args = ["pyFAI-calib2", "--poni", str(poni_file)]
     if wavelength:
         args.extend(["--wavelength", wavelength])
     if calibrant:
         args.extend(["--calibrant", calibrant])
     if detector:
         args.extend(["--detector", detector])
-    args.append(str(directory.joinpath(tiff_file)))
+    args.append(str(tiff_file))
     if test:
         return 0
     cp = subprocess.run(args)
