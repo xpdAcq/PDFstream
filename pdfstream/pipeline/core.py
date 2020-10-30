@@ -12,14 +12,21 @@ from .visualization import VisConfig, Visualizer
 
 class XPDConfig(AnalysisConfig, VisConfig, ExportConfig, CalibrationConfig):
     """The configuration for the xpd data reduction. It consists of analysis, visualization and exportation."""
-    pass
+
+    @property
+    def an_db(self) -> tp.Union[None, Broker]:
+        name = self.get("DATABASE", "an_db", fallback=None)
+        if name:
+            from databroker import catalog
+            return catalog[name]
+        return None
 
 
 class XPDRouter(RunRouter):
     """A router that contains the callbacks for the xpd data reduction."""
 
-    def __init__(self, config: XPDConfig, *, raw_db: Broker = None):
-        factory = XPDFactory(config, raw_db=raw_db)
+    def __init__(self, config: XPDConfig, *, raw_db: Broker = None, an_db: Broker = None):
+        factory = XPDFactory(config, raw_db=raw_db, an_db=an_db)
         super(XPDRouter, self).__init__(
             [factory],
             handler_registry={"NPY_SEQ": NumpySeqHandler}
@@ -29,9 +36,13 @@ class XPDRouter(RunRouter):
 class XPDFactory:
     """The factory to generate callback for xpd data reduction."""
 
-    def __init__(self, config: XPDConfig, *, raw_db: Broker = None):
+    def __init__(self, config: XPDConfig, *, raw_db: Broker = None, an_db: Broker = None):
         self.config = config
         self.analysis = AnalysisStream(config, raw_db=raw_db)
+        if an_db is not None:
+            self.analysis.subscribe(an_db.v1.insert)
+        if self.config.an_db is not None:
+            self.analysis.subscribe(self.config.an_db.v1.insert)
         self.analysis.subscribe(Exporter(config))
         self.analysis.subscribe(Visualizer(config))
         self.calibration = Calibration(config, raw_db=raw_db)

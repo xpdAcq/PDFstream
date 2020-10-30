@@ -44,7 +44,7 @@ def test_make_and_run(db_with_dark_and_light, proxy, tmpdir):
     thread = Thread(target=interrupt, args=(10,))
     thread.start()
     process.start()
-    mod.make_and_run(fn, test_tiff_base=str(tmpdir), test_an_db=an_db, test_raw_db=raw_db)
+    mod.make_and_run(fn, test_file_base=str(tmpdir), test_an_db=an_db, test_raw_db=raw_db)
     thread.join()
     process.join()
     folder = Path(str(tmpdir))

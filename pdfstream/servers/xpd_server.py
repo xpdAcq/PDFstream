@@ -22,9 +22,9 @@ class XPDServerConfig(XPDConfig, ServerConfig):
 
 
 class XPDServer(RemoteDispatcher):
-    def __init__(self, config: XPDServerConfig, *, raw_db: Broker = None, an_db: Broker = None):
+    def __init__(self, config: XPDServerConfig, *, raw_db: Broker = None):
         super(XPDServer, self).__init__(config.address, prefix=config.prefix)
-        self.subscribe(XPDRouter(config, raw_db=raw_db, an_db=an_db))
+        self.subscribe(XPDRouter(config, raw_db=raw_db))
         self.subscribe(StartStopCallback())
 
 
@@ -32,7 +32,7 @@ def make_and_run(
     cfg: str,
     *,
     suppress_warning: bool = True,
-    test_tiff_base: str = None,
+    test_file_base: str = None,
     test_raw_db: Broker = None,
     test_an_db: Broker = None
 ):
@@ -50,14 +50,14 @@ def make_and_run(
     suppress_warning :
         If True, all warning will be suppressed. Turn it to False when running in a test.
 
-    test_tiff_base :
-        A test tiff base option for developers.
+    test_file_base :
+        A test tiff base and test calib base option for developers. Usually, a temporary folder.
 
     test_raw_db :
-        A test database option for developers.
+        A test database option for developers. Usually, a temporary database.
 
     test_an_db :
-        A test database option for developers.
+        A test database option for developers.  Usually, a temporary database.
     """
     if suppress_warning:
         import warnings
@@ -65,8 +65,9 @@ def make_and_run(
     cfg_file = CFG.get(cfg, cfg)
     config = XPDServerConfig()
     config.read(cfg_file)
-    if test_tiff_base:
-        config.tiff_base = test_tiff_base
+    if test_file_base:
+        config.tiff_base = test_file_base
+        config.calib_base = test_file_base
     server = XPDServer(config, raw_db=test_raw_db, an_db=test_an_db)
     install_qt_kicker(server.loop)
     run_server(server)

@@ -32,14 +32,6 @@ class ExportConfig(BasicExportConfig):
     """The configuration of exporter."""
 
     @property
-    def an_db(self):
-        name = self.get("DATABASE", "an_db", fallback=None)
-        if name:
-            from databroker import catalog
-            return catalog[name]
-        return None
-
-    @property
     def run_template(self):
         return SpecialStr(self.get("DIR SETTING", "template"))
 
