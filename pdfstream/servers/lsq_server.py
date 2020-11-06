@@ -1,17 +1,17 @@
-import typing as tp
 from collections import namedtuple
-from configparser import ConfigParser
-from pathlib import Path
 
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy.optimize as opt
+import typing as tp
 from bluesky.callbacks.core import CallbackBase
 from bluesky.callbacks.stream import LiveDispatcher
 from bluesky.callbacks.zmq import RemoteDispatcher
+from configparser import ConfigParser
 from diffpy.pdfgetx import PDFGetter, PDFConfig
 from event_model import RunRouter, unpack_event_page
 from ophyd.sim import NumpySeqHandler
+from pathlib import Path
 from xpdview.waterfall import Waterfall
 
 import pdfstream.units as units
@@ -95,6 +95,16 @@ class LSQServer(RemoteDispatcher):
     def __init__(self, config: LSQServerConfig):
         super(LSQServer, self).__init__(config.address, prefix=config.prefix)
         self.subscribe(LSQRunRouter(config))
+
+    @classmethod
+    def from_config(cls, config: LSQServerConfig):
+        return LSQServer(config)
+
+    @classmethod
+    def from_cfg_file(cls, cfg_file: str):
+        config = LSQServerConfig()
+        config.read(cfg_file)
+        return LSQServer(config)
 
 
 class LSQRunRouter(RunRouter):
@@ -361,19 +371,8 @@ class LiveWaterfall(CallbackBase):
         self.waterfall.update(key_list=[key], int_data_list=[int_data])
 
 
-def make_and_run(cfg_file: str = "~/.config/acq/lsq_server.ini", *, config: ServerConfig = None):
-    """Make and run the LSQ server.
-
-    Parameters
-    ----------
-    cfg_file :
-        The configuration file of the server.
-
-    config :
-        The configuration instance for the server. Used in testing.
-    """
-    if config is None:
-        config = ServerConfig()
-        config.read(cfg_file)
-    server = LSQServer(config)
+def make_and_run(cfg_file: str = "~/.config/acq/lsq_server.ini"):
+    """Make and run LSQ server."""
+    server = LSQServer.from_cfg_file(cfg_file)
     run_server(server)
+    return
