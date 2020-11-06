@@ -16,6 +16,7 @@ from xpdview.waterfall import Waterfall
 
 import pdfstream.units as units
 from .config import ServerConfig
+from .tools import run_server
 
 
 class LSQConfig(ConfigParser):
@@ -358,3 +359,21 @@ class LiveWaterfall(CallbackBase):
 
     def update(self, key: str, int_data: tp.Tuple[np.ndarray, np.ndarray]):
         self.waterfall.update(key_list=[key], int_data_list=[int_data])
+
+
+def make_and_run(cfg_file: str = "~/.config/acq/lsq_server.ini", *, config: ServerConfig = None):
+    """Make and run the LSQ server.
+
+    Parameters
+    ----------
+    cfg_file :
+        The configuration file of the server.
+
+    config :
+        The configuration instance for the server. Used in testing.
+    """
+    if config is None:
+        config = ServerConfig()
+        config.read(cfg_file)
+    server = LSQServer(config)
+    run_server(server)
