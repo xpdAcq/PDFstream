@@ -136,7 +136,7 @@ def auto_text(text: str, ax: Axes, text_xy: tuple = None, index: int = -1):
     lines = ax.get_lines()
     if len(lines) == 0:
         return ax
-    vis_data = lines[index].get_data()
+    vis_data = lines[index].get_interp_data()
     color = lines[index].get_color()
     if text_xy is None:
         text_xy = _TEXT_XY

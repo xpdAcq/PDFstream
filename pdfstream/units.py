@@ -9,7 +9,7 @@ DEG = r"deg"
 RAD = r"rad"
 ARB = "a. u."
 
-LABELS = namedtuple("LABELS", ["xy", "chi", "iq", "sq", "fq", "fgr"])
+LABELS = namedtuple("LABELS", ["xy", "chi", "iq", "sq", "fq", "gr", "fgr"])
 LABELS.xy = (r"Q ($\mathrm{\AA}^{-1}$)", r"I (A. U.)")
 LABELS.chi = (r"Q ($\mathrm{\AA}^{-1}$)", r"I (A. U.)")
 LABELS.iq = (r"Q ($\mathrm{\AA}^{-1}$)", r"I (A. U.)")

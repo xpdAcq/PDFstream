@@ -10,7 +10,7 @@ from databroker.v2 import Broker
 from event_model import RunRouter
 from xpdview.waterfall import Waterfall
 
-from pdfstream.pipeline.units import LABELS
+from pdfstream.units import LABELS
 
 
 class VisConfig(ConfigParser):

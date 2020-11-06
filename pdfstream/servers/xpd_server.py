@@ -7,7 +7,8 @@ from pdfstream.pipeline.callbacks import StartStopCallback
 from pdfstream.pipeline.core import XPDConfig
 from pdfstream.pipeline.core import XPDRouter
 from pdfstream.vend.qt_kicker import install_qt_kicker
-from .tools import ServerConfig, run_server
+from .config import ServerConfig
+from .tools import run_server
 
 CFG = {
     "XPD": resource_filename("pdfstream", "configs/pdf_xpdserver.ini"),
