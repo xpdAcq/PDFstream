@@ -15,8 +15,8 @@ from pathlib import Path
 from xpdview.waterfall import Waterfall
 
 import pdfstream.units as units
-from .config import ServerConfig
-from .tools import run_server
+from pdfstream.servers.config import ServerConfig
+from pdfstream.servers.tools import run_server
 
 
 class LSQConfig(ConfigParser):
@@ -412,3 +412,9 @@ def make_and_run(cfg_file: str = "~/.config/acq/lsq_server.ini"):
     server = LSQServer.from_cfg_file(cfg_file)
     run_server(server)
     return
+
+
+if __name__ == "__main__":
+    import fire
+
+    fire.Fire(make_and_run)
