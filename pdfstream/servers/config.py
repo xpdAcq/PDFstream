@@ -5,12 +5,12 @@ class ServerConfig(ConfigParser):
     """The configuration for the server."""
 
     @property
-    def address(self):
-        return self.get("PROXY", "address")
+    def host(self):
+        return self.get("PROXY", "host")
 
     @property
-    def dispatcher_address(self):
-        return self.address, self.out_port
+    def address(self):
+        return self.host, self.out_port
 
     @property
     def in_port(self):

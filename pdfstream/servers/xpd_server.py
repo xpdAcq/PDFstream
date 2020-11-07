@@ -24,7 +24,7 @@ class XPDServerConfig(XPDConfig, ServerConfig):
 
 class XPDServer(RemoteDispatcher):
     def __init__(self, config: XPDServerConfig, *, raw_db: Broker = None, an_db: Broker = None):
-        super(XPDServer, self).__init__(config.dispatcher_address, prefix=config.prefix)
+        super(XPDServer, self).__init__(config.address, prefix=config.prefix)
         self.subscribe(XPDRouter(config, raw_db=raw_db, an_db=an_db))
         self.subscribe(StartStopCallback())
         install_qt_kicker(self.loop)

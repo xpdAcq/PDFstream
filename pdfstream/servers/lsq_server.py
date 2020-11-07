@@ -22,6 +22,10 @@ from .tools import run_server
 class LSQConfig(ConfigParser):
     """The configuration to make LSQ run router."""
 
+    def __init__(self, *args, **kwargs):
+        super(LSQConfig, self).__init__(*args, **kwargs)
+        self._figs = list()
+
     @property
     def data_config(self):
         section = self["DATA KEYS"]
@@ -54,7 +58,7 @@ class LSQConfig(ConfigParser):
         section = self["FITTING"]
         tup = namedtuple("fit_config", ["p"])
         tup.p = section.getfloat("p")
-        return tup.p
+        return tup
 
     @property
     def trans_config(self):
@@ -81,6 +85,16 @@ class LSQConfig(ConfigParser):
     @property
     def verbose(self):
         return self.getint("OTHER", "verbose")
+
+    @property
+    def figs(self):
+        return self._figs
+
+    def push_fig(self, fig):
+        self._figs.append(fig)
+
+    def pop_fig(self, fig):
+        self._figs.pop(fig)
 
 
 class LSQServerConfig(LSQConfig, ServerConfig):
@@ -121,7 +135,7 @@ class LSQFactory:
     def __init__(self, config: LSQConfig):
         self.config = config
         self.decomposer = LiveDecomposer(config)
-        self.decomposer.subscribe(Visualiser())
+        self.decomposer.subscribe(Visualiser(config))
         self.decomposer.subscribe(Exporter(config))
 
     def __call__(self, name, doc):
@@ -159,18 +173,18 @@ class LiveDecomposer(LiveDispatcher):
             if self.config.verbose > 0:
                 print("Process data from the {}.".format(self.cache["comp_id"]))
             data = process_data(
-                doc["data"],
-                self.memory,
-                self.cache["lsq_comps"],
-                self.cache["composition"],
-                self.config
+                data=doc["data"],
+                memory=self.memory,
+                lsq_comps=self.cache["lsq_comps"],
+                composition=self.cache["composition"],
+                config=self.config
             )
             self.process_event({"data": data, 'descriptor': doc["descriptor"]})
         # if components, record the interpreted data in memory
         elif self.cache["lsq_type"] == "component":
             if self.config.verbose > 0:
                 print("Record data from the {} in memory.".format(self.cache["comp_id"]))
-            self.memory[self.component_id] = get_interp_data(doc["data"], self.config)
+            self.memory[self.cache["comp_id"]] = get_interp_data(doc["data"], self.config)
         # else do nothing
         else:
             pass
@@ -191,24 +205,22 @@ def process_data(
     # the interpolated target y data
     y = get_interp_data(data, config)
     # the component matrix where each row is a component data
-    x = np.stack([memory[k] for k in lsq_comps])
+    x = np.stack([memory[k] for k in lsq_comps], axis=0)
     # the model to decompose to a weight and the component matrix.
-    model = Model(y, x, config.fit_config.p)
-    result = opt.least_squares(model.cost_func, x0=model.x0, bounds=config.fit_config.bounds)
-    yres = model.cost_func(result.x)
+    model = Model(y, x, config.fit_config.p, xgrid=config.interp_config.x)
+    opt.least_squares(model.cost_func, x0=model.x0)
     # transfer the data to PDF
     pdfconfig = PDFConfig(**config.trans_config, composition=composition)
     pdfgetter = PDFGetter(pdfconfig)
-    xres = config.fit_config.x
-    pdfgetter(xres, yres)
+    pdfgetter(model.xgrid, model.yres)
     return {
-        "y": y,
-        "x": x,
-        "w": res.x,
-        "xres": config.fit_config.x,
-        "yres": yres,
+        "y": model.y,
+        "x": model.x,
+        "w": model.w,
+        "xgrid": model.xgrid,
+        "yres": model.yres,
         "r": pdfgetter.gr[0],
-        "g": pdfconfig.gr[1]
+        "g": pdfgetter.gr[1]
     }
 
 
@@ -216,7 +228,7 @@ def get_interp_data(data: tp.Dict[str, np.ndarray], config: LSQConfig) -> np.nda
     """Get the x and y data from the data in event."""
     xp = data[config.data_config.x]
     yp = data[config.data_config.y]
-    x = config.fit_config.x
+    x = config.interp_config.x
     y = np.interp(x, xp, yp)
     return y
 
@@ -225,27 +237,31 @@ class Model:
     """The calculate Y - P(wX^T). Y is the a vector, P is a mapping from vector to vector, Pv = v'. v'_i =
     \sqrt(p) v_i if v_i > 0 else v'_i = \sqrt(1 - p) v_i. w is the vector and X is a matrix."""
 
-    def __init__(self, y: np.ndarray, x: np.ndarray, p: float):
-        self._y = y
-        self._x = x
-        self._pos = np.sqrt(p)
-        self._neg = np.sqrt(1 - p)
+    def __init__(self, y: np.ndarray, x: np.ndarray, p: float, xgrid=None):
+        self.y = y
+        self.x = x
+        self.ycalc = None
+        self.w = None
+        self.yres = None
+        self.xgrid = xgrid
+        self.pos = np.sqrt(p)
+        self.neg = np.sqrt(1 - p)
 
     def cost_func(self, w: np.ndarray):
-        y = np.inner(w, x)
-        yres = self._y - y
-        mask = yres > 0.
-        return p * yres[mask] + (1. - p) * yres[~mask]
+        self.w = w
+        self.ycalc = np.dot(w, self.x)
+        self.yres = self.y - self.ycalc
+        return np.where(self.yres > 0, self.pos * self.yres, self.neg * self.yres)
 
     @property
     def x0(self):
-        return np.zeros(self._x.shape[0])
+        return np.zeros(self.x.shape[0])
 
 
 class Visualiser(RunRouter):
     """The callback to visualize documents from the decomposer."""
 
-    def __init__(self):
+    def __init__(self, config: LSQConfig):
         factory = VisualiserFactory(config)
         super(Visualiser, self).__init__([factory], handler_registry={"NPY_SEQ": NumpySeqHandler})
 
@@ -255,9 +271,25 @@ class VisualiserFactory:
 
     def __init__(self, config: LSQConfig):
         self.config = config
+        if len(self.config.figs) > 0:
+            figs = self.config.figs
+        else:
+            figs = [None, None]
         self.callbacks = [
-            LiveWaterfall("xres", "yres", xlabel=units.LABELS.iq[0], ylabel=units.LABELS.iq[1]),
-            LiveWaterfall("r", "g", xlabel=units.LABELS.gr[0], ylabel=units.LABELS.gr[1])
+            LiveWaterfall(
+                "xgrid",
+                "yres",
+                xlabel=units.LABELS.iq[0],
+                ylabel=units.LABELS.iq[1],
+                fig=figs[0]
+            ),
+            LiveWaterfall(
+                "r",
+                "g",
+                xlabel=units.LABELS.gr[0],
+                ylabel=units.LABELS.gr[1],
+                fig=figs[1]
+            )
         ]
 
     def __call__(self, name, doc):
@@ -283,7 +315,7 @@ class ExporterFactory:
             NumpyExporter(
                 str(config.export_config.directory),
                 file_prefix=config.export_config.file_prefix,
-                data_keys=["y", "x", "w", "xres", "yres", "r", "g"]
+                data_keys=["y", "x", "w", "xgrid", "yres", "r", "g"]
             )
         ]
 
@@ -329,7 +361,7 @@ class NumpyExporter(CallbackBase):
 class LiveWaterfall(CallbackBase):
     """A live water plot for the one dimensional data."""
 
-    def __init__(self, x: str, y: str, *, xlabel: str, ylabel: str, **kwargs):
+    def __init__(self, x: str, y: str, *, xlabel: str, ylabel: str, fig=None, **kwargs):
         """Initiate the instance.
 
         Parameters
@@ -346,13 +378,17 @@ class LiveWaterfall(CallbackBase):
         ylabel :
             The tuple of the labels of y shown in the figure.
 
+        fig :
+            The figure to plot.
+
         kwargs :
             The kwargs for the matplotlib.pyplot.plot.
         """
         super().__init__()
         self.x = x
         self.y = y
-        fig = plt.figure()
+        if fig is None:
+            fig = plt.figure()
         self.waterfall = Waterfall(fig=fig, unit=(xlabel, ylabel), **kwargs)
         fig.show()
 
