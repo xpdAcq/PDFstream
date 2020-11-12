@@ -12,7 +12,7 @@ from ophyd.sim import NumpySeqHandler
 from pathlib import Path
 
 import pdfstream.units as units
-from pdfstream.pipeline.callbacks import NumpyExporter
+from pdfstream.callbacks.basic import NumpyExporter
 from pdfstream.servers.config import ServerConfig
 from pdfstream.servers.tools import run_server
 

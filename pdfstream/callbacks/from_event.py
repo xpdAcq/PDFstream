@@ -3,7 +3,7 @@ import numpy
 import typing
 from numpy import ndarray
 
-from .errors import ValueNotFoundError
+from pdfstream.errors import ValueNotFoundError
 
 
 def get_image_from_event(

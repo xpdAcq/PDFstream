@@ -1,6 +1,6 @@
 import typing as tp
 
-from .errors import ValueNotFoundError
+from pdfstream.errors import ValueNotFoundError
 
 
 def find_one_array(data_keys: dict) -> str:

@@ -1,8 +1,8 @@
 from pkg_resources import resource_filename
 
-import pdfstream.pipeline.calibration as mod
+import pdfstream.callbacks.calibration as mod
 
-fn = resource_filename("tests", "configs/xpd.ini")
+fn = resource_filename("tests", "configs/xpd_server.ini")
 
 
 def test_Calibration(db_with_dark_and_calib, tmpdir):

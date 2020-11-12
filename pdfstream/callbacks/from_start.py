@@ -1,8 +1,7 @@
 """Get data from the start and database."""
 import itertools
-import typing
-
 import numpy
+import typing
 from databroker import Broker
 from databroker.core import BlueskyRunFromGenerator
 from numpy import ndarray

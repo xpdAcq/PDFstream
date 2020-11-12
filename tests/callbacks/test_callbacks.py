@@ -1,4 +1,4 @@
-import pdfstream.pipeline.callbacks as mod
+import pdfstream.callbacks.basic as mod
 
 
 def test_StartStopCallback(simple_stream):

@@ -1,20 +1,35 @@
 """The analysis server. Process raw image to PDF."""
+import typing as tp
 from bluesky.callbacks.zmq import RemoteDispatcher
 from databroker.v2 import Broker
+from event_model import RunRouter
+from ophyd.sim import NumpySeqHandler
 from pkg_resources import resource_filename
 
-from pdfstream.pipeline.callbacks import StartStopCallback
-from pdfstream.pipeline.core import XPDConfig
-from pdfstream.pipeline.core import XPDRouter
+from pdfstream.callbacks.basic import StartStopCallback
 from pdfstream.vend.qt_kicker import install_qt_kicker
 from .config import ServerConfig
 from .tools import run_server
+from ..callbacks.analysis import AnalysisConfig, VisConfig, ExportConfig, AnalysisStream, Exporter, Visualizer
+from ..callbacks.calibration import CalibrationConfig, Calibration
 
 CFG = {
     "XPD": resource_filename("pdfstream", "configs/pdf_xpdserver.ini"),
     "PDF": resource_filename("pdfstream", "configs/xpd_xpdserver.ini"),
     "TEST": resource_filename("pdfstream", "configs/test_xpdserver.ini"),
 }
+
+
+class XPDConfig(AnalysisConfig, VisConfig, ExportConfig, CalibrationConfig):
+    """The configuration for the xpd data reduction. It consists of analysis, visualization and exportation."""
+
+    @property
+    def an_db(self) -> tp.Union[None, Broker]:
+        name = self.get("DATABASE", "an_db", fallback=None)
+        if name:
+            from databroker import catalog
+            return catalog[name]
+        return None
 
 
 class XPDServerConfig(XPDConfig, ServerConfig):
@@ -76,3 +91,42 @@ def make_and_run(
     config = load_config(cfg_file, test_file_base=test_file_base)
     server = XPDServer(config, raw_db=test_raw_db, an_db=test_an_db)
     run_server(server)
+
+
+class XPDFactory:
+    """The factory to generate callback for xpd data reduction."""
+
+    def __init__(self, config: XPDConfig, *, raw_db: Broker = None, an_db: Broker = None):
+        self.config = config
+        self.analysis = AnalysisStream(config, raw_db=raw_db)
+        if an_db is not None:
+            self.analysis.subscribe(an_db.v1.insert)
+        if self.config.an_db is not None:
+            self.analysis.subscribe(self.config.an_db.v1.insert)
+        self.analysis.subscribe(Exporter(config))
+        self.analysis.subscribe(Visualizer(config))
+        self.calibration = Calibration(config, raw_db=raw_db)
+
+    def __call__(self, name: str, doc: dict) -> tp.Tuple[list, list]:
+        if name == "start":
+            if doc.get(self.config.dark_identifier):
+                # dark frame run
+                return [], []
+            elif doc.get(self.config.calib_identifier):
+                # calibration run
+                return [self.calibration], []
+            else:
+                # light frame run
+                return [self.analysis], []
+        return [], []
+
+
+class XPDRouter(RunRouter):
+    """A router that contains the callbacks for the xpd data reduction."""
+
+    def __init__(self, config: XPDConfig, *, raw_db: Broker = None, an_db: Broker = None):
+        factory = XPDFactory(config, raw_db=raw_db, an_db=an_db)
+        super(XPDRouter, self).__init__(
+            [factory],
+            handler_registry={"NPY_SEQ": NumpySeqHandler}
+        )

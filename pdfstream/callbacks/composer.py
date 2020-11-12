@@ -1,9 +1,8 @@
 """Event model run composer from files."""
+import numpy as np
 import time
 import typing as tp
 import uuid
-
-import numpy as np
 from event_model import compose_run, ComposeDescriptorBundle
 
 

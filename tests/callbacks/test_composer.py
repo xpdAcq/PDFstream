@@ -1,6 +1,6 @@
 import pytest
 
-import pdfstream.pipeline.composer as mod
+import pdfstream.callbacks.composer as mod
 
 
 @pytest.fixture

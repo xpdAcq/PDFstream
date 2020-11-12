@@ -1,23 +1,22 @@
 """Configuration of pytest."""
-import json
-import multiprocessing
-import time
-import uuid
-from pathlib import Path
-
 import databroker
+import json
 import matplotlib.pyplot as plt
+import multiprocessing
 import numpy
 import numpy as np
 import pyFAI
 import pytest
+import time
+import uuid
 from bluesky.callbacks.zmq import Proxy
 from databroker.v2 import Broker
 from diffpy.pdfgetx import PDFConfig, PDFGetter
+from pathlib import Path
 from pkg_resources import resource_filename
 
+from pdfstream.callbacks.composer import gen_stream
 from pdfstream.io import load_img, load_array
-from pdfstream.pipeline.composer import gen_stream
 
 plt.ioff()
 

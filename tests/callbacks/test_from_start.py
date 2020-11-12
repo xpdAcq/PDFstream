@@ -2,7 +2,7 @@ import numpy as np
 import pytest
 from diffpy.pdfgetx import PDFConfig
 
-import pdfstream.pipeline.from_start as mod
+import pdfstream.callbacks.from_start as mod
 
 
 def test_query_ai(db_with_dark_and_light):
