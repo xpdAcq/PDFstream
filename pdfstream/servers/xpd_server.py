@@ -4,7 +4,6 @@ from bluesky.callbacks.zmq import RemoteDispatcher
 from databroker.v2 import Broker
 from event_model import RunRouter
 from ophyd.sim import NumpySeqHandler
-from pkg_resources import resource_filename
 
 from pdfstream.callbacks.basic import StartStopCallback
 from pdfstream.vend.qt_kicker import install_qt_kicker
@@ -12,12 +11,6 @@ from .config import ServerConfig
 from .tools import run_server
 from ..callbacks.analysis import AnalysisConfig, VisConfig, ExportConfig, AnalysisStream, Exporter, Visualizer
 from ..callbacks.calibration import CalibrationConfig, Calibration
-
-CFG = {
-    "XPD": resource_filename("pdfstream", "configs/pdf_xpdserver.ini"),
-    "PDF": resource_filename("pdfstream", "configs/xpd_xpdserver.ini"),
-    "TEST": resource_filename("pdfstream", "configs/test_xpdserver.ini"),
-}
 
 
 class XPDConfig(AnalysisConfig, VisConfig, ExportConfig, CalibrationConfig):
