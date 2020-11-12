@@ -1,9 +1,8 @@
 import typing as tp
 from configparser import ConfigParser
 from configparser import Error
-from pathlib import Path
-
 from event_model import RunRouter
+from pathlib import Path
 from suitcase.csv import Serializer as CSVSerializer
 from suitcase.json_metadata import Serializer as JsonSerializer
 from suitcase.tiff_series import Serializer as TiffSerializer

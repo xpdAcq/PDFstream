@@ -1,15 +1,10 @@
 import typing as tp
-from configparser import ConfigParser
-
-import matplotlib.pyplot as plt
-import numpy as np
 from bluesky.callbacks.best_effort import BestEffortCallback
 from bluesky.callbacks.broker import LiveImage
-from bluesky.callbacks.core import CallbackBase
-from databroker.v2 import Broker
+from configparser import ConfigParser
 from event_model import RunRouter
-from xpdview.waterfall import Waterfall
 
+from pdfstream.pipeline.callbacks import LiveMaskedImage, LiveWaterfall
 from pdfstream.units import LABELS
 
 
@@ -136,64 +131,3 @@ class VisFactory:
         return self.cb_lst, []
 
 
-class LiveMaskedImage(LiveImage):
-    """Live image show of a image with a mask."""
-
-    def __init__(self, field: str, msk_field: str, *, cmap: str, norm: tp.Callable = None,
-                 limit_func: tp.Callable = None, auto_draw: bool = True, interpolation: str = None,
-                 window_title: str = None, db: Broker = None):
-        self.msk_field = msk_field
-        super(LiveMaskedImage, self).__init__(
-            field, cmap=cmap, norm=norm, limit_func=limit_func,
-            auto_redraw=auto_draw, interpolation=interpolation, window_title=window_title, db=db
-        )
-
-    def event(self, doc):
-        super(LiveImage, self).event(doc)
-        data = np.ma.masked_array(doc["data"][self.field], doc["data"][self.msk_field])
-        self.update(data)
-
-
-class LiveWaterfall(CallbackBase):
-    """A live water plot for the one dimensional data."""
-
-    def __init__(self, x: str, y: str, *, xlabel: str, ylabel: str, **kwargs):
-        """Initiate the instance.
-
-        Parameters
-        ----------
-        x :
-            The key of the independent variable.
-
-        y :
-            The key of the dependent variable.
-
-        xlabel :
-            The tuple of the labels of x shown in the figure.
-
-        ylabel :
-            The tuple of the labels of y shown in the figure.
-
-        kwargs :
-            The kwargs for the matplotlib.pyplot.plot.
-        """
-        super().__init__()
-        self.x = x
-        self.y = y
-        fig = plt.figure()
-        self.waterfall = Waterfall(fig=fig, unit=(xlabel, ylabel), **kwargs)
-        fig.show()
-
-    def start(self, doc):
-        super(LiveWaterfall, self).start(doc)
-        self.waterfall.clear()
-
-    def event(self, doc):
-        super(LiveWaterfall, self).event(doc)
-        x_data = doc["data"][self.x]
-        y_data = doc["data"][self.y]
-        key = doc['seq_num']
-        self.update(key, (x_data, y_data))
-
-    def update(self, key: str, int_data: tp.Tuple[np.ndarray, np.ndarray]):
-        self.waterfall.update(key_list=[key], int_data_list=[int_data])

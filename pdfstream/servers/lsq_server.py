@@ -1,20 +1,18 @@
 from collections import namedtuple
 
-import matplotlib.pyplot as plt
 import numpy as np
 import scipy.optimize as opt
 import typing as tp
-from bluesky.callbacks.core import CallbackBase
 from bluesky.callbacks.stream import LiveDispatcher
 from bluesky.callbacks.zmq import RemoteDispatcher
 from configparser import ConfigParser
 from diffpy.pdfgetx import PDFGetter, PDFConfig
-from event_model import RunRouter, unpack_event_page
+from event_model import RunRouter
 from ophyd.sim import NumpySeqHandler
 from pathlib import Path
-from xpdview.waterfall import Waterfall
 
 import pdfstream.units as units
+from pdfstream.pipeline.callbacks import NumpyExporter
 from pdfstream.servers.config import ServerConfig
 from pdfstream.servers.tools import run_server
 
@@ -323,88 +321,6 @@ class ExporterFactory:
         if name == "start" and doc.get(self.config.data_config.lsq_type) == "target":
             return self.callbacks, []
         return [], []
-
-
-class NumpyExporter(CallbackBase):
-    """An exporter to export the array data in .npy file."""
-
-    def __init__(self, directory: str, file_prefix: str, data_keys: tp.List[str]):
-        super(NumpyExporter, self).__init__()
-        self.directory = Path(directory)
-        self.directory.mkdir(parents=True, exist_ok=True)
-        self.file_template = file_prefix + "{data_key}-{event[seq_num]}.npy"
-        self.data_keys = data_keys
-        self.cache = dict()
-
-    def start(self, doc):
-        self.cache = dict()
-        self.cache["start"] = doc
-        super(NumpyExporter, self).start(doc)
-
-    def event_page(self, doc):
-        for event in unpack_event_page(doc):
-            self.event(event)
-
-    def event(self, doc):
-        for data_key in self.data_keys:
-            arr: np.ndarray = doc["data"][data_key]
-            filename = self.file_template.format(start=self.cache["start"], event=doc, data_key=data_key)
-            filepath = self.directory.joinpath(filename)
-            np.save(str(filepath), arr)
-        super(NumpyExporter, self).event(doc)
-
-    def stop(self, doc):
-        self.cache = dict()
-        super(NumpyExporter, self).stop(doc)
-
-
-class LiveWaterfall(CallbackBase):
-    """A live water plot for the one dimensional data."""
-
-    def __init__(self, x: str, y: str, *, xlabel: str, ylabel: str, fig=None, **kwargs):
-        """Initiate the instance.
-
-        Parameters
-        ----------
-        x :
-            The key of the independent variable.
-
-        y :
-            The key of the dependent variable.
-
-        xlabel :
-            The tuple of the labels of x shown in the figure.
-
-        ylabel :
-            The tuple of the labels of y shown in the figure.
-
-        fig :
-            The figure to plot.
-
-        kwargs :
-            The kwargs for the matplotlib.pyplot.plot.
-        """
-        super().__init__()
-        self.x = x
-        self.y = y
-        if fig is None:
-            fig = plt.figure()
-        self.waterfall = Waterfall(fig=fig, unit=(xlabel, ylabel), **kwargs)
-        fig.show()
-
-    def start(self, doc):
-        super(LiveWaterfall, self).start(doc)
-        self.waterfall.clear()
-
-    def event(self, doc):
-        super(LiveWaterfall, self).event(doc)
-        x_data = doc["data"][self.x]
-        y_data = doc["data"][self.y]
-        key = doc['seq_num']
-        self.update(key, (x_data, y_data))
-
-    def update(self, key: str, int_data: tp.Tuple[np.ndarray, np.ndarray]):
-        self.waterfall.update(key_list=[key], int_data_list=[int_data])
 
 
 def make_and_run(cfg_file: str = "~/.config/acq/lsq_server.ini"):
