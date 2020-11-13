@@ -461,7 +461,7 @@ class Visualizer(RunRouter):
             elif isinstance(cb, LiveWaterfall):
                 cb.waterfall.fig.show()
             elif isinstance(cb, SmartScalarPlot):
-                cb.ax.figure.show()
+                cb.show()
         return
 
 

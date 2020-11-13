@@ -145,6 +145,9 @@ class SmartScalarPlot(CallbackBase):
     def __init__(self, y: str, *, ax: Axes = None, ylabel: str = None, **kwargs):
         super(SmartScalarPlot, self).__init__()
         self.y = y
+        if ax is None:
+            fig = plt.figure()
+            ax = fig.add_subplot(111)
         self.ax = ax
         self.ylabel = ylabel
         self.kwargs = kwargs
@@ -159,7 +162,7 @@ class SmartScalarPlot(CallbackBase):
         elif len(indeps) == 2:
             self.callback = LiveScatter(indeps.pop(), indeps.pop(), self.y, ax=self.ax, **self.kwargs)
         else:
-            self.callback = LivePlot(dep, ax=self.ax, **self.kwargs)
+            self.callback = LivePlot(self.y, ax=self.ax, **self.kwargs)
         self.callback.start(doc)
 
     def descriptor(self, doc):
@@ -179,3 +182,6 @@ class SmartScalarPlot(CallbackBase):
     def clear(self):
         self.ax.cla()
         self.callback = None
+
+    def show(self):
+        self.ax.figure.show()

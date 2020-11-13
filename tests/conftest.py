@@ -95,6 +95,23 @@ def simple_stream():
     return gen_stream([{"pe1_image": NI_IMG}], START_DOC)
 
 
+@pytest.fixture(
+    scope="function",
+    params=[
+        {"hints": {}},
+        {"hints": {"dimensions": [(["x0"], "primary")]}},
+        {"hints": {"dimensions": [(["x0"], "primary"), (["x1"], "primary")]}},
+    ]
+)
+def ymax_stream(request):
+    data = [
+        {"ymax": 0, "x0": 0, "x1": 0},
+        {"ymax": 1, "x0": 1, "x1": 1},
+        {"ymax": 2, "x0": 2, "x1": 2}
+    ]
+    return gen_stream(data, request.param)
+
+
 @pytest.fixture(scope="session")
 def db_with_dark_and_light() -> Broker:
     """A database with a dark run and a light run inside. The last one is light and the first one is dark."""
