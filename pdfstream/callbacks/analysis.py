@@ -1,13 +1,14 @@
+import typing as tp
+from configparser import ConfigParser, Error
+from pathlib import Path
+
 import event_model
 import numpy as np
-import typing as tp
 from bluesky.callbacks.best_effort import BestEffortCallback
 from bluesky.callbacks.broker import LiveImage
 from bluesky.callbacks.stream import LiveDispatcher
-from configparser import ConfigParser, Error
 from databroker.v2 import Broker
 from event_model import RunRouter
-from pathlib import Path
 from pyFAI.azimuthalIntegrator import AzimuthalIntegrator
 from suitcase.csv import Serializer as CSVSerializer
 from suitcase.json_metadata import Serializer as JsonSerializer
@@ -27,7 +28,7 @@ except ImportError:
     pass
 
 
-class BasicConfig(ConfigParser):
+class BasicAnalysisConfig(ConfigParser):
     """The basic configuration that is shared by analysis and calibration."""
 
     @property
@@ -55,7 +56,7 @@ class BasicConfig(ConfigParser):
         return self.get("METADATA", "wavelength_key")
 
 
-class AnalysisConfig(BasicConfig):
+class AnalysisConfig(BasicAnalysisConfig):
     """The configuration for analysis callbacks."""
 
     @property

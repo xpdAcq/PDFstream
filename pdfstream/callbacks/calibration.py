@@ -1,20 +1,21 @@
-import event_model
-import numpy as np
 import subprocess
 import typing as tp
-from bluesky.callbacks.core import CallbackBase
 from configparser import Error
-from databroker.v2 import Broker
 from pathlib import Path
+
+import event_model
+import numpy as np
+from bluesky.callbacks.core import CallbackBase
+from databroker.v2 import Broker
 from tifffile import TiffWriter
 
 import pdfstream.callbacks.from_descriptor as fd
 import pdfstream.callbacks.from_event as fe
 import pdfstream.callbacks.from_start as fs
-from .analysis import BasicConfig, BasicExportConfig
+from .analysis import BasicAnalysisConfig, BasicExportConfig
 
 
-class CalibrationConfig(BasicConfig, BasicExportConfig):
+class CalibrationConfig(BasicAnalysisConfig, BasicExportConfig):
     """The configuration of the calibration callbacks."""
 
     @property
