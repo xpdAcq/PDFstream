@@ -11,8 +11,8 @@ fn = resource_filename("tests", "configs/xpd_server.ini")
 
 
 @pytest.mark.parametrize("use_db", [True, False])
-def test_AnalysisStream(db_with_dark_and_light, use_db):
-    db = db_with_dark_and_light
+def test_AnalysisStream(db_with_dark_and_scan, use_db):
+    db = db_with_dark_and_scan
     config = an.AnalysisConfig()
     config.read(fn)
     ld = an.AnalysisStream(config, raw_db=db if use_db else None)
@@ -50,6 +50,7 @@ def test_Exporter(db_with_dark_and_scan, tmpdir):
     assert len(list(tiff_base.rglob("*.tiff"))) > 0
     assert len(list(tiff_base.rglob("*.csv"))) > 0
     assert len(list(tiff_base.rglob("*.json"))) > 0
+    assert len(list(tiff_base.rglob("*.npy"))) > 0
 
 
 def test_ExportConfig():

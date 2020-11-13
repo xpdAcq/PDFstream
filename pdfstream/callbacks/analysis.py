@@ -17,7 +17,7 @@ import pdfstream.callbacks.from_descriptor as from_desc
 import pdfstream.callbacks.from_event as from_event
 import pdfstream.callbacks.from_start as from_start
 import pdfstream.integration.tools as integ
-from pdfstream.callbacks.basic import LiveMaskedImage, LiveWaterfall
+from pdfstream.callbacks.basic import LiveMaskedImage, LiveWaterfall, NumpyExporter
 from pdfstream.units import LABELS
 from pdfstream.vend.formatters import SpecialStr
 
@@ -262,11 +262,6 @@ class BasicExportConfig(ConfigParser):
 
 class ExportConfig(BasicExportConfig):
     """The configuration of exporter."""
-
-    @property
-    def run_template(self):
-        return SpecialStr(self.get("DIR SETTING", "template"))
-
     @property
     def tiff_setting(self):
         section = self["TIFF SETTING"]
@@ -288,6 +283,13 @@ class ExportConfig(BasicExportConfig):
             return None
         return {"file_prefix": SpecialStr(section.get("file_prefix"))}
 
+    @property
+    def npy_setting(self):
+        section = self["NPY SETTING"]
+        if not section.getboolean("enable", fallback=True):
+            return None
+        return {"file_prefix": SpecialStr(section.get("file_prefix"))}
+
 
 class Exporter(RunRouter):
     """Export the processed data to file systems, including."""
@@ -302,33 +304,38 @@ class ExporterFactory:
 
     def __init__(self, config: ExportConfig):
         self.config = config
-        self.config.tiff_base.mkdir(exist_ok=True, parents=True)
+        tiff_base = self.config.tiff_base
+        tiff_base.mkdir(exist_ok=True, parents=True)
+        self.callbacks = []
+        if self.config.tiff_setting is not None:
+            cb = TiffSerializer(
+                str(tiff_base.joinpath("images")),
+                **self.config.tiff_setting
+            )
+            self.callbacks.append(cb)
+        if self.config.json_setting is not None:
+            cb = JsonSerializer(
+                str(tiff_base.joinpath("metadata")),
+                **self.config.json_setting
+            )
+            self.callbacks.append(cb)
+        if self.config.csv_setting is not None:
+            cb = CSVSerializer(
+                str(tiff_base.joinpath("datasheets")),
+                **self.config.csv_setting
+            )
+            self.callbacks.append(cb)
+        if self.config.csv_setting is not None:
+            cb = NumpyExporter(
+                str(tiff_base.joinpath("arrays")),
+                **self.config.npy_setting
+            )
+            self.callbacks.append(cb)
 
     def __call__(self, name: str, doc: dict) -> tp.Tuple[list, list]:
         if name != "start":
             return [], []
-        dir_name = self.config.run_template.format(start=doc)
-        base_dir = self.config.tiff_base.joinpath(dir_name)
-        cb_lst = []
-        if self.config.tiff_setting is not None:
-            cb = TiffSerializer(
-                str(base_dir.joinpath("images")),
-                **self.config.tiff_setting
-            )
-            cb_lst.append(cb)
-        if self.config.json_setting is not None:
-            cb = JsonSerializer(
-                str(base_dir.joinpath("metadata")),
-                **self.config.json_setting
-            )
-            cb_lst.append(cb)
-        if self.config.csv_setting is not None:
-            cb = CSVSerializer(
-                str(base_dir.joinpath("datasheets")),
-                **self.config.csv_setting
-            )
-            cb_lst.append(cb)
-        return cb_lst, []
+        return self.callbacks, []
 
 
 class VisConfig(ConfigParser):

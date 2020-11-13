@@ -9,6 +9,8 @@ from matplotlib import pyplot as plt
 from pathlib import Path
 from xpdview.waterfall import Waterfall
 
+import pdfstream.callbacks.from_descriptor as fd
+
 try:
     from diffpy.pdfgetx import PDFConfig, PDFGetter
 except ImportError:
@@ -32,9 +34,9 @@ class StartStopCallback(CallbackBase):
 
 
 class NumpyExporter(CallbackBase):
-    """An exporter to export the array data in .npy file."""
+    """An exporter to export the 1d array data in .npy file."""
 
-    def __init__(self, directory: str, file_prefix: str, data_keys: tp.List[str]):
+    def __init__(self, directory: str, *, file_prefix: str, data_keys: tp.List[str] = None):
         super(NumpyExporter, self).__init__()
         self.directory = Path(directory)
         self.directory.mkdir(parents=True, exist_ok=True)
@@ -46,6 +48,11 @@ class NumpyExporter(CallbackBase):
         self.cache = dict()
         self.cache["start"] = doc
         super(NumpyExporter, self).start(doc)
+
+    def descriptor(self, doc):
+        if not self.data_keys:
+            self.data_keys = list(fd.yield_1d_array(doc["data_keys"]))
+        super(NumpyExporter, self).descriptor(doc)
 
     def event_page(self, doc):
         for event in unpack_event_page(doc):
