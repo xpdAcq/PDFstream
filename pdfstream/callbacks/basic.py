@@ -10,6 +10,7 @@ from databroker.v2 import Broker
 from event_model import unpack_event_page
 from matplotlib import pyplot as plt
 from matplotlib.axes import Axes
+from matplotlib.widgets import Slider
 from xpdview.waterfall import Waterfall
 
 import pdfstream.callbacks.from_descriptor as fd
@@ -93,10 +94,54 @@ class LiveMaskedImage(LiveImage):
         self.update(data)
 
 
+class MyWaterfall(Waterfall):
+    """An adaptation of WaterFall. Allow using ax instead of Figure."""
+
+    def __init__(self, *, xlabel: str, ylabel: str, ax: Axes, **kwargs):
+        super(Waterfall, self).__init__()
+        self.ax = ax
+        self.fig = self.ax.figure
+        self.canvas = self.fig.canvas
+        self.kwargs = kwargs
+        self.x_array_list = []
+        self.y_array_list = []
+
+        # callback for showing legend
+        self.canvas.mpl_connect("pick_event", self.on_plot_hover)
+        self.key_list = []
+        self.unit = (xlabel, ylabel)
+
+        # add sliders, which store information
+        self.ydist = 0
+        self.xdist = 0
+
+        y_offset_slider_ax = self.fig.add_axes([0.15, 0.95, 0.3, 0.035])
+        self.y_offset_slider = Slider(
+            y_offset_slider_ax,
+            "y-offset",
+            0.0,
+            1.0,
+            valinit=0.1,
+            valfmt="%1.2f",
+        )
+        self.y_offset_slider.on_changed(self.update_y_offset)
+
+        x_offset_slider_ax = self.fig.add_axes([0.6, 0.95, 0.3, 0.035])
+        self.x_offset_slider = Slider(
+            x_offset_slider_ax,
+            "x-offset",
+            0.0,
+            1.0,
+            valinit=0.,
+            valfmt="%1.2f",
+        )
+        self.x_offset_slider.on_changed(self.update_x_offset)
+
+
 class LiveWaterfall(CallbackBase):
     """A live water plot for the one dimensional data."""
 
-    def __init__(self, x: str, y: str, *, xlabel: str, ylabel: str, **kwargs):
+    def __init__(self, x: str, y: str, *, xlabel: str, ylabel: str, ax: Axes, **kwargs):
         """Initiate the instance.
 
         Parameters
@@ -113,15 +158,17 @@ class LiveWaterfall(CallbackBase):
         ylabel :
             The tuple of the labels of y shown in the figure.
 
+        ax :
+            The axes to plot.
+
         kwargs :
             The kwargs for the matplotlib.pyplot.plot.
         """
         super().__init__()
         self.x = x
         self.y = y
-        fig = plt.figure()
-        self.waterfall = Waterfall(fig=fig, unit=(xlabel, ylabel), **kwargs)
-        fig.show()
+        self.ax = ax
+        self.waterfall = MyWaterfall(xlabel=xlabel, ylabel=ylabel, ax=self.ax, **kwargs)
 
     def start(self, doc):
         super(LiveWaterfall, self).start(doc)
@@ -136,6 +183,9 @@ class LiveWaterfall(CallbackBase):
 
     def update(self, key: str, int_data: tp.Tuple[np.ndarray, np.ndarray]):
         self.waterfall.update(key_list=[key], int_data_list=[int_data])
+
+    def show(self):
+        self.ax.figure.show()
 
 
 class SmartScalarPlot(CallbackBase):

@@ -459,7 +459,7 @@ class Visualizer(RunRouter):
             if isinstance(cb, (LiveImage, LiveMaskedImage)):
                 cb.cs._fig.show()
             elif isinstance(cb, LiveWaterfall):
-                cb.waterfall.fig.show()
+                cb.show()
             elif isinstance(cb, SmartScalarPlot):
                 cb.show()
         return
@@ -471,6 +471,7 @@ class VisFactory:
     def __init__(self, config: VisConfig):
         self.config = config
         self.cb_lst = []
+        # images
         if self.config.vis_best_effort is not None:
             cb = BestEffortCallback()
             cb.disable_table()
@@ -485,6 +486,7 @@ class VisFactory:
             self.cb_lst.append(
                 LiveMaskedImage("dk_sub_image", "mask", **self.config.vis_masked_image)
             )
+        # one dimensional array waterfall
         for xfield, yfield, vis_config in [
             ("chi_Q", "chi_I", self.config.vis_chi),
             ("iq_Q", "iq_I", self.config.vis_iq),
@@ -493,11 +495,15 @@ class VisFactory:
             ("gr_r", "gr_G", self.config.vis_gr)
         ]:
             if vis_config is not None:
+                fig = plt.figure()
                 self.cb_lst.append(
-                    LiveWaterfall(xfield, yfield, **vis_config)
+                    LiveWaterfall(xfield, yfield, ax=fig.add_subplot(111), **vis_config)
                 )
-        fig = plt.figure()
-        axes = (fig.add_subplot(grid) for grid in GridSpec(2, 2))
+                fig.show()
+
+        # scalar data
+        fig1 = plt.figure()
+        axes1 = (fig1.add_subplot(grid) for grid in GridSpec(2, 2))
         for field, vis_config in [
             ("chi_max", self.config.vis_chi_max),
             ("chi_argmax", self.config.vis_chi_argmax),
@@ -506,8 +512,9 @@ class VisFactory:
         ]:
             if vis_config is not None:
                 self.cb_lst.append(
-                    SmartScalarPlot(field, ax=next(axes), **vis_config)
+                    SmartScalarPlot(field, ax=next(axes1), **vis_config)
                 )
+        fig1.show()
 
     def __call__(self, name: str, doc: dict) -> tp.Tuple[list, list]:
         if name != "start":
