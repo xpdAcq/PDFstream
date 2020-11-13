@@ -1,18 +1,19 @@
 """Configuration of pytest."""
-import databroker
 import json
-import matplotlib.pyplot as plt
 import multiprocessing
+import time
+import uuid
+from pathlib import Path
+
+import databroker
+import matplotlib.pyplot as plt
 import numpy
 import numpy as np
 import pyFAI
 import pytest
-import time
-import uuid
 from bluesky.callbacks.zmq import Proxy
 from databroker.v2 import Broker
 from diffpy.pdfgetx import PDFConfig, PDFGetter
-from pathlib import Path
 from pkg_resources import resource_filename
 
 from pdfstream.callbacks.composer import gen_stream
@@ -121,7 +122,9 @@ def db_with_dark_and_scan() -> Broker:
         {"pe1_image": NI_IMG, "temperature": 1},
         {"pe1_image": NI_IMG, "temperature": 3}
     ]
-    for name, doc in gen_stream(light_data, dict(**START_DOC, sc_dk_field_uid=dark_uid)):
+    start = dict(**START_DOC, sc_dk_field_uid=dark_uid)
+    start.update({"hints": {"dimensions": [(["temperature"], "primary")]}})
+    for name, doc in gen_stream(light_data, start):
         db.v1.insert(name, doc)
     return db
 

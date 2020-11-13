@@ -3,12 +3,14 @@ from configparser import ConfigParser, Error
 from pathlib import Path
 
 import event_model
+import matplotlib.pyplot as plt
 import numpy as np
 from bluesky.callbacks.best_effort import BestEffortCallback
 from bluesky.callbacks.broker import LiveImage
 from bluesky.callbacks.stream import LiveDispatcher
 from databroker.v2 import Broker
 from event_model import RunRouter
+from matplotlib.gridspec import GridSpec
 from pyFAI.azimuthalIntegrator import AzimuthalIntegrator
 from suitcase.csv import Serializer as CSVSerializer
 from suitcase.json_metadata import Serializer as JsonSerializer
@@ -18,7 +20,7 @@ import pdfstream.callbacks.from_descriptor as from_desc
 import pdfstream.callbacks.from_event as from_event
 import pdfstream.callbacks.from_start as from_start
 import pdfstream.integration.tools as integ
-from pdfstream.callbacks.basic import LiveMaskedImage, LiveWaterfall, NumpyExporter
+from pdfstream.callbacks.basic import LiveMaskedImage, LiveWaterfall, NumpyExporter, SmartScalarPlot
 from pdfstream.units import LABELS
 from pdfstream.vend.formatters import SpecialStr
 
@@ -415,6 +417,34 @@ class VisConfig(ConfigParser):
             "ylabel": section.get("ylabel", fallback=LABELS.gr[1])
         }
 
+    @property
+    def vis_gr_max(self):
+        section = self["VIS GR MAX"]
+        if not section.getboolean("enable", fallback=True):
+            return None
+        return {"ylabel": section.get("ylabel", fallback=LABELS.gr[1])}
+
+    @property
+    def vis_gr_argmax(self):
+        section = self["VIS GR ARGMAX"]
+        if not section.getboolean("enable", fallback=True):
+            return None
+        return {"ylabel": section.get("ylabel", fallback=LABELS.gr[0])}
+
+    @property
+    def vis_chi_max(self):
+        section = self["VIS CHI MAX"]
+        if not section.getboolean("enable", fallback=True):
+            return None
+        return {"ylabel": section.get("ylabel", fallback=LABELS.chi[1])}
+
+    @property
+    def vis_chi_argmax(self):
+        section = self["VIS CHI ARGMAX"]
+        if not section.getboolean("enable", fallback=True):
+            return None
+        return {"ylabel": section.get("ylabel", fallback=LABELS.chi[0])}
+
 
 class Visualizer(RunRouter):
     """Visualize the analyzed data. It can be subscribed to a live dispatcher."""
@@ -430,6 +460,8 @@ class Visualizer(RunRouter):
                 cb.cs._fig.show()
             elif isinstance(cb, LiveWaterfall):
                 cb.waterfall.fig.show()
+            elif isinstance(cb, SmartScalarPlot):
+                cb.ax.figure.show()
         return
 
 
@@ -463,6 +495,18 @@ class VisFactory:
             if vis_config is not None:
                 self.cb_lst.append(
                     LiveWaterfall(xfield, yfield, **vis_config)
+                )
+        fig = plt.figure()
+        axes = (fig.add_subplot(grid) for grid in GridSpec(2, 2))
+        for field, vis_config in [
+            ("chi_max", self.config.vis_chi_max),
+            ("chi_argmax", self.config.vis_chi_argmax),
+            ("gr_max", self.config.vis_gr_max),
+            ("gr_argmax", self.config.vis_gr_argmax)
+        ]:
+            if vis_config is not None:
+                self.cb_lst.append(
+                    SmartScalarPlot(field, ax=next(axes), **vis_config)
                 )
 
     def __call__(self, name: str, doc: dict) -> tp.Tuple[list, list]:

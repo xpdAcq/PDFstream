@@ -1,6 +1,8 @@
-import pytest
 from configparser import Error
 from pathlib import Path
+
+import matplotlib.pyplot as plt
+import pytest
 from pkg_resources import resource_filename
 
 import pdfstream.callbacks
@@ -21,13 +23,14 @@ def test_AnalysisStream(db_with_dark_and_light, use_db):
         ld(name, doc)
 
 
-def test_Visualizer(db_with_dark_and_light):
-    db = db_with_dark_and_light
+def test_Visualizer(db_with_dark_and_scan):
+    db = db_with_dark_and_scan
     config = an.AnalysisConfig()
     config.read(fn)
     ld = an.AnalysisStream(config, raw_db=db)
     config1 = pdfstream.callbacks.analysis.VisConfig()
     config1.read(fn)
+    config1.fig = plt.figure()
     cb = pdfstream.callbacks.analysis.Visualizer(config1)
     ld.subscribe(cb)
     for name, doc in db[-1].canonical(fill="yes", strict_order=True):

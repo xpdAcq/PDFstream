@@ -1,15 +1,19 @@
-import numpy as np
 import time
 import typing as tp
+from pathlib import Path
+
+import numpy as np
 from bluesky.callbacks import CallbackBase
+from bluesky.callbacks.best_effort import LivePlot, LiveScatter
 from bluesky.callbacks.broker import LiveImage
 from databroker.v2 import Broker
 from event_model import unpack_event_page
 from matplotlib import pyplot as plt
-from pathlib import Path
+from matplotlib.axes import Axes
 from xpdview.waterfall import Waterfall
 
 import pdfstream.callbacks.from_descriptor as fd
+import pdfstream.callbacks.from_start as fs
 
 try:
     from diffpy.pdfgetx import PDFConfig, PDFGetter
@@ -132,3 +136,46 @@ class LiveWaterfall(CallbackBase):
 
     def update(self, key: str, int_data: tp.Tuple[np.ndarray, np.ndarray]):
         self.waterfall.update(key_list=[key], int_data_list=[int_data])
+
+
+class SmartScalarPlot(CallbackBase):
+    """A plot for scalar variable. Use LivePlot for one dimensional case and Use LiveScatter for two dimensional
+    case """
+
+    def __init__(self, y: str, *, ax: Axes = None, ylabel: str = None, **kwargs):
+        super(SmartScalarPlot, self).__init__()
+        self.y = y
+        self.ax = ax
+        self.ylabel = ylabel
+        self.kwargs = kwargs
+        self.callback = None
+
+    def start(self, doc):
+        super(SmartScalarPlot, self).start(doc)
+        self.clear()
+        indeps = fs.get_indeps(doc, exclude={"time"})
+        if len(indeps) == 1:
+            self.callback = LivePlot(self.y, x=indeps.pop(), ax=self.ax, **self.kwargs)
+        elif len(indeps) == 2:
+            self.callback = LiveScatter(indeps.pop(), indeps.pop(), self.y, ax=self.ax, **self.kwargs)
+        else:
+            self.callback = LivePlot(dep, ax=self.ax, **self.kwargs)
+        self.callback.start(doc)
+
+    def descriptor(self, doc):
+        super(SmartScalarPlot, self).descriptor(doc)
+        self.callback.descriptor(doc)
+
+    def event(self, doc):
+        super(SmartScalarPlot, self).event(doc)
+        self.callback.event(doc)
+        if self.ylabel:
+            self.ax.set_ylabel(self.ylabel)
+
+    def stop(self, doc):
+        super(SmartScalarPlot, self).stop(doc)
+        self.callback.stop(doc)
+
+    def clear(self):
+        self.ax.cla()
+        self.callback = None
