@@ -11,8 +11,8 @@ fn = resource_filename("tests", "configs/xpd_server.ini")
 
 
 @pytest.mark.parametrize("use_db", [True, False])
-def test_AnalysisStream(db_with_dark_and_scan, use_db):
-    db = db_with_dark_and_scan
+def test_AnalysisStream(db_with_dark_and_light, use_db):
+    db = db_with_dark_and_light
     config = an.AnalysisConfig()
     config.read(fn)
     ld = an.AnalysisStream(config, raw_db=db if use_db else None)
@@ -32,6 +32,7 @@ def test_Visualizer(db_with_dark_and_light):
     ld.subscribe(cb)
     for name, doc in db[-1].canonical(fill="yes", strict_order=True):
         ld(name, doc)
+    cb.show_figs()
 
 
 def test_Exporter(db_with_dark_and_scan, tmpdir):

@@ -419,8 +419,17 @@ class Visualizer(RunRouter):
     """Visualize the analyzed data. It can be subscribed to a live dispatcher."""
 
     def __init__(self, config: VisConfig):
-        factory = VisFactory(config)
-        super(Visualizer, self).__init__([factory])
+        self._factory = VisFactory(config)
+        super(Visualizer, self).__init__([self._factory])
+
+    def show_figs(self):
+        """Show all the figures in the callbacks in the factory."""
+        for cb in self._factory.cb_lst:
+            if isinstance(cb, (LiveImage, LiveMaskedImage)):
+                cb.cs._fig.show()
+            elif isinstance(cb, LiveWaterfall):
+                cb.waterfall.fig.show()
+        return
 
 
 class VisFactory:
