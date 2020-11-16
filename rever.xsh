@@ -23,11 +23,9 @@ $ACTIVITIES = [
     'version_bump',
     'install',
     'changelog',
-    'build_docs',
     'tag',
     'push_tag',
     'ghrelease',
-    'ghpages',
     'pypi',
     'conda_release'
 ]
