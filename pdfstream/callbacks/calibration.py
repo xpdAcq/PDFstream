@@ -24,7 +24,7 @@ class CalibrationConfig(BasicAnalysisConfig, BasicExportConfig):
 
     @property
     def default_calibrant(self):
-        return self.get("METADATA", "default_calibrant")
+        return self.get("CALIBRATION", "default_calibrant")
 
     @property
     def detector_key(self):

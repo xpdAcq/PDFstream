@@ -179,8 +179,8 @@ class AnalysisStream(LiveDispatcher):
 def process(
     *,
     raw_img: np.ndarray,
+    ai: AzimuthalIntegrator,
     dk_img: np.ndarray = None,
-    ai: AzimuthalIntegrator = None,
     integ_setting: dict = None,
     mask_setting: dict = None,
     pdfgetx_setting: dict = None,
@@ -194,9 +194,6 @@ def process(
         data.update({"dk_image": dk_img})
     final_image = np.subtract(raw_img, dk_img)
     data.update({"dk_sub_image": final_image})
-    # return the data if no calibration metadata
-    if ai is None:
-        return data
     # auto masking
     final_mask, _ = integ.auto_mask(final_image, ai, mask_setting=mask_setting)
     data.update({"mask": final_mask})

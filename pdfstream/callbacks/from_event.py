@@ -1,9 +1,8 @@
 """Get data from event."""
-import numpy
 import typing
-from numpy import ndarray
 
-from pdfstream.errors import ValueNotFoundError
+import numpy
+from numpy import ndarray
 
 
 def get_image_from_event(
@@ -29,16 +28,6 @@ def get_image_from_event(
     return squeeze_to_image(data)
 
 
-def find_one_image(event: typing.Dict[str, dict]) -> typing.Tuple[str, ndarray]:
-    """Find an array that can be squeezed to 2d array in the event data."""
-    for key, data in event["data"].items():
-        if numpy.ndim(data) >= 2:
-            img = numpy.squeeze(numpy.asarray(data))
-            if img.ndim == 2:
-                return key, img
-    raise ValueNotFoundError("Image not found in event.")
-
-
 def squeeze_to_image(
     arr: typing.Union[list, ndarray],
     ndim: int = 2
@@ -49,22 +38,3 @@ def squeeze_to_image(
     if img.ndim != ndim:
         raise ValueError("Invalid image dimension. Expect {} but this is {}".format(ndim, img.ndim))
     return img
-
-
-def get_masked_array_from_event(
-    event: typing.Dict[str, typing.Any],
-    det_name: str
-):
-    """Get a masked image from the event. The return is the numpy masked array."""
-    data = event['data'][det_name]
-    data = numpy.ma.asarray(data)
-    data = numpy.ma.squeeze(data)
-    return data
-
-
-def get_array_from_event(event: typing.Dict[str, typing.Any], data_key: str):
-    """Get a certain dimension numpy array form the event. If the input is a list, convert it to numpy array."""
-    data = event["data"][data_key]
-    data = numpy.asarray(data)
-    data = numpy.squeeze(data)
-    return data

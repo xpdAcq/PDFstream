@@ -127,6 +127,28 @@ def db_with_dark_and_light() -> Broker:
 
 
 @pytest.fixture(scope="session")
+def db_with_img_and_bg_img() -> Broker:
+    """A database with a dark image, a background image run and a data image run inside. The first one is dark
+    image, the second one is background image, the third one is the data image."""
+    db = databroker.v2.temp()
+    sample_name = "Kapton"
+    dk_uid = str(uuid.uuid4())
+    dk_meta = {"dark_frame": True}
+    dk_data = [{"pe1_image": np.ones_like(NI_IMG)}]
+    bg_meta = {"sample_name": sample_name, "sc_dk_field_uid": dk_uid}
+    bg_data = [{"pe1_image": 2 * np.ones_like(NI_IMG)}]
+    img_data = [{"pe1_image": 2 * np.ones_like(NI_IMG) + NI_IMG}]
+    img_meta = dict(**START_DOC, bkgd_sample_name=sample_name, sc_dk_field_uid=dk_uid)
+    for name, doc in gen_stream(dk_data, dk_meta, uid=dk_uid):
+        db.v1.insert(name, doc)
+    for name, doc in gen_stream(bg_data, bg_meta):
+        db.v1.insert(name, doc)
+    for name, doc in gen_stream(img_data, img_meta):
+        db.v1.insert(name, doc)
+    return db
+
+
+@pytest.fixture(scope="session")
 def db_with_dark_and_scan() -> Broker:
     """A database with a dark run and a motor scan inside. The last one is light and the first one is dark."""
     db = databroker.v2.temp()

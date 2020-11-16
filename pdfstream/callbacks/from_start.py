@@ -1,9 +1,10 @@
 """Get data from the start and database."""
 import itertools
-import numpy
 import typing
-from databroker import Broker
+
+import numpy
 from databroker.core import BlueskyRunFromGenerator
+from databroker.v2 import Broker
 from numpy import ndarray
 
 import pdfstream.io as io
@@ -31,13 +32,14 @@ def query_ai(
         The azimuthal integrator.
     """
     if calibration_md_key not in start:
-        return None
+        raise ValueError("Missing key {} in start document.".format(calibration_md_key))
     return io.load_ai_from_calib_result(start[calibration_md_key])
 
 
 def query_bg_img(
     start: typing.Dict[str, typing.Any],
-    bg_id_key: str,
+    bkgd_sample_name_key: str,
+    sample_name_key: str,
     det_name: str,
     db: Broker,
     dk_id_key: str = None
@@ -54,8 +56,11 @@ def query_bg_img(
     start :
         The start document of the measurement run. It may contain the id of the background run.
 
-    bg_id_key :
-        The key of the id of the background image run.
+    bkgd_sample_name_key :
+        The key of the sample of background.
+
+    sample_name_key :
+        The key of the sample name.
 
     det_name :
         The name in the background image data in the xarray of the run.
@@ -71,9 +76,11 @@ def query_bg_img(
     bg_img :
         The background image either dark subtracted or raw. If not found, None.
     """
-    if bg_id_key not in start:
+    sample_name = start.get(bkgd_sample_name_key)
+    result = list(db.search({sample_name_key: sample_name}))
+    if len(result) == 0:
         return None
-    bg_run: BlueskyRunFromGenerator = db[bg_id_key]
+    bg_run = db[result[-1]]
     img = get_img_from_run(bg_run, det_name=det_name)
     bg_start = get_start_of_run(bg_run)
     dk_img = query_dk_img(bg_start, det_name=det_name, db=db, dk_id_key=dk_id_key) if dk_id_key else None
@@ -132,9 +139,7 @@ def get_img_from_run(run: BlueskyRunFromGenerator, det_name: str) -> ndarray:
     # remove all single dimensions
     img = numpy.squeeze(img)
     if img.ndim != 2:
-        raise ValueError(
-            "Invalid number of dimension for an image: {}. Expect 2.".format(img.ndim)
-        )
+        raise ValueError("Invalid number of dimension for an image: {}. Expect 2.".format(img.ndim))
     return img
 
 
@@ -168,12 +173,6 @@ def query_bt_info(
         "composition": composition_str,
         "wavelength": wavelength
     }
-
-
-def strip_basics(start: dict) -> dict:
-    """Strip the time, uid and hints from the start document."""
-    dct = {key: value for key, value in start.items() if key not in ("time", "uid", "hints")}
-    return dct
 
 
 def get_indeps(start: dict, exclude: set = frozenset()) -> set:
