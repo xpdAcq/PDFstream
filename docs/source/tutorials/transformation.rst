@@ -30,7 +30,7 @@ Or run the function in python.
     from pdfstream.transformation.cli import transform
 
     transform(
-        "geometry.poni",
+        "pdfconfig.cfg",
         "sample_diffraction.tiff"
     )
 
@@ -45,7 +45,7 @@ If we would like to output the files in a specific directory called ``data_folde
 .. code-block:: python
 
     transform(
-        "geometry.poni",
+        "pdfconfig.cfg",
         "sample_diffraction.tiff",
         output_dir="data_folder"
     )
@@ -62,7 +62,7 @@ For example, we would like to plot a line with green circles.
 .. code-block:: python
 
     transform(
-        "geometry.poni",
+        "pdfconfig.cfg",
         "sample_diffraction.tiff",
         plot_setting={'marker': 'o', 'color': 'green'}
     )
@@ -72,7 +72,7 @@ If we don't want visualization, we can turn if off by set the ``plot_setting`` t
 .. code-block:: python
 
     transform(
-        "geometry.poni",
+        "pdfconfig.cfg",
         "sample_diffraction.tiff",
         plot_setting="OFF"
     )
@@ -88,7 +88,7 @@ key ``parallel``.
 .. code-block:: python
 
     transform(
-        "geometry.poni",
+        "pdfconfig.cfg",
         "sample_diffraction.tiff",
         plot_setting="OFF",
         parallel=True
