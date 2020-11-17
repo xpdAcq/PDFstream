@@ -218,22 +218,18 @@ def process(
     # dark subtraction
     if dk_img is None:
         dk_img = np.zeros_like(raw_img)
-    else:
-        data.update({"dk_image": dk_img})
     dk_sub_img = np.subtract(raw_img, dk_img)
     data.update({"dk_sub_image": dk_sub_img})
     # background subtraction
     if dk_sub_bg_img is None:
         dk_sub_bg_img = np.zeros_like(dk_sub_img)
-    else:
-        data.update({"dk_sub_bg_image": dk_sub_bg_img})
     bg_sub_img = np.subtract(dk_sub_img, dk_sub_bg_img)
     data.update({"bg_sub_image": bg_sub_img})
     # auto masking
-    final_mask, _ = integ.auto_mask(bg_sub_img, ai, mask_setting=mask_setting)
-    data.update({"mask": final_mask})
+    mask, _ = integ.auto_mask(bg_sub_img, ai, mask_setting=mask_setting)
+    data.update({"mask": mask})
     # integration
-    x, y = ai.integrate1d(bg_sub_img, mask=final_mask, **integ_setting)
+    x, y = ai.integrate1d(bg_sub_img, mask=mask, **integ_setting)
     chi_max_ind = np.argmax(y)
     data.update({"chi_Q": x, "chi_I": y, "chi_max": y[chi_max_ind], "chi_argmax": x[chi_max_ind]})
     # transformation

@@ -8,6 +8,7 @@ from pkg_resources import resource_filename
 import pdfstream.callbacks
 import pdfstream.callbacks.analysis as an
 from pdfstream.callbacks import analysis as an
+from pdfstream.schemas import analysis_out_schemas, analysis_in_schemas, Validator
 
 fn = resource_filename("tests", "configs/xpd_server.ini")
 
@@ -17,10 +18,15 @@ def test_AnalysisStream(db_with_img_and_bg_img, use_db):
     db = db_with_img_and_bg_img
     config = an.AnalysisConfig()
     config.read(fn)
-    ld = an.AnalysisStream(config)
     config.raw_db = db
-    ld.subscribe(print)
+    ld = an.AnalysisStream(config)
+    # validate that output data
+    out_validator = Validator(analysis_out_schemas)
+    ld.subscribe(out_validator)
+    # validate the input data
+    in_validator = Validator(analysis_in_schemas)
     for name, doc in db[-1].canonical(fill="yes", strict_order=True):
+        in_validator(name, doc)
         ld(name, doc)
 
 
