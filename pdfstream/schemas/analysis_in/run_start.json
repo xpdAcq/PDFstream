@@ -242,6 +242,111 @@
         "$ref": "#/definitions/projections"
       }
     },
+    "dark_frame": {
+      "type": "boolean",
+      "description": "if true, the run contains the dark frame image"
+    },
+    "calibration": {
+      "type": "boolean",
+      "description": "if true, the run contains the image of the standard material for calibration"
+    },
+    "sc_dk_field_uid": {
+      "type": "string",
+      "description": "the uid of the run that contains the dark frame image"
+    },
+    "calibration_md": {
+      "type": "object",
+      "description": "the metadata of experiment setup being used in the azimuthal integration of image",
+      "properties": {
+        "detector": {
+          "type": "string",
+          "description": "the name of the detector, one of the types defined in pyFAI"
+        },
+        "pixel1": {
+          "type": "number",
+          "description": "the horizontal pixel length in meter"
+        },
+        "pixel2": {
+          "type": "number",
+          "description": "the vertical pixel length in meter"
+        },
+        "max_shape": {
+          "type": "array",
+          "description": "the numbers of horizontal and vertical pixels",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "dist": {
+          "type": "number",
+          "description": "the distance between the sample and the beam center on the detector in meter"
+        },
+        "distance": {
+          "type": "number",
+          "description": "an analog to 'dist'"
+        },
+        "poni1": {
+          "type": "number",
+          "description": "the horizontal coordinate of the beam center in meter"
+        },
+        "poni2": {
+          "type": "number",
+          "description": "the vertical coordinate of the beam center in meter"
+        },
+        "rot1": {
+          "type": "number",
+          "description": "the first Euler angle from sample ref to detector ref in radian"
+        },
+        "rot2": {
+          "type": "number",
+          "description": "the second Euler angle from sample ref to detector ref in radian"
+        },
+        "rot3": {
+          "type": "number",
+          "description": "the third Euler angle from sample ref to detector ref in radian"
+        },
+        "wavelength": {
+          "type": "number",
+          "description": "the wavelength of the ray in meter"
+        },
+        "pixelX": {
+          "type": "number",
+          "description": "the horizontal length of the pixel in micron"
+        },
+        "pixelY": {
+          "type": "number",
+          "description": "the vertical length of the pixel in micron"
+        }
+      }
+    },
+    "sample_composition": {
+      "oneOf": [
+        {
+          "type": "string",
+          "description": "the chemical formula, e. g. TiO2"
+        },
+        {
+          "type": "object",
+          "description": "the dictionary of elements, e. g. {'Ti': 1, 'O': 2}"
+        }
+      ]
+    },
+    "bt_wavelength": {
+      "type": "number",
+      "description": "the wavelength of the beam during the beam time"
+    },
+    "bkgd_sample_name": {
+      "type": "string",
+      "description": "the name of the sample whose diffraction is used as the background scattering"
+    },
+    "sample_name": {
+      "type": "string",
+      "description": "the name of the sample measured in this run"
+    },
+    "detector": {
+      "type": "string",
+      "description": "the name of the detector, one of the types defined in pyFAI"
+    }
     "hints": {
       "type": "object",
       "description": "Start-level hints",
