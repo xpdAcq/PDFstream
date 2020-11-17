@@ -346,7 +346,7 @@
     "detector": {
       "type": "string",
       "description": "the name of the detector, one of the types defined in pyFAI"
-    }
+    },
     "hints": {
       "type": "object",
       "description": "Start-level hints",

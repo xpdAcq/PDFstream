@@ -1,15 +1,15 @@
+import typing as tp
 from collections import namedtuple
+from configparser import ConfigParser
+from pathlib import Path
 
 import numpy as np
 import scipy.optimize as opt
-import typing as tp
 from bluesky.callbacks.stream import LiveDispatcher
 from bluesky.callbacks.zmq import RemoteDispatcher
-from configparser import ConfigParser
 from diffpy.pdfgetx import PDFGetter, PDFConfig
 from event_model import RunRouter
 from ophyd.sim import NumpySeqHandler
-from pathlib import Path
 
 import pdfstream.units as units
 from pdfstream.callbacks.basic import NumpyExporter
@@ -82,7 +82,7 @@ class LSQConfig(ConfigParser):
 
     @property
     def verbose(self):
-        return self.getint("OTHER", "verbose")
+        return self.getint("BASIC", "verbose", fallback=1)
 
     @property
     def figs(self):
