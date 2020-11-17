@@ -21,7 +21,7 @@ jobs:
 
       - name: set quiet and append channels
         run: |
-          conda config --append channels diffpy
+          conda config --append channels nsls2forge
           conda config --append channels conda-forge
 
       - name: install requirements
