@@ -2,6 +2,7 @@ import typing as tp
 from configparser import ConfigParser, Error
 from pathlib import Path
 
+import databroker
 import event_model
 import matplotlib.pyplot as plt
 import numpy as np
@@ -32,13 +33,20 @@ except ImportError:
 class BasicAnalysisConfig(ConfigParser):
     """The basic configuration that is shared by analysis and calibration."""
 
+    def __init__(self, *args, **kwargs):
+        super(BasicAnalysisConfig, self).__init__(*args, **kwargs)
+        self._raw_db = None
+
     @property
     def raw_db(self):
         name = self.get("DATABASE", "raw_db", fallback=None)
-        if name:
-            from databroker import catalog
-            return catalog[name]
-        return None
+        if name is not None:
+            self._raw_db = databroker.catalog[name]
+        return self._raw_db
+
+    @raw_db.setter
+    def raw_db(self, db: Broker):
+        self._raw_db = db
 
     @property
     def dark_identifier(self):
@@ -55,6 +63,10 @@ class BasicAnalysisConfig(ConfigParser):
     @property
     def wavelength_key(self):
         return self.get("METADATA", "wavelength_key")
+
+    def to_dict(self):
+        """Convert the configuration to a dictionary."""
+        return {s: dict(self.items(s)) for s in self.sections()}
 
 
 class AnalysisConfig(BasicAnalysisConfig):
@@ -113,10 +125,6 @@ class AnalysisConfig(BasicAnalysisConfig):
             "rstep": section.getfloat("rstep")
         }
 
-    def to_dict(self):
-        """Convert the configuration to a dictionary."""
-        return {s: dict(self.items(s)) for s in self.sections()}
-
 
 class AnalysisStream(LiveDispatcher):
     """The secondary stream for data analysis.
@@ -124,11 +132,11 @@ class AnalysisStream(LiveDispatcher):
     It inject the configuration into start document and emit processed data to the subscribers.
     """
 
-    def __init__(self, config: AnalysisConfig, *, raw_db: Broker = None):
+    def __init__(self, config: AnalysisConfig):
         super().__init__()
         self.config = config
         self.cache = {}
-        self.db = config.raw_db if raw_db is None else raw_db
+        self.db = config.raw_db
 
     def start(self, doc, _md=None):
         self.cache = dict()

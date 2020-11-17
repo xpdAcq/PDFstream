@@ -1,7 +1,5 @@
 """Configuration of pytest."""
 import json
-import multiprocessing
-import time
 import uuid
 from pathlib import Path
 
@@ -11,7 +9,6 @@ import numpy
 import numpy as np
 import pyFAI
 import pytest
-from bluesky.callbacks.zmq import Proxy
 from databroker.v2 import Broker
 from diffpy.pdfgetx import PDFConfig, PDFGetter
 from pkg_resources import resource_filename
@@ -74,20 +71,6 @@ DB = {
 def test_data():
     """Test configs."""
     return DB
-
-
-def start_proxy():
-    Proxy(5567, 5568).start()
-
-
-@pytest.fixture(scope="session")
-def proxy():
-    proxy_proc = multiprocessing.Process(target=start_proxy, daemon=True)
-    proxy_proc.start()
-    time.sleep(4)  # Give this plenty of time to start up.
-    yield "127.0.0.1:5567", "127.0.0.1:5568"
-    proxy_proc.terminate()
-    proxy_proc.join()
 
 
 @pytest.fixture(scope="function")

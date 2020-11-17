@@ -6,7 +6,6 @@ from pathlib import Path
 import event_model
 import numpy as np
 from bluesky.callbacks.core import CallbackBase
-from databroker.v2 import Broker
 from tifffile import TiffWriter
 
 import pdfstream.callbacks.from_descriptor as fd
@@ -60,14 +59,12 @@ class CalibrationConfig(BasicAnalysisConfig, BasicExportConfig):
 class Calibration(CallbackBase):
     """Run the calibration in a gui and save the results which will be used by xpdacq."""
 
-    def __init__(self, config: CalibrationConfig, *, raw_db: Broker = None, test: bool = False):
+    def __init__(self, config: CalibrationConfig, *, test: bool = False):
         super(Calibration, self).__init__()
         self.config = config
         self.cache = dict()
-        self.db = self.config.raw_db if raw_db is None else raw_db
+        self.db = self.config.raw_db
         self.test = test
-        self.config.calib_tiff_dir.mkdir(exist_ok=True, parents=True)
-        self.config.calib_base.mkdir(exist_ok=True, parents=True)
 
     def start(self, doc):
         super(Calibration, self).start(doc)
@@ -104,6 +101,8 @@ class Calibration(CallbackBase):
 
     def stop(self, doc):
         super(Calibration, self).stop(doc)
+        self.config.calib_base.mkdir(parents=True, exist_ok=True)
+        self.config.calib_tiff_dir.mkdir(parents=True, exist_ok=True)
         poni_path = self.config.calib_base.joinpath(self.config.poni_file)
         tiff_path = self.config.calib_tiff_dir.joinpath("{}-calib.tiff".format(self.cache["start"]["uid"]))
         calc_image_and_save(
