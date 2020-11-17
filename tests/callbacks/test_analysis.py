@@ -13,8 +13,8 @@ fn = resource_filename("tests", "configs/xpd_server.ini")
 
 
 @pytest.mark.parametrize("use_db", [True, False])
-def test_AnalysisStream(db_with_dark_and_light, use_db):
-    db = db_with_dark_and_light
+def test_AnalysisStream(db_with_img_and_bg_img, use_db):
+    db = db_with_img_and_bg_img
     config = an.AnalysisConfig()
     config.read(fn)
     ld = an.AnalysisStream(config, raw_db=db if use_db else None)

@@ -41,7 +41,7 @@ def query_bg_img(
     bkgd_sample_name_key: str,
     sample_name_key: str,
     det_name: str,
-    db: Broker,
+    db: Broker = None,
     dk_id_key: str = None
 ) -> typing.Union[ndarray, None]:
     """Find background image from database according to the start document of a run.
@@ -76,6 +76,8 @@ def query_bg_img(
     bg_img :
         The background image either dark subtracted or raw. If not found, None.
     """
+    if db is None:
+        return None
     sample_name = start.get(bkgd_sample_name_key)
     result = list(db.search({sample_name_key: sample_name}))
     if len(result) == 0:

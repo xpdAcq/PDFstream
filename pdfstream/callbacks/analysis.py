@@ -5,7 +5,6 @@ from pathlib import Path
 import event_model
 import matplotlib.pyplot as plt
 import numpy as np
-from bluesky.callbacks.best_effort import BestEffortCallback
 from bluesky.callbacks.broker import LiveImage
 from bluesky.callbacks.stream import LiveDispatcher
 from databroker.v2 import Broker
@@ -64,6 +63,14 @@ class AnalysisConfig(BasicAnalysisConfig):
     @property
     def calibration_md_key(self):
         return self.get("METADATA", "calibration_md_key")
+
+    @property
+    def bkgd_sample_name_key(self):
+        return self.get("METADATA", "bkgd_sample_name_key")
+
+    @property
+    def sample_name_key(self):
+        return self.get("METADATA", "sample_name_key")
 
     @property
     def mask_setting(self):
@@ -151,15 +158,27 @@ class AnalysisStream(LiveDispatcher):
             dk_id_key=self.config.dk_id_key,
             det_name=self.cache["det_name"]
         )
+        self.cache["dk_sub_bg_img"] = from_start.query_bg_img(
+            self.cache["start"],
+            bkgd_sample_name_key=self.config.bkgd_sample_name_key,
+            sample_name_key=self.config.sample_name_key,
+            det_name=self.cache["det_name"],
+            dk_id_key=self.config.dk_id_key,
+            db=self.db
+        )
         super().descriptor(doc)
 
     def event(self, doc, _md=None):
+        # the raw image in the data
         raw_img = from_event.get_image_from_event(doc, det_name=self.cache["det_name"])
+        # the independent variables in the data
         indep_data = {key: doc["data"][key] for key in self.cache["indeps"]}
+        # process the data output a dictionary
         an_data = process(
             raw_img=raw_img,
-            dk_img=self.cache["dk_img"],
             ai=self.cache["ai"],
+            dk_img=self.cache["dk_img"],
+            dk_sub_bg_img=self.cache["dk_sub_bg_img"],
             integ_setting=self.config.integ_setting,
             mask_setting=self.config.mask_setting,
             pdfgetx_setting=dict(
@@ -168,11 +187,11 @@ class AnalysisStream(LiveDispatcher):
                 **self.config.grid_config
             )
         )
+        # the final output data is a combination of the independent variables and processed data
         data = dict(**indep_data, **an_data)
         self.process_event(EventDoc(data=data, descriptor=doc["descriptor"]))
 
     def stop(self, doc, _md=None):
-        self.cache = {}
         super().stop(doc)
 
 
@@ -181,6 +200,7 @@ def process(
     raw_img: np.ndarray,
     ai: AzimuthalIntegrator,
     dk_img: np.ndarray = None,
+    dk_sub_bg_img: np.ndarray = None,
     integ_setting: dict = None,
     mask_setting: dict = None,
     pdfgetx_setting: dict = None,
@@ -192,13 +212,20 @@ def process(
         dk_img = np.zeros_like(raw_img)
     else:
         data.update({"dk_image": dk_img})
-    final_image = np.subtract(raw_img, dk_img)
-    data.update({"dk_sub_image": final_image})
+    dk_sub_img = np.subtract(raw_img, dk_img)
+    data.update({"dk_sub_image": dk_sub_img})
+    # background subtraction
+    if dk_sub_bg_img is None:
+        dk_sub_bg_img = np.zeros_like(dk_sub_img)
+    else:
+        data.update({"dk_sub_bg_image": dk_sub_bg_img})
+    bg_sub_img = np.subtract(dk_sub_img, dk_sub_bg_img)
+    data.update({"bg_sub_image": bg_sub_img})
     # auto masking
-    final_mask, _ = integ.auto_mask(final_image, ai, mask_setting=mask_setting)
+    final_mask, _ = integ.auto_mask(bg_sub_img, ai, mask_setting=mask_setting)
     data.update({"mask": final_mask})
     # integration
-    x, y = ai.integrate1d(final_image, mask=final_mask, **integ_setting)
+    x, y = ai.integrate1d(bg_sub_img, mask=final_mask, **integ_setting)
     chi_max_ind = np.argmax(y)
     data.update({"chi_Q": x, "chi_I": y, "chi_max": y[chi_max_ind], "chi_argmax": x[chi_max_ind]})
     # transformation
@@ -342,19 +369,21 @@ class VisConfig(ConfigParser):
     """The configuration of visualization."""
 
     @property
-    def vis_best_effort(self):
-        section = self["VIS BEST EFFORT"]
-        if not section.getboolean("enable", fallback=True):
-            return None
-        return {}
-
-    @property
     def vis_masked_image(self):
         section = self["VIS MASKED IMAGE"]
         if not section.getboolean("enable", fallback=True):
             return None
         return {
-            "cmap": section.get("cmap")
+            "cmap": section.get("cmap", fallback="viridis")
+        }
+
+    @property
+    def vis_bg_sub_image(self):
+        section = self["VIS BG SUB IMAGE"]
+        if not section.getboolean("enable", fallback=True):
+            return None
+        return {
+            "cmap": section.get("cmap", fallback="viridis")
         }
 
     @property
@@ -469,19 +498,17 @@ class VisFactory:
         self.config = config
         self.cb_lst = []
         # images
-        if self.config.vis_best_effort is not None:
-            cb = BestEffortCallback()
-            cb.disable_table()
-            cb.disable_baseline()
-            cb.disable_heading()
-            self.cb_lst.append(cb)
         if self.config.vis_dk_sub_image is not None:
             self.cb_lst.append(
                 LiveImage("dk_sub_image", **self.config.vis_dk_sub_image)
             )
+        if self.config.vis_bg_sub_image is not None:
+            self.cb_lst.append(
+                LiveImage("bg_sub_image", **self.config.vis_dk_sub_image)
+            )
         if self.config.vis_masked_image is not None:
             self.cb_lst.append(
-                LiveMaskedImage("dk_sub_image", "mask", **self.config.vis_masked_image)
+                LiveMaskedImage("bg_sub_image", "mask", **self.config.vis_masked_image)
             )
         # one dimensional array waterfall
         for xfield, yfield, vis_config in [
