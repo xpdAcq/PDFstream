@@ -116,9 +116,9 @@ class XPDFactory:
         self.config = config
         self.analysis = AnalysisStream(config)
         self.func = self.config.functionality
-        if self.func.dump_to_db is not None:
+        if self.func.dump_to_db:
             self.analysis.subscribe(self.config.an_db.v1.insert)
-        if self.func.export_files is not None:
+        if self.func.export_files:
             self.analysis.subscribe(Exporter(config))
         if self.func.visualize_data:
             self.analysis.subscribe(Visualizer(config))
@@ -130,9 +130,12 @@ class XPDFactory:
             if doc.get(self.config.dark_identifier, False):
                 # dark frame run
                 return [], []
-            elif doc.get(self.config.calib_identifier, False) and self.func.do_calibration:
+            elif doc.get(self.config.calib_identifier, False):
                 # calibration run
-                return [self.calibration], []
+                if self.func.do_calibration:
+                    return [self.calibration], []
+                else:
+                    return [], []
             else:
                 # light frame run
                 return [self.analysis], []
