@@ -14,10 +14,6 @@ class ServerConfig(ConfigParser):
         return self.host, self.out_port
 
     @property
-    def in_port(self):
-        return self.getint("PROXY", "in_port")
-
-    @property
     def out_port(self):
         return self.getint("PROXY", "out_port")
 
