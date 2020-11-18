@@ -11,11 +11,11 @@ class ServerConfig(ConfigParser):
 
     @property
     def address(self):
-        return self.host, self.out_port
+        return self.host, self.port
 
     @property
-    def out_port(self):
-        return self.getint("PROXY", "out_port")
+    def port(self):
+        return self.getint("PROXY", "port")
 
     @property
     def prefix(self):
