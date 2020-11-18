@@ -1,5 +1,6 @@
 """The analysis server. Process raw image to PDF."""
 import typing as tp
+from collections import namedtuple
 
 import databroker
 from bluesky.callbacks.zmq import RemoteDispatcher
@@ -33,6 +34,24 @@ class XPDConfig(AnalysisConfig, VisConfig, ExportConfig, CalibrationConfig):
     @an_db.setter
     def an_db(self, db: Broker):
         self._an_db = db
+
+    @property
+    def functionality(self):
+        tup = namedtuple(
+            "functionality",
+            [
+                "do_calibration",
+                "dump_to_db",
+                "export_files",
+                "visualize_data"
+            ]
+        )
+        return tup(
+            self.getboolean("FUNCTIONALITY", "do_calibration"),
+            self.getboolean("FUNCTIONALITY", "dump_to_db"),
+            self.getboolean("FUNCTIONALITY", "export_files"),
+            self.getboolean("FUNCTIONALITY", "visualize_data")
+        )
 
 
 class XPDServerConfig(XPDConfig, ServerConfig):
@@ -96,19 +115,22 @@ class XPDFactory:
     def __init__(self, config: XPDConfig):
         self.config = config
         self.analysis = AnalysisStream(config)
-        an_db = self.config.an_db
-        if an_db is not None:
-            self.analysis.subscribe(an_db.v1.insert)
-        self.analysis.subscribe(Exporter(config))
-        self.analysis.subscribe(Visualizer(config))
-        self.calibration = Calibration(config)
+        self.func = self.config.functionality
+        if self.func.dump_to_db is not None:
+            self.analysis.subscribe(self.config.an_db.v1.insert)
+        if self.func.export_files is not None:
+            self.analysis.subscribe(Exporter(config))
+        if self.func.visualize_data:
+            self.analysis.subscribe(Visualizer(config))
+        if self.func.do_calibration:
+            self.calibration = Calibration(config)
 
     def __call__(self, name: str, doc: dict) -> tp.Tuple[list, list]:
         if name == "start":
-            if doc.get(self.config.dark_identifier):
+            if doc.get(self.config.dark_identifier, False):
                 # dark frame run
                 return [], []
-            elif doc.get(self.config.calib_identifier):
+            elif doc.get(self.config.calib_identifier, False) and self.func.do_calibration:
                 # calibration run
                 return [self.calibration], []
             else:

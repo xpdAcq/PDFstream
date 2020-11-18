@@ -35,10 +35,10 @@ class CalibrationConfig(BasicAnalysisConfig, BasicExportConfig):
 
     @property
     def calib_base(self):
-        section = self["CALIBRATION"]
+        section = self["FILE SYSTEM"]
         dir_path = section.get("calib_base")
         if not dir_path:
-            raise Error("Missing tiff_base in configuration.")
+            raise Error("Missing calib_base in configuration.")
         path = Path(dir_path)
         return path
 
