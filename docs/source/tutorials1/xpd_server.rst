@@ -86,6 +86,9 @@ Write the configuration file
 The server needs a .ini file. This file contains all the configuration to build a server. An example of the file
 is shown below. Please read the comments in the file to know what are the meaning of the parameters.
 
+.. include:: ../_static/xpd_server.ini
+   :literal:
+
 You can download the file here. The parameters you can change are the values that behind the equity symbol in each
 row.
 
@@ -144,14 +147,9 @@ The ``<job ID>`` is a number that shows up after you run the command ``nohup run
 How to do the calibration?
 --------------------------
 
-When you run the command below in ``bsui`` of xpdacq, you will the xpd server responds and gives you a window of
-diffraction image.
-
-.. ipython::
-
-   In [1]: run_calibration()
-
-You will finish the calibration in this window. Please see the `tutorials <http://www.python.org/>`_ to learn
+When you run the ``run_calibration()`` in ``bsui`` of xpdacq, the xpd server responds and gives you a window of
+diffraction image. You will finish the calibration in this process . Please see the
+`tutorials <https://pyfai.readthedocs.io/en/master/usage/cookbook/calib-gui/index.html>`_ to learn
 how to use it. When you are at the last step of the tutorials and you are going to save the geometry in a PONI
 file, please save the file at exact where it is first shown in the finder window after you click the button.
 Please do not change the folder and file name of the PONI file.
