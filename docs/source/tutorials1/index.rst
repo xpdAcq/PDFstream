@@ -35,6 +35,12 @@ terminal::
 You will find some text showing up, press ``CTRL + C`` to end it. It won't terminate the proxy. Then, close the
 terminal and the proxy will keep running in the background.
 
+To terminate this proxy, in terminal, run command::
+
+    kill <job ID>
+
+The ``<job ID>`` is a number that shows up after you run the command ``nohup bluesky-0MQ-proxy 5567 5568 &``.
+
 .. toctree::
    :maxdepth: 1
 
