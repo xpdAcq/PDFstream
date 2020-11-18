@@ -13,7 +13,9 @@ from ophyd.sim import NumpySeqHandler
 
 import pdfstream.units as units
 from pdfstream.callbacks.basic import NumpyExporter
+from pdfstream.servers import CONFIG_DIR, ServerNames
 from pdfstream.servers.config import ServerConfig
+from pdfstream.servers.config import find_cfg_file
 from pdfstream.servers.tools import run_server
 
 
@@ -323,14 +325,10 @@ class ExporterFactory:
         return [], []
 
 
-def make_and_run(cfg_file: str = "~/.config/acq/lsq_server.ini"):
+def make_and_run(cfg_file: str = None):
     """Make and run LSQ server."""
+    if not cfg_file:
+        cfg_file = find_cfg_file(CONFIG_DIR, ServerNames.lsq)
     server = LSQServer.from_cfg_file(cfg_file)
     run_server(server)
     return
-
-
-if __name__ == "__main__":
-    import fire
-
-    fire.Fire(make_and_run)

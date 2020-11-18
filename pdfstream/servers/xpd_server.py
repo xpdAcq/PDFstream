@@ -8,8 +8,9 @@ from event_model import RunRouter
 from ophyd.sim import NumpySeqHandler
 
 from pdfstream.callbacks.basic import StartStopCallback
+from pdfstream.servers import CONFIG_DIR, ServerNames
 from pdfstream.vend.qt_kicker import install_qt_kicker
-from .config import ServerConfig
+from .config import ServerConfig, find_cfg_file
 from .tools import run_server
 from ..callbacks.analysis import AnalysisConfig, VisConfig, ExportConfig, AnalysisStream, Exporter, Visualizer
 from ..callbacks.calibration import CalibrationConfig, Calibration
@@ -50,7 +51,7 @@ class XPDServer(RemoteDispatcher):
 
 
 def make_and_run(
-    cfg_file: str = "~/.config/acq/xpd_server.ini",
+    cfg_file: str = None,
     *,
     suppress_warning: bool = True
 ):
@@ -70,6 +71,8 @@ def make_and_run(
     if suppress_warning:
         import warnings
         warnings.simplefilter("ignore")
+    if not cfg_file:
+        find_cfg_file(CONFIG_DIR, ServerNames.xpd)
     config = XPDServerConfig()
     config.read(cfg_file)
     server = XPDServer(config)

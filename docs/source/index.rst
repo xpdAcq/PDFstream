@@ -5,8 +5,8 @@ PDFstream Documentation
    :maxdepth: 2
 
    installation
-   usage/index
-   tutorials/index
+   tutorials0/index
+   tutorials1/index
    auto_gallery/index
    changelog
    min_versions
