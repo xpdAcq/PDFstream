@@ -13,13 +13,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: setup-conda
-        uses: s-weigand/setup-conda@v1.0.3
+      - uses: conda-incubator/setup-miniconda@v2
         with:
-          activate-conda: true
-          update-conda: false
+          auto-update-conda: true
 
-      - name: set quiet and append channels
+      - name: configure conda
         run: |
           conda config --append channels nsls2forge
           conda config --append channels conda-forge
