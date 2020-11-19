@@ -16,6 +16,7 @@ import pdfstream.units as units
 from pdfstream.callbacks.basic import LiveWaterfall, NumpyExporter
 from pdfstream.servers import CONFIG_DIR, ServerNames
 from pdfstream.servers.base import run_server, ServerConfig, find_cfg_file
+from pdfstream.vend.qt_kicker import install_qt_kicker
 
 
 class LSQConfig(ConfigParser):
@@ -98,6 +99,7 @@ class LSQServer(RemoteDispatcher):
     def __init__(self, config: LSQServerConfig):
         super(LSQServer, self).__init__(config.address, prefix=config.prefix)
         self.subscribe(LSQRunRouter(config))
+        install_qt_kicker(self.loop)
 
     @classmethod
     def from_config(cls, config: LSQServerConfig):
