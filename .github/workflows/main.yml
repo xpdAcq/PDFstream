@@ -21,9 +21,7 @@ jobs:
           auto-update-conda: true
 
       - name: configure conda
-        run: |
-          conda config --append channels nsls2forge
-          conda config --append channels conda-forge
+        run: conda config --append channels nsls2forge
 
       - name: install requirements
         run: >-
