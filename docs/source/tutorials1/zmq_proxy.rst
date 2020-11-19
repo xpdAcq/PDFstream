@@ -1,6 +1,9 @@
 ZMQ Proxy
 =========
 
+Start the proxy
+^^^^^^^^^^^^^^^
+
 Before you start the server, you need to start the proxy first. The proxy is a server that transfers the message
 from the bluesky RunEngine to the server. Without proxy, the server cannot receive any data from the experiments.
 
@@ -15,6 +18,9 @@ Please remember the two ports because they are needed when you set up the server
 address of the machine where you run the proxy if you are running server on a different machine.
 
 If you would like to terminate the proxy, press ``CTRL + C`` in the terminal.
+
+Run the proxy in background
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 If you are tired of running the command very time, you can run the proxy in background and detach it with the
 terminal::

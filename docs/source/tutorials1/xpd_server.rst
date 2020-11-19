@@ -89,9 +89,9 @@ is shown below. Please read the comments in the file to know what are the meanin
 .. include:: ../_static/xpd_server.ini
    :literal:
 
-You can download the file here. The parameters you can change are the values that behind the equity symbol in each
-row.
-
+The parameters you can change are the values that behind the equity symbol in each row. Usually, you don't need
+to change the file structure but if you would like to do that, you can find what file structure is supported
+`here <https://docs.python.org/3/library/configparser.html#supported-ini-file-structure>`_.
 
 Start the server
 ^^^^^^^^^^^^^^^^
@@ -148,8 +148,53 @@ How to do the calibration?
 --------------------------
 
 When you run the ``run_calibration()`` in ``bsui`` of xpdacq, the xpd server responds and gives you a window of
-diffraction image. You will finish the calibration in this process . Please see the
+diffraction image. You will finish the calibration using that interface . Please see the
 `tutorials <https://pyfai.readthedocs.io/en/master/usage/cookbook/calib-gui/index.html>`_ to learn
 how to use it. When you are at the last step of the tutorials and you are going to save the geometry in a PONI
-file, please save the file at exact where it is first shown in the finder window after you click the button.
-Please do not change the folder and file name of the PONI file.
+file, please save the file at exact where it is first shown in the finder window after you click the
+"SAVE AS PONI" button.
+
+How to do the data reduction?
+-----------------------------
+
+The data reduction is totally automatic after you start the server and finish your calibration run. The server
+will process the streaming data by itself according to the configuration. You will find messages in the terminal
+where the server is running. It tells you if a data processing starts or finishes and if there are any errors.
+
+How to get the data back home?
+------------------------------
+
+The processed data will be archived in the database specified in the .ini file of the server, if you are
+familar with the `databroker <https://blueskyproject.io/databroker/>`_, you can find the catalog name in the
+.ini file of the server.
+
+The processed data will also be exported to the files in the folder specified in .ini file. The diffraction
+image data together with the mask data will be saved in .tiff files. The scalar data like temperature and motor
+positions will be in the .csv files. You can match the scalar data with the image by the start id and the
+sequence number. The reduced data like XRD and PDF will be in the .npy files.
+You can use `numpy <https://numpy.org/devdocs/user/quickstart.html>`_
+to open it and transfer it to other format you like. The metadata like the sample information, wavelength of the
+beam, and the experiment setup can be found in the .json files.
+
+How to see the data during the experiment?
+------------------------------------------
+
+The data will be visualized in windows. The windows will pop up when you start the server and the plot will
+automatically show up when you are running the experiments using xpdacq.
+
+The images will be plotted in a two dimensional colorful histogram, you can move the cursor onto one point and
+the pixel values in horizontal and vertical line across the point will be shown in the panels around the image.
+Below is an example of the masked dark subtracted diffraction image.
+
+.. figure:: ../_static/masked_image.png
+
+The reduced data like XRD and PDF will be plotted in a waterfall plot, you can change the x-offset and y-offset
+to move the curves in two dimensions. Below is an example of the waterfall plot of PDF.
+
+.. figure:: ../_static/gr.png
+
+The scalar data like the maximum points will be plotted in a line plot. The x-axis will be the independent
+variable in the measurement. In the example below, the coordinates of maximum point in XRD and PDF are plotted
+as a function of temperature.
+
+.. figure:: ../_static/max.png

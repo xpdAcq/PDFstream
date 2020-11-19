@@ -540,7 +540,7 @@ class VisFactory:
         ]:
             if vis_config is not None:
                 self.cb_lst.append(
-                    SmartScalarPlot(field, ax=next(axes1), **vis_config)
+                    SmartScalarPlot(field, ax=next(axes1), **vis_config, marker="o")
                 )
         fig1.show()
 

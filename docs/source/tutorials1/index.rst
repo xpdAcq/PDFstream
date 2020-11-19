@@ -1,5 +1,5 @@
-Tutorials (streaming data analysis)
-===================================
+Beamline Scientists Document
+============================
 
 If you are a beamline scientist or a user who is conducting experiment at the beamline and you are using the
 bluesky to collect the data, here is the tutorial to setup a server that can process the data in real time.
