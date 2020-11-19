@@ -16,6 +16,9 @@ from pkg_resources import resource_filename
 from pdfstream.callbacks.composer import gen_stream
 from pdfstream.io import load_img, load_array
 
+# use AGG as backend
+plt.switch_backend('agg')
+# do not show any figures in test otherwise they will block the tests
 plt.ioff()
 
 NI_PONI_FILE = resource_filename('tests', 'test_data/Ni_poni_file.poni')

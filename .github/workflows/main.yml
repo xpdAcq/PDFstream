@@ -38,7 +38,7 @@ jobs:
 
       - uses: actions/checkout@v2
 
-      - name: install pdfstream
+      - name: install the package
         run: python -m pip install .
 
       - name: run the tests and check for test coverage
