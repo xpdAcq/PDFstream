@@ -34,35 +34,35 @@ jobs:
 
       - name: install diffpy.pdfgetx
         run: |
-          source activate test
+          conda activate test
           python -m pip install *.whl
 
       - uses: actions/checkout@v2
 
       - name: install pdfstream
         run: |
-          source activate test
+          conda activate test
           python -m pip install .
 
       - name: run the tests and check for test coverage
         run: |
-          source activate test
+          conda activate test
           coverage run -m pytest tests --showlocals
 
       - name: generate test coverage report and upload to codecov
         run: |
-          source activate test
+          conda activate test
           coverage report -m
           bash <(curl -s https://codecov.io/bash) -t ${{ secrets.CODECOV_TOKEN }}
 
       - name: check code style
         run: |
-          source activate test
+          conda activate test
           flake8
 
       - name: build documents
         run: |
-          source activate test
+          conda activate test
           make -C docs html
 
       - name: Deploy
