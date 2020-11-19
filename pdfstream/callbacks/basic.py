@@ -16,11 +16,6 @@ from xpdview.waterfall import Waterfall
 import pdfstream.callbacks.from_descriptor as fd
 import pdfstream.callbacks.from_start as fs
 
-try:
-    from diffpy.pdfgetx import PDFConfig, PDFGetter
-except ImportError:
-    pass
-
 
 class StartStopCallback(CallbackBase):
     """Print the time for analysis"""

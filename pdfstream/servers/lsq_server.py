@@ -12,6 +12,7 @@ from event_model import RunRouter
 from ophyd.sim import NumpySeqHandler
 
 import pdfstream.units as units
+from pdfstream.callbacks.basic import LiveWaterfall
 from pdfstream.callbacks.basic import NumpyExporter
 from pdfstream.servers import CONFIG_DIR, ServerNames
 from pdfstream.servers.config import ServerConfig
@@ -235,7 +236,7 @@ def get_interp_data(data: tp.Dict[str, np.ndarray], config: LSQConfig) -> np.nda
 
 class Model:
     """The calculate Y - P(wX^T). Y is the a vector, P is a mapping from vector to vector, Pv = v'. v'_i =
-    \sqrt(p) v_i if v_i > 0 else v'_i = \sqrt(1 - p) v_i. w is the vector and X is a matrix."""
+    sqrt(p) v_i if v_i > 0 else v'_i = sqrt(1 - p) v_i. w is the vector and X is a matrix."""
 
     def __init__(self, y: np.ndarray, x: np.ndarray, p: float, xgrid=None):
         self.y = y

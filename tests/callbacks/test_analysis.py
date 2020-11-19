@@ -7,7 +7,6 @@ from pkg_resources import resource_filename
 
 import pdfstream.callbacks
 import pdfstream.callbacks.analysis as an
-from pdfstream.callbacks import analysis as an
 from pdfstream.schemas import analysis_out_schemas, analysis_in_schemas, Validator
 
 fn = resource_filename("tests", "configs/xpd_server.ini")
