@@ -164,11 +164,11 @@ where the server is running. It tells you if a data processing starts or finishe
 How to get the data back home?
 ------------------------------
 
-The processed data will be archived in the database specified in the .ini file of the server, if you are
+The processed data will be archived in the ``an_db`` database specified in the .ini file of the server, if you are
 familar with the `databroker <https://blueskyproject.io/databroker/>`_, you can find the catalog name in the
 .ini file of the server.
 
-The processed data will also be exported to the files in the folder specified in .ini file. The diffraction
+The processed data will also be exported to the files in the ``tiff_base`` folder specified in .ini file. The diffraction
 image data together with the mask data will be saved in .tiff files. The scalar data like temperature and motor
 positions will be in the .csv files. You can match the scalar data with the image by the start id and the
 sequence number. The reduced data like XRD and PDF will be in the .npy files.
