@@ -35,8 +35,7 @@ class CalibrationConfig(BasicAnalysisConfig, BasicExportConfig):
 
     @property
     def calib_base(self):
-        section = self["FILE SYSTEM"]
-        dir_path = section.get("calib_base")
+        dir_path = self.get("FILE SYSTEM", "calib_base")
         if not dir_path:
             raise Error("Missing calib_base in configuration.")
         path = Path(dir_path)
@@ -44,7 +43,7 @@ class CalibrationConfig(BasicAnalysisConfig, BasicExportConfig):
 
     @calib_base.setter
     def calib_base(self, value: str):
-        self.set("CALIBRATION", "calib_base", value)
+        self.set("FILE SYSTEM", "calib_base", value)
 
     @property
     def calib_tiff_dir(self):

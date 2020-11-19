@@ -20,8 +20,8 @@ def test_XPDServer(tmpdir):
     mod.XPDServer(config)
 
 
-def test_XPDRouter(db_with_dark_and_scan, tmpdir):
-    raw_db = db_with_dark_and_scan
+def test_XPDRouter(db_with_img_and_bg_img, tmpdir):
+    raw_db = db_with_img_and_bg_img
     an_db = databroker.v2.temp()
     config = pdfstream.servers.xpd_server.XPDConfig()
     config.read(fn)
@@ -33,6 +33,6 @@ def test_XPDRouter(db_with_dark_and_scan, tmpdir):
         cb(name, doc)
     tiff_base = Path(config.tiff_base)
     assert len(list(tiff_base.rglob("*.tiff"))) > 0
-    assert len(list(tiff_base.rglob("*.csv"))) > 0
     assert len(list(tiff_base.rglob("*.json"))) > 0
+    assert len(list(tiff_base.rglob("*.npy"))) > 0
     assert len(list(an_db)) > 0

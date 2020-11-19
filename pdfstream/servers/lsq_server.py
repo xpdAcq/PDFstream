@@ -3,6 +3,7 @@ from collections import namedtuple
 from configparser import ConfigParser
 from pathlib import Path
 
+import matplotlib.pyplot as plt
 import numpy as np
 import scipy.optimize as opt
 from bluesky.callbacks.stream import LiveDispatcher
@@ -12,12 +13,9 @@ from event_model import RunRouter
 from ophyd.sim import NumpySeqHandler
 
 import pdfstream.units as units
-from pdfstream.callbacks.basic import LiveWaterfall
-from pdfstream.callbacks.basic import NumpyExporter
+from pdfstream.callbacks.basic import LiveWaterfall, NumpyExporter
 from pdfstream.servers import CONFIG_DIR, ServerNames
-from pdfstream.servers.config import ServerConfig
-from pdfstream.servers.config import find_cfg_file
-from pdfstream.servers.tools import run_server
+from pdfstream.servers.base import run_server, ServerConfig, find_cfg_file
 
 
 class LSQConfig(ConfigParser):
@@ -86,16 +84,6 @@ class LSQConfig(ConfigParser):
     @property
     def verbose(self):
         return self.getint("BASIC", "verbose", fallback=1)
-
-    @property
-    def figs(self):
-        return self._figs
-
-    def push_fig(self, fig):
-        self._figs.append(fig)
-
-    def pop_fig(self, fig):
-        self._figs.pop(fig)
 
 
 class LSQServerConfig(LSQConfig, ServerConfig):
@@ -272,26 +260,24 @@ class VisualiserFactory:
 
     def __init__(self, config: LSQConfig):
         self.config = config
-        if len(self.config.figs) > 0:
-            figs = self.config.figs
-        else:
-            figs = [None, None]
+        fig = plt.figure()
         self.callbacks = [
             LiveWaterfall(
                 "xgrid",
                 "yres",
                 xlabel=units.LABELS.iq[0],
                 ylabel=units.LABELS.iq[1],
-                fig=figs[0]
+                ax=fig.add_subplot(121)
             ),
             LiveWaterfall(
                 "r",
                 "g",
                 xlabel=units.LABELS.gr[0],
                 ylabel=units.LABELS.gr[1],
-                fig=figs[1]
+                ax=fig.add_subplot(122)
             )
         ]
+        fig.show()
 
     def __call__(self, name, doc):
         if name == "start" and doc.get(self.config.data_config.lsq_type) == "target":

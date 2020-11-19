@@ -1,4 +1,3 @@
-import matplotlib.pyplot as plt
 import numpy as np
 import pytest
 from pkg_resources import resource_filename
@@ -31,15 +30,10 @@ def test_LSQRunRouter(runs, tmpdir):
     config = mod.LSQConfig()
     config.read(cfg_file)
     config.set("EXPORTATION", "directory", str(tmpdir))
-    figs = [plt.figure() for _ in range(2)]
-    for fig in figs:
-        config.push_fig(fig)
     lsq_cb = mod.LSQRunRouter(config)
     for run in runs:
         for name, doc in run:
             lsq_cb(name, doc)
-    for fig in figs:
-        fig.show()
     assert len(tmpdir.listdir()) > 0
 
 

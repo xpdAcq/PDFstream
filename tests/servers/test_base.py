@@ -3,7 +3,7 @@ from pathlib import Path
 import pytest
 from pkg_resources import resource_filename
 
-import pdfstream.servers.config as mod
+import pdfstream.servers.base as mod
 
 fn = Path(resource_filename("tests", "configs"))
 
