@@ -61,3 +61,14 @@ jobs:
         run: |
           source activate test
           flake8
+
+      - name: build documents
+        run: |
+          source activate test
+          make -C docs html
+
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs/build/html
