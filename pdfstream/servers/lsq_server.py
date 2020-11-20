@@ -99,7 +99,6 @@ class LSQServer(RemoteDispatcher):
     def __init__(self, config: LSQServerConfig):
         super(LSQServer, self).__init__(config.address, prefix=config.prefix)
         self.subscribe(LSQRunRouter(config))
-        install_qt_kicker(self.loop)
 
     @classmethod
     def from_config(cls, config: LSQServerConfig):
@@ -314,10 +313,12 @@ class ExporterFactory:
         return [], []
 
 
-def make_and_run(cfg_file: str = None):
+def make_and_run(cfg_file: str = None, *, run_in_background: True):
     """Make and run LSQ server."""
     if not cfg_file:
         cfg_file = find_cfg_file(CONFIG_DIR, ServerNames.lsq)
     server = LSQServer.from_cfg_file(cfg_file)
     run_server(server)
+    if not run_in_background:
+        install_qt_kicker(self.loop)
     return

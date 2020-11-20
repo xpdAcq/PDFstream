@@ -65,13 +65,13 @@ class XPDServer(RemoteDispatcher):
         super(XPDServer, self).__init__(config.address, prefix=config.prefix)
         self.subscribe(XPDRouter(config))
         self.subscribe(StartStopCallback())
-        install_qt_kicker(self.loop)
 
 
 def make_and_run(
     cfg_file: str = None,
     *,
-    suppress_warning: bool = True
+    suppress_warning: bool = True,
+    run_in_background: bool = True
 ):
     """Run the xpd data reduction server.
 
@@ -94,6 +94,8 @@ def make_and_run(
     config = XPDServerConfig()
     config.read(cfg_file)
     server = XPDServer(config)
+    if not run_in_background:
+        install_qt_kicker(server.loop)
     run_server(server)
 
 
