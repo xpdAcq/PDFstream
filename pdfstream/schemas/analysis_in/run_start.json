@@ -246,7 +246,7 @@
       "type": "boolean",
       "description": "if true, the run contains the dark frame image"
     },
-    "calibration": {
+    "is_calibration": {
       "type": "boolean",
       "description": "if true, the run contains the image of the standard material for calibration"
     },

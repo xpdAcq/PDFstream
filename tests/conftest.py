@@ -171,7 +171,7 @@ def db_with_dark_and_calib() -> Broker:
             sample_composition="Ni",
             sc_dk_field_uid=dark_uid,
             detector="perkin_elmer",
-            calibration=True,
+            is_calibration=True,
             bt_wavelength=0.1917
         )
     ):
