@@ -90,7 +90,7 @@ def make_and_run(
         import warnings
         warnings.simplefilter("ignore")
     if not cfg_file:
-        find_cfg_file(CONFIG_DIR, ServerNames.xpd)
+        cfg_file = find_cfg_file(CONFIG_DIR, ServerNames.xpd)
     config = XPDServerConfig()
     config.read(cfg_file)
     server = XPDServer(config)
