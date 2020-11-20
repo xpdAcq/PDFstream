@@ -39,7 +39,7 @@ setup(
     entry_points={
         'console_scripts': [
             'pdfstream = pdfstream.main:main',
-            'run_server = pdfstream.main:run_server'
+            'run_server = pdfstream.main:run_server',
             'print_server_config_dir = pdfstream.main:print_server_config_dir'
             # 'command = some.module:some_function',
         ],
