@@ -35,13 +35,21 @@ class ServerConfig(ConfigParser):
 
 def find_cfg_file(directory: Path, name: str) -> str:
     """Find the configuration file by matching the value of BASIC section name paramter to the name variable."""
+    ini_files = []
     for filename in directory.glob("*.ini"):
-        config = ConfigParser()
         try:
-            config.read(str(filename))
-            _name = config["BASIC"]["name"]
-            if name == _name:
+            config = ConfigParser()
+            ini_files.extend(config.read(str(filename)))
+            if name == config["BASIC"]["name"]:
                 return str(filename)
         except Error:
             continue
-    raise FileNotFoundError("No .ini file in {} satisfies [BASIC][name] == {}".format(str(directory), name))
+    raise FileNotFoundError(
+        "\n".join(
+            [
+                "These are the ini_files found in the {}:".format(str(directory)),
+                "\n".join(ini_files),
+                "No .ini file satisfies that parameter 'name = {}' in section [BASIC]".format(name)
+            ]
+        )
+    )
