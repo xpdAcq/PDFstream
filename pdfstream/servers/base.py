@@ -1,16 +1,10 @@
 from configparser import ConfigParser, Error
+from datetime import datetime
 from pathlib import Path
 
 from bluesky.callbacks.zmq import RemoteDispatcher
 
-
-def run_server(dispatcher: RemoteDispatcher):
-    """Run the server."""
-    try:
-        print("Start the server. To terminate the server, press 'CTRL + C'.")
-        dispatcher.start()
-    except KeyboardInterrupt:
-        print("Terminate the server.")
+from pdfstream.vend.qt_kicker import install_qt_kicker
 
 
 class ServerConfig(ConfigParser):
@@ -31,6 +25,17 @@ class ServerConfig(ConfigParser):
     @property
     def prefix(self):
         return self.get("PROXY", "prefix", fallback="").encode()
+
+
+class BaseServer(RemoteDispatcher):
+    """The basic server class."""
+
+    def start(self):
+        super(BaseServer, self).start()
+        print("[{}] Server is started".format(datetime.now()))
+
+    def install_qt_kicker(self):
+        install_qt_kicker(self)
 
 
 def find_cfg_file(directory: Path, name: str) -> str:

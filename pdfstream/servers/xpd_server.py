@@ -3,17 +3,16 @@ import typing as tp
 from collections import namedtuple
 
 import databroker
-from bluesky.callbacks.zmq import RemoteDispatcher
 from databroker.v2 import Broker
 from event_model import RunRouter
 from ophyd.sim import NumpySeqHandler
 
+from pdfstream.callbacks.analysis import AnalysisConfig, VisConfig, ExportConfig, AnalysisStream, Exporter, \
+    Visualizer
 from pdfstream.callbacks.basic import StartStopCallback
+from pdfstream.callbacks.calibration import CalibrationConfig, Calibration
 from pdfstream.servers import CONFIG_DIR, ServerNames
-from pdfstream.vend.qt_kicker import install_qt_kicker
-from .base import run_server, ServerConfig, find_cfg_file
-from ..callbacks.analysis import AnalysisConfig, VisConfig, ExportConfig, AnalysisStream, Exporter, Visualizer
-from ..callbacks.calibration import CalibrationConfig, Calibration
+from pdfstream.servers.base import ServerConfig, find_cfg_file, BaseServer
 
 
 class XPDConfig(AnalysisConfig, VisConfig, ExportConfig, CalibrationConfig):
@@ -58,7 +57,7 @@ class XPDServerConfig(XPDConfig, ServerConfig):
     pass
 
 
-class XPDServer(RemoteDispatcher):
+class XPDServer(BaseServer):
     """The server of XPD data analysis. It is a live dispatcher with XPDRouter subscribed."""
 
     def __init__(self, config: XPDServerConfig):
@@ -70,8 +69,7 @@ class XPDServer(RemoteDispatcher):
 def make_and_run(
     cfg_file: str = None,
     *,
-    suppress_warning: bool = True,
-    run_in_background: bool = True
+    suppress_warning: bool = True
 ):
     """Run the xpd data reduction server.
 
@@ -94,9 +92,8 @@ def make_and_run(
     config = XPDServerConfig()
     config.read(cfg_file)
     server = XPDServer(config)
-    if not run_in_background:
-        install_qt_kicker(server.loop)
-    run_server(server)
+
+    server.start()
 
 
 class XPDRouter(RunRouter):

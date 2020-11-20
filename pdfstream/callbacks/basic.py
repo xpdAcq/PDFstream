@@ -1,5 +1,5 @@
-import time
 import typing as tp
+from datetime import datetime
 from pathlib import Path
 
 import numpy as np
@@ -21,16 +21,13 @@ class StartStopCallback(CallbackBase):
     """Print the time for analysis"""
 
     def __init__(self):
-        super().__init__()
-        self.t0 = 0
+        super(StartStopCallback, self).__init__()
 
     def start(self, doc):
-        self.t0 = time.time()
-        print("START ANALYSIS ON {}".format(doc["uid"]))
+        print("[{}] Receive the start of run {}".format(datetime.now(), doc["uid"]))
 
     def stop(self, doc):
-        print("FINISH ANALYSIS ON {}".format(doc.get("run_start", "NA")))
-        print("Analysis time {}".format(time.time() - self.t0))
+        print("[{}] Receive the stop of run {}".format(datetime.now(), doc.get("run_start", "NA")))
 
 
 class NumpyExporter(CallbackBase):

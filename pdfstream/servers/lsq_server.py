@@ -7,7 +7,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import scipy.optimize as opt
 from bluesky.callbacks.stream import LiveDispatcher
-from bluesky.callbacks.zmq import RemoteDispatcher
 from diffpy.pdfgetx import PDFGetter, PDFConfig
 from event_model import RunRouter
 from ophyd.sim import NumpySeqHandler
@@ -15,7 +14,7 @@ from ophyd.sim import NumpySeqHandler
 import pdfstream.units as units
 from pdfstream.callbacks.basic import LiveWaterfall, NumpyExporter
 from pdfstream.servers import CONFIG_DIR, ServerNames
-from pdfstream.servers.base import run_server, ServerConfig, find_cfg_file
+from pdfstream.servers.base import ServerConfig, find_cfg_file, BaseServer
 from pdfstream.vend.qt_kicker import install_qt_kicker
 
 
@@ -92,7 +91,7 @@ class LSQServerConfig(LSQConfig, ServerConfig):
     pass
 
 
-class LSQServer(RemoteDispatcher):
+class LSQServer(BaseServer):
     """The server that decomposes one array data to a linear combination of the several array data in the record
     and save the data and visualize the residual of the decomposition and the PDF data transformed from it."""
 
@@ -313,12 +312,11 @@ class ExporterFactory:
         return [], []
 
 
-def make_and_run(cfg_file: str = None, *, run_in_background: True):
+def make_and_run(cfg_file: str = None):
     """Make and run LSQ server."""
     if not cfg_file:
         cfg_file = find_cfg_file(CONFIG_DIR, ServerNames.lsq)
     server = LSQServer.from_cfg_file(cfg_file)
-    run_server(server)
-    if not run_in_background:
-        install_qt_kicker(self.loop)
+    install_qt_kicker(self.loop)
+    server.start()
     return
