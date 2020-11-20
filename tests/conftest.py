@@ -1,4 +1,9 @@
 """Configuration of pytest."""
+import matplotlib
+
+# Force matplotlib to not use any Xwindows backend.
+matplotlib.use('Agg')
+
 import json
 import uuid
 from pathlib import Path
@@ -16,8 +21,6 @@ from pkg_resources import resource_filename
 from pdfstream.callbacks.composer import gen_stream
 from pdfstream.io import load_img, load_array
 
-# use AGG as backend
-plt.switch_backend('agg')
 # do not show any figures in test otherwise they will block the tests
 plt.ioff()
 
