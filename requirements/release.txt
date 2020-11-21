@@ -1,5 +1,6 @@
 rever
 pyyaml
 conda-build
+conda-smithy
 anaconda-client
 conda-verify

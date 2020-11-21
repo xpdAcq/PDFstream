@@ -9,14 +9,13 @@ v0.3.0
 
 **Added:**
 
-* `databroker`, `bluesky`, `shed` are added in the dependencies
+* `databroker`, `bluesky` are added in the dependencies
 
-* A pipeline to process the streaming x-ray diffraction data
+* A server to process the streaming x-ray diffraction data to PDF
+
+* A server to decompose processed PDF to a linear combination of other PDFs
 
 * The functions to query the necessary data from the databroker
-
-* The wrappers of the data processing functions that can be used in pipeline.
-
 
 
 v0.2.2

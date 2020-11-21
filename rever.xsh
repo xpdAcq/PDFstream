@@ -1,20 +1,22 @@
 from rever.activity import activity
+from pathlib import Path
 
 
 @activity
 def conda_release():
     $PYTHON release.py
     cd rever
-    gh repo clone $FORGE_ORG/$FORGE_REPO
+    if not Path($FORGE_REPO).is_dir():
+        gh repo clone $FORGE_ORG/$FORGE_REPO
     cp -r recipe $FORGE_REPO/recipe
     cd $FORGE_REPO
+    echo $PWD
     conda smithy rerender --feedstock_directory .
     git add .
     git commit -m "MNT: Re-rendered"
     git push upstream rerender
     gh pr create
     cd ../..
-
 
 @activity
 def build_docs():
