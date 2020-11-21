@@ -1,7 +1,10 @@
-from diffpy.pdfgetx import PDFConfig, PDFGetter
+try:
+    from diffpy.pdfgetx import PDFConfig, PDFGetter
+    from .main import get_pdf
 
-from .main import get_pdf
+    get_pdf = get_pdf
+    PDFConfig = PDFConfig
+    PDFGetter = PDFGetter
 
-get_pdf = get_pdf
-PDFConfig = PDFConfig
-PDFGetter = PDFGetter
+except ImportError:
+    pass
