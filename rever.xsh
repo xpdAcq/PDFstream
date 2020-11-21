@@ -4,8 +4,16 @@ from rever.activity import activity
 @activity
 def conda_release():
     $PYTHON release.py
-    conda build $REVER_DIR/recipe --user $CONDA_ORG
-    conda build purge
+    cd rever
+    gh repo clone $FORGE_ORG/$FORGE_REPO
+    cp -r recipe $FORGE_REPO/recipe
+    cd $FORGE_REPO
+    conda smithy rerender --feedstock_directory .
+    git add .
+    git commit -m "MNT: Re-rendered"
+    git push upstream rerender
+    gh pr create
+    cd ../..
 
 
 @activity
@@ -42,7 +50,8 @@ $TAG_REMOTE = 'git@github.com:st3107/pdfstream.git'
 $GITHUB_ORG = 'st3107'
 $GITHUB_REPO = 'pdfstream'
 
-$CONDA_ORG = 'diffpy'
+$FORGE_ORG = 'nsls-ii-forge'
+$FORGE_REPO = 'pdfstream-feedstock'
 
 $SPHINX_HOST_DIR = 'docs/build'
 $GHPAGES_REPO = 'git@github.com:st3107/pdfstream.git'

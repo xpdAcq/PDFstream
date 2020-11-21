@@ -1,17 +1,18 @@
 """Used in release procedure."""
-import pkg_resources
 import shutil
 import subprocess
 import sys
-import yaml
 from pathlib import Path
+
+import pkg_resources
+import yaml
 
 PACKAGE = "pdfstream"
 REVER_DIR = Path("rever")
 REQUIREMENTS = Path("requirements")
 LICENSE = Path("LICENSE")
-CONDA_CHANNEL_SOURCES = ["defaults", "conda-forge"]
-CONDA_CHANNEL_TARGETS = ["diffpy"]
+CONDA_CHANNEL_SOURCES = ["defaults", "nsls2forge"]
+CONDA_CHANNEL_TARGETS = ["nsls2forge"]
 
 
 def conda_recipe() -> None:
