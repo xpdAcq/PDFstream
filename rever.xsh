@@ -6,17 +6,18 @@ from pathlib import Path
 def conda_release():
     $PYTHON release.py
     cd rever
-    if not Path($FORGE_REPO).is_dir():
-        gh repo clone $FORGE_REPO
+    if Path($FORGE_REPO).is_dir():
+        rm -rf $FORGE_REPO
+    gh repo clone $FORGE_ORG/$FORGE_REPO
     cd $FORGE_REPO
     git checkout master
     git reset --hard origin/master
-    git checkout -b rerender
+    git checkout -b $VERSION
     cp -r ../recipe recipe
     conda smithy rerender --feedstock_directory .
     git add .
     git commit -m "MNT: Re-rendered"
-    git push origin rerender
+    git push origin $VERSION --force
     gh pr create --title $VERSION --body "New release using rever"
     cd ../..
 
@@ -25,15 +26,9 @@ def build_docs():
     make -C docs html
 
 
-@activity
-def install():
-    python -m pip install -e .
-
-
 $PROJECT = 'pdfstream'
 $ACTIVITIES = [
     'version_bump',
-    'install',
     'changelog',
     'tag',
     'push_tag',

@@ -26,13 +26,17 @@ v0.3.0
 
 * The functions to query the necessary data from the databroker
 
+**Changed:**
+
+* Starting from 0.3.0, the package will be released on `nsls2forge` channel on conda.
+
 
 v0.2.2
 ====================
 
 **Changed:**
 
-* Starting from 0.2.2, the package willl be released in `diffpy` channel on conda.
+* Starting from 0.2.2, the package will be released on `diffpy` channel on conda.
 
 
 
