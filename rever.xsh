@@ -13,7 +13,7 @@ def conda_release():
     git checkout master
     git reset --hard origin/master
     git checkout -b $VERSION
-    cp -r ../recipe recipe
+    cp -Rv ../recipe/* recipe/
     conda smithy rerender --feedstock_directory .
     git add .
     git commit -m "MNT: Re-rendered"
