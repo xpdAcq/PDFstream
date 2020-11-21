@@ -4,6 +4,15 @@ PDFstream Change Log
 
 .. current developments
 
+v0.3.1
+====================
+
+**Fixed:**
+
+* Fix the bug that pdfstream has import error if the diffpy.pdfgetx is not in environment
+
+
+
 v0.3.0
 ====================
 
