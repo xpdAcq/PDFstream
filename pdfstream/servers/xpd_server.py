@@ -92,7 +92,7 @@ def make_and_run(
     config = XPDServerConfig()
     config.read(cfg_file)
     server = XPDServer(config)
-
+    server.install_qt_kicker()
     server.start()
 
 

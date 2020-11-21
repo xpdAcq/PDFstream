@@ -15,7 +15,6 @@ import pdfstream.units as units
 from pdfstream.callbacks.basic import LiveWaterfall, NumpyExporter
 from pdfstream.servers import CONFIG_DIR, ServerNames
 from pdfstream.servers.base import ServerConfig, find_cfg_file, BaseServer
-from pdfstream.vend.qt_kicker import install_qt_kicker
 
 
 class LSQConfig(ConfigParser):
@@ -317,6 +316,6 @@ def make_and_run(cfg_file: str = None):
     if not cfg_file:
         cfg_file = find_cfg_file(CONFIG_DIR, ServerNames.lsq)
     server = LSQServer.from_cfg_file(cfg_file)
-    install_qt_kicker(self.loop)
+    server.install_qt_kicker()
     server.start()
     return

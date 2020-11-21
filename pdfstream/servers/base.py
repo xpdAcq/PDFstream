@@ -35,7 +35,7 @@ class BaseServer(RemoteDispatcher):
         print("[{}] Server is started".format(datetime.now()))
 
     def install_qt_kicker(self):
-        install_qt_kicker(self)
+        install_qt_kicker(self.loop)
 
 
 def find_cfg_file(directory: Path, name: str) -> str:
