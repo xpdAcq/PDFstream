@@ -1,9 +1,4 @@
 """Configuration of pytest."""
-import matplotlib
-
-# Force matplotlib to not use any Xwindows backend.
-matplotlib.use('Agg')
-
 import json
 import uuid
 from pathlib import Path
