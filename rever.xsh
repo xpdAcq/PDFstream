@@ -7,15 +7,17 @@ def conda_release():
     $PYTHON release.py
     cd rever
     if not Path($FORGE_REPO).is_dir():
-        gh repo clone $FORGE_ORG/$FORGE_REPO
-    cp -r recipe $FORGE_REPO/recipe
+        gh repo clone $FORGE_REPO
     cd $FORGE_REPO
-    echo $PWD
+    git checkout master
+    git reset --hard origin/master
+    git checkout -b rerender
+    cp -r ../recipe recipe
     conda smithy rerender --feedstock_directory .
     git add .
     git commit -m "MNT: Re-rendered"
-    git push upstream rerender
-    gh pr create
+    git push origin rerender
+    gh pr create --title $VERSION --body "New release using rever"
     cd ../..
 
 @activity
