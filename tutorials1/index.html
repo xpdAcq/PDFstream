@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Examples &mdash; PDFstream 0.2.2 documentation</title>
+  <title>Beamline Scientists Document &mdash; PDFstream 0.2.2 documentation</title>
   
 
   
@@ -41,8 +41,8 @@
   <link rel="stylesheet" href="../_static/gallery-dataframe.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="PDFstream Change Log" href="../changelog.html" />
-    <link rel="prev" title="XPD Server" href="../tutorials1/xpd_server.html" /> 
+    <link rel="next" title="ZMQ Proxy" href="zmq_proxy.html" />
+    <link rel="prev" title="Transformation" href="../tutorials0/transformation.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -93,8 +93,12 @@
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials0/index.html">Users Document</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorials1/index.html">Beamline Scientists Document</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Examples</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Beamline Scientists Document</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="zmq_proxy.html">ZMQ Proxy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="xpd_server.html">XPD Server</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../auto_gallery/index.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../changelog.html">PDFstream Change Log</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../min_versions.html">Minimum Version of Python and NumPy</a></li>
 </ul>
@@ -142,13 +146,13 @@
     
       <li><a href="../index.html">Docs</a> &raquo;</li>
         
-      <li>Examples</li>
+      <li>Beamline Scientists Document</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="../_sources/auto_gallery/index.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/tutorials1/index.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -161,18 +165,19 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="examples">
-<span id="sphx-glr-auto-gallery"></span><h1>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h1>
-<p>Below is a gallery of examples.</p>
-<div class="sphx-glr-clear"></div><div class="sphx-glr-footer class sphx-glr-footer-gallery docutils container">
-<div class="sphx-glr-download sphx-glr-download-python docutils container">
-<p><a class="reference download internal" download="" href="../_downloads/50be3561a31b6f8ab9ba12e67a90316b/auto_gallery_python.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">all</span> <span class="pre">examples</span> <span class="pre">in</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">auto_gallery_python.zip</span></code></a></p>
+  <div class="section" id="beamline-scientists-document">
+<h1>Beamline Scientists Document<a class="headerlink" href="#beamline-scientists-document" title="Permalink to this headline">¶</a></h1>
+<p>If you are a beamline scientist or a user who is conducting experiment at the beamline and you are using the
+bluesky to collect the data, here is the tutorial to setup a server that can process the data in real time.</p>
+<p>In the subsections, you will find several servers that you can run for the real time streaming data analysis.
+Before you start a server, you always needs a proxy running, please look at ZMQ Proxy section to know how to
+start a proxy.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="zmq_proxy.html">ZMQ Proxy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="xpd_server.html">XPD Server</a></li>
+</ul>
 </div>
-<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
-<p><a class="reference download internal" download="" href="../_downloads/0e1efe86a924d1258b06285627be2550/auto_gallery_jupyter.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">all</span> <span class="pre">examples</span> <span class="pre">in</span> <span class="pre">Jupyter</span> <span class="pre">notebooks:</span> <span class="pre">auto_gallery_jupyter.zip</span></code></a></p>
-</div>
-</div>
-<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
 </div>
 
 
@@ -183,10 +188,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../changelog.html" class="btn btn-neutral float-right" title="PDFstream Change Log" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="zmq_proxy.html" class="btn btn-neutral float-right" title="ZMQ Proxy" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="../tutorials1/xpd_server.html" class="btn btn-neutral float-left" title="XPD Server" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="../tutorials0/transformation.html" class="btn btn-neutral float-left" title="Transformation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

@@ -41,7 +41,7 @@
   <link rel="stylesheet" href="_static/gallery-dataframe.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Usage" href="usage/index.html" />
+    <link rel="next" title="Users Document" href="tutorials0/index.html" />
     <link rel="prev" title="PDFstream Documentation" href="index.html" /> 
 </head>
 
@@ -97,8 +97,8 @@
 <li class="toctree-l2"><a class="reference internal" href="#development-installation">Development Installation</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="usage/index.html">Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/index.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials0/index.html">Users Document</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials1/index.html">Beamline Scientists Document</a></li>
 <li class="toctree-l1"><a class="reference internal" href="auto_gallery/index.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">PDFstream Change Log</a></li>
 <li class="toctree-l1"><a class="reference internal" href="min_versions.html">Minimum Version of Python and NumPy</a></li>
@@ -181,9 +181,9 @@ to transform the XRD data to PDF data.</p>
 </div>
 <div class="section" id="general-installation">
 <h2>General Installation<a class="headerlink" href="#general-installation" title="Permalink to this headline">¶</a></h2>
-<p>Users can install the <cite>PDFstream</cite> using conda. It is suggested to create a new environment for it.</p>
+<p>Users can install the <cite>PDFstream</cite> using conda. It is suggested to install it in a clean environment.</p>
 <p>At the command line:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">create</span> <span class="o">-</span><span class="n">n</span> <span class="n">pdfstream_env</span> <span class="o">-</span><span class="n">c</span> <span class="n">st3107</span> <span class="n">pdfstream</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">create</span> <span class="o">-</span><span class="n">n</span> <span class="n">pdfstream_env</span> <span class="o">-</span><span class="n">c</span> <span class="n">diffpy</span> <span class="n">pdfstream</span>
 </pre></div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">pdfstream_env</span></code> in the command is the name of the environment. It can be changed to any name.</p>
@@ -228,8 +228,8 @@ to transform the XRD data to PDF data.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="o">-</span><span class="n">m</span> <span class="n">pip</span> <span class="n">install</span> <span class="o">&lt;</span><span class="n">path</span> <span class="n">to</span> <span class="o">.</span><span class="n">whl</span> <span class="n">file</span><span class="o">&gt;</span>
 </pre></div>
 </div>
-<p>Install the <cite>twine</cite> for pypi release:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="o">-</span><span class="n">m</span> <span class="n">pip</span> <span class="n">install</span> <span class="n">twine</span>
+<p>Install the necessary pypi packages:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="o">-</span><span class="n">m</span> <span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">r</span> <span class="n">requirements</span><span class="o">/</span><span class="n">pip</span><span class="o">.</span><span class="n">txt</span>
 </pre></div>
 </div>
 <p>Change the <code class="docutils literal notranslate"><span class="pre">&lt;path</span> <span class="pre">to</span> <span class="pre">.whl</span> <span class="pre">file&gt;</span></code> to the path of the .whl file on your computer.</p>
@@ -248,7 +248,7 @@ to transform the XRD data to PDF data.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="usage/index.html" class="btn btn-neutral float-right" title="Usage" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="tutorials0/index.html" class="btn btn-neutral float-right" title="Users Document" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="index.html" class="btn btn-neutral float-left" title="PDFstream Documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
