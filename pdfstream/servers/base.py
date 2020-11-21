@@ -31,8 +31,11 @@ class BaseServer(RemoteDispatcher):
     """The basic server class."""
 
     def start(self):
-        super(BaseServer, self).start()
-        print("[{}] Server is started".format(datetime.now()))
+        try:
+            print("[{}] Server is started".format(datetime.now()))
+            super(BaseServer, self).start()
+        except KeyboardInterrupt:
+            print("[{}] Server is terminated".format(datetime.now()))
 
     def install_qt_kicker(self):
         install_qt_kicker(self.loop)

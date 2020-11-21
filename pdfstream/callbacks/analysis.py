@@ -283,7 +283,7 @@ class BasicExportConfig(ConfigParser):
         dir_path = section.get("tiff_base")
         if not dir_path:
             raise Error("Missing tiff_base in configuration.")
-        path = Path(dir_path)
+        path = Path(dir_path).expanduser()
         return path
 
     @tiff_base.setter

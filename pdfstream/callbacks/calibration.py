@@ -38,7 +38,7 @@ class CalibrationConfig(BasicAnalysisConfig, BasicExportConfig):
         dir_path = self.get("FILE SYSTEM", "calib_base")
         if not dir_path:
             raise Error("Missing calib_base in configuration.")
-        path = Path(dir_path)
+        path = Path(dir_path).expanduser()
         return path
 
     @calib_base.setter
@@ -150,5 +150,5 @@ def run_calibration_gui(
     args.append(str(tiff_file))
     if test:
         return 0
-    cp = subprocess.run(args)
+    cp = subprocess.run(args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     return cp.returncode
