@@ -26,7 +26,7 @@ jobs:
       - name: install requirements
         run: >-
           conda install --file requirements/build.txt --file requirements/run.txt --file requirements/test.txt
-          --quiet --yes
+          --file requirements/docs.txt --quiet --yes
 
       - uses: actions/checkout@v2
         with:
