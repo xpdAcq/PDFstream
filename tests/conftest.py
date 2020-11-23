@@ -64,7 +64,8 @@ DB = {
     'Ni_config': NI_CONFIG,
     'Ni_pdfgetter': NI_PDFGETTER,
     'mask_file': MASK_FILE,
-    'mask': MASK
+    'mask': MASK,
+    'start_doc': START_DOC
 }
 
 

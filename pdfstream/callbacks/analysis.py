@@ -20,7 +20,7 @@ import pdfstream.callbacks.from_descriptor as from_desc
 import pdfstream.callbacks.from_event as from_event
 import pdfstream.callbacks.from_start as from_start
 import pdfstream.integration.tools as integ
-from pdfstream.callbacks.basic import LiveMaskedImage, LiveWaterfall, NumpyExporter, SmartScalarPlot
+from pdfstream.callbacks.basic import LiveMaskedImage, LiveWaterfall, DataFrameExporter, SmartScalarPlot
 from pdfstream.units import LABELS
 from pdfstream.vend.formatters import SpecialStr
 
@@ -352,13 +352,13 @@ class ExporterFactory:
             self.callbacks.append(cb)
         if self.config.csv_setting is not None:
             cb = CSVSerializer(
-                str(tiff_base.joinpath("datasheets")),
+                str(tiff_base.joinpath("scalar_data")),
                 **self.config.csv_setting
             )
             self.callbacks.append(cb)
-        if self.config.csv_setting is not None:
-            cb = NumpyExporter(
-                str(tiff_base.joinpath("arrays")),
+        if self.config.npy_setting is not None:
+            cb = DataFrameExporter(
+                str(tiff_base.joinpath("array_data")),
                 **self.config.npy_setting
             )
             self.callbacks.append(cb)

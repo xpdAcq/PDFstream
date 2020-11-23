@@ -125,10 +125,10 @@ class XPDFactory:
 
     def __call__(self, name: str, doc: dict) -> tp.Tuple[list, list]:
         if name == "start":
-            if doc.get(self.config.dark_identifier, False):
+            if doc.get(self.config.dark_identifier):
                 # dark frame run
                 return [], []
-            elif doc.get(self.config.calib_identifier, False):
+            elif doc.get(self.config.calib_identifier):
                 # calibration run
                 if self.func.do_calibration:
                     return [self.calibration], []

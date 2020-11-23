@@ -21,6 +21,9 @@ def load_ai_from_calib_result(calib_result: dict) -> pyFAI.AzimuthalIntegrator:
     ai = pyFAI.azimuthalIntegrator.AzimuthalIntegrator()
     # different from poni file, set_config only accepts dictionary of lowercase keys
     _calib_result = _lower_key(calib_result)
+    # the pyFAI only accept strings so the None should be parsed to a string
+    _calib_result = _str_none(_calib_result)
+    # the old version of poni uses dist intead of distance and the new version only recognize "distance"
     if ("dist" in _calib_result) and "distance" not in _calib_result:
         _calib_result["distance"] = _calib_result["dist"]
     ai.set_config(_calib_result)
@@ -56,3 +59,8 @@ def load_dict_from_poni(poni_file: str) -> dict:
 def _lower_key(dct: Dict[str, Any]) -> Dict[str, Any]:
     """Return dictionary with all keys in lower case."""
     return {key.lower(): value for key, value in dct.items()}
+
+
+def _str_none(dct: Dict[str, Any]) -> Dict[str, Any]:
+    """Make all the None value to string 'none'."""
+    return {key: "none" if value is None else value for key, value in dct.items()}

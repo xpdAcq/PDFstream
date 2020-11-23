@@ -62,7 +62,6 @@ def test_Exporter(db_with_dark_and_scan, tmpdir):
     assert len(list(tiff_base.rglob("*.tiff"))) > 0
     assert len(list(tiff_base.rglob("*.csv"))) > 0
     assert len(list(tiff_base.rglob("*.json"))) > 0
-    assert len(list(tiff_base.rglob("*.npy"))) > 0
 
 
 def test_ExportConfig():

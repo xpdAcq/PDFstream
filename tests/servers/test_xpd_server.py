@@ -34,5 +34,5 @@ def test_XPDRouter(db_with_img_and_bg_img, tmpdir):
     tiff_base = Path(config.tiff_base)
     assert len(list(tiff_base.rglob("*.tiff"))) > 0
     assert len(list(tiff_base.rglob("*.json"))) > 0
-    assert len(list(tiff_base.rglob("*.npy"))) > 0
+    assert len(list(tiff_base.rglob("*.csv"))) > 0
     assert len(list(an_db)) > 0
