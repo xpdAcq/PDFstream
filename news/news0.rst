@@ -1,6 +1,6 @@
 **Added:**
 
-* <news item>
+* Make callback safe for the Exporter and Visualizer in the XPDRouter.
 
 **Changed:**
 
@@ -16,7 +16,7 @@
 
 **Fixed:**
 
-* Fix the bugs of xpd server when it is used with xpdacq
+* Fix the bugs of xpd server when it is used with xpdacq.
 
 **Security:**
 
