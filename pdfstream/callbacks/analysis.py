@@ -7,6 +7,7 @@ import event_model
 import matplotlib.pyplot as plt
 import numpy as np
 from bluesky.callbacks.broker import LiveImage
+from bluesky.callbacks.core import make_class_safe
 from bluesky.callbacks.stream import LiveDispatcher
 from databroker.v2 import Broker
 from event_model import RunRouter
@@ -322,6 +323,7 @@ class ExportConfig(BasicExportConfig):
         return {"file_prefix": SpecialStr(section.get("file_prefix"))}
 
 
+@make_class_safe
 class Exporter(RunRouter):
     """Export the processed data to file systems, including."""
 
@@ -476,6 +478,7 @@ class VisConfig(ConfigParser):
         return {"ylabel": section.get("ylabel", fallback=LABELS.chi[0])}
 
 
+@make_class_safe
 class Visualizer(RunRouter):
     """Visualize the analyzed data. It can be subscribed to a live dispatcher."""
 
