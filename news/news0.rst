@@ -4,6 +4,8 @@
 
 * Add a DataFrameExporter to export data in dataframe
 
+* Make calibration callback identify special calibrant name 'Ni_calib'
+
 **Changed:**
 
 * Export 1d array in dataframe data instead of the numpy array

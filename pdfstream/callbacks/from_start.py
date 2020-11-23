@@ -193,8 +193,11 @@ def get_calib_info(
     calibrant_key: str
 ) -> typing.Dict[str, str]:
     """Get the information for pyfail calib2 gui in the start. If no such key, return empty string."""
+    calibrant = str(start.get(calibrant_key, ""))
+    # a special case for xpdacq
+    calibrant = "Ni" if calibrant == "Ni_calib" else calibrant
     return {
         "detector": str(start.get(detector_key, "")),
         "wavelength": str(start.get(wavelength_key, "")),
-        "calibrant": str(start.get(calibrant_key, ""))
+        "calibrant": calibrant
     }
