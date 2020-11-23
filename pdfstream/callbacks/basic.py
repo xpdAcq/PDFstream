@@ -34,12 +34,13 @@ class StartStopCallback(CallbackBase):
 
 class ArrayExporter(CallbackBase):
     """An base class for the callbacks to find and export the 1d array."""
+    file_suffix = ""
 
     def __init__(self, directory: str, *, file_prefix: str, data_keys: tp.List[str] = None):
         super(ArrayExporter, self).__init__()
         self.directory = Path(directory)
         self.directory.mkdir(parents=True, exist_ok=True)
-        self.file_template = SpecialStr(file_prefix + "{data_key}-{event[seq_num]}.npy")
+        self.file_template = SpecialStr(file_prefix + self.file_suffix)
         self.data_keys = data_keys
         self.start_doc = None
 
@@ -70,6 +71,7 @@ class ArrayExporter(CallbackBase):
 
 class NumpyExporter(ArrayExporter):
     """An exporter to export the 1d array data in .npy file."""
+    file_suffix = "{data_key}-{event[seq_num]}.npy"
 
     def export(self, doc):
         for data_key in self.data_keys:
@@ -81,6 +83,7 @@ class NumpyExporter(ArrayExporter):
 
 class DataFrameExporter(ArrayExporter):
     """An exporter to export data in a dataframe in the .csv file."""
+    file_suffix = "{data_key}-{event[seq_num]}.csv"
 
     def export(self, doc):
         _data = {data_key: pd.Series(doc["data"][data_key]) for data_key in self.data_keys}
