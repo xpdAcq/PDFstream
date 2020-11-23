@@ -1,10 +1,11 @@
 """The input / output functions related to file system."""
+from pathlib import Path
+from typing import Dict, Any
+
 import fabio
 import pyFAI
 import yaml
 from numpy import ndarray
-from pathlib import Path
-from typing import Dict, Any
 
 from pdfstream.vend.loaddata import load_data
 
@@ -18,9 +19,11 @@ def load_ai_from_poni_file(poni_file: str) -> pyFAI.AzimuthalIntegrator:
 def load_ai_from_calib_result(calib_result: dict) -> pyFAI.AzimuthalIntegrator:
     """Initiate the AzimuthalIntegrator using calibration information."""
     ai = pyFAI.azimuthalIntegrator.AzimuthalIntegrator()
-    if ("dist" in calib_result) and "distance" not in calib_result:
-        calib_result["distance"] = calib_result["dist"]
-    ai.set_config(calib_result)
+    # different from poni file, set_config only accepts dictionary of lowercase keys
+    _calib_result = _lower_key(calib_result)
+    if ("dist" in _calib_result) and "distance" not in _calib_result:
+        _calib_result["distance"] = _calib_result["dist"]
+    ai.set_config(_calib_result)
     return ai
 
 
