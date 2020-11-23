@@ -15,6 +15,7 @@ from xpdview.waterfall import Waterfall
 
 import pdfstream.callbacks.from_descriptor as fd
 import pdfstream.callbacks.from_start as fs
+from pdfstream.vend.formatters import SpecialStr
 
 
 class StartStopCallback(CallbackBase):
@@ -37,7 +38,7 @@ class NumpyExporter(CallbackBase):
         super(NumpyExporter, self).__init__()
         self.directory = Path(directory)
         self.directory.mkdir(parents=True, exist_ok=True)
-        self.file_template = file_prefix + "{data_key}-{event[seq_num]}.npy"
+        self.file_template = SpecialStr(file_prefix + "{data_key}-{event[seq_num]}.npy")
         self.data_keys = data_keys
         self.cache = dict()
 
