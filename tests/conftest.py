@@ -76,7 +76,7 @@ def test_data():
 
 @pytest.fixture(scope="function")
 def simple_stream():
-    return gen_stream([{"pe1_image": NI_IMG}], START_DOC)
+    return gen_stream([{"x": 1}], {})
 
 
 @pytest.fixture(
@@ -94,6 +94,17 @@ def ymax_stream(request):
         {"ymax": 2, "x0": 2, "x1": 2}
     ]
     return gen_stream(data, request.param)
+
+
+@pytest.fixture(scope="function")
+def array_stream():
+    return gen_stream(
+        [
+            {"x0": np.zeros(3), "x1": np.zeros(5)},
+            {"x0": np.ones(3), "x1": np.ones(5)},
+        ],
+        {}
+    )
 
 
 @pytest.fixture(scope="session")

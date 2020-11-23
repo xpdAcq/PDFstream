@@ -3,6 +3,7 @@ from datetime import datetime
 from pathlib import Path
 
 import numpy as np
+import pandas as pd
 from bluesky.callbacks import CallbackBase
 from bluesky.callbacks.best_effort import LivePlot, LiveScatter
 from bluesky.callbacks.broker import LiveImage
@@ -31,42 +32,62 @@ class StartStopCallback(CallbackBase):
         print("[{}] Receive the stop of run {}".format(datetime.now(), doc.get("run_start", "NA")))
 
 
-class NumpyExporter(CallbackBase):
-    """An exporter to export the 1d array data in .npy file."""
+class ArrayExporter(CallbackBase):
+    """An base class for the callbacks to find and export the 1d array."""
 
     def __init__(self, directory: str, *, file_prefix: str, data_keys: tp.List[str] = None):
-        super(NumpyExporter, self).__init__()
+        super(ArrayExporter, self).__init__()
         self.directory = Path(directory)
         self.directory.mkdir(parents=True, exist_ok=True)
         self.file_template = SpecialStr(file_prefix + "{data_key}-{event[seq_num]}.npy")
         self.data_keys = data_keys
-        self.cache = dict()
+        self.start_doc = None
 
     def start(self, doc):
-        self.cache = dict()
-        self.cache["start"] = doc
-        super(NumpyExporter, self).start(doc)
+        self.start_doc = doc
+        super(ArrayExporter, self).start(doc)
 
     def descriptor(self, doc):
         if not self.data_keys:
             self.data_keys = list(fd.yield_1d_array(doc["data_keys"]))
-        super(NumpyExporter, self).descriptor(doc)
+        super(ArrayExporter, self).descriptor(doc)
+
+    def event(self, doc):
+        self.export(doc)
+        super(ArrayExporter, self).event(doc)
 
     def event_page(self, doc):
         for event in unpack_event_page(doc):
             self.event(event)
 
-    def event(self, doc):
+    def stop(self, doc):
+        self.start_doc = None
+        super(ArrayExporter, self).stop(doc)
+
+    def export(self, doc):
+        pass
+
+
+class NumpyExporter(ArrayExporter):
+    """An exporter to export the 1d array data in .npy file."""
+
+    def export(self, doc):
         for data_key in self.data_keys:
             arr: np.ndarray = doc["data"][data_key]
-            filename = self.file_template.format(start=self.cache["start"], event=doc, data_key=data_key)
+            filename = self.file_template.format(start=self.start_doc, event=doc, data_key=data_key)
             filepath = self.directory.joinpath(filename)
             np.save(str(filepath), arr)
-        super(NumpyExporter, self).event(doc)
 
-    def stop(self, doc):
-        self.cache = dict()
-        super(NumpyExporter, self).stop(doc)
+
+class DataFrameExporter(ArrayExporter):
+    """An exporter to export data in a dataframe in the .csv file."""
+
+    def export(self, doc):
+        _data = {data_key: pd.Series(doc["data"][data_key]) for data_key in self.data_keys}
+        df = pd.DataFrame(data=_data)
+        filename = self.file_template.format(start=self.start_doc, event=doc, data_key="data")
+        filepath = self.directory.joinpath(filename)
+        df.to_csv(filepath)
 
 
 class LiveMaskedImage(LiveImage):
