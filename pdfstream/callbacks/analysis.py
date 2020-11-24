@@ -338,38 +338,38 @@ class ExporterFactory:
 
     def __init__(self, config: ExportConfig):
         self.config = config
+        self.config.tiff_base.mkdir(exist_ok=True, parents=True)
+
+    def __call__(self, name: str, doc: dict) -> tp.Tuple[list, list]:
+        if name != "start":
+            return [], []
         tiff_base = self.config.tiff_base
-        tiff_base.mkdir(exist_ok=True, parents=True)
-        self.callbacks = []
+        callbacks = []
         if self.config.tiff_setting is not None:
             cb = TiffSerializer(
                 str(tiff_base.joinpath("images")),
                 **self.config.tiff_setting
             )
-            self.callbacks.append(cb)
+            callbacks.append(cb)
         if self.config.json_setting is not None:
             cb = JsonSerializer(
                 str(tiff_base.joinpath("metadata")),
                 **self.config.json_setting
             )
-            self.callbacks.append(cb)
+            callbacks.append(cb)
         if self.config.csv_setting is not None:
             cb = CSVSerializer(
                 str(tiff_base.joinpath("scalar_data")),
                 **self.config.csv_setting
             )
-            self.callbacks.append(cb)
+            callbacks.append(cb)
         if self.config.npy_setting is not None:
             cb = DataFrameExporter(
                 str(tiff_base.joinpath("array_data")),
                 **self.config.npy_setting
             )
-            self.callbacks.append(cb)
-
-    def __call__(self, name: str, doc: dict) -> tp.Tuple[list, list]:
-        if name != "start":
-            return [], []
-        return self.callbacks, []
+            callbacks.append(cb)
+        return callbacks, []
 
 
 class VisConfig(ConfigParser):
