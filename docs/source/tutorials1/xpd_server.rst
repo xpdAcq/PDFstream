@@ -204,7 +204,8 @@ The diffraction image data together with the mask data will be saved in .tiff fi
 The scalar data like temperature will be in the .csv files in the folder ``scalar_data``.
 You can match the scalar data with the image by the start id and the sequence number in the file.
 The reduced data like XRD and PDF will be in the .csv files in folder ``array_data``.
-You can match the array data with the image by the start id and the sequence number in the file.
+Each column in the dataframe in the .csv files is an array data.
+You can match the dataframe with the image by the start id and the sequence number in the file.
 The metadata like the sample information, wavelength of the beam, and the experiment setup are saved in
 the .json files in folder ``metadata``.
 
@@ -230,8 +231,11 @@ The schemas can be shown used the code below.
 
 .. code-block:: ipython
 
-    from pdfstream.schemas import analysis_out_schemas, DocumentNames
+    In [1]: from pdfstream.schemas import analysis_out_schemas, print_data_keys
 
+    In [2]: print_data_keys(analysis_out_schemas)
+
+You can find the meanings of the data keys above.
 
 How to see the data during the experiment?
 ------------------------------------------
