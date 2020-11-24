@@ -11,7 +11,7 @@ from pdfstream.vend.qt_kicker import install_qt_kicker
 
 def server_message(msg: str):
     """Print a message to a uniform format of server message."""
-    t = datetime.strptime(datetime.now(), "%x %X")
+    t = datetime.now().strftime("%x %X")
     print("[{}] {}".format(t, msg))
 
 
@@ -79,7 +79,9 @@ class StartStopCallback(CallbackBase):
         super(StartStopCallback, self).__init__()
 
     def start(self, doc):
-        server_message("Receive the start of run {}")
+        server_message("Receive the start of run {}".format(doc["uid"]))
+        super(StartStopCallback, self).start(doc)
 
     def stop(self, doc):
-        server_message("Receive the stop of run {}")
+        server_message("Receive the stop of run {}".format(doc.get("run_start", "")))
+        super(StartStopCallback, self).stop(doc)
