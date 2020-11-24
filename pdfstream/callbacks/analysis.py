@@ -550,7 +550,6 @@ class VisFactory:
     def __call__(self, name: str, doc: dict) -> tp.Tuple[list, list]:
         if name != "start":
             return [], []
-        self.show()
         return self.cb_lst, []
 
     def show(self):
