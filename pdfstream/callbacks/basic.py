@@ -93,7 +93,14 @@ class DataFrameExporter(ArrayExporter):
         df.to_csv(str(filepath))
 
 
-class LiveMaskedImage(LiveImage):
+class MyLiveImage(LiveImage):
+    """A customized LiveImage."""
+
+    def show(self):
+        self.cs._fig.show()
+
+
+class LiveMaskedImage(MyLiveImage):
     """Live image show of a image with a mask."""
 
     def __init__(self, field: str, msk_field: str, *, cmap: str, norm: tp.Callable = None,

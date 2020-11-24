@@ -6,7 +6,6 @@ import databroker
 import event_model
 import matplotlib.pyplot as plt
 import numpy as np
-from bluesky.callbacks.broker import LiveImage
 from bluesky.callbacks.core import make_class_safe
 from bluesky.callbacks.stream import LiveDispatcher
 from databroker.v2 import Broker
@@ -21,7 +20,8 @@ import pdfstream.callbacks.from_descriptor as from_desc
 import pdfstream.callbacks.from_event as from_event
 import pdfstream.callbacks.from_start as from_start
 import pdfstream.integration.tools as integ
-from pdfstream.callbacks.basic import LiveMaskedImage, LiveWaterfall, DataFrameExporter, SmartScalarPlot
+from pdfstream.callbacks.basic import MyLiveImage, LiveMaskedImage, LiveWaterfall, DataFrameExporter, \
+    SmartScalarPlot
 from pdfstream.units import LABELS
 from pdfstream.vend.formatters import SpecialStr
 
@@ -489,14 +489,7 @@ class Visualizer(RunRouter):
 
     def show_figs(self):
         """Show all the figures in the callbacks in the factory."""
-        for cb in self._factory.cb_lst:
-            if isinstance(cb, (LiveImage, LiveMaskedImage)):
-                cb.cs._fig.show()
-            elif isinstance(cb, LiveWaterfall):
-                cb.show()
-            elif isinstance(cb, SmartScalarPlot):
-                cb.show()
-        return
+        return self._factory.show()
 
 
 class VisFactory:
@@ -508,11 +501,11 @@ class VisFactory:
         # images
         if self.config.vis_dk_sub_image is not None:
             self.cb_lst.append(
-                LiveImage("dk_sub_image", **self.config.vis_dk_sub_image)
+                MyLiveImage("dk_sub_image", **self.config.vis_dk_sub_image)
             )
         if self.config.vis_bg_sub_image is not None:
             self.cb_lst.append(
-                LiveImage("bg_sub_image", **self.config.vis_dk_sub_image)
+                MyLiveImage("bg_sub_image", **self.config.vis_dk_sub_image)
             )
         if self.config.vis_masked_image is not None:
             self.cb_lst.append(
@@ -557,4 +550,13 @@ class VisFactory:
     def __call__(self, name: str, doc: dict) -> tp.Tuple[list, list]:
         if name != "start":
             return [], []
+        self.show()
         return self.cb_lst, []
+
+    def show(self):
+        for cb in self.cb_lst:
+            try:
+                cb.show()
+            except AttributeError:
+                pass
+        return
