@@ -534,17 +534,22 @@ class VisFactory:
                 fig.show()
 
         # scalar data
-        fig1 = plt.figure()
-        axes1 = (fig1.add_subplot(grid) for grid in GridSpec(2, 2))
-        for field, vis_config in [
+        fields_and_configs = [
             ("chi_max", self.config.vis_chi_max),
             ("chi_argmax", self.config.vis_chi_argmax),
             ("gr_max", self.config.vis_gr_max),
             ("gr_argmax", self.config.vis_gr_argmax)
-        ]:
+        ]
+        # make a figure of stacking axes
+        fig1 = plt.figure()
+        axes1 = [fig1.add_subplot(grid) for grid in GridSpec(len(fields_and_configs), 1, wspace=0)]
+        for ax in axes1[:-1]:
+            ax.get_xaxis().set_visible(False)
+        # link the axes with callbacks
+        for (field, vis_config), ax in zip(fields_and_configs, axes1):
             if vis_config is not None:
                 self.cb_lst.append(
-                    SmartScalarPlot(field, ax=next(axes1), **vis_config, marker="o")
+                    SmartScalarPlot(field, ax=ax, **vis_config, marker="o")
                 )
         fig1.show()
 

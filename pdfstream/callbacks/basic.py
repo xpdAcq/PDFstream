@@ -132,7 +132,7 @@ class MyWaterfall(Waterfall):
         self.ydist = 0
         self.xdist = 0
 
-        y_offset_slider_ax = self.fig.add_axes([0.15, 0.95, 0.3, 0.035])
+        y_offset_slider_ax = self.fig.add_axes([0.15, 0.95, 0.25, 0.035])
         self.y_offset_slider = Slider(
             y_offset_slider_ax,
             "y-offset",
@@ -143,7 +143,7 @@ class MyWaterfall(Waterfall):
         )
         self.y_offset_slider.on_changed(self.update_y_offset)
 
-        x_offset_slider_ax = self.fig.add_axes([0.6, 0.95, 0.3, 0.035])
+        x_offset_slider_ax = self.fig.add_axes([0.6, 0.95, 0.25, 0.035])
         self.x_offset_slider = Slider(
             x_offset_slider_ax,
             "x-offset",
