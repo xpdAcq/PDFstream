@@ -21,14 +21,18 @@ from pdfstream.vend.formatters import SpecialStr
 class ArrayExporter(CallbackBase):
     """An base class for the callbacks to find and export the 1d array."""
     file_suffix = ""
+    file_stem = "{descriptor[name]}-{field}-{event[seq_num]}"
 
     def __init__(self, directory: str, *, file_prefix: str, data_keys: tp.List[str] = None):
         super(ArrayExporter, self).__init__()
         self.directory = Path(directory)
         self.directory.mkdir(parents=True, exist_ok=True)
-        self.file_template = SpecialStr(file_prefix + self.file_suffix)
+        self.file_template = SpecialStr(
+            file_prefix + self.file_stem + self.file_suffix
+        )
         self.data_keys = data_keys
         self.start_doc = None
+        self.descriptor_doc = None
 
     def start(self, doc):
         self.start_doc = doc
@@ -37,6 +41,7 @@ class ArrayExporter(CallbackBase):
     def descriptor(self, doc):
         if not self.data_keys:
             self.data_keys = list(fd.yield_1d_array(doc["data_keys"]))
+        self.descriptor_doc = doc
         super(ArrayExporter, self).descriptor(doc)
 
     def event(self, doc):
@@ -49,6 +54,7 @@ class ArrayExporter(CallbackBase):
 
     def stop(self, doc):
         self.start_doc = None
+        self.descriptor_doc = None
         super(ArrayExporter, self).stop(doc)
 
     def export(self, doc):
@@ -57,24 +63,26 @@ class ArrayExporter(CallbackBase):
 
 class NumpyExporter(ArrayExporter):
     """An exporter to export the 1d array data in .npy file."""
-    file_suffix = "{data_key}-{event[seq_num]}.npy"
+    file_suffix = ".npy"
 
     def export(self, doc):
         for data_key in self.data_keys:
             arr: np.ndarray = doc["data"][data_key]
-            filename = self.file_template.format(start=self.start_doc, event=doc, data_key=data_key)
+            filename = self.file_template.format(start=self.start_doc, descriptor=self.descriptor_doc, event=doc,
+                                                 field=data_key)
             filepath = self.directory.joinpath(filename)
             np.save(str(filepath), arr)
 
 
 class DataFrameExporter(ArrayExporter):
     """An exporter to export data in a dataframe in the .csv file."""
-    file_suffix = "{data_key}-{event[seq_num]}.csv"
+    file_suffix = ".csv"
 
     def export(self, doc):
         _data = {data_key: pd.Series(doc["data"][data_key]) for data_key in self.data_keys}
         df = pd.DataFrame(data=_data)
-        filename = self.file_template.format(start=self.start_doc, event=doc, data_key="data")
+        filename = self.file_template.format(start=self.start_doc, descriptor=self.descriptor_doc, event=doc,
+                                             field="data")
         filepath = self.directory.joinpath(filename)
         df.to_csv(str(filepath))
 

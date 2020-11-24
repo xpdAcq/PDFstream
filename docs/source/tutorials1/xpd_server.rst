@@ -152,24 +152,29 @@ diffraction image. You will finish the calibration using that interface . Please
 `tutorials <https://pyfai.readthedocs.io/en/master/usage/cookbook/calib-gui/index.html>`_ to learn
 how to use it. When you are at the last step of the tutorials and you are going to save the geometry in a PONI
 file, please save the file at exact where it is first shown in the finder window after you click the
-"SAVE AS PONI" button.
+"SAVE AS PONI" button. Only in this way the software ``xpdacq`` can find the file and use it.
 
 How to do the data reduction?
 -----------------------------
 
 The data reduction is totally automatic after you start the server and finish your calibration run. The server
 will process the streaming data by itself according to the configuration. You will find messages in the terminal
-where the server is running. It tells you if a data processing starts or finishes and if there are any errors.
+where the server is running. It tells you if the message of a run is received and if there are any errors.
 
 How to get the data back home?
 ------------------------------
 
-The processed data will be archived in the ``an_db`` database specified in the .ini file of the server, if you are
-familar with the `databroker <https://blueskyproject.io/databroker/>`_, you can find the catalog name in the
-.ini file of the server.
+The processed data will be archived in the ``an_db`` database specified in the configuration.
+It is the name of an intake catalog.
+Please use `databroker <https://blueskyproject.io/databroker/>`_ to access it.
 
-The processed data will also be exported to the files in the ``tiff_base``folder specified in .ini file. The
-diffraction image data together with the mask data will be saved in .tiff files. The scalar data like
+The processed data will also be exported to the files in the ``tiff_base``folder specified in the configuration.
+
+Here is an example of the file structure.
+
+
+
+The diffraction image data together with the mask data will be saved in .tiff files. The scalar data like
 temperature and motor positions will be in the .csv files. You can match the scalar data with the image by the
 start id and the sequence number. The reduced data like XRD and PDF will be in the .npy files.
 You can use `numpy <https://numpy.org/devdocs/user/quickstart.html>`_
