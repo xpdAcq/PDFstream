@@ -11,4 +11,4 @@ recursive-include docs *.rst conf.py Makefile make.bat
 
 # If including data files in the package, add them like:
 # include path/to/data_file
-include pdfstream/configs/*
+include pdfstream/data/*

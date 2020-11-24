@@ -3,6 +3,7 @@ import pytest
 from diffpy.pdfgetx import PDFConfig
 
 import pdfstream.callbacks.from_start as mod
+from pdfstream.data import ni_dspacing_file
 
 
 def test_query_ai(db_with_dark_and_light):
@@ -88,3 +89,17 @@ def test_query_bg_img(db_with_img_and_bg_img, test_data):
         dk_id_key="sc_dk_field_uid"
     )
     assert np.array_equal(bg_img, np.ones_like(test_data["Ni_img"]))
+
+
+@pytest.mark.parametrize(
+    "start, expect",
+    [
+        (
+            {"detector": "perkin_elmer", "bt_wavelength": 0.18, "sample_name": "Ni_calib"},
+            {"detector": "perkin_elmer", "wavelength": '0.18', "calibrant": str(ni_dspacing_file)}
+        )
+    ]
+)
+def test_get_calib_info(start, expect):
+    dct = mod.get_calib_info(start, "detector", "bt_wavelength", "sample_name")
+    assert dct == expect

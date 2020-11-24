@@ -8,6 +8,7 @@ from databroker.v2 import Broker
 from numpy import ndarray
 
 import pdfstream.io as io
+from pdfstream.data import ni_dspacing_file
 
 
 def query_ai(
@@ -195,7 +196,7 @@ def get_calib_info(
     """Get the information for pyfail calib2 gui in the start. If no such key, return empty string."""
     calibrant = str(start.get(calibrant_key, ""))
     # a special case for xpdacq
-    calibrant = "Ni" if calibrant == "Ni_calib" else calibrant
+    calibrant = str(ni_dspacing_file) if calibrant in ("Ni_calib", "Ni") else calibrant
     return {
         "detector": str(start.get(detector_key, "")),
         "wavelength": str(start.get(wavelength_key, "")),
