@@ -164,22 +164,74 @@ where the server is running. It tells you if the message of a run is received an
 How to get the data back home?
 ------------------------------
 
+Database
+^^^^^^^^
+
 The processed data will be archived in the ``an_db`` database specified in the configuration.
 It is the name of an intake catalog.
 Please use `databroker <https://blueskyproject.io/databroker/>`_ to access it.
 
-The processed data will also be exported to the files in the ``tiff_base``folder specified in the configuration.
+Files
+^^^^^
 
-Here is an example of the file structure.
+The processed data will also be exported to the files in the ``tiff_base`` folder specified in the configuration.
 
+Here is an example of the file structure that is generated from a temperature ramping.
 
+.. code-block:: text
 
-The diffraction image data together with the mask data will be saved in .tiff files. The scalar data like
-temperature and motor positions will be in the .csv files. You can match the scalar data with the image by the
-start id and the sequence number. The reduced data like XRD and PDF will be in the .npy files.
-You can use `numpy <https://numpy.org/devdocs/user/quickstart.html>`_
-to open it and transfer it to other format you like. The metadata like the sample information, wavelength of the
-beam, and the experiment setup can be found in the .json files.
+    tiff_base
+    ├── array_data
+    │   ├── 014cc82d-0631-4b8b-bbfd-7e6c7d7c8f55_Ni_primary-data-1.csv
+    │   ├── 014cc82d-0631-4b8b-bbfd-7e6c7d7c8f55_Ni_primary-data-2.csv
+    │   └── 014cc82d-0631-4b8b-bbfd-7e6c7d7c8f55_Ni_primary-data-3.csv
+    ├── images
+    │   ├── 014cc82d-0631-4b8b-bbfd-7e6c7d7c8f55_Ni_primary-bg_sub_image-0.tiff
+    │   ├── 014cc82d-0631-4b8b-bbfd-7e6c7d7c8f55_Ni_primary-bg_sub_image-1.tiff
+    │   ├── 014cc82d-0631-4b8b-bbfd-7e6c7d7c8f55_Ni_primary-bg_sub_image-2.tiff
+    │   ├── 014cc82d-0631-4b8b-bbfd-7e6c7d7c8f55_Ni_primary-dk_sub_image-0.tiff
+    │   ├── 014cc82d-0631-4b8b-bbfd-7e6c7d7c8f55_Ni_primary-dk_sub_image-1.tiff
+    │   ├── 014cc82d-0631-4b8b-bbfd-7e6c7d7c8f55_Ni_primary-dk_sub_image-2.tiff
+    │   ├── 014cc82d-0631-4b8b-bbfd-7e6c7d7c8f55_Ni_primary-mask-0.tiff
+    │   ├── 014cc82d-0631-4b8b-bbfd-7e6c7d7c8f55_Ni_primary-mask-1.tiff
+    │   └── 014cc82d-0631-4b8b-bbfd-7e6c7d7c8f55_Ni_primary-mask-2.tiff
+    ├── metadata
+    │   └── 014cc82d-0631-4b8b-bbfd-7e6c7d7c8f55_Ni_meta.json
+    └── scalar_data
+        └── 014cc82d-0631-4b8b-bbfd-7e6c7d7c8f55_Ni_primary.csv
+
+The diffraction image data together with the mask data will be saved in .tiff files in the folder ``images``.
+The scalar data like temperature will be in the .csv files in the folder ``scalar_data``.
+You can match the scalar data with the image by the start id and the sequence number in the file.
+The reduced data like XRD and PDF will be in the .csv files in folder ``array_data``.
+You can match the array data with the image by the start id and the sequence number in the file.
+The metadata like the sample information, wavelength of the beam, and the experiment setup are saved in
+the .json files in folder ``metadata``.
+
+Meaning of file name
+^^^^^^^^^^^^^^^^^^^^
+
+Here, we use a file ``014cc82d-0631-4b8b-bbfd-7e6c7d7c8f55_Ni_primary-bg_sub_image-1.tiff`` as an example.
+
+The prefix of the file is defined in the configuration.
+It usually includes a long non-human-readable string, like ``014cc82d-0631-4b8b-bbfd-7e6c7d7c8f55``.
+This string is the unique ID of a bluesky run, or in plain words, one measurement.
+It can be used to identify which data is from the same run.
+After it, you may find other information about the measurement like the sample name ``Ni``.
+
+If there is a ``-`` in file name. Usually, it means that the file is a part of the data from the measurement.
+Which part it is is indicated by the name of the data field.
+For example, ``bg_sub_image`` here means the data key of background subtracted image.
+There might be multiple background subtracted images in one run so there is usually a number to index the image,
+like ``1`` in the example.
+
+The data keys and its meanings are defined in the schemas.
+The schemas can be shown used the code below.
+
+.. code-block:: ipython
+
+    from pdfstream.schemas import analysis_out_schemas, DocumentNames
+
 
 How to see the data during the experiment?
 ------------------------------------------

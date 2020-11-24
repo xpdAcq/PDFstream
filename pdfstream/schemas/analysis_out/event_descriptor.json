@@ -108,71 +108,71 @@
       "properties": {
         "dk_sub_image": {
           "$ref": "#/definitions/data_key",
-          "description": "the numpy array of dark dark subtracted image"
+          "description": "the array of dark dark subtracted image"
         },
         "bg_sub_image": {
           "$ref": "#/definitions/data_key",
-          "description": "the numpy array of dark dark subtracted background subtracted image"
+          "description": "the array of dark dark subtracted background subtracted image"
         },
         "mask": {
           "$ref": "#/definitions/data_key",
-          "description": "the numpy array of mask where 0 is good pixel and 1 is bad pixel"
+          "description": "the array of mask where 0 is good pixel and 1 is bad pixel"
         },
         "chi_Q": {
           "$ref": "#/definitions/data_key",
-          "description": "the numpy array of momentum transfer Q in azimuthal integration result"
+          "description": "the array of momentum transfer Q in azimuthal integration result I(Q)"
         },
         "chi_I": {
           "$ref": "#/definitions/data_key",
-          "description": "the numpy array of intensity in I azimuthal integration result"
+          "description": "the array of intensity in I azimuthal integration result I(Q)"
         },
         "chi_max": {
           "$ref": "#/definitions/data_key",
-          "description": "the maximum value of I in I(Q)"
+          "description": "the maximum value of I in azimuthal integration result I(Q)"
         },
         "chi_argmax": {
           "$ref": "#/definitions/data_key",
-          "description": "the value of Q at the maximum I in I(Q)"
+          "description": "the value of Q at the maximum I in azimuthal integration result I(Q)"
         },
         "iq_Q": {
           "$ref": "#/definitions/data_key",
-          "description": "the numpy array of momentum transfer Q in I(Q)"
+          "description": "the array of momentum transfer Q in the cropped and interpolated I(Q)"
         },
         "iq_I": {
           "$ref": "#/definitions/data_key",
-          "description": "the numpy array of intensity I in I(Q)"
+          "description": "the array of intensity I in the cropped and interpolated I(Q)"
         },
         "sq_Q": {
           "$ref": "#/definitions/data_key",
-          "description": "the numpy array of momentum transfer Q in S(Q)"
+          "description": "the array of momentum transfer Q in the structure factor S(Q)"
         },
         "sq_S": {
           "$ref": "#/definitions/data_key",
-          "description": "the numpy array of intensity I in S(Q)"
+          "description": "the array of intensity I in the structure factor S(Q)"
         },
         "fq_Q": {
           "$ref": "#/definitions/data_key",
-          "description": "the numpy array of momentum transfer Q in F(Q)"
+          "description": "the array of momentum transfer Q in the reduced structure factor F(Q)"
         },
         "fq_F": {
           "$ref": "#/definitions/data_key",
-          "description": "the numpy array of intensity I in F(Q)"
+          "description": "the array of intensity I in the reduced structure factor F(Q)"
         },
         "gr_r": {
           "$ref": "#/definitions/data_key",
-          "description": "the numpy array of atomic pair distance r in G(r)"
+          "description": "the array of atomic pair distance r in the reduced pair distribution function G(r)"
         },
         "gr_G": {
           "$ref": "#/definitions/data_key",
-          "description": "the numpy array of pair distribution function G in G(r)"
+          "description": "the array of pair distribution function G in the reduced pair distribution function G(r)"
         },
         "gr_max": {
           "$ref": "#/definitions/data_key",
-          "description": "the maximum value of G in G(r)"
+          "description": "the maximum value of G in the reduced pair distribution function G(r)"
         },
         "gr_argmax": {
           "$ref": "#/definitions/data_key",
-          "description": "the value of r at the maximum of G in G(r)"
+          "description": "the value of r at the maximum of G in the reduced pair distribution function G(r)"
         }
       },
       "required": [

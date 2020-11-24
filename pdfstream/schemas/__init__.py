@@ -7,7 +7,8 @@ from pkg_resources import resource_filename as rs_fn
 __all__ = [
     "analysis_in_schemas",
     "analysis_out_schemas",
-    "Validator"
+    "Validator",
+    "DocumentNames"
 ]
 
 ANALYSIS_IN_SCHEMA_NAMES = {
@@ -41,6 +42,13 @@ analysis_out_schemas = {}
 for doc_name, filename in ANALYSIS_OUT_SCHEMA_NAMES.items():
     with Path(rs_fn('pdfstream', filename)).open("r") as fin:
         analysis_out_schemas[doc_name] = json.load(fin)
+
+
+def print_data_keys(schemas: dict):
+    """Print out data keys in event descriptor."""
+    data_keys: dict = schemas[DocumentNames.descriptor]['properties']['data_keys']
+    for k, v in data_keys.get("properties", {}).items():
+        print("{}: {}".format(k, v.get("description", "")))
 
 
 class Validator(object):
