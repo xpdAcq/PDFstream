@@ -134,7 +134,7 @@ class AnalysisStream(LiveDispatcher):
     """
 
     def __init__(self, config: AnalysisConfig):
-        super().__init__()
+        super(AnalysisStream, self).__init__()
         self.config = config
         self.cache = {}
         self.db = config.raw_db
@@ -153,7 +153,8 @@ class AnalysisStream(LiveDispatcher):
             default_composition="Ni"
         )
         self.cache["indeps"] = from_start.get_indeps(doc, exclude={"time"})
-        super().start(dict(**doc, an_config=self.config.to_dict()))
+        new_start = dict(**doc, an_config=self.config.to_dict())
+        super(AnalysisStream, self).start(new_start)
 
     def event_page(self, doc):
         for event_doc in event_model.unpack_event_page(doc):
@@ -175,7 +176,7 @@ class AnalysisStream(LiveDispatcher):
             dk_id_key=self.config.dk_id_key,
             db=self.db
         )
-        super().descriptor(doc)
+        super(AnalysisStream, self).descriptor(doc)
 
     def event(self, doc, _md=None):
         # the raw image in the data
@@ -201,7 +202,7 @@ class AnalysisStream(LiveDispatcher):
         self.process_event(EventDoc(data=data, descriptor=doc["descriptor"]))
 
     def stop(self, doc, _md=None):
-        super().stop(doc)
+        super(AnalysisStream, self).stop(doc)
 
 
 def process(
