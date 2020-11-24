@@ -111,7 +111,12 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#how-to-do-the-calibration">How to do the calibration?</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#how-to-do-the-data-reduction">How to do the data reduction?</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#how-to-get-the-data-back-home">How to get the data back home?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#how-to-get-the-data-back-home">How to get the data back home?</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#database">Database</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#files">Files</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#meaning-of-file-name">Meaning of file name</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="#how-to-see-the-data-during-the-experiment">How to see the data during the experiment?</a></li>
 </ul>
 </li>
@@ -272,7 +277,7 @@ is shown below. Please read the comments in the file to know what are the meanin
 <span class="c1"># if False, server will ignore the data of standard sample</span>
 <span class="n">do_calibration</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="c1"># whether to dump the processed data and the data of independent variables in a data base</span>
-<span class="n">dump_to_db</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">dump_to_db</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="c1"># whether to export the processed data to files in the file system</span>
 <span class="n">export_files</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="c1"># whether to visualize the processed data in figures</span>
@@ -281,16 +286,19 @@ is shown below. Please read the comments in the file to know what are the meanin
 <span class="c1"># the information about database used by the server</span>
 <span class="p">[</span><span class="n">DATABASE</span><span class="p">]</span>
 <span class="c1"># the name of the database for raw diffraction image data in the databroker catalog</span>
-<span class="n">raw_db</span> <span class="o">=</span> <span class="n">xpd</span>
+<span class="c1"># uncomment the line below to activate</span>
+<span class="c1"># raw_db = xpd</span>
 <span class="c1"># the name of the database to dump the processed data in the databroker catalog</span>
-<span class="n">an_db</span> <span class="o">=</span> <span class="n">xpd</span><span class="o">-</span><span class="n">analysis</span>
+<span class="c1"># uncomment the line below to activate</span>
+<span class="c1"># an_db = xpd-analysis</span>
 
 <span class="c1"># the folders where the server will dump the files to</span>
 <span class="p">[</span><span class="n">FILE</span> <span class="n">SYSTEM</span><span class="p">]</span>
 <span class="c1"># the folder where all the processed data will be saved</span>
 <span class="n">tiff_base</span> <span class="o">=</span> <span class="o">~/</span><span class="n">acqsim</span><span class="o">/</span><span class="n">xpdUser</span><span class="o">/</span><span class="n">tiff_base</span>
 <span class="c1"># the folder where the calibration data will be saved</span>
-<span class="n">calib_base</span> <span class="o">=</span> <span class="o">~/</span><span class="n">acqsim</span><span class="o">/</span><span class="n">xpdConfig</span>
+<span class="c1"># please use the same value as the &#39;config_base&#39; in &#39;glbl&#39; of xpdacq</span>
+<span class="n">calib_base</span> <span class="o">=</span> <span class="o">~/</span><span class="n">acqsim</span><span class="o">/</span><span class="n">xpdUser</span><span class="o">/</span><span class="n">config_base</span>
 
 <span class="c1"># the keys for the metadata in the start document</span>
 <span class="c1"># the server will obtain the metadata according to the keys</span>
@@ -314,14 +322,14 @@ is shown below. Please read the comments in the file to know what are the meanin
 <span class="n">sample_name_key</span> <span class="o">=</span> <span class="n">sample_name</span>
 <span class="c1"># the key to the type of the detector</span>
 <span class="n">detector_key</span> <span class="o">=</span> <span class="n">detector</span>
-<span class="c1"># the key to the sample composition of the standard powder sample</span>
-<span class="n">calibrant_key</span> <span class="o">=</span> <span class="n">sample_composition</span>
+<span class="c1"># the key to the name of the standard powder sample</span>
+<span class="n">calibrant_key</span> <span class="o">=</span> <span class="n">sample_name</span>
 
 <span class="c1"># the configuration about calibration</span>
 <span class="p">[</span><span class="n">CALIBRATION</span><span class="p">]</span>
 <span class="c1"># the name of the .poni file for calibration data</span>
-<span class="c1"># check the setting for xpdacq, the file name here should match the one in the configuration of xpdacq</span>
-<span class="n">poni_file</span> <span class="o">=</span> <span class="n">xpdAcq_calib_info</span><span class="o">.</span><span class="n">yml</span>
+<span class="c1"># please use the same value as the &#39;calib_config_name&#39; in &#39;glbl&#39; of xdpacq</span>
+<span class="n">poni_file</span> <span class="o">=</span> <span class="n">xpdAcq_calib_info</span><span class="o">.</span><span class="n">poni</span>
 <span class="c1"># the default composition of standard powder if it is not specified</span>
 <span class="n">default_calibrant</span> <span class="o">=</span> <span class="n">Ni</span>
 
@@ -338,7 +346,6 @@ is shown below. Please read the comments in the file to know what are the meanin
 <span class="c1"># the lower threshold, any pixels whose intensity is below the lower threshold will be masked</span>
 <span class="n">lower_thresh</span> <span class="o">=</span> <span class="mf">0.</span>
 <span class="c1"># the upper threshold, any pixels whose intensity is above the upper threshold will be masked</span>
-<span class="c1"># uncomment the line below to make it take effect</span>
 <span class="c1"># upper_thresh =</span>
 
 <span class="c1"># the settings for azimuthal integration</span>
@@ -382,28 +389,28 @@ is shown below. Please read the comments in the file to know what are the meanin
 <span class="c1"># whether to export the data or not</span>
 <span class="n">enable</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="c1"># the prefix of the file name</span>
-<span class="n">file_prefix</span> <span class="o">=</span> <span class="p">{</span><span class="n">start</span><span class="p">[</span><span class="n">uid</span><span class="p">]}</span><span class="n">_</span><span class="p">{</span><span class="n">start</span><span class="p">[</span><span class="n">sample_name</span><span class="p">]}</span><span class="n">_</span>
+<span class="n">file_prefix</span> <span class="o">=</span> <span class="p">{</span><span class="n">start</span><span class="p">[</span><span class="n">original_run_uid</span><span class="p">]}</span><span class="n">_</span><span class="p">{</span><span class="n">start</span><span class="p">[</span><span class="n">sample_name</span><span class="p">]}</span><span class="n">_</span>
 
 <span class="c1"># the settings to export the metadata in json files</span>
 <span class="p">[</span><span class="n">JSON</span> <span class="n">SETTING</span><span class="p">]</span>
 <span class="c1"># whether to export the data or not</span>
 <span class="n">enable</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="c1"># the prefix of the file name</span>
-<span class="n">file_prefix</span> <span class="o">=</span> <span class="p">{</span><span class="n">start</span><span class="p">[</span><span class="n">uid</span><span class="p">]}</span><span class="n">_</span><span class="p">{</span><span class="n">start</span><span class="p">[</span><span class="n">sample_name</span><span class="p">]}</span><span class="n">_</span>
+<span class="n">file_prefix</span> <span class="o">=</span> <span class="p">{</span><span class="n">start</span><span class="p">[</span><span class="n">original_run_uid</span><span class="p">]}</span><span class="n">_</span><span class="p">{</span><span class="n">start</span><span class="p">[</span><span class="n">sample_name</span><span class="p">]}</span><span class="n">_</span>
 
 <span class="c1"># the settings to export the scalar data in csv files</span>
 <span class="p">[</span><span class="n">CSV</span> <span class="n">SETTING</span><span class="p">]</span>
 <span class="c1"># whether to export the data or not</span>
 <span class="n">enable</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="c1"># the prefix of the file name</span>
-<span class="n">file_prefix</span> <span class="o">=</span> <span class="p">{</span><span class="n">start</span><span class="p">[</span><span class="n">uid</span><span class="p">]}</span><span class="n">_</span><span class="p">{</span><span class="n">start</span><span class="p">[</span><span class="n">sample_name</span><span class="p">]}</span><span class="n">_</span>
+<span class="n">file_prefix</span> <span class="o">=</span> <span class="p">{</span><span class="n">start</span><span class="p">[</span><span class="n">original_run_uid</span><span class="p">]}</span><span class="n">_</span><span class="p">{</span><span class="n">start</span><span class="p">[</span><span class="n">sample_name</span><span class="p">]}</span><span class="n">_</span>
 
-<span class="c1"># the settings to export the reduced data (like XRD and PDF) in npy files</span>
+<span class="c1"># the settings to export the reduced data (like XRD and PDF) in csv files</span>
 <span class="p">[</span><span class="n">NPY</span> <span class="n">SETTING</span><span class="p">]</span>
 <span class="c1"># whether to export the data or not</span>
 <span class="n">enable</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="c1"># the prefix of the file name</span>
-<span class="n">file_prefix</span> <span class="o">=</span> <span class="p">{</span><span class="n">start</span><span class="p">[</span><span class="n">uid</span><span class="p">]}</span><span class="n">_</span><span class="p">{</span><span class="n">start</span><span class="p">[</span><span class="n">sample_name</span><span class="p">]}</span><span class="n">_</span>
+<span class="n">file_prefix</span> <span class="o">=</span> <span class="p">{</span><span class="n">start</span><span class="p">[</span><span class="n">original_run_uid</span><span class="p">]}</span><span class="n">_</span><span class="p">{</span><span class="n">start</span><span class="p">[</span><span class="n">sample_name</span><span class="p">]}</span><span class="n">_</span>
 
 <span class="c1"># the settings to visualize the masked image (already dark subtracted and background subtracted)</span>
 <span class="p">[</span><span class="n">VIS</span> <span class="n">MASKED</span> <span class="n">IMAGE</span><span class="p">]</span>
@@ -431,7 +438,7 @@ is shown below. Please read the comments in the file to know what are the meanin
 <span class="c1"># whether to visualize the data or not</span>
 <span class="n">enable</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="c1"># the x and y axis labels, if not specified, use the default labels</span>
-<span class="c1"># if you would like to use your labels, uncomment the line below and fill in the label names</span>
+<span class="c1"># uncomment the line below to activate</span>
 <span class="c1"># xlabel =</span>
 <span class="c1"># ylabel =</span>
 
@@ -440,7 +447,7 @@ is shown below. Please read the comments in the file to know what are the meanin
 <span class="c1"># whether to visualize the data or not</span>
 <span class="n">enable</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="c1"># the x and y axis labels, if not specified, use the default labels</span>
-<span class="c1"># if you would like to use your labels, uncomment the line below and fill in the label names</span>
+<span class="c1"># uncomment the line below to activate</span>
 <span class="c1"># xlabel =</span>
 <span class="c1"># ylabel =</span>
 
@@ -449,7 +456,7 @@ is shown below. Please read the comments in the file to know what are the meanin
 <span class="c1"># whether to visualize the data or not</span>
 <span class="n">enable</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="c1"># the x and y axis labels, if not specified, use the default labels</span>
-<span class="c1"># if you would like to use your labels, uncomment the line below and fill in the label names</span>
+<span class="c1"># uncomment the line below to activate</span>
 <span class="c1"># xlabel =</span>
 <span class="c1"># ylabel =</span>
 
@@ -458,7 +465,7 @@ is shown below. Please read the comments in the file to know what are the meanin
 <span class="c1"># whether to visualize the data or not</span>
 <span class="n">enable</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="c1"># the x and y axis labels, if not specified, use the default labels</span>
-<span class="c1"># if you would like to use your labels, uncomment the line below and fill in the label names</span>
+<span class="c1"># uncomment the line below to activate</span>
 <span class="c1"># xlabel =</span>
 <span class="c1"># ylabel =</span>
 
@@ -467,7 +474,7 @@ is shown below. Please read the comments in the file to know what are the meanin
 <span class="c1"># whether to visualize the data or not</span>
 <span class="n">enable</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="c1"># the x and y axis labels, if not specified, use the default labels</span>
-<span class="c1"># if you would like to use your labels, uncomment the line below and fill in the label names</span>
+<span class="c1"># uncomment the line below to activate</span>
 <span class="c1"># xlabel =</span>
 <span class="c1"># ylabel =</span>
 
@@ -476,7 +483,7 @@ is shown below. Please read the comments in the file to know what are the meanin
 <span class="c1"># whether to visualize the data or not</span>
 <span class="n">enable</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="c1"># the y axis labels, if not specified, use the default label</span>
-<span class="c1"># if you would like to use your label, uncomment the line below and fill in the label name</span>
+<span class="c1"># uncomment the line below to activate</span>
 <span class="c1"># ylabel =</span>
 
 <span class="c1"># the settings to visualize the r value at the maximum point of PDF</span>
@@ -484,7 +491,7 @@ is shown below. Please read the comments in the file to know what are the meanin
 <span class="c1"># whether to visualize the data or not</span>
 <span class="n">enable</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="c1"># the y axis labels, if not specified, use the default label</span>
-<span class="c1"># if you would like to use your label, uncomment the line below and fill in the label name</span>
+<span class="c1"># uncomment the line below to activate</span>
 <span class="c1"># ylabel =</span>
 
 <span class="c1"># the settings to visualize the maximum value of XRD</span>
@@ -492,7 +499,7 @@ is shown below. Please read the comments in the file to know what are the meanin
 <span class="c1"># whether to visualize the data or not</span>
 <span class="n">enable</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="c1"># the y axis labels, if not specified, use the default label</span>
-<span class="c1"># if you would like to use your label, uncomment the line below and fill in the label name</span>
+<span class="c1"># uncomment the line below to activate</span>
 <span class="c1"># ylabel =</span>
 
 <span class="c1"># the settings to visualize the Q value at he maximum point of XRD</span>
@@ -500,7 +507,7 @@ is shown below. Please read the comments in the file to know what are the meanin
 <span class="c1"># whether to visualize the data or not</span>
 <span class="n">enable</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="c1"># the y axis labels, if not specified, use the default label</span>
-<span class="c1"># if you would like to use your label, uncomment the line below and fill in the label name</span>
+<span class="c1"># uncomment the line below to activate</span>
 <span class="c1"># ylabel =</span>
 </pre></div>
 </div>
@@ -559,26 +566,78 @@ diffraction image. You will finish the calibration using that interface . Please
 <a class="reference external" href="https://pyfai.readthedocs.io/en/master/usage/cookbook/calib-gui/index.html">tutorials</a> to learn
 how to use it. When you are at the last step of the tutorials and you are going to save the geometry in a PONI
 file, please save the file at exact where it is first shown in the finder window after you click the
-“SAVE AS PONI” button.</p>
+“SAVE AS PONI” button. Only in this way the software <code class="docutils literal notranslate"><span class="pre">xpdacq</span></code> can find the file and use it.</p>
 </div>
 <div class="section" id="how-to-do-the-data-reduction">
 <h2>How to do the data reduction?<a class="headerlink" href="#how-to-do-the-data-reduction" title="Permalink to this headline">¶</a></h2>
 <p>The data reduction is totally automatic after you start the server and finish your calibration run. The server
 will process the streaming data by itself according to the configuration. You will find messages in the terminal
-where the server is running. It tells you if a data processing starts or finishes and if there are any errors.</p>
+where the server is running. It tells you if the message of a run is received and if there are any errors.</p>
 </div>
 <div class="section" id="how-to-get-the-data-back-home">
 <h2>How to get the data back home?<a class="headerlink" href="#how-to-get-the-data-back-home" title="Permalink to this headline">¶</a></h2>
-<p>The processed data will be archived in the <code class="docutils literal notranslate"><span class="pre">an_db</span></code> database specified in the .ini file of the server, if you are
-familar with the <a class="reference external" href="https://blueskyproject.io/databroker/">databroker</a>, you can find the catalog name in the
-.ini file of the server.</p>
-<p>The processed data will also be exported to the files in the <code class="docutils literal notranslate"><span class="pre">tiff_base</span></code> folder specified in .ini file. The diffraction
-image data together with the mask data will be saved in .tiff files. The scalar data like temperature and motor
-positions will be in the .csv files. You can match the scalar data with the image by the start id and the
-sequence number. The reduced data like XRD and PDF will be in the .npy files.
-You can use <a class="reference external" href="https://numpy.org/devdocs/user/quickstart.html">numpy</a>
-to open it and transfer it to other format you like. The metadata like the sample information, wavelength of the
-beam, and the experiment setup can be found in the .json files.</p>
+<div class="section" id="database">
+<h3>Database<a class="headerlink" href="#database" title="Permalink to this headline">¶</a></h3>
+<p>The processed data will be archived in the <code class="docutils literal notranslate"><span class="pre">an_db</span></code> database specified in the configuration.
+It is the name of an intake catalog.
+Please use <a class="reference external" href="https://blueskyproject.io/databroker/">databroker</a> to access it.</p>
+</div>
+<div class="section" id="files">
+<h3>Files<a class="headerlink" href="#files" title="Permalink to this headline">¶</a></h3>
+<p>The processed data will also be exported to the files in the <code class="docutils literal notranslate"><span class="pre">tiff_base</span></code> folder specified in the configuration.</p>
+<p>Here is an example of the file structure that is generated from a temperature ramping.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>tiff_base
+├── array_data
+│   ├── 014cc82d-0631-4b8b-bbfd-7e6c7d7c8f55_Ni_primary-data-1.csv
+│   ├── 014cc82d-0631-4b8b-bbfd-7e6c7d7c8f55_Ni_primary-data-2.csv
+│   └── 014cc82d-0631-4b8b-bbfd-7e6c7d7c8f55_Ni_primary-data-3.csv
+├── images
+│   ├── 014cc82d-0631-4b8b-bbfd-7e6c7d7c8f55_Ni_primary-bg_sub_image-0.tiff
+│   ├── 014cc82d-0631-4b8b-bbfd-7e6c7d7c8f55_Ni_primary-bg_sub_image-1.tiff
+│   ├── 014cc82d-0631-4b8b-bbfd-7e6c7d7c8f55_Ni_primary-bg_sub_image-2.tiff
+│   ├── 014cc82d-0631-4b8b-bbfd-7e6c7d7c8f55_Ni_primary-dk_sub_image-0.tiff
+│   ├── 014cc82d-0631-4b8b-bbfd-7e6c7d7c8f55_Ni_primary-dk_sub_image-1.tiff
+│   ├── 014cc82d-0631-4b8b-bbfd-7e6c7d7c8f55_Ni_primary-dk_sub_image-2.tiff
+│   ├── 014cc82d-0631-4b8b-bbfd-7e6c7d7c8f55_Ni_primary-mask-0.tiff
+│   ├── 014cc82d-0631-4b8b-bbfd-7e6c7d7c8f55_Ni_primary-mask-1.tiff
+│   └── 014cc82d-0631-4b8b-bbfd-7e6c7d7c8f55_Ni_primary-mask-2.tiff
+├── metadata
+│   └── 014cc82d-0631-4b8b-bbfd-7e6c7d7c8f55_Ni_meta.json
+└── scalar_data
+    └── 014cc82d-0631-4b8b-bbfd-7e6c7d7c8f55_Ni_primary.csv
+</pre></div>
+</div>
+<p>The diffraction image data together with the mask data will be saved in .tiff files in the folder <code class="docutils literal notranslate"><span class="pre">images</span></code>.
+The scalar data like temperature will be in the .csv files in the folder <code class="docutils literal notranslate"><span class="pre">scalar_data</span></code>.
+You can match the scalar data with the image by the start id and the sequence number in the file.
+The reduced data like XRD and PDF will be in the .csv files in folder <code class="docutils literal notranslate"><span class="pre">array_data</span></code>.
+Each column in the dataframe in the .csv files is an array data.
+You can match the dataframe with the image by the start id and the sequence number in the file.
+The metadata like the sample information, wavelength of the beam, and the experiment setup are saved in
+the .json files in folder <code class="docutils literal notranslate"><span class="pre">metadata</span></code>.</p>
+</div>
+<div class="section" id="meaning-of-file-name">
+<h3>Meaning of file name<a class="headerlink" href="#meaning-of-file-name" title="Permalink to this headline">¶</a></h3>
+<p>Here, we use a file <code class="docutils literal notranslate"><span class="pre">014cc82d-0631-4b8b-bbfd-7e6c7d7c8f55_Ni_primary-bg_sub_image-1.tiff</span></code> as an example.</p>
+<p>The prefix of the file is defined in the configuration.
+It usually includes a long non-human-readable string, like <code class="docutils literal notranslate"><span class="pre">014cc82d-0631-4b8b-bbfd-7e6c7d7c8f55</span></code>.
+This string is the unique ID of a bluesky run, or in plain words, one measurement.
+It can be used to identify which data is from the same run.
+After it, you may find other information about the measurement like the sample name <code class="docutils literal notranslate"><span class="pre">Ni</span></code>.</p>
+<p>If there is a <code class="docutils literal notranslate"><span class="pre">-</span></code> in file name. Usually, it means that the file is a part of the data from the measurement.
+Which part it is is indicated by the name of the data field.
+For example, <code class="docutils literal notranslate"><span class="pre">bg_sub_image</span></code> here means the data key of background subtracted image.
+There might be multiple background subtracted images in one run so there is usually a number to index the image,
+like <code class="docutils literal notranslate"><span class="pre">1</span></code> in the example.</p>
+<p>The data keys and its meanings are defined in the schemas.
+The schemas can be shown used the code below.</p>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [1]: </span><span class="kn">from</span> <span class="nn">pdfstream.schemas</span> <span class="kn">import</span> <span class="n">analysis_out_schemas</span><span class="p">,</span> <span class="n">print_data_keys</span>
+
+<span class="gp">In [2]: </span><span class="n">print_data_keys</span><span class="p">(</span><span class="n">analysis_out_schemas</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>You can find the meanings of the data keys above.</p>
+</div>
 </div>
 <div class="section" id="how-to-see-the-data-during-the-experiment">
 <h2>How to see the data during the experiment?<a class="headerlink" href="#how-to-see-the-data-during-the-experiment" title="Permalink to this headline">¶</a></h2>
