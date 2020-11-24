@@ -9,10 +9,9 @@ from ophyd.sim import NumpySeqHandler
 
 from pdfstream.callbacks.analysis import AnalysisConfig, VisConfig, ExportConfig, AnalysisStream, Exporter, \
     Visualizer
-from pdfstream.callbacks.basic import StartStopCallback
 from pdfstream.callbacks.calibration import CalibrationConfig, Calibration
 from pdfstream.servers import CONFIG_DIR, ServerNames
-from pdfstream.servers.base import ServerConfig, find_cfg_file, BaseServer
+from pdfstream.servers.base import ServerConfig, find_cfg_file, BaseServer, StartStopCallback
 
 
 class XPDConfig(AnalysisConfig, VisConfig, ExportConfig, CalibrationConfig):
@@ -59,11 +58,10 @@ class XPDServerConfig(XPDConfig, ServerConfig):
 
 class XPDServer(BaseServer):
     """The server of XPD data analysis. It is a live dispatcher with XPDRouter subscribed."""
-
     def __init__(self, config: XPDServerConfig):
         super(XPDServer, self).__init__(config.address, prefix=config.prefix)
-        self.subscribe(XPDRouter(config))
         self.subscribe(StartStopCallback())
+        self.subscribe(XPDRouter(config))
 
 
 def make_and_run(

@@ -2,9 +2,17 @@ from configparser import ConfigParser, Error
 from datetime import datetime
 from pathlib import Path
 
+from bluesky.callbacks import CallbackBase
+from bluesky.callbacks.core import make_class_safe
 from bluesky.callbacks.zmq import RemoteDispatcher
 
 from pdfstream.vend.qt_kicker import install_qt_kicker
+
+
+def server_message(msg: str):
+    """Print a message to a uniform format of server message."""
+    t = datetime.strptime(datetime.now(), "%x %X")
+    print("[{}] {}".format(t, msg))
 
 
 class ServerConfig(ConfigParser):
@@ -32,10 +40,10 @@ class BaseServer(RemoteDispatcher):
 
     def start(self):
         try:
-            print("[{}] Server is started".format(datetime.now()))
+            server_message("Server is started")
             super(BaseServer, self).start()
         except KeyboardInterrupt:
-            print("[{}] Server is terminated".format(datetime.now()))
+            server_message("Server is terminated")
 
     def install_qt_kicker(self):
         install_qt_kicker(self.loop)
@@ -61,3 +69,17 @@ def find_cfg_file(directory: Path, name: str) -> str:
             ]
         )
     )
+
+
+@make_class_safe
+class StartStopCallback(CallbackBase):
+    """Print the time for analysis"""
+
+    def __init__(self):
+        super(StartStopCallback, self).__init__()
+
+    def start(self, doc):
+        server_message("Receive the start of run {}")
+
+    def stop(self, doc):
+        server_message("Receive the stop of run {}")

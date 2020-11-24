@@ -1,12 +1,6 @@
 import pdfstream.callbacks.basic as mod
 
 
-def test_StartStopCallback(simple_stream):
-    cb = mod.StartStopCallback()
-    for name, doc in simple_stream:
-        cb(name, doc)
-
-
 def test_NumpyExporter(tmpdir, array_stream):
     cb = mod.NumpyExporter(str(tmpdir), file_prefix="{start[sample_name]}_")
     for name, doc in array_stream:

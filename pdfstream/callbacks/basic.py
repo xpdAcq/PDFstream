@@ -1,5 +1,4 @@
 import typing as tp
-from datetime import datetime
 from pathlib import Path
 
 import numpy as np
@@ -17,19 +16,6 @@ from xpdview.waterfall import Waterfall
 import pdfstream.callbacks.from_descriptor as fd
 import pdfstream.callbacks.from_start as fs
 from pdfstream.vend.formatters import SpecialStr
-
-
-class StartStopCallback(CallbackBase):
-    """Print the time for analysis"""
-
-    def __init__(self):
-        super(StartStopCallback, self).__init__()
-
-    def start(self, doc):
-        print("[{}] Receive the start of run {}".format(datetime.now(), doc["uid"]))
-
-    def stop(self, doc):
-        print("[{}] Receive the stop of run {}".format(datetime.now(), doc.get("run_start", "NA")))
 
 
 class ArrayExporter(CallbackBase):
