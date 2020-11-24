@@ -42,7 +42,7 @@ setup(
     long_description_content_type='text/markdown',
     author="Songsheng Tao",
     author_email='st3107@columbia.edu',
-    url='https://github.com/st3107/pdfstream',
+    url='https://github.com/xpdAcq/pdfstream',
     python_requires='>={}'.format('.'.join(str(n) for n in min_version)),
     packages=find_packages(exclude=['docs', 'tests']),
     entry_points={

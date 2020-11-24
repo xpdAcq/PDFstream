@@ -44,16 +44,16 @@ $VERSION_BUMP_PATTERNS = [
 
 $CHANGELOG_FILENAME = 'CHANGELOG.rst'
 $CHANGELOG_TEMPLATE = 'TEMPLATE.rst'
-$TAG_REMOTE = 'git@github.com:st3107/pdfstream.git'
+$TAG_REMOTE = 'git@github.com:xpdAcq/pdfstream.git'
 
-$GITHUB_ORG = 'st3107'
+$GITHUB_ORG = 'xpdAcq'
 $GITHUB_REPO = 'pdfstream'
 
 $FORGE_ORG = 'nsls-ii-forge'
 $FORGE_REPO = 'pdfstream-feedstock'
 
 $SPHINX_HOST_DIR = 'docs/build'
-$GHPAGES_REPO = 'git@github.com:st3107/pdfstream.git'
+$GHPAGES_REPO = 'git@github.com:xpdAcq/pdfstream.git'
 $GHPAGES_BRANCH = 'gh-pages'
 $GHPAGES_COPY = (
     ('$SPHINX_HOST_DIR/html', '$GHPAGES_REPO_DIR'),
