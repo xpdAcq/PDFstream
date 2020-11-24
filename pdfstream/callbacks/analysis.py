@@ -542,9 +542,10 @@ class VisFactory:
         ]
         # make a figure of stacking axes
         fig1 = plt.figure()
-        axes1 = [fig1.add_subplot(grid) for grid in GridSpec(len(fields_and_configs), 1, wspace=0)]
-        for ax in axes1[:-1]:
-            ax.get_xaxis().set_visible(False)
+        axes1 = [fig1.add_subplot(grid) for grid in GridSpec(len(fields_and_configs), 1, hspace=0)]
+        if len(axes1) > 1:
+            for ax in axes1[:-1]:
+                ax.get_xaxis().set_visible(False)
         # link the axes with callbacks
         for (field, vis_config), ax in zip(fields_and_configs, axes1):
             if vis_config is not None:
