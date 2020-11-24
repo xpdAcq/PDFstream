@@ -10,6 +10,8 @@
 
 * Export 1d array in dataframe data instead of the numpy array
 
+* Optimize the layout of figures for visualization callbacks
+
 **Deprecated:**
 
 * <news item>
