@@ -6,7 +6,7 @@ from setuptools import setup, find_packages
 # NOTE: This file must remain Python 2 compatible for the foreseeable future,
 # to ensure that we error out properly for people with outdated setuptools
 # and/or pip.
-min_version = (3, 6)
+min_version = (3, 7)
 if sys.version_info < min_version:
     error = ("\n"
              "pdfstream does not support Python {0}.{1}.\n"
@@ -24,8 +24,11 @@ here = path.abspath(path.dirname(__file__))
 
 with open(path.join(here, 'requirements/run.txt')) as requirements_file:
     # Parse requirements.txt, ignoring any commented-out lines.
-    requirements = [line for line in requirements_file.read().splitlines()
-                    if not line.startswith('#')]
+    requirements = [
+        line
+        for line in requirements_file.read().splitlines()[1:]
+        if not line.startswith('#')
+    ]
 
 with open(path.join(here, 'README.md'), encoding='utf-8') as readme_file:
     readme = readme_file.read()
