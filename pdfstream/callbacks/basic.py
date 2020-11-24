@@ -90,7 +90,7 @@ class DataFrameExporter(ArrayExporter):
         df = pd.DataFrame(data=_data)
         filename = self.file_template.format(start=self.start_doc, event=doc, data_key="data")
         filepath = self.directory.joinpath(filename)
-        df.to_csv(filepath)
+        df.to_csv(str(filepath))
 
 
 class LiveMaskedImage(LiveImage):
