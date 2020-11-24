@@ -168,10 +168,10 @@ The processed data will be archived in the ``an_db`` database specified in the .
 familar with the `databroker <https://blueskyproject.io/databroker/>`_, you can find the catalog name in the
 .ini file of the server.
 
-The processed data will also be exported to the files in the ``tiff_base`` folder specified in .ini file. The diffraction
-image data together with the mask data will be saved in .tiff files. The scalar data like temperature and motor
-positions will be in the .csv files. You can match the scalar data with the image by the start id and the
-sequence number. The reduced data like XRD and PDF will be in the .npy files.
+The processed data will also be exported to the files in the ``tiff_base``folder specified in .ini file. The
+diffraction image data together with the mask data will be saved in .tiff files. The scalar data like
+temperature and motor positions will be in the .csv files. You can match the scalar data with the image by the
+start id and the sequence number. The reduced data like XRD and PDF will be in the .npy files.
 You can use `numpy <https://numpy.org/devdocs/user/quickstart.html>`_
 to open it and transfer it to other format you like. The metadata like the sample information, wavelength of the
 beam, and the experiment setup can be found in the .json files.
