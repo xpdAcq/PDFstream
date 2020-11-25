@@ -4,6 +4,29 @@ PDFstream Change Log
 
 .. current developments
 
+v0.3.2
+====================
+
+**Added:**
+
+* Make callback safe for the Exporter and Visualizer in the XPDRouter.
+
+* Add a DataFrameExporter to export data in dataframe
+
+* Make calibration callback identify special calibrant name 'Ni_calib'
+
+**Changed:**
+
+* Export 1d array in dataframe data instead of the numpy array
+
+* Optimize the layout of figures for visualization callbacks
+
+**Fixed:**
+
+* Fix the bugs of xpd server when it is used with xpdacq.
+
+
+
 v0.3.1
 ====================
 
