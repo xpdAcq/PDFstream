@@ -11,8 +11,9 @@ After conda is installed, at the commnad line::
 
     conda config --append channels nsls2forge
 
-(Optional) Get the .whl file of `PDFgetX <https://www.diffpy.org/products/pdfgetx.html>`_. This package is used
-to transform the XRD data to PDF data.
+(Optional) Get the .whl file of `PDFgetX <https://www.diffpy.org/products/pdfgetx.html>`_.
+This package is used to transform the XRD data to PDF data.
+If you are not using the functionality in pdfstream related to the PDF, this package is not necessary.
 
 General Installation
 --------------------
@@ -31,7 +32,7 @@ Activate the environment::
 
 (Optional) Install the `diffpy.pdfgetx` using .whl file::
 
-    python -m pip install <path to .whl file>
+    pdfstream_install <path to .whl file>
 
 Change the ``<path to .whl file>`` to the path of the .whl file on your computer.
 
@@ -66,10 +67,6 @@ Activate the environment::
 
     conda activate pdfstream_env
 
-Install the `diffpy.pdfgetx` using .whl file::
-
-    python -m pip install <path to .whl file>
-
 Install the necessary pypi packages::
 
     python -m pip install -r requirements/pip.txt
@@ -80,3 +77,6 @@ Install the `PDFstream` in development mode::
 
     python -m pip install -e . --no-deps
 
+Install the `diffpy.pdfgetx` using .whl file::
+
+    pdfstream_install <path to .whl file>
