@@ -1,9 +1,9 @@
 PDFstream
 =========
 
-[![test](https://github.com/st3107/pdfstream/workflows/test/badge.svg?branch=master)](https://github.com/st3107/pdfstream/actions?query=branch%3Amaster+workflow%3Atest)
-[![codecov](https://codecov.io/gh/st3107/pdfstream/branch/master/graph/badge.svg?token=ZFXWWDWQW8)](https://codecov.io/gh/st3107/pdfstream)
-[![Anaconda-Server Badge](https://anaconda.org/diffpy/pdfstream/badges/version.svg)](https://anaconda.org/diffpy/pdfstream)
+![test](https://github.com/xpdAcq/PDFstream/workflows/test/badge.svg)
+[![codecov](https://codecov.io/gh/xpdAcq/PDFstream/branch/master/graph/badge.svg?token=ZFXWWDWQW8)](https://codecov.io/gh/xpdAcq/PDFstream)
+[![Anaconda-Server Badge](https://anaconda.org/nsls2forge/pdfstream/badges/version.svg)](https://anaconda.org/nsls2forge/pdfstream)
 
 The data analysis toolbox for the study on pair distribution function (PDF).
 
