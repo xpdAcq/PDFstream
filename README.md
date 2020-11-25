@@ -8,4 +8,4 @@ PDFstream
 The data analysis toolbox for the study on pair distribution function (PDF).
 
 -   Free software: 3-clause BSD license
--   Documentation: <https://st3107.github.io/pdfstream>.
+-   Documentation: <https://xpdacq.github.io/PDFstream/>.
