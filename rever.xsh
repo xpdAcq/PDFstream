@@ -1,31 +1,3 @@
-from rever.activity import activity
-from pathlib import Path
-
-
-@activity
-def conda_release():
-    $PYTHON release.py
-    cd rever
-    if Path($FORGE_REPO).is_dir():
-        rm -rf $FORGE_REPO
-    gh repo clone $FORGE_ORG/$FORGE_REPO
-    cd $FORGE_REPO
-    git checkout master
-    git reset --hard origin/master
-    git checkout -b $VERSION
-    cp -Rv ../recipe/* recipe/
-    conda smithy rerender --feedstock_directory .
-    git add .
-    git commit -m "MNT: Re-rendered"
-    git push origin $VERSION --force
-    gh pr create --title $VERSION --body "New release using rever"
-    cd ../..
-
-@activity
-def build_docs():
-    make -C docs html
-
-
 $PROJECT = 'pdfstream'
 $ACTIVITIES = [
     'version_bump',
@@ -34,7 +6,7 @@ $ACTIVITIES = [
     'push_tag',
     'ghrelease',
     'pypi',
-    'conda_release'
+    'forge'
 ]
 
 $VERSION_BUMP_PATTERNS = [
@@ -49,8 +21,14 @@ $TAG_REMOTE = 'git@github.com:xpdAcq/pdfstream.git'
 $GITHUB_ORG = 'xpdAcq'
 $GITHUB_REPO = 'pdfstream'
 
-$FORGE_ORG = 'nsls-ii-forge'
-$FORGE_REPO = 'pdfstream-feedstock'
+$FORGE_FEEDSTOCK = 'git@github.com:nsls-ii-forge/pdfstream-feedstock.git'
+$FORGE_FEEDSTOCK_ORG = 'nsls-ii-forge'
+$FORGE_PROTOCOL = 'ssh'
+$FORGE_SOURCE_URL = 'https://github.com/$GITHUB_ORG/$GITHUB_REPO/releases/download/$VERSION/$PROJECT-$VERSION.tar.gz'
+$FORGE_HASH_TYPE = 'sha256'
+$FORGE_PULL_REQUEST = True
+$FORGE_RERENDER = True
+$FORGE_USE_GIT_URL = False
 
 $SPHINX_HOST_DIR = 'docs/build'
 $GHPAGES_REPO = 'git@github.com:xpdAcq/pdfstream.git'
