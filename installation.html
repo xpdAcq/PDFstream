@@ -175,8 +175,9 @@
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">config</span> <span class="o">--</span><span class="n">append</span> <span class="n">channels</span> <span class="n">nsls2forge</span>
 </pre></div>
 </div>
-<p>(Optional) Get the .whl file of <a class="reference external" href="https://www.diffpy.org/products/pdfgetx.html">PDFgetX</a>. This package is used
-to transform the XRD data to PDF data.</p>
+<p>(Optional) Get the .whl file of <a class="reference external" href="https://www.diffpy.org/products/pdfgetx.html">PDFgetX</a>.
+This package is used to transform the XRD data to PDF data.
+If you are not using the functionality in pdfstream related to the PDF, this package is not necessary.</p>
 </div>
 <div class="section" id="general-installation">
 <h2>General Installation<a class="headerlink" href="#general-installation" title="Permalink to this headline">¶</a></h2>
@@ -191,7 +192,7 @@ to transform the XRD data to PDF data.</p>
 </pre></div>
 </div>
 <p>(Optional) Install the <cite>diffpy.pdfgetx</cite> using .whl file:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="o">-</span><span class="n">m</span> <span class="n">pip</span> <span class="n">install</span> <span class="o">&lt;</span><span class="n">path</span> <span class="n">to</span> <span class="o">.</span><span class="n">whl</span> <span class="n">file</span><span class="o">&gt;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pdfstream_install</span> <span class="o">&lt;</span><span class="n">path</span> <span class="n">to</span> <span class="o">.</span><span class="n">whl</span> <span class="n">file</span><span class="o">&gt;</span>
 </pre></div>
 </div>
 <p>Change the <code class="docutils literal notranslate"><span class="pre">&lt;path</span> <span class="pre">to</span> <span class="pre">.whl</span> <span class="pre">file&gt;</span></code> to the path of the .whl file on your computer.</p>
@@ -224,10 +225,6 @@ to transform the XRD data to PDF data.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">activate</span> <span class="n">pdfstream_env</span>
 </pre></div>
 </div>
-<p>Install the <cite>diffpy.pdfgetx</cite> using .whl file:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="o">-</span><span class="n">m</span> <span class="n">pip</span> <span class="n">install</span> <span class="o">&lt;</span><span class="n">path</span> <span class="n">to</span> <span class="o">.</span><span class="n">whl</span> <span class="n">file</span><span class="o">&gt;</span>
-</pre></div>
-</div>
 <p>Install the necessary pypi packages:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="o">-</span><span class="n">m</span> <span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">r</span> <span class="n">requirements</span><span class="o">/</span><span class="n">pip</span><span class="o">.</span><span class="n">txt</span>
 </pre></div>
@@ -235,6 +232,10 @@ to transform the XRD data to PDF data.</p>
 <p>Change the <code class="docutils literal notranslate"><span class="pre">&lt;path</span> <span class="pre">to</span> <span class="pre">.whl</span> <span class="pre">file&gt;</span></code> to the path of the .whl file on your computer.</p>
 <p>Install the <cite>PDFstream</cite> in development mode:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="o">-</span><span class="n">m</span> <span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">e</span> <span class="o">.</span> <span class="o">--</span><span class="n">no</span><span class="o">-</span><span class="n">deps</span>
+</pre></div>
+</div>
+<p>Install the <cite>diffpy.pdfgetx</cite> using .whl file:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pdfstream_install</span> <span class="o">&lt;</span><span class="n">path</span> <span class="n">to</span> <span class="o">.</span><span class="n">whl</span> <span class="n">file</span><span class="o">&gt;</span>
 </pre></div>
 </div>
 </div>
