@@ -221,21 +221,40 @@ It can be used to identify which data is from the same run.
 After it, you may find other information about the measurement like the sample name ``Ni``.
 
 If there is a ``-`` in file name. Usually, it means that the file is a part of the data from the measurement.
-Which part it is is indicated by the name of the data field.
+Which part it is is indicated by the name of the data key.
 For example, ``bg_sub_image`` here means the data key of background subtracted image.
 There might be multiple background subtracted images in one run so there is usually a number to index the image,
 like ``1`` in the example.
 
-The data keys and its meanings are defined in the schemas.
-The schemas can be shown used the code below.
+The data keys and their meanings are defined in the schemas shown below.
 
-.. code-block:: ipython
+.. code-block:: text
 
-    In [1]: from pdfstream.schemas import analysis_out_schemas, print_data_keys
+    dk_sub_image: the array of dark dark subtracted image
+    bg_sub_image: the array of dark dark subtracted background subtracted image
+    mask: the array of mask where 0 is good pixel and 1 is bad pixel
+    chi_Q: the array of momentum transfer Q in azimuthal integration result I(Q)
+    chi_I: the array of intensity in I azimuthal integration result I(Q)
+    chi_max: the maximum value of I in azimuthal integration result I(Q)
+    chi_argmax: the value of Q at the maximum I in azimuthal integration result I(Q)
+    iq_Q: the array of momentum transfer Q in the cropped and interpolated I(Q)
+    iq_I: the array of intensity I in the cropped and interpolated I(Q)
+    sq_Q: the array of momentum transfer Q in the structure factor S(Q)
+    sq_S: the array of intensity I in the structure factor S(Q)
+    fq_Q: the array of momentum transfer Q in the reduced structure factor F(Q)
+    fq_F: the array of intensity I in the reduced structure factor F(Q)
+    gr_r: the array of atomic pair distance r in the reduced pair distribution function G(r)
+    gr_G: the array of pair distribution function G in the reduced pair distribution function G(r)
+    gr_max: the maximum value of G in the reduced pair distribution function G(r)
+    gr_argmax: the value of r at the maximum of G in the reduced pair distribution function G(r)
 
-    In [2]: print_data_keys(analysis_out_schemas)
+The schemas may be different depending on the version of package.
+If you would like to find out what is schemas for the package on your local machine, please run the command below
+in terminal::
 
-You can find the meanings of the data keys above.
+    python -c "from pdfstream.schemas import analysis_out_schemas, print_data_keys; print_data_keys(analysis_out_schemas)"
+
+You can find the meanings of the data keys in the output.
 
 How to see the data during the experiment?
 ------------------------------------------
