@@ -1,6 +1,6 @@
-import sys
 from os import path
 
+import sys
 from setuptools import setup, find_packages
 
 # NOTE: This file must remain Python 2 compatible for the foreseeable future,
@@ -68,4 +68,7 @@ setup(
         'Natural Language :: English',
         'Programming Language :: Python :: 3',
     ],
+    scripts=[
+        'scripts/pdfstream_install'
+    ]
 )

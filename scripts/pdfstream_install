@@ -1,0 +1,7 @@
+#!/bin/bash
+# install the extra non-open-source packages for pdfstream
+
+set -e
+echo "Install the diffpy.pdfgetx"
+PDFGETX=$1
+python -m pip install "$PDFGETX"
