@@ -1,6 +1,6 @@
+import sys
 from os import path
 
-import sys
 from setuptools import setup, find_packages
 
 # NOTE: This file must remain Python 2 compatible for the foreseeable future,
@@ -22,14 +22,6 @@ if sys.version_info < min_version:
 
 here = path.abspath(path.dirname(__file__))
 
-with open(path.join(here, 'requirements/run.txt')) as requirements_file:
-    # Parse requirements.txt, ignoring any commented-out lines.
-    requirements = [
-        line
-        for line in requirements_file.read().splitlines()
-        if not line.startswith('#')
-    ]
-
 with open(path.join(here, 'README.md'), encoding='utf-8') as readme_file:
     readme = readme_file.read()
 
@@ -37,7 +29,7 @@ setup(
     name='pdfstream',
     version='0.3.1',
     description="The configs analysis toolbox for the study on pair distribution function (PDF).",
-    install_requires=requirements,
+    install_requires=[],
     long_description=readme,
     long_description_content_type='text/markdown',
     author="Songsheng Tao",
