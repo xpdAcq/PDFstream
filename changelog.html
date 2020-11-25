@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>PDFstream Change Log &mdash; PDFstream 0.3.1 documentation</title>
+  <title>PDFstream Change Log &mdash; PDFstream 0.3.2 documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.3.1
+                0.3.2
               </div>
             
           
@@ -92,6 +92,7 @@
 <li class="toctree-l1"><a class="reference internal" href="tutorials0/index.html">Users Document</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials1/index.html">Beamline Scientists Document</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">PDFstream Change Log</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#v0-3-2">v0.3.2</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#v0-3-1">v0.3.1</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#v0-3-0">v0.3.0</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#v0-2-2">v0.2.2</a></li>
@@ -170,6 +171,24 @@
             
   <div class="section" id="pdfstream-change-log">
 <h1>PDFstream Change Log<a class="headerlink" href="#pdfstream-change-log" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="v0-3-2">
+<h2>v0.3.2<a class="headerlink" href="#v0-3-2" title="Permalink to this headline">¶</a></h2>
+<p><strong>Added:</strong></p>
+<ul class="simple">
+<li><p>Make callback safe for the Exporter and Visualizer in the XPDRouter.</p></li>
+<li><p>Add a DataFrameExporter to export data in dataframe</p></li>
+<li><p>Make calibration callback identify special calibrant name ‘Ni_calib’</p></li>
+</ul>
+<p><strong>Changed:</strong></p>
+<ul class="simple">
+<li><p>Export 1d array in dataframe data instead of the numpy array</p></li>
+<li><p>Optimize the layout of figures for visualization callbacks</p></li>
+</ul>
+<p><strong>Fixed:</strong></p>
+<ul class="simple">
+<li><p>Fix the bugs of xpd server when it is used with xpdacq.</p></li>
+</ul>
+</div>
 <div class="section" id="v0-3-1">
 <h2>v0.3.1<a class="headerlink" href="#v0-3-1" title="Permalink to this headline">¶</a></h2>
 <p><strong>Fixed:</strong></p>
