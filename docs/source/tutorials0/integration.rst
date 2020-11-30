@@ -75,17 +75,17 @@ all in the key word arguments described in the following sections.
 Output directory
 ^^^^^^^^^^^^^^^^
 
-If we would like to output the files in a directory called ``data_folder``, we can use key ``output_dir``.
+If we would like to output the files in a directory called ``data``, we can use key ``output_dir``.
 
 .. code-block:: python
 
     integrate(
         "geometry.poni",
         "sample_diffraction.tiff",
-        output_dir="data_folder"
+        output_dir="data"
     )
 
-If ``data_folder`` doesn't exist, it will be created.
+If the folder ``data`` doesn't exist, it will be created.
 
 Background subtraction
 ^^^^^^^^^^^^^^^^^^^^^^
