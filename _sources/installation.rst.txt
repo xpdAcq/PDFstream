@@ -7,10 +7,6 @@ Prerequisites
 
 Install `Anaconda <https://docs.conda.io/projects/conda/en/latest/user-guide/install/>`_.
 
-After conda is installed, at the commnad line::
-
-    conda config --append channels nsls2forge
-
 (Optional) Get the .whl file of `PDFgetX <https://www.diffpy.org/products/pdfgetx.html>`_.
 This package is used to transform the XRD data to PDF data.
 If you are not using the functionality in pdfstream related to the PDF, this package is not necessary.
@@ -22,7 +18,7 @@ This is the instructions for the users. It is suggested to install it in a clean
 
 At the command line::
 
-    conda create -n pdfstream_env pdfstream
+    conda create -n pdfstream_env -c defaults -c nsls2forge pdfstream
 
 The ``pdfstream_env`` in the command is the name of the environment. It can be changed to any name.
 
@@ -57,11 +53,7 @@ Change directory::
 
 Create an environment with all the requirements::
 
-    conda create -n pdfstream_env --file requirements/build.txt --file requirements/run.txt --file requirements/test.txt
-
-Install the packages for building documents and releasing the software::
-
-    conda install -n pdfstream_env -c conda-forge --file requirements/docs.txt --file requirements/release.txt
+    conda create -n pdfstream_env -c defaults -c nsls2forge -c conda-forge --file requirements/build.txt --file requirements/run.txt --file requirements/test.txt --file requirements/docs.txt --file requirements/release.txt
 
 Activate the environment::
 
@@ -80,3 +72,4 @@ Install the `PDFstream` in development mode::
 Install the `diffpy.pdfgetx` using .whl file::
 
     pdfstream_install <path to .whl file>
+
