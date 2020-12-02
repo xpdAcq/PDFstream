@@ -17,7 +17,7 @@ class AnalyzerConfig(ConfigParser):
 class Analyzer(CallbackBase):
     """The base class of analyzers."""
 
-    def analyze_run(self, run: BlueskyRun):
+    def analyze(self, run: BlueskyRun):
         """Analyze the data in a bluesky run."""
         for name, doc in run.canonical(fill="yes"):
             self.__call__(name, doc)
