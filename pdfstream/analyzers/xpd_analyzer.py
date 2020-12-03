@@ -1,3 +1,5 @@
+import typing as tp
+
 from databroker.core import BlueskyRun
 
 from pdfstream.analyzers.base import AnalyzerConfig, Analyzer
@@ -17,3 +19,28 @@ class XPDAnalyzerConfig(XPDConfig, AnalyzerConfig):
 class XPDAnalyzer(XPDRouter, Analyzer):
     """The class to process the XPD data to PDF data. """
     pass
+
+
+def replay(run: BlueskyRun) -> tp.Tuple[BlueskyRun, XPDAnalyzerConfig, XPDAnalyzer]:
+    """Generate the original data, original configure and the XPD analyzer of it.
+
+    Parameters
+    ----------
+    run :
+        The run containing the processed data.
+
+    Returns
+    -------
+    raw_run :
+        The run containing the raw data.
+
+    config :
+        The original configuration.
+
+    analyzer :
+        The original analyzer.
+    """
+    config = XPDAnalyzerConfig()
+    raw_run = config.retrieve_original_run(run)
+    analyzer = XPDAnalyzer(config)
+    return raw_run, config, analyzer
