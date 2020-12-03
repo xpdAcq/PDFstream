@@ -6,7 +6,7 @@ It is basically a wrapper of the core of the XPD server and thus its functionali
 The only difference is that the XPD server receives data from the messages sent by a proxy
 while the analyzer takes data from a database entry.
 If you would like to know what the analyzer does and what input and output look like,
-please see :ref:`_xpd_server_functionalities`.
+please see :ref:`xpd-server-functionalities`.
 
 The sections below show how to use the XPD analyzer in Ipython.
 
@@ -113,7 +113,7 @@ Export the processed data to files
 Instead of saving the metadata and data in the database, we can also export them in files.
 By setting ``export_files = True`` and specify ``tiff_base`` parameter in the configuration,
 we will export the processed data into the ``tiff_base``.
-The detail of what the data will be like is introduced in :ref:`_xpd_server_data`.
+The detail of what the data will be like is introduced in :ref:`xpd-server-data`.
 
 Get processed data from databroker
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
