@@ -19,3 +19,4 @@ def test_XPDAnalyzer(db_with_img_and_bg_img, tmpdir):
     config.read(fn)
     analyzer = mod.XPDAnalyzer(config)
     analyzer.analyze(raw_db[-1])
+    config.retrieve_original_run(an_db[-1])
