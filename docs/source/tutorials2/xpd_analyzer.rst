@@ -140,10 +140,10 @@ Here, we show the processed data in an xarray.
     In [32]: an_run.primary.read()
 
 
-Create a configuration from the processed data
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Replay the data processing
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-We can replay the analysis process.
+We can replay the analysis process according to the metadata and data in the analysis run.
 
 .. ipython::
 
@@ -152,14 +152,14 @@ We can replay the analysis process.
     In [33]: config2, analyzer2 = reply(an_run)
 
 The ``confgi2`` and ``analyzer2`` have the same settings as the ``config`` and ``analyzer`` except the ``an_db``,
-because we use a temporary database for ``an_db`` and this database is not record in catalog.
+because we use a temporary database for ``an_db``.
 We need to set it manually.
 
 .. ipython::
 
     In [34]: config2.an_db = an_db
 
-You don't need this step if you were using a permanent database when you dumped the data.
+You don't need this step if you were using a permanent database when you processed the data.
 
 We can also get the original data from the run.
 
@@ -168,7 +168,6 @@ We can also get the original data from the run.
     In [21]: run2 = retrieve_original_run(run)
 
 Now, we can do the processing again.
-
 
 .. ipython::
 
