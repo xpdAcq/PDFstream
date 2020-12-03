@@ -8,12 +8,7 @@ from pdfstream.servers.xpd_server import XPDRouter, XPDConfig
 
 class XPDAnalyzerConfig(XPDConfig, AnalyzerConfig):
     """The configuration of the XPDAnalyzer."""
-
-    def retrieve_original_run(self, run: BlueskyRun) -> BlueskyRun:
-        """Retrieve the original run."""
-        self.read_run(run)
-        uid = run.metadata['start']['original_run_uid']
-        return self.raw_db[uid]
+    pass
 
 
 class XPDAnalyzer(XPDRouter, Analyzer):
@@ -21,7 +16,7 @@ class XPDAnalyzer(XPDRouter, Analyzer):
     pass
 
 
-def replay(run: BlueskyRun) -> tp.Tuple[BlueskyRun, XPDAnalyzerConfig, XPDAnalyzer]:
+def replay(run: BlueskyRun) -> tp.Tuple[str, XPDAnalyzerConfig, XPDAnalyzer]:
     """Generate the original data, original configure and the XPD analyzer of it.
 
     Parameters
@@ -31,8 +26,8 @@ def replay(run: BlueskyRun) -> tp.Tuple[BlueskyRun, XPDAnalyzerConfig, XPDAnalyz
 
     Returns
     -------
-    raw_run :
-        The run containing the raw data.
+    uid :
+        The uid of the original run.
 
     config :
         The original configuration.
@@ -40,7 +35,8 @@ def replay(run: BlueskyRun) -> tp.Tuple[BlueskyRun, XPDAnalyzerConfig, XPDAnalyz
     analyzer :
         The original analyzer.
     """
+    uid = run.metadata['start']['original_run_uid']
     config = XPDAnalyzerConfig()
-    raw_run = config.retrieve_original_run(run)
+    config.read_run(run)
     analyzer = XPDAnalyzer(config)
-    return raw_run, config, analyzer
+    return uid, config, analyzer
