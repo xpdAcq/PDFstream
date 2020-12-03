@@ -1,10 +1,10 @@
-.. _xpd_server:
-
 XPD Server
 ==========
 
 The XPD Server is a server designed for x-ray powder diffraction experiments. It will process image data from
 a two dimensional detector.
+
+.. _xpd_server_functionalities:
 
 What does XPD Server do?
 ------------------------
@@ -162,6 +162,8 @@ How to do the data reduction?
 The data reduction is totally automatic after you start the server and finish your calibration run. The server
 will process the streaming data by itself according to the configuration. You will find messages in the terminal
 where the server is running. It tells you if the message of a run is received and if there are any errors.
+
+.. _xpd_server_data:
 
 How to get the data back home?
 ------------------------------
