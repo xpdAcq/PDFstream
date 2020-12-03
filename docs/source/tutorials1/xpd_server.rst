@@ -260,6 +260,8 @@ in terminal::
 
 You can find the meanings of the data keys in the output.
 
+.. _xpd-server-figures:
+
 How to see the data during the experiment?
 ------------------------------------------
 
