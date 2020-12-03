@@ -1,8 +1,9 @@
 """Event model run composer from files."""
-import numpy as np
 import time
 import typing as tp
 import uuid
+
+import numpy as np
 from event_model import compose_run, ComposeDescriptorBundle
 
 
@@ -16,14 +17,15 @@ def gen_stream(
     yield "start", crb.start_doc
     if len(data_lst) == 0:
         yield "stop", crb.compose_stop()
-    cdb: ComposeDescriptorBundle = crb.compose_descriptor(
-        name="primary",
-        data_keys=compose_data_keys(data_lst[0])
-    )
-    yield "descriptor", cdb.descriptor_doc
-    for data in data_lst:
-        yield "event", cdb.compose_event(data=data, timestamps=compose_timestamps(data))
-    yield "stop", crb.compose_stop()
+    else:
+        cdb: ComposeDescriptorBundle = crb.compose_descriptor(
+            name="primary",
+            data_keys=compose_data_keys(data_lst[0])
+        )
+        yield "descriptor", cdb.descriptor_doc
+        for data in data_lst:
+            yield "event", cdb.compose_event(data=data, timestamps=compose_timestamps(data))
+        yield "stop", crb.compose_stop()
 
 
 def compose_data_keys(data: tp.Dict[str, tp.Any]) -> tp.Dict[str, dict]:

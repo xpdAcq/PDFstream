@@ -1,3 +1,5 @@
+.. _xpd_server:
+
 XPD Server
 ==========
 
