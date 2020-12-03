@@ -4,6 +4,8 @@
 
 * The objects to process the XRD data to PDF data from bluesky runs.
 
+* The functions to replay the analysis.
+
 **Changed:**
 
 * <news item>
