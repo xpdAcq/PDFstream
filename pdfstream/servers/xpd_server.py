@@ -8,7 +8,7 @@ from event_model import RunRouter
 from ophyd.sim import NumpySeqHandler
 
 from pdfstream.callbacks.analysis import AnalysisConfig, VisConfig, ExportConfig, AnalysisStream, Exporter, \
-    Visualizer
+    Visualizer, no_need_to_refresh_db
 from pdfstream.callbacks.calibration import CalibrationConfig, Calibration
 from pdfstream.servers import CONFIG_DIR, ServerNames
 from pdfstream.servers.base import ServerConfig, find_cfg_file, BaseServer, StartStopCallback
@@ -24,12 +24,24 @@ class XPDConfig(AnalysisConfig, VisConfig, ExportConfig, CalibrationConfig):
     @property
     def an_db(self) -> tp.Union[None, Broker]:
         name = self.get("DATABASE", "an_db", fallback=None)
-        if name:
+        if no_need_to_refresh_db(self._an_db, name):
+            pass
+        elif name is None:
+            self._an_db = None
+        elif name == "temp":
+            print("Warning: a temporary db is created for an db. It will be destroy at the end of the session.")
+            self._an_db = databroker.v2.temp()
+        else:
             self._an_db = databroker.catalog[name]
         return self._an_db
 
     @an_db.setter
     def an_db(self, db: Broker):
+        section_name = "DATABASE"
+        db_key = "an_db"
+        if section_name not in self.sections():
+            self.add_section(section_name)
+        self.set(section_name, db_key, db.name)
         self._an_db = db
 
     @property

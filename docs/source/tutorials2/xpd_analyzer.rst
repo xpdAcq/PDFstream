@@ -6,46 +6,9 @@ It is basically a wrapper of the core of the XPD server and thus its functionali
 The only difference is that the XPD server receives data from the messages sent by a proxy
 while the analyzer takes data from a database entry.
 If you would like to know what the analyzer does and what input and output look like,
-please see :ref:`xpd_server`.
+please see :ref:`xpd-server-functionalities`.
 
 The sections below show how to use the XPD analyzer in Ipython.
-
-
-Get data from databroker
-^^^^^^^^^^^^^^^^^^^^^^^^
-
-The input data of the analyzer can be a ``BlueskyRun``.
-It can be retrieved by from a databroker ``catalog``.
-Below is an example showing the process of retrieving one run from a catalog according to its unique ID.
-For details, please visit `databroker user documents <https://blueskyproject.io/databroker/v2/user/index.html>`_.
-
-.. ipython::
-
-    In [1]: from databroker import catalog
-
-    In [2]: db = catalog['example']
-
-    In [5]: run = db['a3e64b70-c5b9-4437-80ea-ea6a7198d397']
-
-Here, We show the metadata of this run.
-
-.. ipython::
-
-    In [6]: run.metadata['start']
-
-Create the analysis database
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Here, we create a temporary database and use it to store the processed data from the analyzer.
-You can use the database catalog on your machine instead of creating a temporary one.
-How to create a database catalog is written in the
-`databroker administrator documents <https://blueskyproject.io/databroker/v2/administrator/index.html>`_.
-
-.. ipython::
-
-    In [18]: import databroker
-
-    In [19]: an_db = databroker.v2.temp()
 
 Create an analyzer
 ^^^^^^^^^^^^^^^^^^
@@ -82,18 +45,36 @@ Please read through it and change it according to your needs.
 Now, we have a ``config`` loaded with parameters.
 We use it to create an analyzer.
 
-Because we use the temporary database in the example here, we have to manually add it to ``config``.
-You don't need to do the step below if you are not using the temporary database.
-
-.. ipython::
-
-    In [20]: config.an_db = an_db
-
-Finally, we use this ``config`` to create an ``analyzer``.
-
 .. ipython::
 
     In [21]: analyzer = XPDAnalyzer(config)
+
+Get data from databroker
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+The input data of the analyzer is a ``BlueskyRun``, the data entry retrieved by from a databroker catalog.
+Below is an example showing the process of retrieving one run from a catalog according to its unique ID.
+
+.. ipython::
+
+    In [2]: db = config.raw_db
+
+    In [5]: run = db['a3e64b70-c5b9-4437-80ea-ea6a7198d397']
+
+Here, ``db`` is a databroker catalog loaded according to your configuration.
+Please visit `databroker user documents <https://blueskyproject.io/databroker/v2/user/index.html>`_ for details
+about what you can do with the ``db`` and ``run``.
+Here, we show the metadata of this run.
+
+.. ipython::
+
+    In [6]: run.metadata['start']
+
+The data inside this run is show below.
+
+.. ipython::
+
+    In [6]: run.primary.read()
 
 Change settings
 ^^^^^^^^^^^^^^^
@@ -124,7 +105,6 @@ We use the analyzer to process the data.
 
 .. ipython::
 
-    @savefig
     In [29]: analyzer.analyze(run)
 
 Export the processed data to files
@@ -133,7 +113,7 @@ Export the processed data to files
 Instead of saving the metadata and data in the database, we can also export them in files.
 By setting ``export_files = True`` and specify ``tiff_base`` parameter in the configuration,
 we will export the processed data into the ``tiff_base``.
-The detail of what the data will be like is introduced in :ref:`xpd_server`.
+The detail of what the data will be like is introduced in :ref:`xpd-server-data`.
 
 Get processed data from databroker
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -142,6 +122,8 @@ The data is dumped into databroker ``an_db`` by the analyzer.
 We retrieve the last run in the database and it should be the processed data from our analyzer.
 
 .. ipython::
+
+    In [29]: an_db = config.an_db
 
     In [30]: an_run = an_db[-1]
 
@@ -157,23 +139,21 @@ Here, we show the processed data in an xarray.
 
     In [32]: an_run.primary.read()
 
-You can play with it in the way you like.
 
-Create a configuration from the processed data
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Replay the data processing
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-We can load configuration from a run.
+We can replay the analysis process according to the metadata and data in the analysis run.
 
 .. ipython::
 
-    In [33]: config2 = XPDAnalyzerConfig()
+    In [33]: from pdfstream.analyzers.xpd_analyzer import reply, retrieve_original_run
 
-    In [34]: config2.read_run(an_run)
+    In [33]: config2, analyzer2 = reply(an_run)
 
-Because the we used the temporary database,
-the ``an_run`` does record the information of ``an_db``
-and thus the ``config2`` does not know what database to use for ``an_db``.
-We need to specify it manually.
+The ``confgi2`` and ``analyzer2`` have the same settings as the ``config`` and ``analyzer`` except the ``an_db``,
+because we use a temporary database for ``an_db``.
+We need to set it manually.
 
 .. ipython::
 
@@ -181,11 +161,14 @@ We need to specify it manually.
 
 You don't need this step if you were using a permanent database when you processed the data.
 
-We create an analyzer.
-This analyzer is exactly the same as the one used to obtain the data in ``an_run``.
+We can also get the original data from the run.
 
 .. ipython::
 
-    In [21]: analyzer2 = XPDAnalyzer(config2)
+    In [21]: run2 = retrieve_original_run(run)
 
-You can use it to process other data so that the data will be processed in the same way as the ``an_run``.
+Now, we can do the processing again.
+
+.. ipython::
+
+    In [21]: analyzer2.analyze(run2)

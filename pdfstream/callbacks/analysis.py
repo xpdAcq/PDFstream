@@ -31,6 +31,11 @@ except ImportError:
     pass
 
 
+def no_need_to_refresh_db(db: tp.Union[None, Broker], name: tp.Union[None, str]):
+    """If there is no need to refresh the db, return True. Used in configparser."""
+    return (db is not None and name == db.name) or (db is None and name is None)
+
+
 class BasicAnalysisConfig(ConfigParser):
     """The basic configuration that is shared by analysis and calibration."""
 
@@ -39,14 +44,27 @@ class BasicAnalysisConfig(ConfigParser):
         self._raw_db = None
 
     @property
-    def raw_db(self):
+    def raw_db(self) -> tp.Union[None, Broker]:
         name = self.get("DATABASE", "raw_db", fallback=None)
-        if name is not None:
+        if no_need_to_refresh_db(self._raw_db, name):
+            pass
+        # refresh the db
+        elif name is None:
+            self._raw_db = None
+        elif name == "temp":
+            print("Warning: a temporary db is created for raw db. It will be destroy at the end of the session.")
+            self._raw_db = databroker.v2.temp()
+        else:
             self._raw_db = databroker.catalog[name]
         return self._raw_db
 
     @raw_db.setter
     def raw_db(self, db: Broker):
+        section_name = "DATABASE"
+        db_key = "raw_db"
+        if section_name not in self.sections():
+            self.add_section(section_name)
+        self.set(section_name, db_key, db.name)
         self._raw_db = db
 
     @property

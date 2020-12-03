@@ -20,4 +20,8 @@ class Analyzer(CallbackBase):
     def analyze(self, run: BlueskyRun):
         """Analyze the data in a bluesky run."""
         for name, doc in run.canonical(fill="yes"):
+            # inject the original_db
+            if name == "start":
+                doc = doc.to_dict()
+                doc["original_db"] = run.catalog_object.name
             self.__call__(name, doc)

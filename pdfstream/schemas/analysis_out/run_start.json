@@ -228,6 +228,10 @@
       "type": "string",
       "description": "Globally unique ID for this run"
     },
+    "original_db": {
+      "type": "string",
+      "description": "The name of the source catalog of the input run if it is from a database"
+    },
     "original_run_uid": {
       "type": "string",
       "description": "Globally unique ID for the input run"
