@@ -143,30 +143,33 @@ Here, we show the processed data in an xarray.
 Create a configuration from the processed data
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-We can load configuration from a run.
+We can replay the analysis process.
 
 .. ipython::
 
-    In [33]: config2 = XPDAnalyzerConfig()
+    In [33]: from pdfstream.analyzers.xpd_analyzer import reply, retrieve_original_run
 
-    In [34]: config2.read_run(an_run)
+    In [33]: config2, analyzer2 = reply(an_run)
 
-Because the we used the temporary database,
-the ``an_run`` does record the information of ``an_db``
-and thus the ``config2`` does not know what database to use for ``an_db``.
-We need to specify it manually.
+The ``confgi2`` and ``analyzer2`` have the same settings as the ``config`` and ``analyzer`` except the ``an_db``,
+because we use a temporary database for ``an_db`` and this database is not record in catalog.
+We need to set it manually.
 
 .. ipython::
 
     In [34]: config2.an_db = an_db
 
-You don't need this step if you were using a permanent database when you processed the data.
+You don't need this step if you were using a permanent database when you dumped the data.
 
-We create an analyzer.
-This analyzer is exactly the same as the one used to obtain the data in ``an_run``.
+We can also get the original data from the run.
 
 .. ipython::
 
-    In [21]: analyzer2 = XPDAnalyzer(config2)
+    In [21]: run2 = retrieve_original_run(run)
 
-You can use it to process other data so that the data will be processed in the same way as the ``an_run``.
+Now, we can do the processing again.
+
+
+.. ipython::
+
+    In [21]: analyzer2.analyze(run2)
