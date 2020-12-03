@@ -29,6 +29,7 @@ class XPDConfig(AnalysisConfig, VisConfig, ExportConfig, CalibrationConfig):
         elif name is None:
             self._an_db = None
         elif name == "temp":
+            print("Warning: a temporary db is created for an db. It will be destroy at the end of the session.")
             self._an_db = databroker.v2.temp()
         else:
             self._an_db = databroker.catalog[name]

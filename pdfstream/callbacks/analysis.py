@@ -52,6 +52,7 @@ class BasicAnalysisConfig(ConfigParser):
         elif name is None:
             self._raw_db = None
         elif name == "temp":
+            print("Warning: a temporary db is created for raw db. It will be destroy at the end of the session.")
             self._raw_db = databroker.v2.temp()
         else:
             self._raw_db = databroker.catalog[name]

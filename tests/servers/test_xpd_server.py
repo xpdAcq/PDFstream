@@ -15,19 +15,17 @@ def test_XPDServer(tmpdir):
     config.read(fn)
     config.tiff_base = str(tmpdir)
     config.calib_base = str(tmpdir)
-    config.an_db = databroker.v2.temp()
     config.raw_db = databroker.v2.temp()
     mod.XPDServer(config)
 
 
 def test_XPDRouter(db_with_img_and_bg_img, tmpdir):
     raw_db = db_with_img_and_bg_img
-    an_db = databroker.v2.temp()
     config = pdfstream.servers.xpd_server.XPDConfig()
     config.read(fn)
     config.tiff_base = str(tmpdir)
     config.calib_base = str(tmpdir)
-    config.an_db = an_db
+    an_db = config.an_db
     cb = pdfstream.servers.xpd_server.XPDRouter(config)
     for name, doc in raw_db[-1].canonical(fill="yes", strict_order=True):
         cb(name, doc)
