@@ -54,7 +54,7 @@ analyzer = XPDAnalyzer(config)
 # Below is an example showing the process of retrieving one run from a catalog according to its unique ID.
 
 db = config.raw_db
-run = db['a3e64b70-c5b9-4437-80ea-ea6a7198d397']
+run = db['9d320500-b3c8-47a2-8554-ca63fa092c17']
 
 # %%
 # Here, ``db`` is a databroker catalog loaded according to your configuration.
