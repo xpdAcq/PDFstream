@@ -4,6 +4,19 @@ PDFstream Change Log
 
 .. current developments
 
+v0.4.0
+====================
+
+**Added:**
+
+* The base objects to process data from bluesky runs.
+
+* The objects to process the XRD data to PDF data from bluesky runs.
+
+* The functions to replay the analysis.
+
+
+
 v0.3.2
 ====================
 
