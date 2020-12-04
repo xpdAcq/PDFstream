@@ -201,3 +201,8 @@ sphinx_gallery_conf = {
     'examples_dirs': '../examples',  # path to your example scripts
     'gallery_dirs': 'tutorials2',  # path to where to save gallery generated output
 }
+
+# Ignore warnings in the gallery
+import warnings
+
+warnings.filterwarnings("ignore")

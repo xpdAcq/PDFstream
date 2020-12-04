@@ -4,8 +4,8 @@
 
 Computation times
 =================
-**00:14.490** total execution time for **tutorials2** files:
+**00:10.518** total execution time for **tutorials2** files:
 
 +----------------------------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr_tutorials2_plot_xpd_analyzer.py` (``plot_xpd_analyzer.py``) | 00:14.490 | 0.0 MB |
+| :ref:`sphx_glr_tutorials2_plot_xpd_analyzer.py` (``plot_xpd_analyzer.py``) | 00:10.518 | 0.0 MB |
 +----------------------------------------------------------------------------+-----------+--------+

@@ -68,7 +68,8 @@ raw_data
 # %%
 # The data is processed by the analyzer is the diffraction image.
 
-raw_data["pe1_image"][0].plot()
+image = raw_data["pe1_image"]
+image.plot(vmin=0, vmax=image.mean() + 2. * image.std())
 
 # %%
 # In both ways, we need to use string values even if the ``qmax`` is actually a number.
