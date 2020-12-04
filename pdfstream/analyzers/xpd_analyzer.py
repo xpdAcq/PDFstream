@@ -49,8 +49,8 @@ def retrieve_original_run(run: BlueskyRun) -> tp.Union[None, BlueskyRun]:
     try:
         db = catalog[start['original_db']]
     except KeyError:
-        raise Warning("Missing {} in catalog. Cannot retrieve original run.".format(db_name))
+        raise Warning("Missing {} in catalog. Cannot retrieve original run.".format(start['original_db']))
     try:
         return db[start['original_run_uid']]
     except KeyError:
-        raise Warning("Run {} not found in database.".format(uid))
+        raise Warning("Run {} not found in database.".format(start['original_run_uid']))
