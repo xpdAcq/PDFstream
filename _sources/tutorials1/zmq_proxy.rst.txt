@@ -1,6 +1,9 @@
 ZMQ Proxy
 =========
 
+The proxy works like a bridge between your data acquisition program and the server.
+It receives the data from the data acquisition and send it to the server.
+
 Start the proxy
 ^^^^^^^^^^^^^^^
 
