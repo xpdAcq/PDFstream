@@ -110,7 +110,7 @@ import numpy as np
 
 image2 = np.ma.masked_array(an_data["dk_sub_image"], an_data["mask"])
 image2 = np.ma.squeeze(image2)
-plt.matshow(image2)
+plt.matshow(image2, vmin=0., vmax=image2.mean() + 2. * image2.std())
 plt.colorbar()
 plt.show()
 
