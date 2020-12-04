@@ -5,7 +5,6 @@ $ACTIVITIES = [
     'tag',
     'push_tag',
     'ghrelease',
-    'pypi',
     'forge'
 ]
 
