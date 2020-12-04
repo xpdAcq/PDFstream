@@ -68,8 +68,11 @@ raw_data
 # %%
 # The data is processed by the analyzer is the diffraction image.
 
+import matplotlib.pyplot as plt
+
 image = raw_data["pe1_image"]
 image.plot(vmin=0, vmax=image.mean() + 2. * image.std())
+plt.show()
 
 # %%
 # In both ways, we need to use string values even if the ``qmax`` is actually a number.
@@ -100,11 +103,30 @@ an_data = an_run.primary.read()
 an_data
 
 # %%
-# Here, we plot the most important part of data, that is, the reduced pair distribution function.
+# We plot the some of the important data to give a sense of what the processed data looks like.
+# First, we plot the masked dark subtracted image.
 
-import matplotlib.pyplot as plt
+import numpy as np
 
-plt.plot(an_data["gr_r"][0], an_data["gr_G"][0])
+image2 = np.ma.masked_array(an_data["dk_sub_image"], an_data["mask"])
+image2 = np.ma.squeeze(image2)
+plt.matshow(image2)
+plt.colorbar()
+plt.show()
+
+# %%
+# Second, we show the XRD data obtained from the dark subtracted image above.
+
+chi = np.stack((an_data["chi_Q"], an_data["chi_I"])).squeeze()
+plt.plot(*chi)
+plt.show()
+
+# %%
+# Finally, it is the PDF data transferred from XRD data.
+
+gr = np.stack((an_data["gr_r"], an_data["gr_G"])).squeeze()
+plt.plot(*gr)
+plt.show()
 
 # %%
 # Change settings
@@ -124,6 +146,7 @@ config["TRANSFORMATION SETTING"]["qmax"] = '20'
 
 # %%
 # Then, we just need to run ``analyzer.analyze(run)``.
+# You don't need to create another analyzer if you tune the configuration other than "BASIC" and "FUNCTIONALITY".
 
 # %%
 # Export the processed data to files
@@ -144,7 +167,8 @@ config["FILE SYSTEM"]["tiff_base"] = "~/my_folder"
 # Live visualization
 # ^^^^^^^^^^^^^^^^^^
 #
-# If you would like live visualization of the processed data, run the code below to run on the functionality.
+# If you would like see the figures of processed data at the same time of data processing
+# , run the code below to turn on the functionality.
 
 config["FUNCTIONALITY"]["visualize_data"] = "True"
 
