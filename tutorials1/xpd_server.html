@@ -36,9 +36,12 @@
   <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
   <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/gallery.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/gallery-dataframe.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="PDFstream Change Log" href="../changelog.html" />
+    <link rel="next" title="Advanced Users Documents" href="../tutorials2/index.html" />
     <link rel="prev" title="ZMQ Proxy" href="zmq_proxy.html" /> 
 </head>
 
@@ -89,8 +92,8 @@
             
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorials0/index.html">Users Document</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="index.html">Beamline Scientists Document</a><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../tutorials0/index.html">Users Documents</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Beamline Scientists Documents</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="zmq_proxy.html">ZMQ Proxy</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">XPD Server</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#what-does-xpd-server-do">What does XPD Server do?</a><ul>
@@ -119,6 +122,7 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials2/index.html">Advanced Users Documents</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../changelog.html">PDFstream Change Log</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../min_versions.html">Minimum Version of Python and NumPy</a></li>
 </ul>
@@ -166,7 +170,7 @@
     
       <li><a href="../index.html">Docs</a> &raquo;</li>
         
-          <li><a href="index.html">Beamline Scientists Document</a> &raquo;</li>
+          <li><a href="index.html">Beamline Scientists Documents</a> &raquo;</li>
         
       <li>XPD Server</li>
     
@@ -192,7 +196,7 @@
 <p>The XPD Server is a server designed for x-ray powder diffraction experiments. It will process image data from
 a two dimensional detector.</p>
 <div class="section" id="what-does-xpd-server-do">
-<h2>What does XPD Server do?<a class="headerlink" href="#what-does-xpd-server-do" title="Permalink to this headline">¶</a></h2>
+<span id="xpd-server-functionalities"></span><h2>What does XPD Server do?<a class="headerlink" href="#what-does-xpd-server-do" title="Permalink to this headline">¶</a></h2>
 <p>The XPD Server receives the message from a proxy. Depending on what type of the data is in the message, the server
 will apply different data processing method to it.</p>
 <div class="section" id="calibration">
@@ -273,7 +277,7 @@ is shown below. Please read the comments in the file to know what are the meanin
 <span class="c1"># if False, server will ignore the data of standard sample</span>
 <span class="n">do_calibration</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="c1"># whether to dump the processed data and the data of independent variables in a data base</span>
-<span class="n">dump_to_db</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">dump_to_db</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="c1"># whether to export the processed data to files in the file system</span>
 <span class="n">export_files</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="c1"># whether to visualize the processed data in figures</span>
@@ -571,7 +575,7 @@ will process the streaming data by itself according to the configuration. You wi
 where the server is running. It tells you if the message of a run is received and if there are any errors.</p>
 </div>
 <div class="section" id="how-to-get-the-data-back-home">
-<h2>How to get the data back home?<a class="headerlink" href="#how-to-get-the-data-back-home" title="Permalink to this headline">¶</a></h2>
+<span id="xpd-server-data"></span><h2>How to get the data back home?<a class="headerlink" href="#how-to-get-the-data-back-home" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="database">
 <h3>Database<a class="headerlink" href="#database" title="Permalink to this headline">¶</a></h3>
 <p>The processed data will be archived in the <code class="docutils literal notranslate"><span class="pre">an_db</span></code> database specified in the configuration.
@@ -655,7 +659,7 @@ in terminal:</p>
 </div>
 </div>
 <div class="section" id="how-to-see-the-data-during-the-experiment">
-<h2>How to see the data during the experiment?<a class="headerlink" href="#how-to-see-the-data-during-the-experiment" title="Permalink to this headline">¶</a></h2>
+<span id="xpd-server-figures"></span><h2>How to see the data during the experiment?<a class="headerlink" href="#how-to-see-the-data-during-the-experiment" title="Permalink to this headline">¶</a></h2>
 <p>The data will be visualized in windows. The windows will pop up when you start the server and the plot will
 automatically show up when you are running the experiments using xpdacq.</p>
 <p>The images will be plotted in a two dimensional colorful histogram, you can move the cursor onto one point and
@@ -686,7 +690,7 @@ as a function of temperature.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../changelog.html" class="btn btn-neutral float-right" title="PDFstream Change Log" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="../tutorials2/index.html" class="btn btn-neutral float-right" title="Advanced Users Documents" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="zmq_proxy.html" class="btn btn-neutral float-left" title="ZMQ Proxy" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
