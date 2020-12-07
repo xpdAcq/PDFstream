@@ -20,7 +20,7 @@ class ServerConfig(ConfigParser):
 
     @property
     def host(self):
-        return self.get("PROXY", "host")
+        return self.get("LISTEN TO", "host")
 
     @property
     def address(self):
@@ -28,11 +28,11 @@ class ServerConfig(ConfigParser):
 
     @property
     def port(self):
-        return self.getint("PROXY", "port")
+        return self.getint("LISTEN TO", "port")
 
     @property
     def prefix(self):
-        return self.get("PROXY", "prefix", fallback="").encode()
+        return self.get("LISTEN TO", "prefix", fallback="").encode()
 
 
 class BaseServer(RemoteDispatcher):
