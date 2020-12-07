@@ -99,7 +99,7 @@ def make_and_run(
         warnings.simplefilter("ignore")
     if not cfg_file:
         cfg_file = find_cfg_file(CONFIG_DIR, ServerNames.xpd)
-    config = XPDServerConfig()
+    config = XPDServerConfig(allow_no_value=True)
     config.read(cfg_file)
     server = XPDServer(config)
     server.install_qt_kicker()
