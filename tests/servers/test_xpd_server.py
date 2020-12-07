@@ -16,6 +16,7 @@ def test_XPDServer(tmpdir):
     config.tiff_base = str(tmpdir)
     config.calib_base = str(tmpdir)
     config.raw_db = databroker.v2.temp()
+    config["FUNCTIONALITY"]["send_messages"] = "True"
     mod.XPDServer(config)
 
 

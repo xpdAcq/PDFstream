@@ -1,8 +1,8 @@
 """The analysis server. Process raw image to PDF."""
 import typing as tp
-from collections import namedtuple
 
 import databroker
+from bluesky.callbacks.zmq import Publisher
 from databroker.v2 import Broker
 from event_model import RunRouter
 from ophyd.sim import NumpySeqHandler
@@ -45,22 +45,24 @@ class XPDConfig(AnalysisConfig, VisConfig, ExportConfig, CalibrationConfig):
         self._an_db = db
 
     @property
-    def functionality(self):
-        tup = namedtuple(
-            "functionality",
-            [
-                "do_calibration",
-                "dump_to_db",
-                "export_files",
-                "visualize_data"
-            ]
-        )
-        return tup(
-            self.getboolean("FUNCTIONALITY", "do_calibration"),
-            self.getboolean("FUNCTIONALITY", "dump_to_db"),
-            self.getboolean("FUNCTIONALITY", "export_files"),
-            self.getboolean("FUNCTIONALITY", "visualize_data")
-        )
+    def publisher_config(self) -> dict:
+        host = self.get("PUBLISH TO", "host")
+        port = self.getint("PUBLISH TO", "port")
+        prefix = self.get("PUBLISH TO", "prefix", fallback="").encode()
+        return {
+            "address": (host, port),
+            "prefix": prefix
+        }
+
+    @property
+    def functionality(self) -> dict:
+        return {
+            "do_calibration": self.getboolean("FUNCTIONALITY", "do_calibration"),
+            "dump_to_db": self.getboolean("FUNCTIONALITY", "dump_to_db"),
+            "export_files": self.getboolean("FUNCTIONALITY", "export_files"),
+            "visualize_data": self.getboolean("FUNCTIONALITY", "visualize_data"),
+            "send_messages": self.getboolean("FUNCTIONALITY", "send_messages"),
+        }
 
 
 class XPDServerConfig(XPDConfig, ServerConfig):
@@ -124,14 +126,16 @@ class XPDFactory:
         self.config = config
         self.analysis = AnalysisStream(config)
         self.func = self.config.functionality
-        if self.func.dump_to_db:
+        if self.func["do_calibration"]:
             self.analysis.subscribe(self.config.an_db.v1.insert)
-        if self.func.export_files:
+        if self.func["export_files"]:
             self.analysis.subscribe(Exporter(config))
-        if self.func.visualize_data:
+        if self.func["visualize_data"]:
             self.analysis.subscribe(Visualizer(config))
-        if self.func.do_calibration:
+        if self.func["visualize_data"]:
             self.calibration = Calibration(config)
+        if self.func["send_messages"]:
+            self.analysis.subscribe(Publisher(**self.config.publisher_config))
 
     def __call__(self, name: str, doc: dict) -> tp.Tuple[list, list]:
         if name == "start":
