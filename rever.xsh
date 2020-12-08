@@ -4,8 +4,9 @@ $ACTIVITIES = [
     'changelog',
     'tag',
     'push_tag',
-    'ghrelease',
-    'forge'
+#    'ghrelease',
+    'pypi',
+#    'forge'
 ]
 
 $VERSION_BUMP_PATTERNS = [
