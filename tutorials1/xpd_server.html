@@ -259,11 +259,11 @@ is shown below. Please read the comments in the file to know what are the meanin
 
 <span class="c1"># the information about the proxy and the message from the proxy</span>
 <span class="c1"># the proxy is the one that sends the message to your server</span>
-<span class="p">[</span><span class="n">PROXY</span><span class="p">]</span>
+<span class="p">[</span><span class="n">LISTEN</span> <span class="n">TO</span><span class="p">]</span>
 <span class="c1"># the name or the IP address of the host for the proxy</span>
 <span class="c1"># &quot;localhost&quot; means that the proxy runs on the same machine where your server runs</span>
 <span class="n">host</span> <span class="o">=</span> <span class="n">localhost</span>
-<span class="c1"># the port that message goes out from the proxy</span>
+<span class="c1"># the port that the server is listening to</span>
 <span class="n">port</span> <span class="o">=</span> <span class="mi">5568</span>
 <span class="c1"># the prefix of the message that the server listens to</span>
 <span class="c1"># the server will only listen to the message starting with the prefix</span>
@@ -271,17 +271,37 @@ is shown below. Please read the comments in the file to know what are the meanin
 <span class="n">prefix</span> <span class="o">=</span> <span class="n">raw</span>
 
 <span class="c1"># the control for whether the server will run certain functionality</span>
-<span class="c1"># if a functionality is turned to False, all the settings related to the functionality will be inactive</span>
+<span class="c1"># if a functionality is turned to False, all the settings below related to the functionality will be inactive</span>
 <span class="p">[</span><span class="n">FUNCTIONALITY</span><span class="p">]</span>
 <span class="c1"># whether to do the calibration if the server receives the data of standard powder</span>
-<span class="c1"># if False, server will ignore the data of standard sample</span>
+<span class="c1"># if False, server will ignore the data of standard sample and the CALIBRATION section will be inactivate</span>
 <span class="n">do_calibration</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="c1"># whether to dump the processed data and the data of independent variables in a data base</span>
+<span class="c1"># if False, the an_db in [DATABASE] section will be inactive</span>
 <span class="n">dump_to_db</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="c1"># whether to export the processed data to files in the file system</span>
+<span class="c1"># if False, all the [FILE SETTING] sections will be inactivate</span>
 <span class="n">export_files</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="c1"># whether to visualize the processed data in figures</span>
+<span class="c1"># if False, all the [VIS DATA] sections will be inactivate</span>
 <span class="n">visualize_data</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="c1"># whether to send the messages of the processed data to a server</span>
+<span class="c1"># this functionality allows you to send the processed data into a internal network automatically</span>
+<span class="c1"># if False, the [PUBLISH TO] section will be inactivate</span>
+<span class="n">send_messages</span> <span class="o">=</span> <span class="kc">True</span>
+
+<span class="c1"># the information about the proxy server and the message that will be sent</span>
+<span class="c1"># the proxy is the one that will received the message of processed data from this server and distribute it to</span>
+<span class="c1"># other servers</span>
+<span class="c1"># this proxy can be the same proxy that sends the message to this server</span>
+<span class="p">[</span><span class="n">PUBLISH</span> <span class="n">TO</span><span class="p">]</span>
+<span class="c1"># the name or the IP address of the host for the proxy</span>
+<span class="c1"># &quot;localhost&quot; means that the proxy runs on the same machine where your server runs</span>
+<span class="n">host</span> <span class="o">=</span> <span class="n">localhost</span>
+<span class="c1"># the port that message be sent to</span>
+<span class="n">port</span> <span class="o">=</span> <span class="mi">5567</span>
+<span class="c1"># the prefix of the message that will be sent by the server</span>
+<span class="n">prefix</span> <span class="o">=</span> <span class="n">an</span>
 
 <span class="c1"># the information about database used by the server</span>
 <span class="p">[</span><span class="n">DATABASE</span><span class="p">]</span>
