@@ -4,6 +4,19 @@ PDFstream Change Log
 
 .. current developments
 
+v0.4.1
+====================
+
+**Added:**
+
+* The XPD server will publish the data to a proxy
+
+**Changed:**
+
+* The section name of the configuration of XPD server is changed.
+
+
+
 v0.4.0
 ====================
 
