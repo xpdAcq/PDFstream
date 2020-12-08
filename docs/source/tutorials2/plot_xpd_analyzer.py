@@ -178,6 +178,20 @@ config["FUNCTIONALITY"]["visualize_data"] = "True"
 # The detail of what the figures will be like is introduced in :ref:`xpd-server-figures`.
 
 # %%
+# Send to a server
+# ^^^^^^^^^^^^^^^^
+#
+# We can even send the streaming processed data to a server in an internal network.
+# To make it, we need to turn the functionality on.
+
+config["FUNCTIONALITY"]["send_messages"] = "True"
+
+# %%
+# Then, we need to build the analyzer again ``analyzer = XPDAnalyzer(config)`` to make the functionality
+# take effect and rerun the analysis ``analyzer.analyze(run)``.
+# The server specified in the configuration will receive message from our analyzer.
+
+# %%
 # Replay the data processing
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^
 #

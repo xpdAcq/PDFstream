@@ -127,13 +127,13 @@ class XPDFactory:
         self.analysis = AnalysisStream(config)
         self.func = self.config.functionality
         if self.func["do_calibration"]:
+            self.calibration = Calibration(config)
+        if self.func["dump_to_db"]:
             self.analysis.subscribe(self.config.an_db.v1.insert)
         if self.func["export_files"]:
             self.analysis.subscribe(Exporter(config))
         if self.func["visualize_data"]:
             self.analysis.subscribe(Visualizer(config))
-        if self.func["visualize_data"]:
-            self.calibration = Calibration(config)
         if self.func["send_messages"]:
             self.analysis.subscribe(Publisher(**self.config.publisher_config))
 
