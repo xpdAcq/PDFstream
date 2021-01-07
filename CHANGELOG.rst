@@ -4,6 +4,15 @@ PDFstream Change Log
 
 .. current developments
 
+v0.4.2
+====================
+
+**Fixed:**
+
+* Fix the bug that the background subtraction and dark substrate do not work in the integration
+
+
+
 v0.4.1
 ====================
 
