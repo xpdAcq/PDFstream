@@ -1,11 +1,12 @@
 """The functions used in the integration pipelines. All functions consume namespace and return the modified
 namespace. """
+from typing import Tuple
+
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.axes import Axes
 from numpy import ndarray
 from pyFAI.azimuthalIntegrator import AzimuthalIntegrator
-from typing import Tuple
 
 from pdfstream.vend.masking import generate_binner, mask_img
 
@@ -44,8 +45,7 @@ def bg_sub(img: ndarray, bg_img: ndarray, bg_scale: float = None) -> ndarray:
         bg_scale = 1.
     if bg_img.shape != img.shape:
         raise ValueError(f"Unmatched shape between two images: {bg_img.shape}, {img.shape}.")
-    img = img - bg_scale * bg_img
-    return img
+    return img - bg_scale * bg_img
 
 
 def integrate(
