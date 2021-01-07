@@ -1,5 +1,6 @@
-import numpy as np
 import typing as tp
+
+import numpy as np
 from numpy import ndarray
 from pyFAI import AzimuthalIntegrator
 
@@ -106,8 +107,8 @@ def get_chi(
     else:
         final_mask, _mask_setting = None, None
     if img_setting != "OFF":
-        vis_img(img, final_mask, img_setting=img_setting)
-    chi, _integ_setting = integrate(img, ai, mask=final_mask, integ_setting=integ_setting)
+        vis_img(bg_sub_img, final_mask, img_setting=img_setting)
+    chi, _integ_setting = integrate(bg_sub_img, ai, mask=final_mask, integ_setting=integ_setting)
     if plot_setting != "OFF":
         vis_chi(chi, plot_setting=plot_setting, unit=_integ_setting.get('unit'))
     return chi, bg_sub_img, dk_sub_img, img, final_mask, _integ_setting, _mask_setting
