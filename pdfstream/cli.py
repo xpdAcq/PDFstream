@@ -102,7 +102,7 @@ def integrate(
         _integrate(
             poni_file, img_file, bg_img_file=bg_img_file, mask_file=mask_file,
             output_dir=output_dir, bg_scale=bg_scale, mask_setting=mask_setting, integ_setting=integ_setting,
-            img_setting=img_setting, test=test
+            plot_setting=plot_setting, img_setting=img_setting, test=test
         )
         for img_file in img_files
     ]
