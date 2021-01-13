@@ -6,6 +6,8 @@
 
 * Average cli check if the directory exits, make it if not.
 
+* AnalysisStream injects the pdfstream version into the start document.
+
 **Deprecated:**
 
 * <news item>
