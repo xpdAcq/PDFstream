@@ -156,6 +156,11 @@ def average(out_file: str, *img_files, weights: tp.List[float] = None) -> None:
     img_files: tp.Tuple[str]
     imgs = (io.load_img(_) for _ in img_files)
     avg_img = integ.avg_imgs(imgs, weights=weights)
+    # make the directory if not exists
+    out_file_path = Path(out_file)
+    if not out_file_path.parent.is_dir():
+        out_file_path.parent.mkdir(parents=True)
+    # write out the file
     io.write_img(out_file, avg_img, img_files[0])
     return
 

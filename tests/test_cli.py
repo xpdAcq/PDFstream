@@ -41,7 +41,7 @@ def test_integrate(test_data, bg_img_file, mask_file, kwargs):
 )
 def test_average(test_data, kwargs):
     with TemporaryDirectory() as tempdir:
-        img_file = Path(tempdir).joinpath('average.tiff')
+        img_file = Path(tempdir).joinpath('new_dir/average.tiff')
         cli.average(img_file, test_data['white_img_file'], test_data['white_img_file'], **kwargs)
         avg_img = io.load_img(img_file)
         white_img = io.load_img(test_data['white_img_file'])
