@@ -4,7 +4,7 @@
 
 **Changed:**
 
-* <news item>
+* Average cli check if the directory exits, make it if not.
 
 **Deprecated:**
 
