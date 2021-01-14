@@ -54,3 +54,24 @@ def test_XPDRouter(db_with_img_and_bg_img, tmpdir):
     assert len(list(tiff_base.rglob("*.json"))) > 0
     assert len(list(tiff_base.rglob("*.csv"))) > 0
     assert len(list(an_db)) > 0
+
+
+def test_XPDRouter_with_xpdan_exporter(db_with_img_and_bg_img, tmpdir):
+    raw_db = db_with_img_and_bg_img
+    config = mod.XPDConfig()
+    config.read(fn)
+    config.tiff_base = str(tmpdir)
+    config.calib_base = str(tmpdir)
+    config["FUNCTIONALITY"]["export_files_in_xpdan_style"] = "True"
+    config["FUNCTIONALITY"]["export_files"] = "False"
+    cb = mod.XPDRouter(config)
+    for name, doc in raw_db[-1].canonical(fill="yes", strict_order=True):
+        cb(name, doc)
+    tiff_base = Path(config.tiff_base)
+    data_folder = tiff_base.joinpath("Ni")
+    assert data_folder.is_dir()
+    for dir_name in ("dark_sub", "integration", "meta", "mask", "iq", "sq", "fq", "pdf", "scalar_data"):
+        assert data_folder.joinpath(dir_name).is_dir()
+        assert len(list(data_folder.joinpath(dir_name).glob("*.*"))) > 0
+    an_db = config.an_db
+    assert len(list(an_db)) > 0

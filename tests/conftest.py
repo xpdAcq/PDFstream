@@ -134,7 +134,7 @@ def db_with_img_and_bg_img() -> Broker:
     bg_meta = {"sample_name": sample_name, "sc_dk_field_uid": dk_uid}
     bg_data = [{"pe1_image": 2 * np.ones_like(NI_IMG)}]
     img_data = [{"pe1_image": 2 * np.ones_like(NI_IMG) + NI_IMG}]
-    img_meta = dict(**START_DOC, bkgd_sample_name=sample_name, sc_dk_field_uid=dk_uid)
+    img_meta = dict(**START_DOC, bkgd_sample_name=sample_name, sc_dk_field_uid=dk_uid, sample_name="Ni")
     for name, doc in gen_stream(dk_data, dk_meta, uid=dk_uid):
         db.v1.insert(name, doc)
     for name, doc in gen_stream(bg_data, bg_meta):
