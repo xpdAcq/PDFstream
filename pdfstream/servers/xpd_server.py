@@ -125,16 +125,16 @@ class XPDFactory:
     def __init__(self, config: XPDConfig):
         self.config = config
         self.analysis = AnalysisStream(config)
-        self.func = self.config.functionality
-        if self.func["do_calibration"]:
+        self.functionality = self.config.functionality
+        if self.functionality["do_calibration"]:
             self.calibration = Calibration(config)
-        if self.func["dump_to_db"]:
+        if self.functionality["dump_to_db"]:
             self.analysis.subscribe(self.config.an_db.v1.insert)
-        if self.func["export_files"]:
+        if self.functionality["export_files"]:
             self.analysis.subscribe(Exporter(config))
-        if self.func["visualize_data"]:
+        if self.functionality["visualize_data"]:
             self.analysis.subscribe(Visualizer(config))
-        if self.func["send_messages"]:
+        if self.functionality["send_messages"]:
             self.analysis.subscribe(Publisher(**self.config.publisher_config))
 
     def __call__(self, name: str, doc: dict) -> tp.Tuple[list, list]:
@@ -144,7 +144,7 @@ class XPDFactory:
                 return [], []
             elif doc.get(self.config.calib_identifier):
                 # calibration run
-                if self.func.do_calibration:
+                if self.functionality["do_calibration"]:
                     return [self.calibration], []
                 else:
                     return [], []
