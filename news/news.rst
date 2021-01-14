@@ -20,6 +20,8 @@
 
 * BUG: fix the bug that the plot setting doesn't work in cli.
 
+* BUG: fix the bug about calibration in xpd server.
+
 **Security:**
 
 * <news item>
