@@ -12,7 +12,7 @@ from event_model import RunRouter
 from ophyd.sim import NumpySeqHandler
 
 import pdfstream.units as units
-from pdfstream.callbacks.basic import LiveWaterfall, StackedNumpyExporter
+from pdfstream.callbacks.basic import LiveWaterfall, NumpyExporter
 from pdfstream.servers import CONFIG_DIR, ServerNames
 from pdfstream.servers.base import ServerConfig, find_cfg_file, BaseServer
 
@@ -298,7 +298,7 @@ class ExporterFactory:
     def __init__(self, config: LSQConfig):
         self.config = config
         self.callbacks = [
-            StackedNumpyExporter(
+            NumpyExporter(
                 str(config.export_config.directory),
                 file_prefix=config.export_config.file_prefix,
                 data_keys=["y", "x", "w", "xgrid", "yres", "r", "g"]
