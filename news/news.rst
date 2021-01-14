@@ -1,6 +1,6 @@
 **Added:**
 
-* <news item>
+* Add the functionality to export files in xpdan style file structure for the xpd server
 
 **Changed:**
 
