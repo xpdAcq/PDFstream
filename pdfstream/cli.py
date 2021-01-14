@@ -102,7 +102,7 @@ def integrate(
         _integrate(
             poni_file, img_file, bg_img_file=bg_img_file, mask_file=mask_file,
             output_dir=output_dir, bg_scale=bg_scale, mask_setting=mask_setting, integ_setting=integ_setting,
-            img_setting=img_setting, test=test
+            plot_setting=plot_setting, img_setting=img_setting, test=test
         )
         for img_file in img_files
     ]
@@ -156,6 +156,11 @@ def average(out_file: str, *img_files, weights: tp.List[float] = None) -> None:
     img_files: tp.Tuple[str]
     imgs = (io.load_img(_) for _ in img_files)
     avg_img = integ.avg_imgs(imgs, weights=weights)
+    # make the directory if not exists
+    out_file_path = Path(out_file)
+    if not out_file_path.parent.is_dir():
+        out_file_path.parent.mkdir(parents=True)
+    # write out the file
     io.write_img(out_file, avg_img, img_files[0])
     return
 

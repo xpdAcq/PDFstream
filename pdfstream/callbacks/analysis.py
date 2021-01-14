@@ -16,6 +16,7 @@ from suitcase.csv import Serializer as CSVSerializer
 from suitcase.json_metadata import Serializer as JsonSerializer
 from suitcase.tiff_series import Serializer as TiffSerializer
 
+import pdfstream
 import pdfstream.callbacks.from_descriptor as from_desc
 import pdfstream.callbacks.from_event as from_event
 import pdfstream.callbacks.from_start as from_start
@@ -171,7 +172,7 @@ class AnalysisStream(LiveDispatcher):
             default_composition="Ni"
         )
         self.cache["indeps"] = from_start.get_indeps(doc, exclude={"time"})
-        new_start = dict(**doc, an_config=self.config.to_dict())
+        new_start = dict(**doc, an_config=self.config.to_dict(), pdfstream_version=pdfstream.__version__)
         super(AnalysisStream, self).start(new_start)
 
     def event_page(self, doc):
