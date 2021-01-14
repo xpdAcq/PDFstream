@@ -8,6 +8,20 @@ def test_NumpyExporter(tmpdir, array_stream):
     assert len(tmpdir.listdir()) > 0
 
 
+def test_StackedNumpyExporter(tmpdir, array_stream):
+    cb = mod.StackedNumpyExporter(str(tmpdir), file_prefix="{start[sample_name]}_", data_keys=["x0"])
+    for name, doc in array_stream:
+        cb(name, doc)
+    assert len(tmpdir.listdir()) > 0
+
+
+def test_StackedNumpyTextExporter(tmpdir, array_stream):
+    cb = mod.StackedNumpyTextExporter(str(tmpdir), file_prefix="{start[sample_name]}_", data_keys=["x0"])
+    for name, doc in array_stream:
+        cb(name, doc)
+    assert len(tmpdir.listdir()) > 0
+
+
 def test_DataFrameExporter(tmpdir, array_stream):
     cb = mod.DataFrameExporter(str(tmpdir), file_prefix="{start[sample_name]}_")
     for name, doc in array_stream:

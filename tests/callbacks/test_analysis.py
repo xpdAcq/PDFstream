@@ -64,6 +64,28 @@ def test_Exporter(db_with_dark_and_scan, tmpdir):
     assert len(list(tiff_base.rglob("*.json"))) > 0
 
 
+def test_ExporterXpdan(db_with_dark_and_scan, tmpdir):
+    """Test ExporterXpaan. It should output the correct files in a two layer directory."""
+    db = db_with_dark_and_scan
+    config = an.AnalysisConfig()
+    config.read(fn)
+    config.raw_db = db
+    ld = an.AnalysisStream(config)
+    ep_config = pdfstream.callbacks.analysis.ExportConfig()
+    ep_config.read(fn)
+    ep_config.tiff_base = str(tmpdir)
+    ep = pdfstream.callbacks.analysis.ExporterXpdan(ep_config)
+    ld.subscribe(ep)
+    for name, doc in db[-1].canonical(fill="yes", strict_order=True):
+        ld(name, doc)
+    tiff_base = Path(ep_config.tiff_base)
+    data_folder = tiff_base.joinpath("Ni")
+    assert data_folder.is_dir()
+    for dir_name in ("dark_sub", "integration", "meta", "mask", "iq", "sq", "fq", "pdf", "scalar_data"):
+        assert data_folder.joinpath(dir_name).is_dir()
+        assert len(list(data_folder.joinpath(dir_name).glob("*.*"))) > 0
+
+
 def test_ExportConfig():
     config = pdfstream.callbacks.analysis.ExportConfig()
     config.read(fn)

@@ -157,8 +157,14 @@ def db_with_dark_and_scan() -> Broker:
         {"pe1_image": NI_IMG, "temperature": 1},
         {"pe1_image": NI_IMG, "temperature": 3}
     ]
-    start = dict(**START_DOC, sc_dk_field_uid=dark_uid)
-    start.update({"hints": {"dimensions": [(["temperature"], "primary")]}})
+    start = dict(**START_DOC)
+    start.update(
+        {
+            "sc_dk_field_uid": dark_uid,
+            "hints": {"dimensions": [(["temperature"], "primary")]},
+            "sample_name": "Ni"
+        }
+    )
     for name, doc in gen_stream(light_data, start):
         db.v1.insert(name, doc)
     return db

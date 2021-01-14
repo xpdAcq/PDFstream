@@ -6,7 +6,6 @@ import databroker
 import event_model
 import matplotlib.pyplot as plt
 import numpy as np
-from bluesky.callbacks.core import make_class_safe
 from bluesky.callbacks.stream import LiveDispatcher
 from databroker.v2 import Broker
 from event_model import RunRouter
@@ -22,7 +21,7 @@ import pdfstream.callbacks.from_event as from_event
 import pdfstream.callbacks.from_start as from_start
 import pdfstream.integration.tools as integ
 from pdfstream.callbacks.basic import MyLiveImage, LiveMaskedImage, LiveWaterfall, DataFrameExporter, \
-    SmartScalarPlot
+    SmartScalarPlot, StackedNumpyTextExporter, NumpyExporter
 from pdfstream.units import LABELS
 from pdfstream.vend.formatters import SpecialStr
 
@@ -316,6 +315,7 @@ class ExportConfig(BasicExportConfig):
     """The configuration of exporter."""
     @property
     def tiff_setting(self):
+        """Settings for all tiff files."""
         section = self["TIFF SETTING"]
         if not section.getboolean("enable", fallback=True):
             return None
@@ -323,6 +323,7 @@ class ExportConfig(BasicExportConfig):
 
     @property
     def json_setting(self):
+        """Settings for all json files of metadata."""
         section = self["JSON SETTING"]
         if not section.getboolean("enable", fallback=True):
             return None
@@ -330,6 +331,7 @@ class ExportConfig(BasicExportConfig):
 
     @property
     def csv_setting(self):
+        """Settings for the csv file of the scalr data like temperature."""
         section = self["CSV SETTING"]
         if not section.getboolean("enable", fallback=True):
             return None
@@ -337,15 +339,31 @@ class ExportConfig(BasicExportConfig):
 
     @property
     def npy_setting(self):
+        """Settings for the csv file of the processed data."""
         section = self["NPY SETTING"]
         if not section.getboolean("enable", fallback=True):
             return None
         return {"file_prefix": SpecialStr(section.get("file_prefix"))}
 
+    @property
+    def txt_setting(self):
+        """Settings for txt file of processed 1d data."""
+        section = self["NPY TXT SETTING"]
+        if not section.getboolean("enable", fallback=True):
+            return None
+        return {"file_prefix": SpecialStr(section.get("file_prefix"))}
 
-@make_class_safe
+    @property
+    def msk_npy_setting(self):
+        """Settings for the npy file of the mask."""
+        section = self["MASK NPY SETTING"]
+        if not section.getboolean("enable", fallback=True):
+            return None
+        return {"file_prefix": SpecialStr(section.get("file_prefix"))}
+
+
 class Exporter(RunRouter):
-    """Export the processed data to file systems, including."""
+    """Export the processed data to file systems."""
 
     def __init__(self, config: ExportConfig):
         factory = ExporterFactory(config)
@@ -386,6 +404,86 @@ class ExporterFactory:
             cb = DataFrameExporter(
                 str(tiff_base.joinpath("array_data")),
                 **self.config.npy_setting
+            )
+            callbacks.append(cb)
+        return callbacks, []
+
+
+class ExporterXpdan(RunRouter):
+    """Export the processed data to file systems in an xpdan style file structure."""
+
+    def __init__(self, config: ExportConfig):
+        factory = ExporterXpdanFactory(config)
+        super().__init__([factory])
+
+
+class ExporterXpdanFactory:
+    """The factory that gives the callbacks to export analysis data to xpdan style directory structure."""
+
+    def __init__(self, config: ExportConfig):
+        self.config = config
+
+    def __call__(self, name: str, doc: dict) -> tp.Tuple[list, list]:
+        if name != "start":
+            return [], []
+        folder_name = doc.get("sample_name", "unknown_sample")
+        data_folder = self.config.tiff_base.joinpath(folder_name)
+        data_folder.mkdir(exist_ok=True, parents=True)
+        callbacks = []
+        if self.config.tiff_setting is not None:
+            cb = TiffSerializer(
+                str(data_folder.joinpath("dark_sub")),
+                **self.config.tiff_setting
+            )
+            callbacks.append(cb)
+        if self.config.json_setting is not None:
+            cb = JsonSerializer(
+                str(data_folder.joinpath("meta")),
+                **self.config.json_setting
+            )
+            callbacks.append(cb)
+        if self.config.csv_setting is not None:
+            cb = CSVSerializer(
+                str(data_folder.joinpath("scalar_data")),
+                **self.config.csv_setting
+            )
+            callbacks.append(cb)
+        if self.config.txt_setting is not None:
+            cb = StackedNumpyTextExporter(
+                str(data_folder.joinpath("integration")),
+                **self.config.txt_setting,
+                data_keys=["chi_Q", "chi_I"]
+            )
+            callbacks.append(cb)
+            cb = StackedNumpyTextExporter(
+                str(data_folder.joinpath("iq")),
+                **self.config.txt_setting,
+                data_keys=["iq_Q", "iq_I"]
+            )
+            callbacks.append(cb)
+            cb = StackedNumpyTextExporter(
+                str(data_folder.joinpath("sq")),
+                **self.config.txt_setting,
+                data_keys=["sq_Q", "sq_S"]
+            )
+            callbacks.append(cb)
+            cb = StackedNumpyTextExporter(
+                str(data_folder.joinpath("fq")),
+                **self.config.txt_setting,
+                data_keys=["fq_Q", "fq_F"]
+            )
+            callbacks.append(cb)
+            cb = StackedNumpyTextExporter(
+                str(data_folder.joinpath("pdf")),
+                **self.config.txt_setting,
+                data_keys=["gr_r", "gr_G"]
+            )
+            callbacks.append(cb)
+        if self.config.msk_npy_setting is not None:
+            cb = NumpyExporter(
+                str(data_folder.joinpath("mask")),
+                **self.config.msk_npy_setting,
+                data_keys=["mask"]
             )
             callbacks.append(cb)
         return callbacks, []
@@ -498,7 +596,6 @@ class VisConfig(ConfigParser):
         return {"ylabel": section.get("ylabel", fallback=LABELS.chi[0])}
 
 
-@make_class_safe
 class Visualizer(RunRouter):
     """Visualize the analyzed data. It can be subscribed to a live dispatcher."""
 

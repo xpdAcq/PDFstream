@@ -21,7 +21,7 @@ from pdfstream.vend.formatters import SpecialStr
 class ArrayExporter(CallbackBase):
     """An base class for the callbacks to find and export the 1d array."""
     file_suffix = ""
-    file_stem = "{descriptor[name]}-{field}-{event[seq_num]}"
+    file_stem = ""
 
     def __init__(self, directory: str, *, file_prefix: str, data_keys: tp.List[str] = None):
         super(ArrayExporter, self).__init__()
@@ -62,8 +62,9 @@ class ArrayExporter(CallbackBase):
 
 
 class NumpyExporter(ArrayExporter):
-    """An exporter to export the 1d array data in .npy file."""
+    """An exporter to export the array data one by one in .npy file."""
     file_suffix = ".npy"
+    file_stem = "{descriptor[name]}-{field}-{event[seq_num]}"
 
     def export(self, doc):
         for data_key in self.data_keys:
@@ -74,9 +75,39 @@ class NumpyExporter(ArrayExporter):
             np.save(str(filepath), arr)
 
 
+class StackedNumpyExporter(ArrayExporter):
+    """An exporter to export the column-stacked array data in .npy file."""
+    file_suffix = ".npy"
+    file_stem = "{descriptor[name]}-{field}-{event[seq_num]}"
+
+    def export(self, doc):
+        arr: np.ndarray = np.stack([doc["data"][data_key] for data_key in self.data_keys], axis=-1)
+        field = "-".join(self.data_keys)
+        filename = self.file_template.format(start=self.start_doc, descriptor=self.descriptor_doc, event=doc,
+                                             field=field)
+        filepath = self.directory.joinpath(filename)
+        np.save(str(filepath), arr)
+
+
+class StackedNumpyTextExporter(ArrayExporter):
+    """An exporter to export the column-stacked array data in .txt file."""
+    file_suffix = ".txt"
+    file_stem = "{descriptor[name]}-{field}-{event[seq_num]}"
+
+    def export(self, doc):
+        arr: np.ndarray = np.stack([doc["data"][data_key] for data_key in self.data_keys], axis=-1)
+        field = "-".join(self.data_keys)
+        filename = self.file_template.format(start=self.start_doc, descriptor=self.descriptor_doc, event=doc,
+                                             field=field)
+        filepath = self.directory.joinpath(filename)
+        header = " ".join(self.data_keys)
+        np.savetxt(str(filepath), arr, header=header)
+
+
 class DataFrameExporter(ArrayExporter):
     """An exporter to export data in a dataframe in the .csv file."""
     file_suffix = ".csv"
+    file_stem = "{descriptor[name]}-{field}-{event[seq_num]}"
 
     def export(self, doc):
         _data = {data_key: pd.Series(doc["data"][data_key]) for data_key in self.data_keys}
