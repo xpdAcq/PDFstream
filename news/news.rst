@@ -2,6 +2,8 @@
 
 * Add the functionality to export files in xpdan style file structure for the xpd server
 
+* More messages from the server including what is running and the errors from pyFAI calibration
+
 **Changed:**
 
 * Average cli check if the directory exits, make it if not.
@@ -18,9 +20,9 @@
 
 **Fixed:**
 
-* BUG: fix the bug that the plot setting doesn't work in cli.
+* Fix the bug that the plot setting doesn't work in cli.
 
-* BUG: fix the bug about calibration in xpd server.
+* Fix the bug about calibration in xpd server.
 
 **Security:**
 
