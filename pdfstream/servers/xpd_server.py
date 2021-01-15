@@ -7,6 +7,7 @@ from databroker.v2 import Broker
 from event_model import RunRouter
 from ophyd.sim import NumpySeqHandler
 
+import pdfstream.io as io
 from pdfstream.callbacks.analysis import AnalysisConfig, VisConfig, ExportConfig, AnalysisStream, Exporter, \
     Visualizer, no_need_to_refresh_db, ExporterXpdan
 from pdfstream.callbacks.calibration import CalibrationConfig, Calibration
@@ -125,33 +126,32 @@ class XPDFactory:
 
     def __init__(self, config: XPDConfig):
         self.config = config
-        self.analysis = AnalysisStream(config)
         self.functionality = self.config.functionality
-        if self.functionality["do_calibration"]:
-            self.calibration = Calibration(config)
+        self.analysis = [AnalysisStream(config)]
+        self.calibration = [Calibration(config)] if self.functionality["do_calibration"] else []
         if self.functionality["dump_to_db"]:
-            self.analysis.subscribe(self.config.an_db.v1.insert)
+            self.analysis[0].subscribe(self.config.an_db.v1.insert)
         if self.functionality["export_files"]:
-            self.analysis.subscribe(Exporter(config))
+            self.analysis[0].subscribe(Exporter(config))
         if self.functionality["visualize_data"]:
-            self.analysis.subscribe(Visualizer(config))
+            self.analysis[0].subscribe(Visualizer(config))
         if self.functionality["send_messages"]:
-            self.analysis.subscribe(Publisher(**self.config.publisher_config))
+            self.analysis[0].subscribe(Publisher(**self.config.publisher_config))
         if self.functionality["export_files_in_xpdan_style"]:
-            self.analysis.subscribe(ExporterXpdan(config))
+            self.analysis[0].subscribe(ExporterXpdan(config))
 
     def __call__(self, name: str, doc: dict) -> tp.Tuple[list, list]:
         if name == "start":
             if doc.get(self.config.dark_identifier):
                 # dark frame run
+                io.server_message("Ignore dark frame.")
                 return [], []
             elif doc.get(self.config.calib_identifier):
                 # calibration run
-                if self.functionality["do_calibration"]:
-                    return [self.calibration], []
-                else:
-                    return [], []
+                io.server_message("Start calibration.")
+                return self.calibration, []
             else:
                 # light frame run
-                return [self.analysis], []
+                io.server_message("Start data reduction.")
+                return self.analysis, []
         return [], []

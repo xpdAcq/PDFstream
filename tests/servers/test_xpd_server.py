@@ -28,7 +28,7 @@ def test_XPDServer(tmpdir):
         ({}, [mod.AnalysisStream])
     ]
 )
-def test_XPDFactroy(start_doc, expect_lst):
+def test_XPDFactory(start_doc, expect_lst):
     """Assert XPDFactory output the correct callback function list."""
     config = mod.XPDConfig()
     config.read(fn)

@@ -1,4 +1,5 @@
 """The input / output functions related to file system."""
+from datetime import datetime
 from pathlib import Path
 from typing import Dict, Any
 
@@ -64,3 +65,9 @@ def _lower_key(dct: Dict[str, Any]) -> Dict[str, Any]:
 def _str_none(dct: Dict[str, Any]) -> Dict[str, Any]:
     """Make all the None value to string 'none'."""
     return {key: "none" if value is None else value for key, value in dct.items()}
+
+
+def server_message(msg: str):
+    """Print a message to a uniform format of server message."""
+    t = datetime.now().strftime("%x %X")
+    print("[{}] {}".format(t, msg))

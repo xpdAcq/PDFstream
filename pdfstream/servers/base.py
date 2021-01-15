@@ -1,18 +1,12 @@
 from configparser import ConfigParser, Error
-from datetime import datetime
 from pathlib import Path
 
 from bluesky.callbacks import CallbackBase
 from bluesky.callbacks.core import make_class_safe
 from bluesky.callbacks.zmq import RemoteDispatcher
 
+from pdfstream.io import server_message
 from pdfstream.vend.qt_kicker import install_qt_kicker
-
-
-def server_message(msg: str):
-    """Print a message to a uniform format of server message."""
-    t = datetime.now().strftime("%x %X")
-    print("[{}] {}".format(t, msg))
 
 
 class ServerConfig(ConfigParser):
@@ -40,10 +34,10 @@ class BaseServer(RemoteDispatcher):
 
     def start(self):
         try:
-            server_message("Server is started")
+            server_message("Server is started.")
             super(BaseServer, self).start()
         except KeyboardInterrupt:
-            server_message("Server is terminated")
+            server_message("Server is terminated.")
 
     def install_qt_kicker(self):
         install_qt_kicker(self.loop)

@@ -11,6 +11,7 @@ from tifffile import TiffWriter
 import pdfstream.callbacks.from_descriptor as fd
 import pdfstream.callbacks.from_event as fe
 import pdfstream.callbacks.from_start as fs
+import pdfstream.io as io
 from .analysis import BasicAnalysisConfig, BasicExportConfig
 
 
@@ -151,4 +152,9 @@ def run_calibration_gui(
     if test:
         return 0
     cp = subprocess.run(args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    if cp.returncode != 0:
+        io.server_message("Error in Calibration. See below:")
+        print(r"$", " ".join(args))
+        print(cp.stdout.decode())
+        print(cp.stderr.decode())
     return cp.returncode
