@@ -262,9 +262,9 @@ is shown below. Please read the comments in the file to know what are the meanin
 <span class="p">[</span><span class="n">LISTEN</span> <span class="n">TO</span><span class="p">]</span>
 <span class="c1"># the name or the IP address of the host for the proxy</span>
 <span class="c1"># &quot;localhost&quot; means that the proxy runs on the same machine where your server runs</span>
-<span class="n">host</span> <span class="o">=</span> <span class="n">localhost</span>
+<span class="n">host</span> <span class="o">=</span> <span class="n">xf28id1</span><span class="o">-</span><span class="n">ca1</span>
 <span class="c1"># the port that the server is listening to</span>
-<span class="n">port</span> <span class="o">=</span> <span class="mi">5568</span>
+<span class="n">port</span> <span class="o">=</span> <span class="mi">5578</span>
 <span class="c1"># the prefix of the message that the server listens to</span>
 <span class="c1"># the server will only listen to the message starting with the prefix</span>
 <span class="c1"># if you would like the server to listen to any message, delete the row below</span>
@@ -281,14 +281,17 @@ is shown below. Please read the comments in the file to know what are the meanin
 <span class="n">dump_to_db</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="c1"># whether to export the processed data to files in the file system</span>
 <span class="c1"># if False, all the [FILE SETTING] sections will be inactivate</span>
-<span class="n">export_files</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">export_files</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="c1"># whether to export the processed data to files in the file system with a file structure like XpdAn</span>
+<span class="c1"># if False, all the [FILE SETTING] sections will be inactivate</span>
+<span class="n">export_files_in_xpdan_style</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="c1"># whether to visualize the processed data in figures</span>
 <span class="c1"># if False, all the [VIS DATA] sections will be inactivate</span>
 <span class="n">visualize_data</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="c1"># whether to send the messages of the processed data to a server</span>
 <span class="c1"># this functionality allows you to send the processed data into a internal network automatically</span>
 <span class="c1"># if False, the [PUBLISH TO] section will be inactivate</span>
-<span class="n">send_messages</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">send_messages</span> <span class="o">=</span> <span class="kc">False</span>
 
 <span class="c1"># the information about the proxy server and the message that will be sent</span>
 <span class="c1"># the proxy is the one that will received the message of processed data from this server and distribute it to</span>
@@ -297,28 +300,29 @@ is shown below. Please read the comments in the file to know what are the meanin
 <span class="p">[</span><span class="n">PUBLISH</span> <span class="n">TO</span><span class="p">]</span>
 <span class="c1"># the name or the IP address of the host for the proxy</span>
 <span class="c1"># &quot;localhost&quot; means that the proxy runs on the same machine where your server runs</span>
-<span class="n">host</span> <span class="o">=</span> <span class="n">localhost</span>
+<span class="c1"># host =</span>
 <span class="c1"># the port that message be sent to</span>
-<span class="n">port</span> <span class="o">=</span> <span class="mi">5567</span>
+<span class="c1"># port =</span>
 <span class="c1"># the prefix of the message that will be sent by the server</span>
-<span class="n">prefix</span> <span class="o">=</span> <span class="n">an</span>
+<span class="c1"># prefix =</span>
 
 <span class="c1"># the information about database used by the server</span>
 <span class="p">[</span><span class="n">DATABASE</span><span class="p">]</span>
 <span class="c1"># the name of the database for raw diffraction image data in the databroker catalog</span>
 <span class="c1"># uncomment the line below to activate</span>
-<span class="c1"># raw_db = xpd</span>
+<span class="n">raw_db</span> <span class="o">=</span> <span class="n">pdf</span>
 <span class="c1"># the name of the database to dump the processed data in the databroker catalog</span>
 <span class="c1"># uncomment the line below to activate</span>
-<span class="c1"># an_db = xpd-analysis</span>
+<span class="n">an_db</span> <span class="o">=</span> <span class="n">pdf</span><span class="o">-</span><span class="n">analysis</span>
 
 <span class="c1"># the folders where the server will dump the files to</span>
 <span class="p">[</span><span class="n">FILE</span> <span class="n">SYSTEM</span><span class="p">]</span>
 <span class="c1"># the folder where all the processed data will be saved</span>
-<span class="n">tiff_base</span> <span class="o">=</span> <span class="o">~/</span><span class="n">acqsim</span><span class="o">/</span><span class="n">xpdUser</span><span class="o">/</span><span class="n">tiff_base</span>
+<span class="c1"># please use the same value as the &#39;tiff_base&#39; in &#39;glbl&#39; of xpdacq</span>
+<span class="n">tiff_base</span> <span class="o">=</span> <span class="o">/</span><span class="n">nsls2</span><span class="o">/</span><span class="n">xf28id1</span><span class="o">/</span><span class="n">xpdacq_data</span><span class="o">/</span><span class="n">user_data</span><span class="o">/</span><span class="n">tiff_base</span>
 <span class="c1"># the folder where the calibration data will be saved</span>
 <span class="c1"># please use the same value as the &#39;config_base&#39; in &#39;glbl&#39; of xpdacq</span>
-<span class="n">calib_base</span> <span class="o">=</span> <span class="o">~/</span><span class="n">acqsim</span><span class="o">/</span><span class="n">xpdUser</span><span class="o">/</span><span class="n">config_base</span>
+<span class="n">calib_base</span> <span class="o">=</span> <span class="o">/</span><span class="n">nsls2</span><span class="o">/</span><span class="n">xf28id1</span><span class="o">/</span><span class="n">xpdacq_data</span><span class="o">/</span><span class="n">user_data</span><span class="o">/</span><span class="n">config_base</span>
 
 <span class="c1"># the keys for the metadata in the start document</span>
 <span class="c1"># the server will obtain the metadata according to the keys</span>
@@ -404,7 +408,7 @@ is shown below. Please read the comments in the file to know what are the meanin
 <span class="c1"># the interval between two data points on r-grid, unit: inverse angstrom</span>
 <span class="n">rstep</span> <span class="o">=</span> <span class="mf">0.01</span>
 
-<span class="c1"># the settings to export images in tiff files</span>
+<span class="c1"># the settings to export dark subtracted images, background subtracted image and masks in tiff files</span>
 <span class="p">[</span><span class="n">TIFF</span> <span class="n">SETTING</span><span class="p">]</span>
 <span class="c1"># whether to export the data or not</span>
 <span class="n">enable</span> <span class="o">=</span> <span class="kc">True</span>
@@ -430,6 +434,16 @@ is shown below. Please read the comments in the file to know what are the meanin
 <span class="c1"># whether to export the data or not</span>
 <span class="n">enable</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="c1"># the prefix of the file name</span>
+<span class="n">file_prefix</span> <span class="o">=</span> <span class="p">{</span><span class="n">start</span><span class="p">[</span><span class="n">original_run_uid</span><span class="p">]}</span><span class="n">_</span><span class="p">{</span><span class="n">start</span><span class="p">[</span><span class="n">sample_name</span><span class="p">]}</span><span class="n">_</span>
+
+<span class="c1"># the settings to export the reduced data (like XRD and PDF) in txt files</span>
+<span class="p">[</span><span class="n">NPY</span> <span class="n">TXT</span> <span class="n">SETTING</span><span class="p">]</span>
+<span class="n">enable</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">file_prefix</span> <span class="o">=</span> <span class="p">{</span><span class="n">start</span><span class="p">[</span><span class="n">original_run_uid</span><span class="p">]}</span><span class="n">_</span><span class="p">{</span><span class="n">start</span><span class="p">[</span><span class="n">sample_name</span><span class="p">]}</span><span class="n">_</span>
+
+<span class="c1"># the settings to export the mask in npy files</span>
+<span class="p">[</span><span class="n">MASK</span> <span class="n">NPY</span> <span class="n">SETTING</span><span class="p">]</span>
+<span class="n">enable</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="n">file_prefix</span> <span class="o">=</span> <span class="p">{</span><span class="n">start</span><span class="p">[</span><span class="n">original_run_uid</span><span class="p">]}</span><span class="n">_</span><span class="p">{</span><span class="n">start</span><span class="p">[</span><span class="n">sample_name</span><span class="p">]}</span><span class="n">_</span>
 
 <span class="c1"># the settings to visualize the masked image (already dark subtracted and background subtracted)</span>
