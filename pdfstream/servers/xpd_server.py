@@ -83,7 +83,8 @@ class XPDServer(BaseServer):
 def make_and_run(
     cfg_file: str = None,
     *,
-    suppress_warning: bool = True
+    suppress_warning: bool = True,
+    test_mode: bool = False
 ):
     """Run the xpd data reduction server.
 
@@ -97,6 +98,9 @@ def make_and_run(
 
     suppress_warning :
         If True, all warning will be suppressed. Turn it to False when running in a test.
+
+    test_mode :
+        If True, just create a server but not start. Used for test.
     """
     if suppress_warning:
         import warnings
@@ -106,8 +110,10 @@ def make_and_run(
     config = XPDServerConfig(allow_no_value=True)
     config.read(cfg_file)
     server = XPDServer(config)
-    server.install_qt_kicker()
-    server.start()
+    if config.functionality["visualize_data"]:
+        server.install_qt_kicker()
+    if not test_mode:
+        server.start()
 
 
 class XPDRouter(RunRouter):
