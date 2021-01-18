@@ -27,7 +27,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as readme_file:
 
 setup(
     name='pdfstream',
-    version='0.4.3',
+    version='0.4.4',
     description="The configs analysis toolbox for the study on pair distribution function (PDF).",
     install_requires=[],
     long_description=readme,
