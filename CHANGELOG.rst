@@ -4,6 +4,15 @@ PDFstream Change Log
 
 .. current developments
 
+v0.4.4
+====================
+
+**Added:**
+
+* An xpdvis server that plots figures of analyzed data from xpd server.
+
+
+
 v0.4.3
 ====================
 
