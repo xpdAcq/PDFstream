@@ -4,9 +4,11 @@ from pathlib import Path
 from typing import Dict, Any
 
 import fabio
+import numpy as np
 import pyFAI
 import yaml
 from numpy import ndarray
+from tifffile import TiffWriter
 
 from pdfstream.vend.loaddata import load_data
 
@@ -42,7 +44,12 @@ def write_img(filepath: str, img: ndarray, template: str) -> None:
     temp_img = fabio.open(template)
     temp_img.data = img
     temp_img.save(filepath)
-    return
+
+
+def write_tiff(filepath: str, img: ndarray) -> None:
+    """Write the image to a tiff file."""
+    tw = TiffWriter(filepath)
+    tw.write(img)
 
 
 def load_array(data_file: str, minrows=10, **kwargs) -> ndarray:
@@ -71,3 +78,18 @@ def server_message(msg: str):
     """Print a message to a uniform format of server message."""
     t = datetime.now().strftime("%x %X")
     print("[{}] {}".format(t, msg))
+
+
+def load_matrix_flexible(matrix_file: str) -> ndarray:
+    """Load a matrix data from .tiff, .npy or .txt file."""
+    path = Path(matrix_file)
+    if path.suffix in (".tiff", ".tif"):
+        return load_img(matrix_file)
+    elif path.suffix == ".npy":
+        return np.load(matrix_file)
+    elif path.suffix == ".txt":
+        return np.loadtxt(matrix_file)
+    else:
+        raise ValueError(
+            "Unknown extension: {}. Only accept .tiff, .tif, .npy, .txt.".format(path.suffix)
+        )

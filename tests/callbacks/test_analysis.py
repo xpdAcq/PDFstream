@@ -2,6 +2,7 @@ from configparser import Error
 from pathlib import Path
 
 import matplotlib.pyplot as plt
+import numpy as np
 import pytest
 from pkg_resources import resource_filename
 
@@ -17,6 +18,40 @@ def test_AnalysisStream(db_with_img_and_bg_img, use_db):
     db = db_with_img_and_bg_img
     config = an.AnalysisConfig()
     config.read(fn)
+    if use_db:
+        config.raw_db = db
+    ld = an.AnalysisStream(config)
+    # validate that output data
+    out_validator = Validator(analysis_out_schemas)
+    ld.subscribe(out_validator)
+    # validate the input data
+    in_validator = Validator(analysis_in_schemas)
+    for name, doc in db[-1].canonical(fill="yes", strict_order=True):
+        in_validator(name, doc)
+        ld(name, doc)
+
+
+@pytest.fixture(params=[0, 1, 2, 3])
+def user_config(request, test_data):
+    # user gives a mask as the starting point of auto maksing
+    if request.param == 0:
+        return {"user_mask": test_data["mask_file"]}
+    # user just wants to use the mask
+    elif request.param == 1:
+        return {"auto_mask": False, "user_mask": test_data["mask_file"]}
+    # user doesn't care
+    elif request.param == 2:
+        return {}
+    # user doesn't want any masking
+    elif request.param == 3:
+        return {"auto_mask": False}
+
+
+def test_AnalysisStream_with_UserConfig(db_with_img_and_bg_img, user_config):
+    """Test the analysis stream with user configuration of masking."""
+    db = db_with_img_and_bg_img
+    config = an.AnalysisConfig()
+    config.read(fn)
     config.raw_db = db
     ld = an.AnalysisStream(config)
     # validate that output data
@@ -25,6 +60,8 @@ def test_AnalysisStream(db_with_img_and_bg_img, use_db):
     # validate the input data
     in_validator = Validator(analysis_in_schemas)
     for name, doc in db[-1].canonical(fill="yes", strict_order=True):
+        if name == "start":
+            doc = dict(**doc, user_config=user_config)
         in_validator(name, doc)
         ld(name, doc)
 
@@ -91,3 +128,23 @@ def test_ExportConfig():
     config.read(fn)
     with pytest.raises(Error):
         assert config.tiff_base
+
+
+@pytest.fixture(params=[0, 1])
+def cases0(request, test_data):
+    """Gives user_config dictionary, tuple of property values."""
+    if request.param == 0:
+        return (
+            {"user_config": {"auto_mask": False, "mask_file": test_data["white_img_file"]}},
+            (False, test_data["white_img"])
+        )
+    elif request.param == 1:
+        return {}, (True, None)
+
+
+def test_UserConfig(cases0):
+    start_doc, results = cases0
+    user_config = an.UserConfig()
+    user_config.read_start_doc(start_doc)
+    assert user_config.do_auto_masking == results[0]
+    assert np.array_equal(user_config.user_mask, results[1])

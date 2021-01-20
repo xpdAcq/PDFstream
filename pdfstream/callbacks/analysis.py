@@ -20,6 +20,7 @@ import pdfstream.callbacks.from_descriptor as from_desc
 import pdfstream.callbacks.from_event as from_event
 import pdfstream.callbacks.from_start as from_start
 import pdfstream.integration.tools as integ
+import pdfstream.io as io
 from pdfstream.callbacks.basic import MyLiveImage, LiveMaskedImage, LiveWaterfall, DataFrameExporter, \
     SmartScalarPlot, StackedNumpyTextExporter, NumpyExporter
 from pdfstream.units import LABELS
@@ -34,6 +35,39 @@ except ImportError:
 def no_need_to_refresh_db(db: tp.Union[None, Broker], name: tp.Union[None, str]):
     """If there is no need to refresh the db, return True. Used in configparser."""
     return (db is not None and name == db.name) or (db is None and name is None)
+
+
+class UserConfig(ConfigParser):
+    """The configuration specified by the user in each run.
+
+    It tunes the configuration of the analysis stream. It is an one section ini configuration.
+    """
+    _section_name = "user_config"
+    _auto_mask = "auto_mask"
+    _mask_file = "mask_file"
+
+    @property
+    def _section(self):
+        return self[self._section_name]
+
+    @property
+    def do_auto_masking(self) -> bool:
+        """Do mask setting or not. Default True."""
+        return self._section.getboolean(self._auto_mask, fallback=True)
+
+    @property
+    def user_mask(self) -> tp.Union[None, np.ndarray]:
+        """The mask given by the user. Default None."""
+        mask_file = self._section.get(self._mask_file, fallback=None)
+        if mask_file:
+            return io.load_matrix_flexible(mask_file)
+        return None
+
+    def read_start_doc(self, start: dict):
+        """Load configuration from the start document. If keys do not exist, use empty dictionary."""
+        self.read_dict(
+            {self._section_name: start.get(self._section_name, {})}
+        )
 
 
 class BasicAnalysisConfig(ConfigParser):
@@ -171,6 +205,11 @@ class AnalysisStream(LiveDispatcher):
             default_composition="Ni"
         )
         self.cache["indeps"] = from_start.get_indeps(doc, exclude={"time"})
+        # load user config
+        user_config = UserConfig(allow_no_value=True)
+        user_config.read_start_doc(doc)
+        self.cache["user_config"] = user_config
+        # create new start
         new_start = dict(**doc, an_config=self.config.to_dict(), pdfstream_version=pdfstream.__version__)
         super(AnalysisStream, self).start(new_start)
 
@@ -203,6 +242,7 @@ class AnalysisStream(LiveDispatcher):
         indep_data = {key: doc["data"][key] for key in self.cache["indeps"]}
         # process the data output a dictionary
         an_data = process(
+            user_config=self.cache['user_config'],
             raw_img=raw_img,
             ai=self.cache["ai"],
             dk_img=self.cache["dk_img"],
@@ -225,6 +265,7 @@ class AnalysisStream(LiveDispatcher):
 
 def process(
     *,
+    user_config: UserConfig,
     raw_img: np.ndarray,
     ai: AzimuthalIntegrator,
     dk_img: np.ndarray = None,
@@ -245,8 +286,15 @@ def process(
         dk_sub_bg_img = np.zeros_like(dk_sub_img)
     bg_sub_img = np.subtract(dk_sub_img, dk_sub_bg_img)
     data.update({"bg_sub_image": bg_sub_img})
-    # auto masking
-    mask, _ = integ.auto_mask(bg_sub_img, ai, mask_setting=mask_setting)
+    # do auto masking if specified
+    if user_config.do_auto_masking:
+        mask, _ = integ.auto_mask(bg_sub_img, ai, mask_setting=mask_setting, user_mask=user_config.user_mask)
+    # if user gives a mask, use it
+    elif user_config.user_mask is not None:
+        mask = user_config.user_mask.copy()
+    # if user disable auto masking and doesn't give a mask, make a transparent mask
+    else:
+        mask = np.zeros_like(bg_sub_img)
     data.update({"mask": mask})
     # integration
     x, y = ai.integrate1d(bg_sub_img, mask=mask, **integ_setting)

@@ -161,8 +161,7 @@ def average(out_file: str, *img_files, weights: tp.List[float] = None) -> None:
     if not out_file_path.parent.is_dir():
         out_file_path.parent.mkdir(parents=True)
     # write out the file
-    io.write_img(out_file, avg_img, img_files[0])
-    return
+    io.write_tiff(out_file, avg_img)
 
 
 def waterfall(
