@@ -37,7 +37,7 @@ def test_LSQRunRouter(runs, tmpdir):
     assert len(tmpdir.listdir()) > 0
 
 
-@pytest.skip
+@pytest.mark.skip
 def test_LSQServer(tmpdir):
     config = mod.LSQServerConfig()
     config.read(cfg_file)
