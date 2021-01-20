@@ -110,7 +110,7 @@ def make_and_run(
     config = XPDServerConfig(allow_no_value=True)
     config.read(cfg_file)
     server = XPDServer(config)
-    if config.functionality["visualize_data"]:
+    if config.functionality["visualize_data"] and not test_mode:
         server.install_qt_kicker()
     if not test_mode:
         server.start()

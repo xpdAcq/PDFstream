@@ -48,6 +48,6 @@ def make_and_run(
     config = XPDVisServerConfig(allow_no_value=True)
     config.read(cfg_file)
     server = XPDVisServer(config)
-    server.install_qt_kicker()
     if not test_mode:
+        server.install_qt_kicker()
         server.start()

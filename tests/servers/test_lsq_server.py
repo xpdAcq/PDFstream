@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import numpy as np
 import pytest
 from pkg_resources import resource_filename
@@ -37,9 +39,11 @@ def test_LSQRunRouter(runs, tmpdir):
     assert len(tmpdir.listdir()) > 0
 
 
-@pytest.mark.skip
-def test_LSQServer(tmpdir):
+def test_make_and_run(tmpdir):
+    tmp_ini = Path(tmpdir.join("test.ini"))
     config = mod.LSQServerConfig()
     config.read(cfg_file)
     config.set("EXPORTATION", "directory", str(tmpdir))
-    mod.LSQServer.from_config(config)
+    with tmp_ini.open("w") as f:
+        config.write(f)
+    mod.make_and_run(str(tmp_ini), test_mode=True)

@@ -311,11 +311,11 @@ class ExporterFactory:
         return [], []
 
 
-def make_and_run(cfg_file: str = None):
+def make_and_run(cfg_file: str = None, test_mode: bool = False):
     """Make and run LSQ server."""
     if not cfg_file:
         cfg_file = find_cfg_file(CONFIG_DIR, ServerNames.lsq)
     server = LSQServer.from_cfg_file(cfg_file)
-    server.install_qt_kicker()
-    server.start()
-    return
+    if not test_mode:
+        server.install_qt_kicker()
+        server.start()
