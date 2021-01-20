@@ -4,6 +4,17 @@ PDFstream Change Log
 
 .. current developments
 
+v0.4.5
+====================
+
+**Added:**
+
+* Allow users to use their own mask by adding the file path in the metadata of the run
+
+* Allow users to disable auto masking by using the metadata of the run
+
+
+
 v0.4.4
 ====================
 
