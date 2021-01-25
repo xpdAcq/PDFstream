@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>XPD Server &mdash; PDFstream 0.4.5 documentation</title>
+  <title>XPDVis Server &mdash; PDFstream 0.4.5 documentation</title>
   
 
   
@@ -41,8 +41,8 @@
   <link rel="stylesheet" href="../_static/gallery-rendered-html.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="XPDVis Server" href="xpdvis_server.html" />
-    <link rel="prev" title="ZMQ Proxy" href="zmq_proxy.html" /> 
+    <link rel="next" title="Advanced Users Documents" href="../tutorials2/index.html" />
+    <link rel="prev" title="XPD Server" href="xpd_server.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -95,38 +95,17 @@
 <li class="toctree-l1"><a class="reference internal" href="../tutorials0/index.html">Users Documents</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Beamline Scientists Documents</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="zmq_proxy.html">ZMQ Proxy</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">XPD Server</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#what-does-xpd-server-do">What does XPD Server do?</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#calibration">Calibration</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#data-reduction">Data Reduction</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#dark-frame">Dark frame</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#how-to-setup-a-xpd-server">How to setup a XPD Server?</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="xpd_server.html">XPD Server</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">XPDVis Server</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#how-to-setup-a-xpdvis-server">How to setup a XPDVis Server?</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#write-the-configuration-file">Write the configuration file</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#start-the-server">Start the server</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#recommended-put-the-configuration-file-in-default-folder">(Recommended) Put the configuration file in default folder</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#optional-run-the-server-in-a-detached-background-process">(Optional) Run the server in a detached background process</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#how-to-do-the-calibration">How to do the calibration?</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#how-to-do-the-data-reduction">How to do the data reduction?</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#how-to-get-the-data-back-home">How to get the data back home?</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#database">Database</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#files">Files</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#meaning-of-file-name">Meaning of file name</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#i-miss-the-good-old-days">I miss the good old days</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#how-to-see-the-data-during-the-experiment">How to see the data during the experiment?</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#how-to-user-configuration-during-the-experiment">How to user configuration during the experiment?</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#how-to-use-user-defined-calibration">How to use user defined calibration?</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#how-to-use-a-user-defined-mask">How to use a user defined mask?</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="xpdvis_server.html">XPDVis Server</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials2/index.html">Advanced Users Documents</a></li>
@@ -179,13 +158,13 @@
         
           <li><a href="index.html">Beamline Scientists Documents</a> &raquo;</li>
         
-      <li>XPD Server</li>
+      <li>XPDVis Server</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="../_sources/tutorials1/xpd_server.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/tutorials1/xpdvis_server.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -198,59 +177,13 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="xpd-server">
-<h1>XPD Server<a class="headerlink" href="#xpd-server" title="Permalink to this headline">¶</a></h1>
-<p>The XPD Server is a server designed for x-ray powder diffraction experiments. It will process image data from
-a two dimensional detector.</p>
-<div class="section" id="what-does-xpd-server-do">
-<span id="xpd-server-functionalities"></span><h2>What does XPD Server do?<a class="headerlink" href="#what-does-xpd-server-do" title="Permalink to this headline">¶</a></h2>
-<p>The XPD Server receives the message from a proxy. Depending on what type of the data is in the message, the server
-will apply different data processing method to it.</p>
-<div class="section" id="calibration">
-<h3>Calibration<a class="headerlink" href="#calibration" title="Permalink to this headline">¶</a></h3>
-<p>If the XPD Server finds that the data is intended to be used to calibrate the sample detector distances along with
-other experiment setup in the system, it will start the calibration process as followings:</p>
-<ol class="arabic simple">
-<li><p>Find the dark frame image in the database.</p></li>
-<li><p>Subtract the light frame image in the message by the dark frame image and get the dark subtracted image.</p></li>
-<li><p>Ask users to draw mask on the image.</p></li>
-<li><p>Ask users to select several points on the inner Debye-Scherrer rings to allocate their positions.</p></li>
-<li><p>Fit the ring positions to optimize the experiment setup geometry parameters including samples detector distance and detector frame orientation.</p></li>
-<li><p>Use the parameters to do azimuthal integration on the image to get the integration results.</p></li>
-<li><p>Ask users to check the results and save it in a poni file at the designated place.</p></li>
-</ol>
-</div>
-<div class="section" id="data-reduction">
-<h3>Data Reduction<a class="headerlink" href="#data-reduction" title="Permalink to this headline">¶</a></h3>
-<p>If the XPD Server finds that the data is a light frame diffraction image of a sample, it will start the data
-reduction process as followings:</p>
-<ol class="arabic simple">
-<li><p>Find the dark frame image in the database.</p></li>
-<li><p>Find the background light frame image and its dark frame image in the database.</p></li>
-<li><p>Do dark subtraction on the background image.</p></li>
-<li><p>Do dark subtraction on the sample image.</p></li>
-<li><p>Subtract the sample image by the background image.</p></li>
-<li><p>Mask the bad pixels in the image.</p></li>
-<li><p>Do azimuthal integration on the image to get the x-ray diffraction pattern (XRD) on momentum transfer grid.</p></li>
-<li><p>Transfer the XRD pattern to the reduced pair distribution function (PDF).</p></li>
-<li><p>(Optional) Dump the processed data with the independent variables (e. g. temperature) in the database.</p></li>
-<li><p>(Optional) Export the processed images in tiff files.</p></li>
-<li><p>(Optional) Export the reduced data in numpy files.</p></li>
-<li><p>(Optional) Export the scalar data in the measurement in csv files.</p></li>
-<li><p>(Optional) Export metadata in json files.</p></li>
-<li><p>(Optional) Visualize the images in a window.</p></li>
-<li><p>(Optional) Visualize the waterfall plot of the reduced data in a window.</p></li>
-<li><p>(Optional) Visualize the scalar plot of the maximum peak height and peak position of the maximum peak in the XRD and PDF.</p></li>
-</ol>
-</div>
-<div class="section" id="dark-frame">
-<h3>Dark frame<a class="headerlink" href="#dark-frame" title="Permalink to this headline">¶</a></h3>
-<p>If the XPD Server finds that the data is a dark frame image, it will ignore the data and do nothing. It assumes
-that the data frame image has been already record in the database in another process.</p>
-</div>
-</div>
-<div class="section" id="how-to-setup-a-xpd-server">
-<h2>How to setup a XPD Server?<a class="headerlink" href="#how-to-setup-a-xpd-server" title="Permalink to this headline">¶</a></h2>
+  <div class="section" id="xpdvis-server">
+<h1>XPDVis Server<a class="headerlink" href="#xpdvis-server" title="Permalink to this headline">¶</a></h1>
+<p>The XPDVis server is the server that visualize the data from the XPD server. If users would like to separate the
+data processing with the data visualization, they could runt the XPDVis server together with the XPD server on
+the same or different machine.</p>
+<div class="section" id="how-to-setup-a-xpdvis-server">
+<h2>How to setup a XPDVis Server?<a class="headerlink" href="#how-to-setup-a-xpdvis-server" title="Permalink to this headline">¶</a></h2>
 <p>There are only two steps: first, write a configuration file or download one; start a server in terminal using
 that file.</p>
 <div class="section" id="write-the-configuration-file">
@@ -560,7 +493,7 @@ to change the file structure but if you would like to do that, you can find what
 <h3>Start the server<a class="headerlink" href="#start-the-server" title="Permalink to this headline">¶</a></h3>
 <p>Assume that you have written a configuration file and the path to it is “~/xpd_server.ini”.</p>
 <p>In terminal, run the command:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">run_server</span> <span class="n">xpd</span> <span class="o">~/</span><span class="n">xpd_server</span><span class="o">.</span><span class="n">ini</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">run_server</span> <span class="n">xpdvis</span> <span class="o">~/</span><span class="n">xpdvis_server</span><span class="o">.</span><span class="n">ini</span>
 </pre></div>
 </div>
 <p>The server will start in terminal.</p>
@@ -576,7 +509,7 @@ configuration file.</p>
 </pre></div>
 </div>
 <p>You will find the path to the directory. Put the .ini file in that directory and then you can just run:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">run_server</span> <span class="n">xpd</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">run_server</span> <span class="n">xpdvis</span>
 </pre></div>
 </div>
 <p>The server will start.</p>
@@ -585,11 +518,11 @@ configuration file.</p>
 <h3>(Optional) Run the server in a detached background process<a class="headerlink" href="#optional-run-the-server-in-a-detached-background-process" title="Permalink to this headline">¶</a></h3>
 <p>Similar to what you have done with the proxy, you can also run the server in background and detach it from the
 terminal so that you don’t need to start the server every time. To do this, in terminal, run command:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nohup</span> <span class="n">run_server</span> <span class="n">xpd</span> <span class="o">~/</span><span class="n">xpd_server</span><span class="o">.</span><span class="n">ini</span> <span class="o">&amp;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nohup</span> <span class="n">run_server</span> <span class="n">xpdvis</span> <span class="o">~/</span><span class="n">xpd_server</span><span class="o">.</span><span class="n">ini</span> <span class="o">&amp;</span>
 </pre></div>
 </div>
 <p>If you have put the “xpd_server.ini” in default folder, run this instead:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nohup</span> <span class="n">run_server</span> <span class="n">xpd</span> <span class="o">&amp;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nohup</span> <span class="n">run_server</span> <span class="n">xpdvis</span> <span class="o">&amp;</span>
 </pre></div>
 </div>
 <p>You will find the message from the server in file “nohup.out”.</p>
@@ -598,190 +531,6 @@ terminal so that you don’t need to start the server every time. To do this, in
 </pre></div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">&lt;job</span> <span class="pre">ID&gt;</span></code> is a number that shows up after you run the command <code class="docutils literal notranslate"><span class="pre">nohup</span> <span class="pre">run_server</span> <span class="pre">xpd</span> <span class="pre">&amp;</span></code>.</p>
-</div>
-</div>
-<div class="section" id="how-to-do-the-calibration">
-<h2>How to do the calibration?<a class="headerlink" href="#how-to-do-the-calibration" title="Permalink to this headline">¶</a></h2>
-<p>When you run the <code class="docutils literal notranslate"><span class="pre">run_calibration()</span></code> in <code class="docutils literal notranslate"><span class="pre">bsui</span></code> of xpdacq, the xpd server responds and gives you a window of
-diffraction image. You will finish the calibration using that interface . Please see the
-<a class="reference external" href="https://pyfai.readthedocs.io/en/master/usage/cookbook/calib-gui/index.html">tutorials</a> to learn
-how to use it. When you are at the last step of the tutorials and you are going to save the geometry in a PONI
-file, please save the file at exact where it is first shown in the finder window after you click the
-“SAVE AS PONI” button. Only in this way the software <code class="docutils literal notranslate"><span class="pre">xpdacq</span></code> can find the file and use it.</p>
-</div>
-<div class="section" id="how-to-do-the-data-reduction">
-<h2>How to do the data reduction?<a class="headerlink" href="#how-to-do-the-data-reduction" title="Permalink to this headline">¶</a></h2>
-<p>The data reduction is totally automatic after you start the server and finish your calibration run. The server
-will process the streaming data by itself according to the configuration. You will find messages in the terminal
-where the server is running. It tells you if the message of a run is received and if there are any errors.</p>
-</div>
-<div class="section" id="how-to-get-the-data-back-home">
-<span id="xpd-server-data"></span><h2>How to get the data back home?<a class="headerlink" href="#how-to-get-the-data-back-home" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="database">
-<h3>Database<a class="headerlink" href="#database" title="Permalink to this headline">¶</a></h3>
-<p>The processed data will be archived in the <code class="docutils literal notranslate"><span class="pre">an_db</span></code> database specified in the configuration.
-It is the name of an intake catalog.
-Please use <a class="reference external" href="https://blueskyproject.io/databroker/">databroker</a> to access it.</p>
-</div>
-<div class="section" id="files">
-<h3>Files<a class="headerlink" href="#files" title="Permalink to this headline">¶</a></h3>
-<p>The processed data will also be exported to the files in the <code class="docutils literal notranslate"><span class="pre">tiff_base</span></code> folder specified in the configuration.</p>
-<p>Here is an example of the file structure that is generated from a temperature ramping.</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>tiff_base
-├── array_data
-│   ├── 014cc82d-0631-4b8b-bbfd-7e6c7d7c8f55_Ni_primary-data-1.csv
-│   ├── 014cc82d-0631-4b8b-bbfd-7e6c7d7c8f55_Ni_primary-data-2.csv
-│   └── 014cc82d-0631-4b8b-bbfd-7e6c7d7c8f55_Ni_primary-data-3.csv
-├── images
-│   ├── 014cc82d-0631-4b8b-bbfd-7e6c7d7c8f55_Ni_primary-bg_sub_image-0.tiff
-│   ├── 014cc82d-0631-4b8b-bbfd-7e6c7d7c8f55_Ni_primary-bg_sub_image-1.tiff
-│   ├── 014cc82d-0631-4b8b-bbfd-7e6c7d7c8f55_Ni_primary-bg_sub_image-2.tiff
-│   ├── 014cc82d-0631-4b8b-bbfd-7e6c7d7c8f55_Ni_primary-dk_sub_image-0.tiff
-│   ├── 014cc82d-0631-4b8b-bbfd-7e6c7d7c8f55_Ni_primary-dk_sub_image-1.tiff
-│   ├── 014cc82d-0631-4b8b-bbfd-7e6c7d7c8f55_Ni_primary-dk_sub_image-2.tiff
-│   ├── 014cc82d-0631-4b8b-bbfd-7e6c7d7c8f55_Ni_primary-mask-0.tiff
-│   ├── 014cc82d-0631-4b8b-bbfd-7e6c7d7c8f55_Ni_primary-mask-1.tiff
-│   └── 014cc82d-0631-4b8b-bbfd-7e6c7d7c8f55_Ni_primary-mask-2.tiff
-├── metadata
-│   └── 014cc82d-0631-4b8b-bbfd-7e6c7d7c8f55_Ni_meta.json
-└── scalar_data
-    └── 014cc82d-0631-4b8b-bbfd-7e6c7d7c8f55_Ni_primary.csv
-</pre></div>
-</div>
-<p>The diffraction image data together with the mask data will be saved in .tiff files in the folder <code class="docutils literal notranslate"><span class="pre">images</span></code>.
-The scalar data like temperature will be in the .csv files in the folder <code class="docutils literal notranslate"><span class="pre">scalar_data</span></code>.
-You can match the scalar data with the image by the start id and the sequence number in the file.
-The reduced data like XRD and PDF will be in the .csv files in folder <code class="docutils literal notranslate"><span class="pre">array_data</span></code>.
-Each column in the dataframe in the .csv files is an array data.
-You can match the dataframe with the image by the start id and the sequence number in the file.
-The metadata like the sample information, wavelength of the beam, and the experiment setup are saved in
-the .json files in folder <code class="docutils literal notranslate"><span class="pre">metadata</span></code>.</p>
-</div>
-<div class="section" id="meaning-of-file-name">
-<h3>Meaning of file name<a class="headerlink" href="#meaning-of-file-name" title="Permalink to this headline">¶</a></h3>
-<p>Here, we use a file <code class="docutils literal notranslate"><span class="pre">014cc82d-0631-4b8b-bbfd-7e6c7d7c8f55_Ni_primary-bg_sub_image-1.tiff</span></code> as an example.</p>
-<p>The prefix of the file is defined in the configuration.
-It usually includes a long non-human-readable string, like <code class="docutils literal notranslate"><span class="pre">014cc82d-0631-4b8b-bbfd-7e6c7d7c8f55</span></code>.
-This string is the unique ID of a bluesky run, or in plain words, one measurement.
-It can be used to identify which data is from the same run.
-After it, you may find other information about the measurement like the sample name <code class="docutils literal notranslate"><span class="pre">Ni</span></code>.</p>
-<p>If there is a <code class="docutils literal notranslate"><span class="pre">-</span></code> in file name. Usually, it means that the file is a part of the data from the measurement.
-Which part it is is indicated by the name of the data key.
-For example, <code class="docutils literal notranslate"><span class="pre">bg_sub_image</span></code> here means the data key of background subtracted image.
-There might be multiple background subtracted images in one run so there is usually a number to index the image,
-like <code class="docutils literal notranslate"><span class="pre">1</span></code> in the example.</p>
-<p>The data keys and their meanings are defined in the schemas shown below.</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>dk_sub_image: the array of dark dark subtracted image
-bg_sub_image: the array of dark dark subtracted background subtracted image
-mask: the array of mask where 0 is good pixel and 1 is bad pixel
-chi_Q: the array of momentum transfer Q in azimuthal integration result I(Q)
-chi_I: the array of intensity in I azimuthal integration result I(Q)
-chi_max: the maximum value of I in azimuthal integration result I(Q)
-chi_argmax: the value of Q at the maximum I in azimuthal integration result I(Q)
-iq_Q: the array of momentum transfer Q in the cropped and interpolated I(Q)
-iq_I: the array of intensity I in the cropped and interpolated I(Q)
-sq_Q: the array of momentum transfer Q in the structure factor S(Q)
-sq_S: the array of intensity I in the structure factor S(Q)
-fq_Q: the array of momentum transfer Q in the reduced structure factor F(Q)
-fq_F: the array of intensity I in the reduced structure factor F(Q)
-gr_r: the array of atomic pair distance r in the reduced pair distribution function G(r)
-gr_G: the array of pair distribution function G in the reduced pair distribution function G(r)
-gr_max: the maximum value of G in the reduced pair distribution function G(r)
-gr_argmax: the value of r at the maximum of G in the reduced pair distribution function G(r)
-</pre></div>
-</div>
-<p>The schemas may be different depending on the version of package.
-If you would like to find out what is schemas for the package on your local machine, please run the command below
-in terminal:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="o">-</span><span class="n">c</span> <span class="s2">&quot;from pdfstream.schemas import analysis_out_schemas, print_data_keys; print_data_keys(analysis_out_schemas)&quot;</span>
-</pre></div>
-</div>
-<p>You can find the meanings of the data keys in the output.</p>
-</div>
-<div class="section" id="i-miss-the-good-old-days">
-<h3>I miss the good old days<a class="headerlink" href="#i-miss-the-good-old-days" title="Permalink to this headline">¶</a></h3>
-<p>The xpd server also offers users the option to go back to the good old days of xpdAn.
-By using <code class="docutils literal notranslate"><span class="pre">export_files_in_xpdan_style</span> <span class="pre">=</span> <span class="pre">True</span></code> in the configuraion file, the xpd server will output the files
-in the same type of what xpdan uses and in the directory structure.</p>
-<p>Below is an example of the output using the xpdAn file type and directory structure.</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>tiff_base
-└── Ni
-    ├── dark_sub
-    │   ├── 10fd020b-6704-4ba9-a016-d422484904f5_Ni_primary-bg_sub_image-0.tiff
-    │   ├── 10fd020b-6704-4ba9-a016-d422484904f5_Ni_primary-dk_sub_image-0.tiff
-    │   └── 10fd020b-6704-4ba9-a016-d422484904f5_Ni_primary-mask-0.tiff
-    ├── fq
-    │   └── d80fdb8d-0186-40f4-9aa4-9705a7cb915e_Ni_primary-fq_Q-fq_F-1.txt
-    ├── integration
-    │   └── d80fdb8d-0186-40f4-9aa4-9705a7cb915e_Ni_primary-chi_Q-chi_I-1.txt
-    ├── iq
-    │   └── d80fdb8d-0186-40f4-9aa4-9705a7cb915e_Ni_primary-iq_Q-iq_I-1.txt
-    ├── mask
-    │   └── d80fdb8d-0186-40f4-9aa4-9705a7cb915e_Ni_primary-mask-1.npy
-    ├── meta
-    │   └── 10fd020b-6704-4ba9-a016-d422484904f5_Ni_meta.json
-    ├── pdf
-    │   └── d80fdb8d-0186-40f4-9aa4-9705a7cb915e_Ni_primary-gr_r-gr_G-1.txt
-    ├── scalar_data
-    │   └── 10fd020b-6704-4ba9-a016-d422484904f5_Ni_primary.csv
-    └── sq
-        └── d80fdb8d-0186-40f4-9aa4-9705a7cb915e_Ni_primary-sq_Q-sq_S-1.txt
-</pre></div>
-</div>
-</div>
-</div>
-<div class="section" id="how-to-see-the-data-during-the-experiment">
-<span id="xpd-server-figures"></span><h2>How to see the data during the experiment?<a class="headerlink" href="#how-to-see-the-data-during-the-experiment" title="Permalink to this headline">¶</a></h2>
-<p>The data will be visualized in windows. The windows will pop up when you start the server and the plot will
-automatically show up when you are running the experiments using xpdacq.</p>
-<p>The images will be plotted in a two dimensional colorful histogram, you can move the cursor onto one point and
-the pixel values in horizontal and vertical line across the point will be shown in the panels around the image.
-Below is an example of the masked dark subtracted diffraction image.</p>
-<div class="figure align-default">
-<img alt="../_images/masked_image.png" src="../_images/masked_image.png" />
-</div>
-<p>The reduced data like XRD and PDF will be plotted in a waterfall plot, you can change the x-offset and y-offset
-to move the curves in two dimensions. Below is an example of the waterfall plot of PDF.</p>
-<div class="figure align-default">
-<img alt="../_images/gr.png" src="../_images/gr.png" />
-</div>
-<p>The scalar data like the maximum points will be plotted in a line plot. The x-axis will be the independent
-variable in the measurement. In the example below, the coordinates of maximum point in XRD and PDF are plotted
-as a function of temperature.</p>
-<div class="figure align-default">
-<img alt="../_images/max.png" src="../_images/max.png" />
-</div>
-</div>
-<div class="section" id="how-to-user-configuration-during-the-experiment">
-<h2>How to user configuration during the experiment?<a class="headerlink" href="#how-to-user-configuration-during-the-experiment" title="Permalink to this headline">¶</a></h2>
-<p>Users can give some of their own data to the server and let it use the data to do the analysis.</p>
-<div class="section" id="how-to-use-user-defined-calibration">
-<h3>How to use user defined calibration?<a class="headerlink" href="#how-to-use-user-defined-calibration" title="Permalink to this headline">¶</a></h3>
-<p>Users can save their own calibration data in the poni file and replace the poni file specified in the
-configuration file of the server with it. Thus, the server will use the calibration data from the user.</p>
-<p>For example, if the setting in the configuration is
-<code class="docutils literal notranslate"><span class="pre">calib_base</span> <span class="pre">=</span> <span class="pre">/nsls2/xf28id1/xpdacq_data/user_data/config_base</span></code> and <code class="docutils literal notranslate"><span class="pre">poni_file</span> <span class="pre">=</span> <span class="pre">xpdAcq_calib_info.poni</span></code>,
-what users need to do is to copy and paste their poni file to replace the <code class="docutils literal notranslate"><span class="pre">xpdAcq_calib_info.poni</span></code> in the
-directory <code class="docutils literal notranslate"><span class="pre">/nsls2/xf28id1/xpdacq_data/user_data/config_base</span></code>.</p>
-</div>
-<div class="section" id="how-to-use-a-user-defined-mask">
-<h3>How to use a user defined mask?<a class="headerlink" href="#how-to-use-a-user-defined-mask" title="Permalink to this headline">¶</a></h3>
-<p>If users would like to apply their own mask before the auto masking, they can give a key word argument
-<code class="docutils literal notranslate"><span class="pre">user_config</span></code> in the xrun to specify the mask file that they would like to use.
-The maks file can be a tiff file, a npy file or a numpy text file.
-Below is an example of the code.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">xrun</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">user_config</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;mask_file&quot;</span><span class="p">:</span> <span class="s2">&quot;./my_mask.tiff&quot;</span><span class="p">})</span>
-</pre></div>
-</div>
-<p>If users would like to use their mask file as it is without any further auto masking, they can add a statement
-like the example below.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">xrun</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">user_config</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;auto_mask&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;mask_file&quot;</span><span class="p">:</span> <span class="s2">&quot;./my_mask.tiff&quot;</span><span class="p">})</span>
-</pre></div>
-</div>
-<p>If users don’t want any masking, they can disable the auto masking with applying the mask as the following.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">xrun</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">user_config</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;auto_mask&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">})</span>
-</pre></div>
-</div>
 </div>
 </div>
 </div>
@@ -794,10 +543,10 @@ like the example below.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="xpdvis_server.html" class="btn btn-neutral float-right" title="XPDVis Server" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="../tutorials2/index.html" class="btn btn-neutral float-right" title="Advanced Users Documents" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="zmq_proxy.html" class="btn btn-neutral float-left" title="ZMQ Proxy" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="xpd_server.html" class="btn btn-neutral float-left" title="XPD Server" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

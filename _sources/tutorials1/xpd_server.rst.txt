@@ -260,6 +260,40 @@ in terminal::
 
 You can find the meanings of the data keys in the output.
 
+I miss the good old days
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+The xpd server also offers users the option to go back to the good old days of xpdAn.
+By using ``export_files_in_xpdan_style = True`` in the configuraion file, the xpd server will output the files
+in the same type of what xpdan uses and in the directory structure.
+
+Below is an example of the output using the xpdAn file type and directory structure.
+
+.. code-block:: text
+
+    tiff_base
+    └── Ni
+        ├── dark_sub
+        │   ├── 10fd020b-6704-4ba9-a016-d422484904f5_Ni_primary-bg_sub_image-0.tiff
+        │   ├── 10fd020b-6704-4ba9-a016-d422484904f5_Ni_primary-dk_sub_image-0.tiff
+        │   └── 10fd020b-6704-4ba9-a016-d422484904f5_Ni_primary-mask-0.tiff
+        ├── fq
+        │   └── d80fdb8d-0186-40f4-9aa4-9705a7cb915e_Ni_primary-fq_Q-fq_F-1.txt
+        ├── integration
+        │   └── d80fdb8d-0186-40f4-9aa4-9705a7cb915e_Ni_primary-chi_Q-chi_I-1.txt
+        ├── iq
+        │   └── d80fdb8d-0186-40f4-9aa4-9705a7cb915e_Ni_primary-iq_Q-iq_I-1.txt
+        ├── mask
+        │   └── d80fdb8d-0186-40f4-9aa4-9705a7cb915e_Ni_primary-mask-1.npy
+        ├── meta
+        │   └── 10fd020b-6704-4ba9-a016-d422484904f5_Ni_meta.json
+        ├── pdf
+        │   └── d80fdb8d-0186-40f4-9aa4-9705a7cb915e_Ni_primary-gr_r-gr_G-1.txt
+        ├── scalar_data
+        │   └── 10fd020b-6704-4ba9-a016-d422484904f5_Ni_primary.csv
+        └── sq
+            └── d80fdb8d-0186-40f4-9aa4-9705a7cb915e_Ni_primary-sq_Q-sq_S-1.txt
+
 .. _xpd-server-figures:
 
 How to see the data during the experiment?
@@ -284,3 +318,46 @@ variable in the measurement. In the example below, the coordinates of maximum po
 as a function of temperature.
 
 .. figure:: ../_static/max.png
+
+
+How to user configuration during the experiment?
+------------------------------------------------
+
+Users can give some of their own data to the server and let it use the data to do the analysis.
+
+How to use user defined calibration?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Users can save their own calibration data in the poni file and replace the poni file specified in the
+configuration file of the server with it. Thus, the server will use the calibration data from the user.
+
+For example, if the setting in the configuration is
+``calib_base = /nsls2/xf28id1/xpdacq_data/user_data/config_base`` and ``poni_file = xpdAcq_calib_info.poni``,
+what users need to do is to copy and paste their poni file to replace the ``xpdAcq_calib_info.poni`` in the
+directory ``/nsls2/xf28id1/xpdacq_data/user_data/config_base``.
+
+How to use a user defined mask?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If users would like to apply their own mask before the auto masking, they can give a key word argument
+``user_config`` in the xrun to specify the mask file that they would like to use.
+The maks file can be a tiff file, a npy file or a numpy text file.
+Below is an example of the code.
+
+.. code-block:: python
+
+    xrun(0, 0, user_config={"mask_file": "./my_mask.tiff"})
+
+If users would like to use their mask file as it is without any further auto masking, they can add a statement
+like the example below.
+
+.. code-block:: python
+
+    xrun(0, 0, user_config={"auto_mask": False, "mask_file": "./my_mask.tiff"})
+
+If users don't want any masking, they can disable the auto masking with applying the mask as the following.
+
+.. code-block:: python
+
+    xrun(0, 0, user_config={"auto_mask": False})
+
