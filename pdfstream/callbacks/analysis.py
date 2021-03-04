@@ -301,7 +301,7 @@ def process(
         data["dk_sub_image"] = np.subtract(raw_img, dk_img)
     # background subtraction
     if dk_sub_bg_img is not None:
-        data["bg_sub_image"] = np.subtract(data, dk_sub_bg_img)
+        data["bg_sub_image"] = np.subtract(data["dk_sub_image"], dk_sub_bg_img)
     # if no calibration, output data now
     if ai is None:
         return data
