@@ -33,7 +33,8 @@ def query_ai(
         The azimuthal integrator.
     """
     if calibration_md_key not in start:
-        raise ValueError("Missing key {} in start document.".format(calibration_md_key))
+        io.server_message("Missing key {} in start document.".format(calibration_md_key))
+        return None
     return io.load_ai_from_calib_result(start[calibration_md_key])
 
 

@@ -86,7 +86,8 @@ class BasicAnalysisConfig(ConfigParser):
         elif name is None:
             self._raw_db = None
         elif name == "temp":
-            print("Warning: a temporary db is created for raw db. It will be destroy at the end of the session.")
+            io.server_message(
+                "Warning: a temporary db is created for raw db. It will be destroy at the end of the session.")
             self._raw_db = databroker.v2.temp()
         else:
             self._raw_db = databroker.catalog[name]
@@ -267,7 +268,7 @@ def process(
     *,
     user_config: UserConfig,
     raw_img: np.ndarray,
-    ai: AzimuthalIntegrator,
+    ai: tp.Union[None, AzimuthalIntegrator],
     dk_img: np.ndarray = None,
     dk_sub_bg_img: np.ndarray = None,
     integ_setting: dict = None,
@@ -275,29 +276,44 @@ def process(
     pdfgetx_setting: dict = None,
 ) -> dict:
     """The function to process the data from event."""
-    data = dict()
+    # initialize the data dictionary
+    data = {
+        "dk_sub_image": raw_img.copy(),
+        "bg_sub_image": raw_img.copy(),
+        "mask": np.zeros_like(raw_img),
+        "chi_Q": np.array([0.]),
+        "chi_I": np.array([0.]),
+        "chi_max": 0.,
+        "chi_argmax": 0.,
+        "iq_Q": np.array([0.]),
+        "iq_I": np.array([0.]),
+        "sq_Q": np.array([0.]),
+        "sq_S": np.array([0.]),
+        "fq_Q": np.array([0.]),
+        "fq_F": np.array([0.]),
+        "gr_r": np.array([0.]),
+        "gr_G": np.array([0.]),
+        "gr_max": 0.,
+        "gr_argmax": 0.
+    }
     # dark subtraction
-    if dk_img is None:
-        dk_img = np.zeros_like(raw_img)
-    dk_sub_img = np.subtract(raw_img, dk_img)
-    data.update({"dk_sub_image": dk_sub_img})
+    if dk_img is not None:
+        data["dk_sub_image"] = np.subtract(raw_img, dk_img)
     # background subtraction
-    if dk_sub_bg_img is None:
-        dk_sub_bg_img = np.zeros_like(dk_sub_img)
-    bg_sub_img = np.subtract(dk_sub_img, dk_sub_bg_img)
-    data.update({"bg_sub_image": bg_sub_img})
+    if dk_sub_bg_img is not None:
+        data["bg_sub_image"] = np.subtract(data["dk_sub_image"], dk_sub_bg_img)
+    # if no calibration, output data now
+    if ai is None:
+        return data
     # do auto masking if specified
     if user_config.do_auto_masking:
-        mask, _ = integ.auto_mask(bg_sub_img, ai, mask_setting=mask_setting, user_mask=user_config.user_mask)
+        data["mask"], _ = integ.auto_mask(data["bg_sub_image"], ai, mask_setting=mask_setting,
+                                          user_mask=user_config.user_mask)
     # if user gives a mask, use it
     elif user_config.user_mask is not None:
-        mask = user_config.user_mask.copy()
-    # if user disable auto masking and doesn't give a mask, make a transparent mask
-    else:
-        mask = np.zeros_like(bg_sub_img)
-    data.update({"mask": mask})
+        data["mask"] = user_config.user_mask.copy()
     # integration
-    x, y = ai.integrate1d(bg_sub_img, mask=mask, **integ_setting)
+    x, y = ai.integrate1d(data["bg_sub_image"], mask=data["mask"], **integ_setting)
     chi_max_ind = np.argmax(y)
     data.update({"chi_Q": x, "chi_I": y, "chi_max": y[chi_max_ind], "chi_argmax": x[chi_max_ind]})
     # transformation
