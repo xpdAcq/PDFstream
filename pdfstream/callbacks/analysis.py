@@ -236,7 +236,8 @@ class AnalysisStream(LiveDispatcher):
         )
         super(AnalysisStream, self).descriptor(doc)
 
-    def event(self, doc, _md=None):
+    def process_data(self, doc) -> dict:
+        """Process the data in the event doc. Return a dictionary of processed data."""
         # the raw image in the data
         raw_img = from_event.get_image_from_event(doc, det_name=self.cache["det_name"])
         # the independent variables in the data
@@ -257,8 +258,11 @@ class AnalysisStream(LiveDispatcher):
             )
         )
         # the final output data is a combination of the independent variables and processed data
-        data = dict(**indep_data, **an_data)
-        self.process_event(EventDoc(data=data, descriptor=doc["descriptor"]))
+        return dict(**indep_data, **an_data)
+
+    def event(self, doc, _md=None):
+        data = self.process_data(doc)
+        self.process_event(dict(data=data, descriptor=doc["descriptor"]))
 
     def stop(self, doc, _md=None):
         super(AnalysisStream, self).stop(doc)
@@ -329,33 +333,6 @@ def process(
         }
     )
     return data
-
-
-class EventDoc(dict):
-    """A simplified event document for callbacks.
-
-    It only contains two necessary key: data and descriptor. The data is the dictionary of data key and data
-    value and the descriptor is the uid of the descriptor from the original event.
-    """
-
-    def __init__(self, data: dict, descriptor: str, **kwargs):
-        super().__init__(data=data, descriptor=descriptor, **kwargs)
-
-    @property
-    def data(self):
-        return self["data"]
-
-    @data.setter
-    def data(self, val: dict):
-        self["data"] = val
-
-    @property
-    def descriptor(self):
-        return self["descriptor"]
-
-    @descriptor.setter
-    def descriptor(self, val: dict):
-        self["descriptor"] = val
 
 
 class BasicExportConfig(ConfigParser):
