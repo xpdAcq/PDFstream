@@ -114,7 +114,13 @@ class LSQRunRouter(RunRouter):
 
     def __init__(self, config: LSQConfig):
         factory = LSQFactory(config)
-        super(LSQRunRouter, self).__init__([factory], handler_registry={"NPY_SEQ": NumpySeqHandler})
+        super(LSQRunRouter, self).__init__(
+            [factory],
+            handler_registry={
+                "NPY_SEQ": NumpySeqHandler,
+                "AD_TIFF": AreaDetectorTiffHandler
+            }
+        )
 
 
 class LSQFactory:

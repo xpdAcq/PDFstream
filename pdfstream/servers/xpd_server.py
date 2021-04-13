@@ -2,6 +2,7 @@
 import typing as tp
 
 import databroker
+from area_detector_handlers.handlers import AreaDetectorTiffHandler
 from bluesky.callbacks.zmq import Publisher
 from databroker.v2 import Broker
 from event_model import RunRouter
@@ -124,7 +125,10 @@ class XPDRouter(RunRouter):
         factory = XPDFactory(config)
         super(XPDRouter, self).__init__(
             [factory],
-            handler_registry={"NPY_SEQ": NumpySeqHandler}
+            handler_registry={
+                "NPY_SEQ": NumpySeqHandler,
+                "AD_TIFF": AreaDetectorTiffHandler
+            }
         )
 
 
