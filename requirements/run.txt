@@ -9,3 +9,4 @@ xray-vision
 suitcase-csv
 suitcase-tiff
 suitcase-json-metadata
+area-detector-handlers
