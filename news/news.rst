@@ -4,7 +4,7 @@
 
 **Changed:**
 
-* <news item>
+* The image data can be any array with dimensions N as long as N >= 2. The first N - 2 dimensions will be averaged.
 
 **Deprecated:**
 
