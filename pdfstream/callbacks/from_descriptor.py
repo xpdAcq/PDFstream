@@ -21,11 +21,6 @@ def yield_1d_array(data_keys: dict) -> tp.Generator[str, None, None]:
 def find_one_image(descriptor: tp.Dict[str, dict]) -> str:
     """Find the key of image data in descriptor."""
     for key, dct in descriptor["data_keys"].items():
-        if dct["dtype"] == "array" and _is_image(dct["shape"]):
+        if dct["dtype"] == "array" and len(dct["shape"]) >= 2:
             return key
-    raise ValueNotFoundError("No image array found in descriptor (uid: {})".format(descriptor["uid"]))
-
-
-def _is_image(shape: list) -> bool:
-    """Whether the shape has 2 dimension that has rank larger than 1."""
-    return sum([1 for s in shape if s > 1]) == 2
+    raise ValueNotFoundError("No image array found in {}".format(", ".format(descriptor["data_keys"].keys())))

@@ -136,14 +136,14 @@ def get_dk_run(start: dict, db: Broker, dk_id_key: str) -> typing.Union[BlueskyR
     return None
 
 
-def get_img_from_run(run: BlueskyRunFromGenerator, det_name: str) -> ndarray:
+def get_img_from_run(run: BlueskyRunFromGenerator, det_name: str, ndim: int = 3) -> ndarray:
     """Read a single image of a detector from a run (databroker v2)."""
     ds = run.primary.read()
     img: ndarray = ds[det_name].values
-    # remove all single dimensions
-    img = numpy.squeeze(img)
-    if img.ndim != 2:
-        raise ValueError("Invalid number of dimension for an image: {}. Expect 2.".format(img.ndim))
+    if img.ndim < ndim:
+        raise ValueError("Invalid number of dimension for an image: {}. Expect >= {}.".format(img.ndim, ndim))
+    if img.ndim > 2:
+        img = img.mean(axis=tuple(range(img.ndim - 2)))
     return img
 
 

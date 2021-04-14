@@ -9,7 +9,7 @@ def get_image_from_event(
     event: typing.Dict[str, typing.Any],
     det_name: str
 ) -> numpy.ndarray:
-    """Read the image data from the event. It will be transferred to a numpy array.
+    """Read the image data from the event. It will be transferred to a 2D numpy array.
 
     Parameters
     ----------
@@ -25,16 +25,16 @@ def get_image_from_event(
         The two dimensional array of image.
     """
     data = event['data'][det_name]
-    return squeeze_to_image(data)
+    return get_average_frame(data)
 
 
-def squeeze_to_image(
-    arr: typing.Union[list, ndarray],
-    ndim: int = 2
+def get_average_frame(
+    arr: typing.Union[list, ndarray]
 ) -> ndarray:
-    """Squeez the array to a 2d image array."""
-    arr1 = numpy.asarray(arr)
-    img = numpy.squeeze(arr1)
-    if img.ndim != ndim:
-        raise ValueError("Invalid image dimension. Expect {} but this is {}".format(ndim, img.ndim))
+    """Get the average frame from a list of frames."""
+    img = numpy.asarray(arr)
+    if img.ndim < 2:
+        raise ValueError("Invalid image dimension {}. A image should have at least 2 dimensions.".format(img.ndim))
+    if img.ndim > 2:
+        img = img.mean(axis=tuple(range(img.ndim - 2)))
     return img

@@ -29,6 +29,7 @@ KAPTON_IMG_FILE = resource_filename('tests', 'test_data/Kapton_img_file.tiff')
 BLACK_IMG_FILE = resource_filename('tests', 'test_data/black_img.tiff')
 WHITE_IMG_FILE = resource_filename('tests', 'test_data/white_img.tiff')
 NI_IMG = load_img(NI_IMG_FILE)
+NI_FRAMES = numpy.expand_dims(NI_IMG, 0)
 KAPTON_IMG = load_img(KAPTON_IMG_FILE)
 NI_GR = load_array(NI_GR_FILE)
 NI_CHI = load_array(NI_CHI_FILE)
@@ -112,11 +113,11 @@ def array_stream():
 def db_with_dark_and_light() -> Broker:
     """A database with a dark run and a light run inside. The last one is light and the first one is dark."""
     db = databroker.v2.temp()
-    dark_data = [{"pe1_image": np.zeros_like(NI_IMG)}]
+    dark_data = [{"pe1_image": np.zeros_like(NI_FRAMES)}]
     dark_uid = str(uuid.uuid4())
     for name, doc in gen_stream(dark_data, {"dark_frame": True}, uid=dark_uid):
         db.v1.insert(name, doc)
-    light_data = [{"pe1_image": NI_IMG}]
+    light_data = [{"pe1_image": NI_FRAMES}]
     for name, doc in gen_stream(light_data, dict(**START_DOC, sc_dk_field_uid=dark_uid)):
         db.v1.insert(name, doc)
     return db
@@ -130,10 +131,10 @@ def db_with_img_and_bg_img() -> Broker:
     sample_name = "Kapton"
     dk_uid = str(uuid.uuid4())
     dk_meta = {"dark_frame": True}
-    dk_data = [{"pe1_image": np.ones_like(NI_IMG)}]
+    dk_data = [{"pe1_image": np.ones_like(NI_FRAMES)}]
     bg_meta = {"sample_name": sample_name, "sc_dk_field_uid": dk_uid}
-    bg_data = [{"pe1_image": 2 * np.ones_like(NI_IMG)}]
-    img_data = [{"pe1_image": 2 * np.ones_like(NI_IMG) + NI_IMG}]
+    bg_data = [{"pe1_image": 2 * np.ones_like(NI_FRAMES)}]
+    img_data = [{"pe1_image": 2 * np.ones_like(NI_FRAMES) + NI_FRAMES}]
     img_meta = dict(**START_DOC, bkgd_sample_name=sample_name, sc_dk_field_uid=dk_uid, sample_name="Ni")
     for name, doc in gen_stream(dk_data, dk_meta, uid=dk_uid):
         db.v1.insert(name, doc)
@@ -148,14 +149,14 @@ def db_with_img_and_bg_img() -> Broker:
 def db_with_dark_and_scan() -> Broker:
     """A database with a dark run and a motor scan inside. The last one is light and the first one is dark."""
     db = databroker.v2.temp()
-    dark_data = [{"pe1_image": np.zeros_like(NI_IMG)}]
+    dark_data = [{"pe1_image": np.zeros_like(NI_FRAMES)}]
     dark_uid = str(uuid.uuid4())
     for name, doc in gen_stream(dark_data, {"dark_frame": True}, uid=dark_uid):
         db.v1.insert(name, doc)
     light_data = [
-        {"pe1_image": NI_IMG, "temperature": 0},
-        {"pe1_image": NI_IMG, "temperature": 1},
-        {"pe1_image": NI_IMG, "temperature": 3}
+        {"pe1_image": NI_FRAMES, "temperature": 0},
+        {"pe1_image": NI_FRAMES, "temperature": 1},
+        {"pe1_image": NI_FRAMES, "temperature": 3}
     ]
     start = dict(**START_DOC)
     start.update(
@@ -174,11 +175,11 @@ def db_with_dark_and_scan() -> Broker:
 def db_with_dark_and_calib() -> Broker:
     """A database with a dark run and a light run inside. The last one is light and the first one is dark."""
     db = databroker.v2.temp()
-    dark_data = [{"pe1_image": np.zeros_like(NI_IMG)}]
+    dark_data = [{"pe1_image": np.zeros_like(NI_FRAMES)}]
     dark_uid = str(uuid.uuid4())
     for name, doc in gen_stream(dark_data, {"dark_frame": True}, uid=dark_uid):
         db.v1.insert(name, doc)
-    light_data = [{"pe1_image": NI_IMG}]
+    light_data = [{"pe1_image": NI_FRAMES}]
     for name, doc in gen_stream(
         light_data, dict(
             sample_composition="Ni",
@@ -200,10 +201,10 @@ def db_with_dark_bg_no_calib() -> Broker:
     sample_name = "Kapton"
     dk_uid = str(uuid.uuid4())
     dk_meta = {"dark_frame": True}
-    dk_data = [{"pe1_image": np.ones_like(NI_IMG)}]
+    dk_data = [{"pe1_image": np.ones_like(NI_FRAMES)}]
     bg_meta = {"sample_name": sample_name, "sc_dk_field_uid": dk_uid}
-    bg_data = [{"pe1_image": 2 * np.ones_like(NI_IMG)}]
-    img_data = [{"pe1_image": 2 * np.ones_like(NI_IMG) + NI_IMG}]
+    bg_data = [{"pe1_image": 2 * np.ones_like(NI_FRAMES)}]
+    img_data = [{"pe1_image": 2 * np.ones_like(NI_FRAMES) + NI_FRAMES}]
     img_meta = dict(**START_DOC, bkgd_sample_name=sample_name, sc_dk_field_uid=dk_uid, sample_name="Ni")
     img_meta.pop("calibration_md")
     for name, doc in gen_stream(dk_data, dk_meta, uid=dk_uid):
