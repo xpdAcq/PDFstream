@@ -23,4 +23,4 @@ def find_one_image(descriptor: tp.Dict[str, dict]) -> str:
     for key, dct in descriptor["data_keys"].items():
         if dct["dtype"] == "array" and len(dct["shape"]) >= 2:
             return key
-    raise ValueNotFoundError("No image array found in {}".format(", ".format(descriptor["data_keys"].keys())))
+    raise ValueNotFoundError("No image array found in {}".format(", ".join(descriptor["data_keys"].keys())))
