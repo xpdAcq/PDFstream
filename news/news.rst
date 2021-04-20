@@ -16,7 +16,7 @@
 
 **Fixed:**
 
-* <news item>
+* Use v1 databroker interface for the query of background and dark images info due to the broken xarray conversion in v2 databroker.
 
 **Security:**
 
