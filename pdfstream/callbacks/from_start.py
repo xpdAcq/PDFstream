@@ -3,7 +3,7 @@ import itertools
 import typing
 
 import numpy
-from databroker.core import BlueskyRunFromGenerator
+from databroker import Header
 from databroker.v2 import Broker
 from numpy import ndarray
 
@@ -84,9 +84,9 @@ def query_bg_img(
     result = list(db.search({sample_name_key: sample_name}))
     if len(result) == 0:
         return None
-    bg_run = db[result[-1]]
-    img = get_img_from_run(bg_run, det_name=det_name)
-    bg_start = get_start_of_run(bg_run)
+    bg_run = db.v1[result[-1]]
+    img = get_img_from_run_v1(bg_run, det_name=det_name)
+    bg_start = get_start_of_run_v1(bg_run)
     dk_img = query_dk_img(bg_start, det_name=det_name, db=db, dk_id_key=dk_id_key) if dk_id_key else None
     return numpy.subtract(img, dk_img) if dk_img is not None else img
 
@@ -122,24 +122,23 @@ def query_dk_img(
     dk_img :
         The raw dark image. If not found, None.
     """
-    dk_run = get_dk_run(start, db, dk_id_key)
+    dk_run = get_dk_run_v1(start, db, dk_id_key)
     if dk_run is None:
         return None
-    return get_img_from_run(dk_run, det_name)
+    return get_img_from_run_v1(dk_run, det_name)
 
 
-def get_dk_run(start: dict, db: Broker, dk_id_key: str) -> typing.Union[BlueskyRunFromGenerator, None]:
+def get_dk_run_v1(start: dict, db: Broker, dk_id_key: str) -> typing.Union[Header, None]:
     """Get the dark image run id. If not found, return None."""
     if db and dk_id_key and dk_id_key in start:
         dk_id = start[dk_id_key]
-        return db[dk_id]
+        return db.v1[dk_id]
     return None
 
 
-def get_img_from_run(run: BlueskyRunFromGenerator, det_name: str, ndim: int = 3) -> ndarray:
+def get_img_from_run_v1(run: Header, det_name: str, ndim: int = 3) -> ndarray:
     """Read a single image of a detector from a run (databroker v2)."""
-    ds = run.primary.read()
-    img: ndarray = ds[det_name].values
+    img = mean(run.data(det_name))
     if img.ndim < ndim:
         raise ValueError("Invalid number of dimension for an image: {}. Expect >= {}.".format(img.ndim, ndim))
     if img.ndim > 2:
@@ -147,9 +146,19 @@ def get_img_from_run(run: BlueskyRunFromGenerator, det_name: str, ndim: int = 3)
     return img
 
 
-def get_start_of_run(run: BlueskyRunFromGenerator):
+def mean(images: typing.Iterable[ndarray]) -> ndarray:
+    """Calculate mean of an iterator of numpy array."""
+    image_iter = iter(images)
+    avg_image = next(image_iter)
+    count = 1
+    for image in image_iter:
+        avg_image += image
+    return avg_image / count
+
+
+def get_start_of_run_v1(run: Header):
     """Read the start document of a run (databroker v2)."""
-    return run.metadata['start']
+    return run.start
 
 
 def query_bt_info(

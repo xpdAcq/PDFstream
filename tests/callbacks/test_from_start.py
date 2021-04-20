@@ -8,7 +8,7 @@ from pdfstream.data import ni_dspacing_file
 
 def test_query_ai(db_with_dark_and_light):
     db = db_with_dark_and_light
-    start = mod.get_start_of_run(db[-1])
+    start = db[-1].metadata["start"]
     mod.query_ai(start, "calibration_md")
 
 
@@ -21,7 +21,7 @@ def test_query_ai(db_with_dark_and_light):
 )
 def test_get_img_from_run(db_with_dark_and_light, det_name, shape):
     db = db_with_dark_and_light
-    img = mod.get_img_from_run(db[-1], det_name)
+    img = mod.get_img_from_run_v1(db.v1[-1], det_name)
     assert img.shape == shape
 
 
@@ -34,7 +34,7 @@ def test_get_img_from_run(db_with_dark_and_light, det_name, shape):
 )
 def test_query_dk_img(db_with_dark_and_light, dk_id_key, shape):
     db = db_with_dark_and_light
-    start = mod.get_start_of_run(db[-1])
+    start = db[-1].metadata["start"]
     dk_img = mod.query_dk_img(start, det_name="pe1_image", db=db, dk_id_key=dk_id_key)
     if shape:
         assert isinstance(dk_img, np.ndarray)
