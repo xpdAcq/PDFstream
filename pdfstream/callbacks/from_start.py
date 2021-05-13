@@ -9,6 +9,7 @@ from numpy import ndarray
 
 import pdfstream.io as io
 from pdfstream.data import ni_dspacing_file
+from pdfstream.errors import ValueNotFoundError
 
 
 def query_ai(
@@ -33,8 +34,7 @@ def query_ai(
         The azimuthal integrator.
     """
     if calibration_md_key not in start:
-        io.server_message("Missing key {} in start document.".format(calibration_md_key))
-        return None
+        raise ValueNotFoundError("Missing key {} in start document.".format(calibration_md_key))
     return io.load_ai_from_calib_result(start[calibration_md_key])
 
 
@@ -123,24 +123,32 @@ def query_dk_img(
         The raw dark image. If not found, None.
     """
     dk_run = get_dk_run_v1(start, db, dk_id_key)
-    if dk_run is None:
-        return None
     return get_img_from_run_v1(dk_run, det_name)
 
 
-def get_dk_run_v1(start: dict, db: Broker, dk_id_key: str) -> typing.Union[Header, None]:
+def get_dk_run_v1(start: dict, db: Broker, dk_id_key: str) -> typing.Union[Header]:
     """Get the dark image run id. If not found, return None."""
-    if db and dk_id_key and dk_id_key in start:
-        dk_id = start[dk_id_key]
+    if not db:
+        raise ValueNotFoundError("db is None.")
+    if not dk_id_key:
+        raise ValueNotFoundError("dk_id_key is None.")
+    if dk_id_key not in start:
+        raise ValueNotFoundError("No such a key in start: {}".format(dk_id_key))
+    dk_id = start[dk_id_key]
+    try:
         return db.v1[dk_id]
-    return None
+    except KeyError:
+        raise ValueNotFoundError("No such a run in db: {}".format(dk_id))
 
 
-def get_img_from_run_v1(run: Header, det_name: str, ndim: int = 3) -> ndarray:
+def get_img_from_run_v1(run: Header, det_name: str) -> ndarray:
     """Read a single image of a detector from a run (databroker v2)."""
-    img = mean(run.data(det_name))
-    if img.ndim < ndim:
-        raise ValueError("Invalid number of dimension for an image: {}. Expect >= {}.".format(img.ndim, ndim))
+    if det_name not in run.fields():
+        raise ValueNotFoundError("No such a det_name '{}' in run '{}'".format(det_name, run.uid))
+    try:
+        img = mean(run.data(det_name))
+    except StopIteration:
+        raise ValueNotFoundError("No images data for '{}' in run '{}'".format(det_name, run.uid))
     if img.ndim > 2:
         img = img.mean(axis=tuple(range(img.ndim - 2)))
     return img
@@ -175,12 +183,16 @@ def query_bt_info(
         elif isinstance(composition, str):
             composition_str = composition
         else:
-            raise ValueError("Cannot parse composition: {}".format(type(composition)))
+            io.server_message(
+                "Cannot parse composition '{}'. Use default '{}'".format(composition, default_composition))
+            composition_str = default_composition
     else:
+        io.server_message("'{}' is not in start.".format(composition_key))
         composition_str = default_composition
     if wavelength_key in start:
         wavelength = float(start[wavelength_key])
     else:
+        io.server_message("'{}' is not in start.".format(wavelength_key))
         wavelength = None
     return {
         "composition": composition_str,

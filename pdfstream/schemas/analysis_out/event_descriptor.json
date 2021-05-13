@@ -110,10 +110,6 @@
           "$ref": "#/definitions/data_key",
           "description": "the array of dark dark subtracted image"
         },
-        "bg_sub_image": {
-          "$ref": "#/definitions/data_key",
-          "description": "the array of dark dark subtracted background subtracted image"
-        },
         "mask": {
           "$ref": "#/definitions/data_key",
           "description": "the array of mask where 0 is good pixel and 1 is bad pixel"
@@ -175,25 +171,7 @@
           "description": "the value of r at the maximum of G in the reduced pair distribution function G(r)"
         }
       },
-      "required": [
-        "dk_sub_image",
-        "bg_sub_image",
-        "mask",
-        "chi_Q",
-        "chi_I",
-        "chi_max",
-        "chi_argmax",
-        "iq_Q",
-        "iq_I",
-        "sq_Q",
-        "sq_S",
-        "fq_Q",
-        "fq_F",
-        "gr_r",
-        "gr_G",
-        "gr_max",
-        "gr_argmax"
-      ]
+      "required": []
     },
     "uid": {
       "type": "string",

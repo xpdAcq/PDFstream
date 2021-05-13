@@ -1,3 +1,4 @@
+import copy
 import typing as tp
 from configparser import ConfigParser, Error
 from pathlib import Path
@@ -6,10 +7,10 @@ import databroker
 import event_model
 import matplotlib.pyplot as plt
 import numpy as np
+from bluesky.callbacks.best_effort import BestEffortCallback
 from bluesky.callbacks.stream import LiveDispatcher
 from databroker.v2 import Broker
 from event_model import RunRouter
-from matplotlib.gridspec import GridSpec
 from pyFAI.azimuthalIntegrator import AzimuthalIntegrator
 from suitcase.csv import Serializer as CSVSerializer
 from suitcase.json_metadata import Serializer as JsonSerializer
@@ -22,14 +23,17 @@ import pdfstream.callbacks.from_start as from_start
 import pdfstream.integration.tools as integ
 import pdfstream.io as io
 from pdfstream.callbacks.basic import MyLiveImage, LiveMaskedImage, LiveWaterfall, DataFrameExporter, \
-    SmartScalarPlot, StackedNumpyTextExporter, NumpyExporter
+    StackedNumpyTextExporter, NumpyExporter
+from pdfstream.errors import ValueNotFoundError
 from pdfstream.units import LABELS
 from pdfstream.vend.formatters import SpecialStr
 
 try:
     from diffpy.pdfgetx import PDFConfig, PDFGetter
+
+    _PDFGETX_AVAILABLE = True
 except ImportError:
-    pass
+    _PDFGETX_AVAILABLE = False
 
 
 def no_need_to_refresh_db(db: tp.Union[None, Broker], name: tp.Union[None, str]):
@@ -131,10 +135,6 @@ class AnalysisConfig(BasicAnalysisConfig):
         return self.get("METADATA", "calibration_md_key")
 
     @property
-    def bkgd_sample_name_key(self):
-        return self.get("METADATA", "bkgd_sample_name_key")
-
-    @property
     def sample_name_key(self):
         return self.get("METADATA", "sample_name_key")
 
@@ -189,92 +189,104 @@ class AnalysisStream(LiveDispatcher):
     def __init__(self, config: AnalysisConfig):
         super(AnalysisStream, self).__init__()
         self.config = config
-        self.cache = {}
         self.db = config.raw_db
+        self.start_doc = {}
+        self.ai = None
+        self.bt_info = {}
+        self.image_key = ""
+        self.dark_image = None
 
     def start(self, doc, _md=None):
-        self.cache = dict()
-        self.cache["start"] = doc
-        self.cache["ai"] = from_start.query_ai(
-            doc,
-            calibration_md_key=self.config.calibration_md_key
-        )
-        self.cache["bt_info"] = from_start.query_bt_info(
-            doc,
-            composition_key=self.config.composition_key,
-            wavelength_key=self.config.wavelength_key,
-            default_composition="Ni"
-        )
-        self.cache["indeps"] = from_start.get_indeps(doc, exclude={"time"})
-        # load user config
-        user_config = UserConfig(allow_no_value=True)
-        user_config.read_start_doc(doc)
-        self.cache["user_config"] = user_config
+        self.clear_cache()
+        self.start_doc = doc
+        # find ai
+        try:
+            self.ai = from_start.query_ai(
+                doc,
+                calibration_md_key=self.config.calibration_md_key
+            )
+        except ValueNotFoundError as error:
+            self.ai = None
+            io.server_message(str(error))
+        # find bt info
+        try:
+            self.bt_info = from_start.query_bt_info(
+                doc,
+                composition_key=self.config.composition_key,
+                wavelength_key=self.config.wavelength_key,
+                default_composition="Ni"
+            )
+        except ValueNotFoundError as error:
+            self.bt_info = {}
+            io.server_message(str(error))
         # create new start
         new_start = dict(**doc, an_config=self.config.to_dict(), pdfstream_version=pdfstream.__version__)
-        super(AnalysisStream, self).start(new_start)
+        return super(AnalysisStream, self).start(new_start)
 
     def event_page(self, doc):
         for event_doc in event_model.unpack_event_page(doc):
             self.event(event_doc)
+        return super(AnalysisStream, self).event_page(doc)
 
     def descriptor(self, doc):
-        self.cache["det_name"] = from_desc.find_one_image(doc)
-        self.cache["dk_img"] = from_start.query_dk_img(
-            self.cache["start"],
-            db=self.db,
-            dk_id_key=self.config.dk_id_key,
-            det_name=self.cache["det_name"]
-        )
-        self.cache["dk_sub_bg_img"] = from_start.query_bg_img(
-            self.cache["start"],
-            bkgd_sample_name_key=self.config.bkgd_sample_name_key,
-            sample_name_key=self.config.sample_name_key,
-            det_name=self.cache["det_name"],
-            dk_id_key=self.config.dk_id_key,
-            db=self.db
-        )
-        super(AnalysisStream, self).descriptor(doc)
+        self.image_key = from_desc.find_one_image(doc)
+        try:
+            self.dark_image = from_start.query_dk_img(
+                self.start_doc,
+                db=self.db,
+                dk_id_key=self.config.dk_id_key,
+                det_name=self.image_key
+            )
+        except ValueNotFoundError as error:
+            self.dark_image = None
+            io.server_message(str(error))
+        return super(AnalysisStream, self).descriptor(doc)
+
+    def event(self, doc, _md=None):
+        data = self.process_data(doc)
+        return self.process_event(dict(data=data, descriptor=doc["descriptor"]))
+
+    def stop(self, doc, _md=None):
+        return super(AnalysisStream, self).stop(doc)
 
     def process_data(self, doc) -> dict:
         """Process the data in the event doc. Return a dictionary of processed data."""
         # the raw image in the data
-        raw_img = from_event.get_image_from_event(doc, det_name=self.cache["det_name"])
-        # the independent variables in the data
-        indep_data = {key: doc["data"][key] for key in self.cache["indeps"]}
+        raw_img = from_event.get_image_from_event(doc, det_name=self.image_key)
+        # copy the data
+        raw_data = {k: copy.copy(v) for k, v in doc["data"].items() if k != self.image_key}
         # process the data output a dictionary
         an_data = process(
-            user_config=self.cache['user_config'],
             raw_img=raw_img,
-            ai=self.cache["ai"],
-            dk_img=self.cache["dk_img"],
-            dk_sub_bg_img=self.cache["dk_sub_bg_img"],
+            ai=self.ai,
+            dk_img=self.dark_image,
             integ_setting=self.config.integ_setting,
             mask_setting=self.config.mask_setting,
             pdfgetx_setting=dict(
-                self.cache["bt_info"],
+                self.bt_info,
                 **self.config.trans_setting,
                 **self.config.grid_config
             )
         )
+        det = self.image_key.split('_')[0]
+        an_data = {"{}_{}".format(det, k): v for k, v in an_data.items()}
         # the final output data is a combination of the independent variables and processed data
-        return dict(**indep_data, **an_data)
+        return dict(**raw_data, **an_data)
 
-    def event(self, doc, _md=None):
-        data = self.process_data(doc)
-        self.process_event(dict(data=data, descriptor=doc["descriptor"]))
-
-    def stop(self, doc, _md=None):
-        super(AnalysisStream, self).stop(doc)
+    def clear_cache(self):
+        """Clear the cache."""
+        self.start_doc = {}
+        self.ai = None
+        self.bt_info = {}
+        self.image_key = ""
+        self.dark_image = None
 
 
 def process(
     *,
-    user_config: UserConfig,
     raw_img: np.ndarray,
     ai: tp.Union[None, AzimuthalIntegrator],
     dk_img: np.ndarray = None,
-    dk_sub_bg_img: np.ndarray = None,
     integ_setting: dict = None,
     mask_setting: dict = None,
     pdfgetx_setting: dict = None,
@@ -283,7 +295,6 @@ def process(
     # initialize the data dictionary
     data = {
         "dk_sub_image": raw_img.copy(),
-        "bg_sub_image": raw_img.copy(),
         "mask": np.zeros_like(raw_img),
         "chi_Q": np.array([0.]),
         "chi_I": np.array([0.]),
@@ -303,24 +314,23 @@ def process(
     # dark subtraction
     if dk_img is not None:
         data["dk_sub_image"] = np.subtract(raw_img, dk_img)
-    # background subtraction
-    if dk_sub_bg_img is not None:
-        data["bg_sub_image"] = np.subtract(data["dk_sub_image"], dk_sub_bg_img)
     # if no calibration, output data now
     if ai is None:
         return data
     # do auto masking if specified
-    if user_config.do_auto_masking:
-        data["mask"], _ = integ.auto_mask(data["bg_sub_image"], ai, mask_setting=mask_setting,
-                                          user_mask=user_config.user_mask)
-    # if user gives a mask, use it
-    elif user_config.user_mask is not None:
-        data["mask"] = user_config.user_mask.copy()
+    data["mask"], _ = integ.auto_mask(data["dk_sub_image"], ai, mask_setting=mask_setting)
     # integration
-    x, y = ai.integrate1d(data["bg_sub_image"], mask=data["mask"], **integ_setting)
+    x, y = ai.integrate1d(data["dk_sub_image"], mask=data["mask"], **integ_setting)
     chi_max_ind = np.argmax(y)
-    data.update({"chi_Q": x, "chi_I": y, "chi_max": y[chi_max_ind], "chi_argmax": x[chi_max_ind]})
+    data.update(
+        {
+            "chi_Q": x, "chi_I": y, "chi_max": y[chi_max_ind], "chi_argmax": x[chi_max_ind]
+        }
+    )
     # transformation
+    if not _PDFGETX_AVAILABLE:
+        io.server_message("diffpy.pdfgetx is not installed. No use [0.] for all the relevant data.")
+        return data
     pdfconfig = PDFConfig(dataformat="QA", **pdfgetx_setting)
     pdfgetter = PDFGetter(pdfconfig)
     pdfgetter(x, y)
@@ -543,15 +553,6 @@ class VisConfig(ConfigParser):
         }
 
     @property
-    def vis_bg_sub_image(self):
-        section = self["VIS BG SUB IMAGE"]
-        if not section.getboolean("enable", fallback=True):
-            return None
-        return {
-            "cmap": section.get("cmap", fallback="viridis")
-        }
-
-    @property
     def vis_dk_sub_image(self):
         section = self["VIS DK SUB IMAGE"]
         if not section.getboolean("enable", fallback=True):
@@ -660,13 +661,9 @@ class VisFactory:
             self.cb_lst.append(
                 MyLiveImage("dk_sub_image", **self.config.vis_dk_sub_image)
             )
-        if self.config.vis_bg_sub_image is not None:
-            self.cb_lst.append(
-                MyLiveImage("bg_sub_image", **self.config.vis_dk_sub_image)
-            )
         if self.config.vis_masked_image is not None:
             self.cb_lst.append(
-                LiveMaskedImage("bg_sub_image", "mask", **self.config.vis_masked_image)
+                LiveMaskedImage("dk_sub_image", "mask", **self.config.vis_masked_image)
             )
         # one dimensional array waterfall
         for xfield, yfield, vis_config in [
@@ -684,25 +681,8 @@ class VisFactory:
                 fig.show()
 
         # scalar data
-        fields_and_configs = [
-            ("chi_max", self.config.vis_chi_max),
-            ("chi_argmax", self.config.vis_chi_argmax),
-            ("gr_max", self.config.vis_gr_max),
-            ("gr_argmax", self.config.vis_gr_argmax)
-        ]
-        # make a figure of stacking axes
-        fig1 = plt.figure()
-        axes1 = [fig1.add_subplot(grid) for grid in GridSpec(len(fields_and_configs), 1, hspace=0)]
-        if len(axes1) > 1:
-            for ax in axes1[:-1]:
-                ax.get_xaxis().set_visible(False)
-        # link the axes with callbacks
-        for (field, vis_config), ax in zip(fields_and_configs, axes1):
-            if vis_config is not None:
-                self.cb_lst.append(
-                    SmartScalarPlot(field, ax=ax, **vis_config, marker="o")
-                )
-        fig1.show()
+        bec = BestEffortCallback(table_enabled=False)
+        self.cb_lst.append(bec)
 
     def __call__(self, name: str, doc: dict) -> tp.Tuple[list, list]:
         if name != "start":
