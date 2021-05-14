@@ -392,6 +392,13 @@ class ExporterFactory:
         return callbacks, []
 
 
+def _get_vlim(image: np.ndarray) -> tp.Tuple[float, float]:
+    """Get the vmin and vmax from a image."""
+    m = np.mean(image)
+    std = np.std(image)
+    return max(m - 2 * std, 0), m + 2 * std
+
+
 class VisConfig(ConfigParser):
     """The configuration of visualization."""
 
@@ -411,13 +418,15 @@ class VisConfig(ConfigParser):
     @property
     def vis_masked_image(self):
         return {
-            "cmap": "viridis"
+            "cmap": "viridis",
+            "limit_func": _get_vlim
         }
 
     @property
     def vis_dk_sub_image(self):
         return {
-            "cmap": "viridis"
+            "cmap": "viridis",
+            "limit_func": _get_vlim
         }
 
     @property
