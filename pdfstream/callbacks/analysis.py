@@ -1,15 +1,14 @@
 import copy
 import typing as tp
-from configparser import ConfigParser, Error
+from configparser import ConfigParser
 from pathlib import Path
 
-import databroker
 import event_model
 import matplotlib.pyplot as plt
 import numpy as np
 from bluesky.callbacks.best_effort import BestEffortCallback
 from bluesky.callbacks.stream import LiveDispatcher
-from databroker.v2 import Broker
+from databroker.v1 import Broker
 from event_model import RunRouter
 from pyFAI.azimuthalIntegrator import AzimuthalIntegrator
 from suitcase.csv import Serializer as CSVSerializer
@@ -22,8 +21,7 @@ import pdfstream.callbacks.from_event as from_event
 import pdfstream.callbacks.from_start as from_start
 import pdfstream.integration.tools as integ
 import pdfstream.io as io
-from pdfstream.callbacks.basic import MyLiveImage, LiveMaskedImage, LiveWaterfall, DataFrameExporter, \
-    StackedNumpyTextExporter, NumpyExporter
+from pdfstream.callbacks.basic import MyLiveImage, LiveMaskedImage, LiveWaterfall, StackedNumpyTextExporter
 from pdfstream.errors import ValueNotFoundError
 from pdfstream.units import LABELS
 from pdfstream.vend.formatters import SpecialStr
@@ -41,86 +39,38 @@ def no_need_to_refresh_db(db: tp.Union[None, Broker], name: tp.Union[None, str])
     return (db is not None and name == db.name) or (db is None and name is None)
 
 
-class UserConfig(ConfigParser):
-    """The configuration specified by the user in each run.
+class BasicConfig(ConfigParser):
+    """The basic class for all configuration."""
 
-    It tunes the configuration of the analysis stream. It is an one section ini configuration.
-    """
-    _section_name = "user_config"
-    _auto_mask = "auto_mask"
-    _mask_file = "mask_file"
-
-    @property
-    def _section(self):
-        return self[self._section_name]
-
-    @property
-    def do_auto_masking(self) -> bool:
-        """Do mask setting or not. Default True."""
-        return self._section.getboolean(self._auto_mask, fallback=True)
-
-    @property
-    def user_mask(self) -> tp.Union[None, np.ndarray]:
-        """The mask given by the user. Default None."""
-        mask_file = self._section.get(self._mask_file, fallback=None)
-        if mask_file:
-            return io.load_matrix_flexible(mask_file)
-        return None
-
-    def read_start_doc(self, start: dict):
-        """Load configuration from the start document. If keys do not exist, use empty dictionary."""
-        self.read_dict(
-            {self._section_name: start.get(self._section_name, {})}
-        )
+    def __init__(self):
+        super(BasicConfig, self).__init__(allow_no_value=True)
 
 
-class BasicAnalysisConfig(ConfigParser):
+class BasicAnalysisConfig(BasicConfig):
     """The basic configuration that is shared by analysis and calibration."""
 
-    def __init__(self, *args, **kwargs):
-        super(BasicAnalysisConfig, self).__init__(*args, **kwargs)
-        self._raw_db = None
+    def __init__(self):
+        super(BasicAnalysisConfig, self).__init__()
 
     @property
-    def raw_db(self) -> tp.Union[None, Broker]:
-        name = self.get("DATABASE", "raw_db", fallback=None)
-        if no_need_to_refresh_db(self._raw_db, name):
-            pass
-        # refresh the db
-        elif name is None:
-            self._raw_db = None
-        elif name == "temp":
-            io.server_message(
-                "Warning: a temporary db is created for raw db. It will be destroy at the end of the session.")
-            self._raw_db = databroker.v2.temp()
-        else:
-            self._raw_db = databroker.catalog[name]
-        return self._raw_db
-
-    @raw_db.setter
-    def raw_db(self, db: Broker):
-        section_name = "DATABASE"
-        db_key = "raw_db"
-        if section_name not in self.sections():
-            self.add_section(section_name)
-        self.set(section_name, db_key, db.name)
-        self._raw_db = db
+    def raw_db(self) -> str:
+        return self.get("DATABASE", "raw_db", fallback="")
 
     @property
     def dark_identifier(self):
-        return self.get("METADATA", "dk_identifier")
+        return self.get("METADATA", "dk_identifier", fallback="dark_frame")
 
     @property
     def dk_id_key(self):
-        return self.get("METADATA", "dk_id_key")
+        return self.get("METADATA", "dk_id_key", fallback="sc_dk_field_uid")
 
     @property
     def composition_key(self):
-        return self.get("METADATA", "composition_key")
+        return self.get("METADATA", "composition_key", fallback="sample_composition")
 
     @property
     def wavelength_key(self):
-        return self.get("METADATA", "wavelength_key")
+        return self.get("METADATA", "wavelength_key", fallback="bt_wavelength")
 
     def to_dict(self):
         """Convert the configuration to a dictionary."""
@@ -132,51 +82,43 @@ class AnalysisConfig(BasicAnalysisConfig):
 
     @property
     def calibration_md_key(self):
-        return self.get("METADATA", "calibration_md_key")
+        return self.get("METADATA", "calibration_md_key", fallback="calibration_md")
 
     @property
     def sample_name_key(self):
-        return self.get("METADATA", "sample_name_key")
+        return self.get("METADATA", "sample_name_key", fallback="sample_name")
 
     @property
     def mask_setting(self):
-        section = self["MASK SETTING"]
         return {
-            "alpha": section.getfloat("alpha"),
-            "edge": section.getint("edge"),
-            "lower_thresh": section.getfloat("lower_thresh"),
-            "upper_thresh": section.getfloat("upper_thresh")
+            "alpha": self.getfloat("ANALYSIS", "alpha", fallback=2.5),
+            "edge": self.getint("ANALYSIS", "edge", fallback=20),
+            "lower_thresh": self.getfloat("ANALYSIS", "lower_thresh", fallback=0.),
+            "upper_thresh": self.getfloat("ANALYSIS", "upper_thresh", fallback=None)
         }
 
     @property
     def integ_setting(self):
-        section = self["INTEGRATION SETTING"]
         return {
-            "npt": section.getint("npt"),
-            "correctSolidAngle": section.getboolean("correctSolidAngle"),
-            "polarization_factor": section.getfloat("polarization_factor"),
-            "method": section.get("method"),
-            "normalization_factor": section.getfloat("normalization_factor"),
+            "npt": self.getint("ANALYSIS", "npt", fallback=1024),
+            "correctSolidAngle": self.getboolean("ANALYSIS", "correctSolidAngle", fallback=False),
+            "polarization_factor": self.getfloat("ANALYSIS", "polarization_factor", fallback=0.99),
+            "method": self.get("ANALYSIS", "method", fallback="splitpixel"),
+            "normalization_factor": self.getfloat("ANALYSIS", "normalization_factor", fallback=1.),
             "unit": "q_A^-1"
         }
 
     @property
     def trans_setting(self):
-        section = self["TRANSFORMATION SETTING"]
         return {
-            "rpoly": section.getfloat("rpoly"),
-            "qmaxinst": section.getfloat("qmaxinst"),
-            "qmin": section.getfloat("qmin"),
-            "qmax": section.getfloat("qmax")
-        }
-
-    @property
-    def grid_config(self):
-        section = self["PDF SETTING"]
-        return {
-            "rmin": section.getfloat("rmin"),
-            "rmax": section.getfloat("rmax"),
-            "rstep": section.getfloat("rstep")
+            "rpoly": self.getfloat("ANALYSIS", "rpoly", fallback=1.2),
+            "qmaxinst": self.getfloat("ANALYSIS", "qmaxinst", fallback=24.),
+            "qmin": self.getfloat("ANALYSIS", "qmin", fallback=0.),
+            "qmax": self.getfloat("ANALYSIS", "qmax", fallback=22.),
+            "rmin": self.getfloat("ANALYSIS", "rmin", fallback=0.),
+            "rmax": self.getfloat("ANALYSIS", "rmax", fallback=30.),
+            "rstep": self.getfloat("ANALYSIS", "rstep", fallback=0.01),
+            "dataformat": "QA"
         }
 
 
@@ -189,7 +131,8 @@ class AnalysisStream(LiveDispatcher):
     def __init__(self, config: AnalysisConfig):
         super(AnalysisStream, self).__init__()
         self.config = config
-        self.db = config.raw_db
+        db_name = config.raw_db
+        self.db = Broker.named(db_name) if db_name else None
         self.start_doc = {}
         self.ai = None
         self.bt_info = {}
@@ -263,13 +206,10 @@ class AnalysisStream(LiveDispatcher):
             integ_setting=self.config.integ_setting,
             mask_setting=self.config.mask_setting,
             pdfgetx_setting=dict(
-                self.bt_info,
-                **self.config.trans_setting,
-                **self.config.grid_config
+                **self.bt_info,
+                **self.config.trans_setting
             )
         )
-        det = self.image_key.split('_')[0]
-        an_data = {"{}_{}".format(det, k): v for k, v in an_data.items()}
         # the final output data is a combination of the independent variables and processed data
         return dict(**raw_data, **an_data)
 
@@ -331,7 +271,7 @@ def process(
     if not _PDFGETX_AVAILABLE:
         io.server_message("diffpy.pdfgetx is not installed. No use [0.] for all the relevant data.")
         return data
-    pdfconfig = PDFConfig(dataformat="QA", **pdfgetx_setting)
+    pdfconfig = PDFConfig(**pdfgetx_setting)
     pdfgetter = PDFGetter(pdfconfig)
     pdfgetter(x, y)
     iq, sq, fq, gr = pdfgetter.iq, pdfgetter.sq, pdfgetter.fq, pdfgetter.gr
@@ -345,72 +285,33 @@ def process(
     return data
 
 
-class BasicExportConfig(ConfigParser):
-    """Basic configuration that is shared by export and calibration."""
+class ExportConfig(BasicConfig):
+    """The configuration of exporter."""
+
+    def get_exports(self):
+        return set(self.get("SUITCASE", "exports", fallback="tiff,json,csv,txt").replace(" ", "").split(","))
+
+    def get_file_prefix(self):
+        return SpecialStr(
+            self.get("SUITCASE", "file_prefix", fallback="{start[original_run_uid]}_{start[sample_name]}_"))
+
+    @property
+    def directory_template(self):
+        return SpecialStr(self.get("SUITCASE", "directory_template", fallback="{start[sample_name]}_data"))
 
     @property
     def tiff_base(self):
-        section = self["FILE SYSTEM"]
-        dir_path = section.get("tiff_base")
+        """Settings for the base folder."""
+        dir_path = self.get("SUITCASE", "tiff_base")
         if not dir_path:
-            raise Error("Missing tiff_base in configuration.")
+            dir_path = "~/pdfstream_data"
+            io.server_message("Missing tiff_base in configuration. Use '{}'".format(dir_path))
         path = Path(dir_path).expanduser()
         return path
 
     @tiff_base.setter
     def tiff_base(self, value: str):
-        self.set("FILE SYSTEM", "tiff_base", value)
-
-
-class ExportConfig(BasicExportConfig):
-    """The configuration of exporter."""
-    @property
-    def tiff_setting(self):
-        """Settings for all tiff files."""
-        section = self["TIFF SETTING"]
-        if not section.getboolean("enable", fallback=True):
-            return None
-        return {"file_prefix": SpecialStr(section.get("file_prefix"))}
-
-    @property
-    def json_setting(self):
-        """Settings for all json files of metadata."""
-        section = self["JSON SETTING"]
-        if not section.getboolean("enable", fallback=True):
-            return None
-        return {"file_prefix": SpecialStr(section.get("file_prefix"))}
-
-    @property
-    def csv_setting(self):
-        """Settings for the csv file of the scalr data like temperature."""
-        section = self["CSV SETTING"]
-        if not section.getboolean("enable", fallback=True):
-            return None
-        return {"file_prefix": SpecialStr(section.get("file_prefix"))}
-
-    @property
-    def npy_setting(self):
-        """Settings for the csv file of the processed data."""
-        section = self["NPY SETTING"]
-        if not section.getboolean("enable", fallback=True):
-            return None
-        return {"file_prefix": SpecialStr(section.get("file_prefix"))}
-
-    @property
-    def txt_setting(self):
-        """Settings for txt file of processed 1d data."""
-        section = self["NPY TXT SETTING"]
-        if not section.getboolean("enable", fallback=True):
-            return None
-        return {"file_prefix": SpecialStr(section.get("file_prefix"))}
-
-    @property
-    def msk_npy_setting(self):
-        """Settings for the npy file of the mask."""
-        section = self["MASK NPY SETTING"]
-        if not section.getboolean("enable", fallback=True):
-            return None
-        return {"file_prefix": SpecialStr(section.get("file_prefix"))}
+        self.set("SUITCASE", "tiff_base", value)
 
 
 class Exporter(RunRouter):
@@ -430,111 +331,58 @@ class ExporterFactory:
     def __call__(self, name: str, doc: dict) -> tp.Tuple[list, list]:
         if name != "start":
             return [], []
-        tiff_base = self.config.tiff_base
-        tiff_base.mkdir(exist_ok=True, parents=True)
-        callbacks = []
-        if self.config.tiff_setting is not None:
-            cb = TiffSerializer(
-                str(tiff_base.joinpath("images")),
-                **self.config.tiff_setting
-            )
-            callbacks.append(cb)
-        if self.config.json_setting is not None:
-            cb = JsonSerializer(
-                str(tiff_base.joinpath("metadata")),
-                **self.config.json_setting
-            )
-            callbacks.append(cb)
-        if self.config.csv_setting is not None:
-            cb = CSVSerializer(
-                str(tiff_base.joinpath("scalar_data")),
-                **self.config.csv_setting
-            )
-            callbacks.append(cb)
-        if self.config.npy_setting is not None:
-            cb = DataFrameExporter(
-                str(tiff_base.joinpath("array_data")),
-                **self.config.npy_setting
-            )
-            callbacks.append(cb)
-        return callbacks, []
-
-
-class ExporterXpdan(RunRouter):
-    """Export the processed data to file systems in an xpdan style file structure."""
-
-    def __init__(self, config: ExportConfig):
-        factory = ExporterXpdanFactory(config)
-        super().__init__([factory])
-
-
-class ExporterXpdanFactory:
-    """The factory that gives the callbacks to export analysis data to xpdan style directory structure."""
-
-    def __init__(self, config: ExportConfig):
-        self.config = config
-
-    def __call__(self, name: str, doc: dict) -> tp.Tuple[list, list]:
-        if name != "start":
-            return [], []
-        folder_name = doc.get("sample_name", "unknown_sample")
-        data_folder = self.config.tiff_base.joinpath(folder_name)
+        data_folder = self.config.tiff_base.joinpath(self.config.directory_template.format(start=doc))
         data_folder.mkdir(exist_ok=True, parents=True)
         callbacks = []
-        if self.config.tiff_setting is not None:
+        exports = self.config.get_exports()
+        file_prefix = self.config.get_file_prefix()
+        if "tiff" in exports:
             cb = TiffSerializer(
-                str(data_folder.joinpath("dark_sub")),
-                **self.config.tiff_setting
+                str(data_folder.joinpath("images")),
+                file_prefix=file_prefix
             )
             callbacks.append(cb)
-        if self.config.json_setting is not None:
+        if "json" in exports:
             cb = JsonSerializer(
-                str(data_folder.joinpath("meta")),
-                **self.config.json_setting
+                str(data_folder.joinpath("metadata")),
+                file_prefix=file_prefix
             )
             callbacks.append(cb)
-        if self.config.csv_setting is not None:
+        if "csv" in exports:
             cb = CSVSerializer(
                 str(data_folder.joinpath("scalar_data")),
-                **self.config.csv_setting
+                file_prefix=file_prefix
             )
             callbacks.append(cb)
-        if self.config.txt_setting is not None:
+        if "txt" in exports:
             cb = StackedNumpyTextExporter(
                 str(data_folder.joinpath("integration")),
-                **self.config.txt_setting,
+                file_prefix=file_prefix,
                 data_keys=["chi_Q", "chi_I"]
             )
             callbacks.append(cb)
             cb = StackedNumpyTextExporter(
                 str(data_folder.joinpath("iq")),
-                **self.config.txt_setting,
+                file_prefix=file_prefix,
                 data_keys=["iq_Q", "iq_I"]
             )
             callbacks.append(cb)
             cb = StackedNumpyTextExporter(
                 str(data_folder.joinpath("sq")),
-                **self.config.txt_setting,
+                file_prefix=file_prefix,
                 data_keys=["sq_Q", "sq_S"]
             )
             callbacks.append(cb)
             cb = StackedNumpyTextExporter(
                 str(data_folder.joinpath("fq")),
-                **self.config.txt_setting,
+                file_prefix=file_prefix,
                 data_keys=["fq_Q", "fq_F"]
             )
             callbacks.append(cb)
             cb = StackedNumpyTextExporter(
                 str(data_folder.joinpath("pdf")),
-                **self.config.txt_setting,
+                file_prefix=file_prefix,
                 data_keys=["gr_r", "gr_G"]
-            )
-            callbacks.append(cb)
-        if self.config.msk_npy_setting is not None:
-            cb = NumpyExporter(
-                str(data_folder.joinpath("mask")),
-                **self.config.msk_npy_setting,
-                data_keys=["mask"]
             )
             callbacks.append(cb)
         return callbacks, []
@@ -543,99 +391,58 @@ class ExporterXpdanFactory:
 class VisConfig(ConfigParser):
     """The configuration of visualization."""
 
+    def get_visualizers(self):
+        return set(
+            self.get("VISUALIZATION", "visualizers", fallback="masked_image,chi,fq,gr,best_effort").replace(" ",
+                                                                                                            "").split(
+                ","))
+
     @property
     def vis_masked_image(self):
-        section = self["VIS MASKED IMAGE"]
-        if not section.getboolean("enable", fallback=True):
-            return None
         return {
-            "cmap": section.get("cmap", fallback="viridis")
+            "cmap": "viridis"
         }
 
     @property
     def vis_dk_sub_image(self):
-        section = self["VIS DK SUB IMAGE"]
-        if not section.getboolean("enable", fallback=True):
-            return None
-        return {"cmap": section.get("cmap", fallback="viridis")}
+        return {
+            "cmap": "viridis"
+        }
 
     @property
     def vis_chi(self):
-        section = self["VIS CHI"]
-        if not section.getboolean("enable", fallback=True):
-            return None
         return {
-            "xlabel": section.get("xlabel", fallback=LABELS.chi[0]),
-            "ylabel": section.get("ylabel", fallback=LABELS.chi[1])
+            "xlabel": LABELS.chi[0],
+            "ylabel": LABELS.chi[1]
         }
 
     @property
     def vis_iq(self):
-        section = self["VIS IQ"]
-        if not section.getboolean("enable", fallback=True):
-            return None
         return {
-            "xlabel": section.get("xlabel", fallback=LABELS.iq[0]),
-            "ylabel": section.get("ylabel", fallback=LABELS.iq[1])
+            "xlabel": LABELS.iq[0],
+            "ylabel": LABELS.iq[1]
         }
 
     @property
     def vis_sq(self):
-        section = self["VIS SQ"]
-        if not section.getboolean("enable", fallback=True):
-            return None
         return {
-            "xlabel": section.get("xlabel", fallback=LABELS.sq[0]),
-            "ylabel": section.get("ylabel", fallback=LABELS.sq[1])
+            "xlabel": LABELS.sq[0],
+            "ylabel": LABELS.sq[1]
         }
 
     @property
     def vis_fq(self):
-        section = self["VIS FQ"]
-        if not section.getboolean("enable", fallback=True):
-            return None
         return {
-            "xlabel": section.get("xlabel", fallback=LABELS.fq[0]),
-            "ylabel": section.get("ylabel", fallback=LABELS.fq[1])
+            "xlabel": LABELS.fq[0],
+            "ylabel": LABELS.fq[1]
         }
 
     @property
     def vis_gr(self):
-        section = self["VIS GR"]
-        if not section.getboolean("enable", fallback=True):
-            return None
         return {
-            "xlabel": section.get("xlabel", fallback=LABELS.gr[0]),
-            "ylabel": section.get("ylabel", fallback=LABELS.gr[1])
+            "xlabel": LABELS.gr[0],
+            "ylabel": LABELS.gr[1]
         }
-
-    @property
-    def vis_gr_max(self):
-        section = self["VIS GR MAX"]
-        if not section.getboolean("enable", fallback=True):
-            return None
-        return {"ylabel": section.get("ylabel", fallback=LABELS.gr[1])}
-
-    @property
-    def vis_gr_argmax(self):
-        section = self["VIS GR ARGMAX"]
-        if not section.getboolean("enable", fallback=True):
-            return None
-        return {"ylabel": section.get("ylabel", fallback=LABELS.gr[0])}
-
-    @property
-    def vis_chi_max(self):
-        section = self["VIS CHI MAX"]
-        if not section.getboolean("enable", fallback=True):
-            return None
-        return {"ylabel": section.get("ylabel", fallback=LABELS.chi[1])}
-
-    @property
-    def vis_chi_argmax(self):
-        section = self["VIS CHI ARGMAX"]
-        if not section.getboolean("enable", fallback=True):
-            return None
-        return {"ylabel": section.get("ylabel", fallback=LABELS.chi[0])}
 
 
 class Visualizer(RunRouter):
@@ -656,24 +463,25 @@ class VisFactory:
     def __init__(self, config: VisConfig):
         self.config = config
         self.cb_lst = []
+        visualizers = self.config.get_visualizers()
         # images
-        if self.config.vis_dk_sub_image is not None:
+        if "dk_sub_image" in visualizers:
             self.cb_lst.append(
                 MyLiveImage("dk_sub_image", **self.config.vis_dk_sub_image)
             )
-        if self.config.vis_masked_image is not None:
+        if "masked_image" in visualizers:
             self.cb_lst.append(
                 LiveMaskedImage("dk_sub_image", "mask", **self.config.vis_masked_image)
             )
         # one dimensional array waterfall
-        for xfield, yfield, vis_config in [
-            ("chi_Q", "chi_I", self.config.vis_chi),
-            ("iq_Q", "iq_I", self.config.vis_iq),
-            ("sq_Q", "sq_S", self.config.vis_sq),
-            ("fq_Q", "fq_F", self.config.vis_fq),
-            ("gr_r", "gr_G", self.config.vis_gr)
+        for xfield, yfield, tag, vis_config in [
+            ("chi_Q", "chi_I", "chi", self.config.vis_chi),
+            ("iq_Q", "iq_I", "iq", self.config.vis_iq),
+            ("sq_Q", "sq_S", "sq", self.config.vis_sq),
+            ("fq_Q", "fq_F", "fq", self.config.vis_fq),
+            ("gr_r", "gr_G", "gr", self.config.vis_gr)
         ]:
-            if vis_config is not None:
+            if tag in visualizers:
                 fig = plt.figure()
                 self.cb_lst.append(
                     LiveWaterfall(xfield, yfield, ax=fig.add_subplot(111), **vis_config)
@@ -681,8 +489,9 @@ class VisFactory:
                 fig.show()
 
         # scalar data
-        bec = BestEffortCallback(table_enabled=False)
-        self.cb_lst.append(bec)
+        if "best_effort" in visualizers:
+            bec = BestEffortCallback(table_enabled=False)
+            self.cb_lst.append(bec)
 
     def __call__(self, name: str, doc: dict) -> tp.Tuple[list, list]:
         if name != "start":

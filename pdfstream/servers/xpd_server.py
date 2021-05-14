@@ -10,7 +10,7 @@ from ophyd.sim import NumpySeqHandler
 
 import pdfstream.io as io
 from pdfstream.callbacks.analysis import AnalysisConfig, VisConfig, ExportConfig, AnalysisStream, Exporter, \
-    Visualizer, no_need_to_refresh_db, ExporterXpdan
+    Visualizer, no_need_to_refresh_db
 from pdfstream.callbacks.calibration import CalibrationConfig, Calibration
 from pdfstream.servers import CONFIG_DIR, ServerNames
 from pdfstream.servers.base import ServerConfig, find_cfg_file, BaseServer, StartStopCallback
@@ -148,8 +148,6 @@ class XPDFactory:
             self.analysis[0].subscribe(Visualizer(config))
         if self.functionality["send_messages"]:
             self.analysis[0].subscribe(Publisher(**self.config.publisher_config))
-        if self.functionality["export_files_in_xpdan_style"]:
-            self.analysis[0].subscribe(ExporterXpdan(config))
 
     def __call__(self, name: str, doc: dict) -> tp.Tuple[list, list]:
         if name == "start":

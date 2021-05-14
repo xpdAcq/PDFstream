@@ -1,6 +1,5 @@
 import subprocess
 import typing as tp
-from configparser import Error
 from pathlib import Path
 
 import event_model
@@ -12,48 +11,43 @@ import pdfstream.callbacks.from_descriptor as fd
 import pdfstream.callbacks.from_event as fe
 import pdfstream.callbacks.from_start as fs
 import pdfstream.io as io
-from .analysis import BasicAnalysisConfig, BasicExportConfig
+from .analysis import BasicAnalysisConfig
 
 
-class CalibrationConfig(BasicAnalysisConfig, BasicExportConfig):
+class CalibrationConfig(BasicAnalysisConfig):
     """The configuration of the calibration callbacks."""
 
     @property
     def calib_identifier(self):
-        return self.get("METADATA", "calib_identifier")
+        return self.get("METADATA", "calib_identifier", fallback="calibration_md")
 
     @property
     def default_calibrant(self):
-        return self.get("CALIBRATION", "default_calibrant")
+        return self.get("CALIBRATION", "default_calibrant", fallback="Ni")
 
     @property
     def detector_key(self):
-        return self.get("METADATA", "detector_key")
+        return self.get("METADATA", "detector_key", fallback="detector")
 
     @property
     def calibrant_key(self):
-        return self.get("METADATA", "calibrant_key")
+        return self.get("METADATA", "calibrant_key", fallback="sample_composition")
 
     @property
     def calib_base(self):
-        dir_path = self.get("FILE SYSTEM", "calib_base")
+        dir_path = self.get("CALIBRATION", "calib_base")
         if not dir_path:
-            raise Error("Missing calib_base in configuration.")
-        path = Path(dir_path).expanduser()
-        return path
+            dir_path = pdfstream_calibration
+            io.server_message("Missing calib_base in configuration. Use '{}'.".format(dir_path))
+        return Path(dir_path).expanduser()
 
     @calib_base.setter
     def calib_base(self, value: str):
-        self.set("FILE SYSTEM", "calib_base", value)
-
-    @property
-    def calib_tiff_dir(self):
-        dir_path = self.tiff_base.joinpath("calib")
-        return dir_path
+        self.set("CALIBRATION", "calib_base", value)
 
     @property
     def poni_file(self):
-        return self.get("CALIBRATION", "poni_file")
+        return self.get("CALIBRATION", "poni_file", fallback="xpdAcq_calib_info.poni")
 
 
 class Calibration(CallbackBase):
@@ -102,9 +96,8 @@ class Calibration(CallbackBase):
     def stop(self, doc):
         super(Calibration, self).stop(doc)
         self.config.calib_base.mkdir(parents=True, exist_ok=True)
-        self.config.calib_tiff_dir.mkdir(parents=True, exist_ok=True)
         poni_path = self.config.calib_base.joinpath(self.config.poni_file)
-        tiff_path = self.config.calib_tiff_dir.joinpath("{}-calib.tiff".format(self.cache["start"]["uid"]))
+        tiff_path = self.config.calib_base.joinpath("{}-calib.tiff".format(self.cache["start"]["uid"]))
         calc_image_and_save(
             self.cache["img_sum"],
             self.cache["img_num"],

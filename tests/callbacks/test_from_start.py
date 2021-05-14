@@ -77,20 +77,6 @@ def test_query_bt_info(start, composition_key, wavelength_key, expect):
     assert (pdfconfig.composition, pdfconfig.wavelength) == expect
 
 
-def test_query_bg_img(db_with_img_and_bg_img, test_data):
-    db = db_with_img_and_bg_img
-    run = db[-1]
-    bg_img = mod.query_bg_img(
-        run.metadata['start'],
-        bkgd_sample_name_key="bkgd_sample_name",
-        sample_name_key="sample_name",
-        det_name="pe1_image",
-        db=db,
-        dk_id_key="sc_dk_field_uid"
-    )
-    assert np.array_equal(bg_img, np.ones_like(test_data["Ni_img"]))
-
-
 @pytest.mark.parametrize(
     "start, expect",
     [
