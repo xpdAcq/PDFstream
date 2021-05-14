@@ -1,7 +1,8 @@
+from bluesky.callbacks.best_effort import BestEffortCallback
+
 from pdfstream.callbacks.analysis import Visualizer, VisConfig
 from pdfstream.servers import CONFIG_DIR, ServerNames
 from pdfstream.servers.base import BaseServer, ServerConfig, find_cfg_file
-from pdfstream.servers.base import StartStopCallback
 
 
 class XPDVisServerConfig(VisConfig, ServerConfig):
@@ -14,7 +15,9 @@ class XPDVisServer(BaseServer):
 
     def __init__(self, config: XPDVisServerConfig):
         super(XPDVisServer, self).__init__(config.address, prefix=config.prefix)
-        self.subscribe(StartStopCallback())
+        bec = BestEffortCallback()
+        bec.disable_plots()
+        self.subscribe(bec)
         self.subscribe(Visualizer(config))
 
 

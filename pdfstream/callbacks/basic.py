@@ -254,6 +254,7 @@ class SmartScalarPlot(CallbackBase):
         self.callback = None
 
     def start(self, doc):
+        self.ax.cla()
         super(SmartScalarPlot, self).start(doc)
         self.clear()
         indeps = fs.get_indeps(doc, exclude={"time"})

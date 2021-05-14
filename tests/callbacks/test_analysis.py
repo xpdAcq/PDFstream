@@ -23,6 +23,7 @@ def test_AnalysisStream(db_with_img_and_bg_img, use_db):
     # validate that output data
     out_validator = Validator(analysis_out_schemas)
     ld.subscribe(out_validator)
+    ld.subscribe(print)
     # validate the input data
     in_validator = Validator(analysis_in_schemas)
     for name, doc in db[-1].canonical(fill="yes", strict_order=True):

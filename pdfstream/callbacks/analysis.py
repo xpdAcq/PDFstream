@@ -6,7 +6,6 @@ from pathlib import Path
 import event_model
 import matplotlib.pyplot as plt
 import numpy as np
-from bluesky.callbacks.best_effort import BestEffortCallback
 from bluesky.callbacks.stream import LiveDispatcher
 from databroker.v1 import Broker
 from event_model import RunRouter
@@ -21,7 +20,8 @@ import pdfstream.callbacks.from_event as from_event
 import pdfstream.callbacks.from_start as from_start
 import pdfstream.integration.tools as integ
 import pdfstream.io as io
-from pdfstream.callbacks.basic import MyLiveImage, LiveMaskedImage, LiveWaterfall, StackedNumpyTextExporter
+from pdfstream.callbacks.basic import MyLiveImage, LiveMaskedImage, LiveWaterfall, StackedNumpyTextExporter, \
+    SmartScalarPlot
 from pdfstream.errors import ValueNotFoundError
 from pdfstream.units import LABELS
 from pdfstream.vend.formatters import SpecialStr
@@ -184,7 +184,6 @@ class AnalysisStream(LiveDispatcher):
     def event_page(self, doc):
         for event_doc in event_model.unpack_event_page(doc):
             self.event(event_doc)
-        return super(AnalysisStream, self).event_page(doc)
 
     def descriptor(self, doc):
         self.image_key = from_desc.find_one_image(doc)
@@ -411,7 +410,7 @@ class VisConfig(ConfigParser):
             self.get(
                 "VISUALIZATION",
                 "visualizers",
-                fallback="masked_image,chi,fq,gr,best_effort"
+                fallback="masked_image,chi,fq,gr,chi_max,chi_argmax"
             ).replace(" ", "").split(",")
         )
 
@@ -507,11 +506,14 @@ class VisFactory:
                     LiveWaterfall(xfield, yfield, ax=fig.add_subplot(111), **vis_config)
                 )
                 fig.show()
-
-        # scalar data
-        if "best_effort" in visualizers:
-            bec = BestEffortCallback(table_enabled=False)
-            self.cb_lst.append(bec)
+        for field in ("gr_max", "gr_argmax", "chi_max", "chi_argmax"):
+            if field in visualizers:
+                fig = plt.figure()
+                ax = fig.add_subplot(111)
+                self.cb_lst.append(
+                    SmartScalarPlot(field, ax=ax, marker="o")
+                )
+                fig.show()
 
     def __call__(self, name: str, doc: dict) -> tp.Tuple[list, list]:
         if name != "start":
