@@ -14,19 +14,19 @@ class ServerConfig(ConfigParser):
 
     @property
     def host(self):
-        return self.get("LISTEN TO", "host")
+        return self.get("LISTEN TO", "host", fallback="localhost")
+
+    @property
+    def port(self):
+        return self.getint("LISTEN TO", "port", fallback=5568)
 
     @property
     def address(self):
         return self.host, self.port
 
     @property
-    def port(self):
-        return self.getint("LISTEN TO", "port")
-
-    @property
     def prefix(self):
-        return self.get("LISTEN TO", "prefix", fallback="").encode()
+        return self.get("LISTEN TO", "prefix", fallback="raw").encode()
 
 
 class BaseServer(RemoteDispatcher):

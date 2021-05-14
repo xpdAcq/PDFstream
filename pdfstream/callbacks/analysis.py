@@ -76,6 +76,9 @@ class BasicAnalysisConfig(BasicConfig):
         """Convert the configuration to a dictionary."""
         return {s: dict(self.items(s)) for s in self.sections()}
 
+    def read_user_config(self, user_config):
+        self.read_dict({"ANALYSIS": user_config})
+
 
 class AnalysisConfig(BasicAnalysisConfig):
     """The configuration for analysis callbacks."""
@@ -141,7 +144,8 @@ class AnalysisStream(LiveDispatcher):
 
     def __init__(self, config: AnalysisConfig):
         super(AnalysisStream, self).__init__()
-        self.config = config
+        self.init_config = config
+        self.config = None
         db_name = config.raw_db
         self.db = Broker.named(db_name) if db_name else None
         self.start_doc = {}
@@ -152,6 +156,10 @@ class AnalysisStream(LiveDispatcher):
 
     def start(self, doc, _md=None):
         self.clear_cache()
+        # copy the default config and read the user config
+        self.config = copy.deepcopy(self.init_config)
+        self.config.read_user_config(doc.get("user_config", {}))
+        # record start doc for later use
         self.start_doc = doc
         # find ai
         try:
@@ -228,6 +236,7 @@ class AnalysisStream(LiveDispatcher):
 
     def clear_cache(self):
         """Clear the cache."""
+        self.config = None
         self.start_doc = {}
         self.ai = None
         self.bt_info = {}
