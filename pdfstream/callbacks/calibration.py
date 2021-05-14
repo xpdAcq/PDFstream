@@ -19,6 +19,10 @@ from .analysis import BasicAnalysisConfig
 class CalibrationConfig(BasicAnalysisConfig):
     """The configuration of the calibration callbacks."""
 
+    def __init__(self, *args, **kwargs):
+        super(CalibrationConfig, self).__init__(*args, **kwargs)
+        self.add_section("CALIBRATION")
+
     @property
     def calib_identifier(self):
         return self.get("METADATA", "calib_identifier", fallback="calibration_md")
@@ -39,7 +43,7 @@ class CalibrationConfig(BasicAnalysisConfig):
     def calib_base(self):
         dir_path = self.get("CALIBRATION", "calib_base")
         if not dir_path:
-            dir_path = pdfstream_calibration
+            dir_path = "~/pdfstream_calibration"
             io.server_message("Missing calib_base in configuration. Use '{}'.".format(dir_path))
         return Path(dir_path).expanduser()
 

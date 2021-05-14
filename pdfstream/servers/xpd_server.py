@@ -20,7 +20,8 @@ class XPDConfig(AnalysisConfig, VisConfig, ExportConfig, CalibrationConfig):
 
     def __init__(self, *args, **kwargs):
         super(XPDConfig, self).__init__(*args, **kwargs)
-        self._an_db = None
+        self.add_section("PUBLISH TO")
+        self.add_section("FUNCTIONALITY")
 
     @property
     def an_db(self) -> str:

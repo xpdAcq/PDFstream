@@ -42,6 +42,12 @@ def no_need_to_refresh_db(db: tp.Union[None, Broker], name: tp.Union[None, str])
 class BasicAnalysisConfig(ConfigParser):
     """The basic configuration that is shared by analysis and calibration."""
 
+    def __init__(self, *args, **kwargs):
+        super(BasicAnalysisConfig, self).__init__(*args, **kwargs)
+        self.add_section("DATABASE")
+        self.add_section("METADATA")
+        self.add_section("ANALYSIS")
+
     @property
     def raw_db(self) -> str:
         return self.get("DATABASE", "raw_db", fallback="")
@@ -305,6 +311,10 @@ def process(
 class ExportConfig(ConfigParser):
     """The configuration of exporter."""
 
+    def __init__(self, *args, **kwargs):
+        super(ExportConfig, self).__init__(*args, **kwargs)
+        self.add_section("SUITCASE")
+
     def get_exports(self):
         return set(self.get("SUITCASE", "exports", fallback="tiff,json,csv,txt").replace(" ", "").split(","))
 
@@ -385,11 +395,18 @@ class ExporterFactory:
 class VisConfig(ConfigParser):
     """The configuration of visualization."""
 
+    def __init__(self, *args, **kwargs):
+        super(VisConfig, self).__init__(*args, **kwargs)
+        self.add_section("VISUALIZATION")
+
     def get_visualizers(self):
         return set(
-            self.get("VISUALIZATION", "visualizers", fallback="masked_image,chi,fq,gr,best_effort").replace(" ",
-                                                                                                            "").split(
-                ","))
+            self.get(
+                "VISUALIZATION",
+                "visualizers",
+                fallback="masked_image,chi,fq,gr,best_effort"
+            ).replace(" ", "").split(",")
+        )
 
     @property
     def vis_masked_image(self):

@@ -12,6 +12,10 @@ from pdfstream.vend.qt_kicker import install_qt_kicker
 class ServerConfig(ConfigParser):
     """The configuration for the server."""
 
+    def __init__(self, *args, **kwargs):
+        super(ServerConfig, self).__init__(*args, **kwargs)
+        self.add_section("LISTEN TO")
+
     @property
     def host(self):
         return self.get("LISTEN TO", "host", fallback="localhost")
