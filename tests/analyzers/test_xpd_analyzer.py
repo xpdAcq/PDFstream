@@ -8,9 +8,6 @@ fn = resource_filename("tests", "configs/xpd_server.ini")
 def test_XPDAnalyzer(db_with_img_and_bg_img, tmpdir):
     raw_db = db_with_img_and_bg_img
     config = mod.XPDAnalyzerConfig()
-    config.add_section("DATABASE")
-    config.add_section("SUITCASE")
-    config.add_section("CALIBRATION")
     config.tiff_base = str(tmpdir)
     config.calib_base = str(tmpdir)
     config.read(fn)
