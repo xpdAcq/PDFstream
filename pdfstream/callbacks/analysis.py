@@ -42,12 +42,6 @@ def no_need_to_refresh_db(db: tp.Union[None, Broker], name: tp.Union[None, str])
 class BasicAnalysisConfig(ConfigParser):
     """The basic configuration that is shared by analysis and calibration."""
 
-    def __init__(self, *args, **kwargs):
-        super(BasicAnalysisConfig, self).__init__(*args, **kwargs)
-        self.add_section("DATABASE")
-        self.add_section("METADATA")
-        self.add_section("ANALYSIS")
-
     @property
     def raw_db(self) -> str:
         return self.get("DATABASE", "raw_db", fallback="")
@@ -78,6 +72,12 @@ class BasicAnalysisConfig(ConfigParser):
 
 class AnalysisConfig(BasicAnalysisConfig):
     """The configuration for analysis callbacks."""
+
+    def __init__(self, *args, **kwargs):
+        super(AnalysisConfig, self).__init__(*args, **kwargs)
+        self.add_section("DATABASE")
+        self.add_section("METADATA")
+        self.add_section("ANALYSIS")
 
     @property
     def calibration_md_key(self):
