@@ -45,7 +45,7 @@ def make_and_run(
         warnings.simplefilter("ignore")
     if not cfg_file:
         cfg_file = find_cfg_file(CONFIG_DIR, ServerNames.xpdvis)
-    config = XPDVisServerConfig(allow_no_value=True)
+    config = XPDVisServerConfig()
     config.read(cfg_file)
     server = XPDVisServer(config)
     if not test_mode:

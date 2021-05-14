@@ -5,12 +5,14 @@ from pathlib import Path
 import event_model
 import numpy as np
 from bluesky.callbacks.core import CallbackBase
+from databroker.v1 import Broker
 from tifffile import TiffWriter
 
 import pdfstream.callbacks.from_descriptor as fd
 import pdfstream.callbacks.from_event as fe
 import pdfstream.callbacks.from_start as fs
 import pdfstream.io as io
+from pdfstream.errors import ValueNotFoundError
 from .analysis import BasicAnalysisConfig
 
 
@@ -57,7 +59,8 @@ class Calibration(CallbackBase):
         super(Calibration, self).__init__()
         self.config = config
         self.cache = dict()
-        self.db = self.config.raw_db
+        raw_db = self.config.raw_db
+        self.db = Broker.named(raw_db) if raw_db else None
         self.test = test
 
     def start(self, doc):
@@ -76,12 +79,16 @@ class Calibration(CallbackBase):
     def descriptor(self, doc):
         super(Calibration, self).descriptor(doc)
         self.cache["det_name"] = fd.find_one_image(doc)
-        self.cache["dk_img"] = fs.query_dk_img(
-            self.cache["start"],
-            db=self.db,
-            dk_id_key=self.config.dk_id_key,
-            det_name=self.cache["det_name"]
-        )
+        try:
+            self.cache["dk_img"] = fs.query_dk_img(
+                self.cache["start"],
+                db=self.db,
+                dk_id_key=self.config.dk_id_key,
+                det_name=self.cache["det_name"]
+            )
+        except ValueNotFoundError as error:
+            self.cache["dk_img"] = None
+            io.server_message(str(error))
 
     def event_page(self, doc):
         for event_doc in event_model.unpack_event_page(doc):

@@ -39,18 +39,8 @@ def no_need_to_refresh_db(db: tp.Union[None, Broker], name: tp.Union[None, str])
     return (db is not None and name == db.name) or (db is None and name is None)
 
 
-class BasicConfig(ConfigParser):
-    """The basic class for all configuration."""
-
-    def __init__(self):
-        super(BasicConfig, self).__init__(allow_no_value=True)
-
-
-class BasicAnalysisConfig(BasicConfig):
+class BasicAnalysisConfig(ConfigParser):
     """The basic configuration that is shared by analysis and calibration."""
-
-    def __init__(self):
-        super(BasicAnalysisConfig, self).__init__()
 
     @property
     def raw_db(self) -> str:
@@ -312,7 +302,7 @@ def process(
     return data
 
 
-class ExportConfig(BasicConfig):
+class ExportConfig(ConfigParser):
     """The configuration of exporter."""
 
     def get_exports(self):

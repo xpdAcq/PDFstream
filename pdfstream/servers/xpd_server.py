@@ -87,7 +87,7 @@ def make_and_run(
         warnings.simplefilter("ignore")
     if not cfg_file:
         cfg_file = find_cfg_file(CONFIG_DIR, ServerNames.xpd)
-    config = XPDServerConfig(allow_no_value=True)
+    config = XPDServerConfig()
     config.read(cfg_file)
     server = XPDServer(config)
     if config.functionality["visualize_data"] and not test_mode:
