@@ -2,7 +2,6 @@ from configparser import Error
 from pathlib import Path
 
 import matplotlib.pyplot as plt
-import numpy as np
 import pytest
 from pkg_resources import resource_filename
 
@@ -18,12 +17,13 @@ def test_AnalysisStream(db_with_img_and_bg_img, use_db):
     db = db_with_img_and_bg_img
     config = an.AnalysisConfig()
     config.read(fn)
-    if use_db:
-        config.raw_db = db
     ld = an.AnalysisStream(config)
+    if use_db:
+        ld.db = db.v1
     # validate that output data
     out_validator = Validator(analysis_out_schemas)
     ld.subscribe(out_validator)
+    ld.subscribe(print)
     # validate the input data
     in_validator = Validator(analysis_in_schemas)
     for name, doc in db[-1].canonical(fill="yes", strict_order=True):
@@ -52,8 +52,8 @@ def test_AnalysisStream_with_UserConfig(db_with_img_and_bg_img, user_config):
     db = db_with_img_and_bg_img
     config = an.AnalysisConfig()
     config.read(fn)
-    config.raw_db = db
     ld = an.AnalysisStream(config)
+    ld.db = db.v1
     # validate that output data
     out_validator = Validator(analysis_out_schemas)
     ld.subscribe(out_validator)
@@ -69,9 +69,9 @@ def test_AnalysisStream_with_UserConfig(db_with_img_and_bg_img, user_config):
 def test_Visualizer(db_with_dark_and_scan):
     db = db_with_dark_and_scan
     config = an.AnalysisConfig()
-    config.raw_db = db
     config.read(fn)
     ld = an.AnalysisStream(config)
+    ld.db = db.v1
     config1 = pdfstream.callbacks.analysis.VisConfig()
     config1.read(fn)
     config1.fig = plt.figure()
@@ -86,8 +86,8 @@ def test_Exporter(db_with_dark_and_scan, tmpdir):
     db = db_with_dark_and_scan
     config = an.AnalysisConfig()
     config.read(fn)
-    config.raw_db = db
     ld = an.AnalysisStream(config)
+    ld.db = db.v1
     ep_config = pdfstream.callbacks.analysis.ExportConfig()
     ep_config.read(fn)
     ep_config.tiff_base = str(tmpdir)
@@ -99,28 +99,7 @@ def test_Exporter(db_with_dark_and_scan, tmpdir):
     assert len(list(tiff_base.rglob("*.tiff"))) > 0
     assert len(list(tiff_base.rglob("*.csv"))) > 0
     assert len(list(tiff_base.rglob("*.json"))) > 0
-
-
-def test_ExporterXpdan(db_with_dark_and_scan, tmpdir):
-    """Test ExporterXpaan. It should output the correct files in a two layer directory."""
-    db = db_with_dark_and_scan
-    config = an.AnalysisConfig()
-    config.read(fn)
-    config.raw_db = db
-    ld = an.AnalysisStream(config)
-    ep_config = pdfstream.callbacks.analysis.ExportConfig()
-    ep_config.read(fn)
-    ep_config.tiff_base = str(tmpdir)
-    ep = pdfstream.callbacks.analysis.ExporterXpdan(ep_config)
-    ld.subscribe(ep)
-    for name, doc in db[-1].canonical(fill="yes", strict_order=True):
-        ld(name, doc)
-    tiff_base = Path(ep_config.tiff_base)
-    data_folder = tiff_base.joinpath("Ni")
-    assert data_folder.is_dir()
-    for dir_name in ("dark_sub", "integration", "meta", "mask", "iq", "sq", "fq", "pdf", "scalar_data"):
-        assert data_folder.joinpath(dir_name).is_dir()
-        assert len(list(data_folder.joinpath(dir_name).glob("*.*"))) > 0
+    assert len(list(tiff_base.rglob("*.txt"))) > 0
 
 
 def test_ExportConfig():
@@ -130,21 +109,27 @@ def test_ExportConfig():
         assert config.tiff_base
 
 
-@pytest.fixture(params=[0, 1])
-def cases0(request, test_data):
-    """Gives user_config dictionary, tuple of property values."""
-    if request.param == 0:
-        return (
-            {"user_config": {"auto_mask": False, "mask_file": test_data["white_img_file"]}},
-            (False, test_data["white_img"])
-        )
-    elif request.param == 1:
-        return {}, (True, None)
+def test_user_mask1(db_with_img_and_bg_img):
+    db = db_with_img_and_bg_img
+    config = an.AnalysisConfig()
+    config.read(fn)
+    ld = an.AnalysisStream(config)
+    ld.db = db.v1
+    ld.subscribe(print, "event")
+    for name, doc in db[-1].canonical(fill="yes", strict_order=True):
+        if name == "start":
+            doc = dict(**doc, user_config={"auto_mask": False})
+        ld(name, doc)
 
 
-def test_UserConfig(cases0):
-    start_doc, results = cases0
-    user_config = an.UserConfig()
-    user_config.read_start_doc(start_doc)
-    assert user_config.do_auto_masking == results[0]
-    assert np.array_equal(user_config.user_mask, results[1])
+def test_user_mask2(db_with_img_and_bg_img, test_data):
+    db = db_with_img_and_bg_img
+    config = an.AnalysisConfig()
+    config.read(fn)
+    ld = an.AnalysisStream(config)
+    ld.db = db.v1
+    ld.subscribe(print, "event")
+    for name, doc in db[-1].canonical(fill="yes", strict_order=True):
+        if name == "start":
+            doc = dict(**doc, user_config={"auto_mask": False, "mask_file": test_data["mask_file"]})
+        ld(name, doc)

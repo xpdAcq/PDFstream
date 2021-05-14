@@ -12,21 +12,25 @@ from pdfstream.vend.qt_kicker import install_qt_kicker
 class ServerConfig(ConfigParser):
     """The configuration for the server."""
 
+    def __init__(self, *args, **kwargs):
+        super(ServerConfig, self).__init__(*args, **kwargs)
+        self.add_section("LISTEN TO")
+
     @property
     def host(self):
-        return self.get("LISTEN TO", "host")
+        return self.get("LISTEN TO", "host", fallback="localhost")
+
+    @property
+    def port(self):
+        return self.getint("LISTEN TO", "port", fallback=5568)
 
     @property
     def address(self):
         return self.host, self.port
 
     @property
-    def port(self):
-        return self.getint("LISTEN TO", "port")
-
-    @property
     def prefix(self):
-        return self.get("LISTEN TO", "prefix", fallback="").encode()
+        return self.get("LISTEN TO", "prefix", fallback="raw").encode()
 
 
 class BaseServer(RemoteDispatcher):

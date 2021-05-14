@@ -23,7 +23,7 @@ class ArrayExporter(CallbackBase):
     file_suffix = ""
     file_stem = ""
 
-    def __init__(self, directory: str, *, file_prefix: str, data_keys: tp.List[str] = None):
+    def __init__(self, directory: str, *, file_prefix: str, data_keys: list = None):
         super(ArrayExporter, self).__init__()
         self.directory = Path(directory)
         self.directory.mkdir(parents=True, exist_ok=True)
@@ -95,13 +95,14 @@ class StackedNumpyTextExporter(ArrayExporter):
     file_stem = "{descriptor[name]}-{field}-{event[seq_num]}"
 
     def export(self, doc):
-        arr: np.ndarray = np.stack([doc["data"][data_key] for data_key in self.data_keys], axis=-1)
-        field = "-".join(self.data_keys)
-        filename = self.file_template.format(start=self.start_doc, descriptor=self.descriptor_doc, event=doc,
-                                             field=field)
-        filepath = self.directory.joinpath(filename)
-        header = " ".join(self.data_keys)
-        np.savetxt(str(filepath), arr, header=header)
+        for data_key_tup in self.data_keys:
+            arr: np.ndarray = np.stack([doc["data"][data_key] for data_key in data_key_tup], axis=-1)
+            field = "-".join(data_key_tup)
+            filename = self.file_template.format(start=self.start_doc, descriptor=self.descriptor_doc, event=doc,
+                                                 field=field)
+            filepath = self.directory.joinpath(filename)
+            header = " ".join(data_key_tup)
+            np.savetxt(str(filepath), arr, header=header)
 
 
 class DataFrameExporter(ArrayExporter):
@@ -253,6 +254,7 @@ class SmartScalarPlot(CallbackBase):
         self.callback = None
 
     def start(self, doc):
+        self.ax.cla()
         super(SmartScalarPlot, self).start(doc)
         self.clear()
         indeps = fs.get_indeps(doc, exclude={"time"})

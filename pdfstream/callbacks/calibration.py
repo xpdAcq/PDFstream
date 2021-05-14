@@ -1,59 +1,59 @@
 import subprocess
 import typing as tp
-from configparser import Error
 from pathlib import Path
 
 import event_model
 import numpy as np
 from bluesky.callbacks.core import CallbackBase
+from databroker.v1 import Broker
 from tifffile import TiffWriter
 
 import pdfstream.callbacks.from_descriptor as fd
 import pdfstream.callbacks.from_event as fe
 import pdfstream.callbacks.from_start as fs
 import pdfstream.io as io
-from .analysis import BasicAnalysisConfig, BasicExportConfig
+from pdfstream.errors import ValueNotFoundError
+from .analysis import BasicAnalysisConfig
 
 
-class CalibrationConfig(BasicAnalysisConfig, BasicExportConfig):
+class CalibrationConfig(BasicAnalysisConfig):
     """The configuration of the calibration callbacks."""
+
+    def __init__(self, *args, **kwargs):
+        super(CalibrationConfig, self).__init__(*args, **kwargs)
+        self.add_section("CALIBRATION")
 
     @property
     def calib_identifier(self):
-        return self.get("METADATA", "calib_identifier")
+        return self.get("METADATA", "calib_identifier", fallback="calibration_md")
 
     @property
     def default_calibrant(self):
-        return self.get("CALIBRATION", "default_calibrant")
+        return self.get("CALIBRATION", "default_calibrant", fallback="Ni")
 
     @property
     def detector_key(self):
-        return self.get("METADATA", "detector_key")
+        return self.get("METADATA", "detector_key", fallback="detector")
 
     @property
     def calibrant_key(self):
-        return self.get("METADATA", "calibrant_key")
+        return self.get("METADATA", "calibrant_key", fallback="sample_composition")
 
     @property
     def calib_base(self):
-        dir_path = self.get("FILE SYSTEM", "calib_base")
+        dir_path = self.get("CALIBRATION", "calib_base")
         if not dir_path:
-            raise Error("Missing calib_base in configuration.")
-        path = Path(dir_path).expanduser()
-        return path
+            dir_path = "~/pdfstream_calibration"
+            io.server_message("Missing calib_base in configuration. Use '{}'.".format(dir_path))
+        return Path(dir_path).expanduser()
 
     @calib_base.setter
     def calib_base(self, value: str):
-        self.set("FILE SYSTEM", "calib_base", value)
-
-    @property
-    def calib_tiff_dir(self):
-        dir_path = self.tiff_base.joinpath("calib")
-        return dir_path
+        self.set("CALIBRATION", "calib_base", value)
 
     @property
     def poni_file(self):
-        return self.get("CALIBRATION", "poni_file")
+        return self.get("CALIBRATION", "poni_file", fallback="xpdAcq_calib_info.poni")
 
 
 class Calibration(CallbackBase):
@@ -63,7 +63,8 @@ class Calibration(CallbackBase):
         super(Calibration, self).__init__()
         self.config = config
         self.cache = dict()
-        self.db = self.config.raw_db
+        raw_db = self.config.raw_db
+        self.db = Broker.named(raw_db) if raw_db else None
         self.test = test
 
     def start(self, doc):
@@ -82,12 +83,16 @@ class Calibration(CallbackBase):
     def descriptor(self, doc):
         super(Calibration, self).descriptor(doc)
         self.cache["det_name"] = fd.find_one_image(doc)
-        self.cache["dk_img"] = fs.query_dk_img(
-            self.cache["start"],
-            db=self.db,
-            dk_id_key=self.config.dk_id_key,
-            det_name=self.cache["det_name"]
-        )
+        try:
+            self.cache["dk_img"] = fs.query_dk_img(
+                self.cache["start"],
+                db=self.db,
+                dk_id_key=self.config.dk_id_key,
+                det_name=self.cache["det_name"]
+            )
+        except ValueNotFoundError as error:
+            self.cache["dk_img"] = None
+            io.server_message("Failed to find dark: " + str(error))
 
     def event_page(self, doc):
         for event_doc in event_model.unpack_event_page(doc):
@@ -102,9 +107,8 @@ class Calibration(CallbackBase):
     def stop(self, doc):
         super(Calibration, self).stop(doc)
         self.config.calib_base.mkdir(parents=True, exist_ok=True)
-        self.config.calib_tiff_dir.mkdir(parents=True, exist_ok=True)
         poni_path = self.config.calib_base.joinpath(self.config.poni_file)
-        tiff_path = self.config.calib_tiff_dir.joinpath("{}-calib.tiff".format(self.cache["start"]["uid"]))
+        tiff_path = self.config.calib_base.joinpath("{}-calib.tiff".format(self.cache["start"]["uid"]))
         calc_image_and_save(
             self.cache["img_sum"],
             self.cache["img_num"],

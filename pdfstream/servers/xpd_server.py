@@ -1,16 +1,15 @@
 """The analysis server. Process raw image to PDF."""
 import typing as tp
 
-import databroker
 from area_detector_handlers.handlers import AreaDetectorTiffHandler
 from bluesky.callbacks.zmq import Publisher
-from databroker.v2 import Broker
+from databroker.v1 import Broker
 from event_model import RunRouter
 from ophyd.sim import NumpySeqHandler
 
 import pdfstream.io as io
 from pdfstream.callbacks.analysis import AnalysisConfig, VisConfig, ExportConfig, AnalysisStream, Exporter, \
-    Visualizer, no_need_to_refresh_db, ExporterXpdan
+    Visualizer
 from pdfstream.callbacks.calibration import CalibrationConfig, Calibration
 from pdfstream.servers import CONFIG_DIR, ServerNames
 from pdfstream.servers.base import ServerConfig, find_cfg_file, BaseServer, StartStopCallback
@@ -21,37 +20,18 @@ class XPDConfig(AnalysisConfig, VisConfig, ExportConfig, CalibrationConfig):
 
     def __init__(self, *args, **kwargs):
         super(XPDConfig, self).__init__(*args, **kwargs)
-        self._an_db = None
+        self.add_section("PUBLISH TO")
+        self.add_section("FUNCTIONALITY")
 
     @property
-    def an_db(self) -> tp.Union[None, Broker]:
-        name = self.get("DATABASE", "an_db", fallback=None)
-        if no_need_to_refresh_db(self._an_db, name):
-            pass
-        elif name is None:
-            self._an_db = None
-        elif name == "temp":
-            io.server_message(
-                "Warning: a temporary db is created for an db. It will be destroy at the end of the session.")
-            self._an_db = databroker.v2.temp()
-        else:
-            self._an_db = databroker.catalog[name]
-        return self._an_db
-
-    @an_db.setter
-    def an_db(self, db: Broker):
-        section_name = "DATABASE"
-        db_key = "an_db"
-        if section_name not in self.sections():
-            self.add_section(section_name)
-        self.set(section_name, db_key, db.name)
-        self._an_db = db
+    def an_db(self) -> str:
+        return self.get("DATABASE", "an_db", fallback="")
 
     @property
     def publisher_config(self) -> dict:
-        host = self.get("PUBLISH TO", "host")
-        port = self.getint("PUBLISH TO", "port")
-        prefix = self.get("PUBLISH TO", "prefix", fallback="").encode()
+        host = self.get("PUBLISH TO", "host", fallback="localhost")
+        port = self.getint("PUBLISH TO", "port", fallback=5567)
+        prefix = self.get("PUBLISH TO", "prefix", fallback="an").encode()
         return {
             "address": (host, port),
             "prefix": prefix
@@ -60,12 +40,11 @@ class XPDConfig(AnalysisConfig, VisConfig, ExportConfig, CalibrationConfig):
     @property
     def functionality(self) -> dict:
         return {
-            "do_calibration": self.getboolean("FUNCTIONALITY", "do_calibration"),
-            "dump_to_db": self.getboolean("FUNCTIONALITY", "dump_to_db"),
-            "export_files": self.getboolean("FUNCTIONALITY", "export_files"),
-            "visualize_data": self.getboolean("FUNCTIONALITY", "visualize_data"),
-            "send_messages": self.getboolean("FUNCTIONALITY", "send_messages"),
-            "export_files_in_xpdan_style": self.getboolean("FUNCTIONALITY", "export_files_in_xpdan_style")
+            "do_calibration": self.getboolean("FUNCTIONALITY", "do_calibration", fallback=True),
+            "dump_to_db": self.getboolean("FUNCTIONALITY", "dump_to_db", fallback=True),
+            "export_files": self.getboolean("FUNCTIONALITY", "export_files", fallback=True),
+            "visualize_data": self.getboolean("FUNCTIONALITY", "visualize_data", fallback=True),
+            "send_messages": self.getboolean("FUNCTIONALITY", "send_messages", fallback=False)
         }
 
 
@@ -109,7 +88,7 @@ def make_and_run(
         warnings.simplefilter("ignore")
     if not cfg_file:
         cfg_file = find_cfg_file(CONFIG_DIR, ServerNames.xpd)
-    config = XPDServerConfig(allow_no_value=True)
+    config = XPDServerConfig()
     config.read(cfg_file)
     server = XPDServer(config)
     if config.functionality["visualize_data"] and not test_mode:
@@ -140,16 +119,15 @@ class XPDFactory:
         self.functionality = self.config.functionality
         self.analysis = [AnalysisStream(config)]
         self.calibration = [Calibration(config)] if self.functionality["do_calibration"] else []
-        if self.functionality["dump_to_db"]:
-            self.analysis[0].subscribe(self.config.an_db.v1.insert)
+        if self.functionality["dump_to_db"] and self.config.an_db:
+            db = Broker.named(self.config.an_db)
+            self.analysis[0].subscribe(db.insert)
         if self.functionality["export_files"]:
             self.analysis[0].subscribe(Exporter(config))
         if self.functionality["visualize_data"]:
             self.analysis[0].subscribe(Visualizer(config))
         if self.functionality["send_messages"]:
             self.analysis[0].subscribe(Publisher(**self.config.publisher_config))
-        if self.functionality["export_files_in_xpdan_style"]:
-            self.analysis[0].subscribe(ExporterXpdan(config))
 
     def __call__(self, name: str, doc: dict) -> tp.Tuple[list, list]:
         if name == "start":

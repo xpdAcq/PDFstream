@@ -29,18 +29,16 @@ def test_get_img_from_run(db_with_dark_and_light, det_name, shape):
     "dk_id_key, shape",
     [
         ("sc_dk_field_uid", (2048, 2048)),
-        ("a_key_not_existing", None)
+        pytest.param("a_key_not_existing", None, marks=pytest.mark.xfail)
     ]
 )
 def test_query_dk_img(db_with_dark_and_light, dk_id_key, shape):
     db = db_with_dark_and_light
     start = db[-1].metadata["start"]
-    dk_img = mod.query_dk_img(start, det_name="pe1_image", db=db, dk_id_key=dk_id_key)
+    dk_img = mod.query_dk_img(start, det_name="pe1_image", db=db.v1, dk_id_key=dk_id_key)
     if shape:
         assert isinstance(dk_img, np.ndarray)
         assert dk_img.shape == shape
-    else:
-        assert dk_img is None
 
 
 @pytest.mark.parametrize(
@@ -75,20 +73,6 @@ def test_query_bt_info(start, composition_key, wavelength_key, expect):
     )
     pdfconfig = PDFConfig(**config)
     assert (pdfconfig.composition, pdfconfig.wavelength) == expect
-
-
-def test_query_bg_img(db_with_img_and_bg_img, test_data):
-    db = db_with_img_and_bg_img
-    run = db[-1]
-    bg_img = mod.query_bg_img(
-        run.metadata['start'],
-        bkgd_sample_name_key="bkgd_sample_name",
-        sample_name_key="sample_name",
-        det_name="pe1_image",
-        db=db,
-        dk_id_key="sc_dk_field_uid"
-    )
-    assert np.array_equal(bg_img, np.ones_like(test_data["Ni_img"]))
 
 
 @pytest.mark.parametrize(

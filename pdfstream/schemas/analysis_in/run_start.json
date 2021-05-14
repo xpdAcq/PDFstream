@@ -335,10 +335,6 @@
       "type": "number",
       "description": "the wavelength of the beam during the beam time"
     },
-    "bkgd_sample_name": {
-      "type": "string",
-      "description": "the name of the sample whose diffraction is used as the background scattering"
-    },
     "sample_name": {
       "type": "string",
       "description": "the name of the sample measured in this run"

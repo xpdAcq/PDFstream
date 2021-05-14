@@ -1,6 +1,7 @@
 fire
 numba
 pyfai
+pyopencl
 scikit-beam
 bluesky
 databroker
