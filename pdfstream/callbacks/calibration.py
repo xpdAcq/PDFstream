@@ -92,7 +92,7 @@ class Calibration(CallbackBase):
             )
         except ValueNotFoundError as error:
             self.cache["dk_img"] = None
-            io.server_message(str(error))
+            io.server_message("Failed to find dark: " + str(error))
 
     def event_page(self, doc):
         for event_doc in event_model.unpack_event_page(doc):

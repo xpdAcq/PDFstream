@@ -165,7 +165,7 @@ class AnalysisStream(LiveDispatcher):
             )
         except ValueNotFoundError as error:
             self.ai = None
-            io.server_message(str(error))
+            io.server_message("Failed to find calibration data: " + str(error))
         # find bt info
         try:
             self.bt_info = from_start.query_bt_info(
@@ -176,7 +176,7 @@ class AnalysisStream(LiveDispatcher):
             )
         except ValueNotFoundError as error:
             self.bt_info = {}
-            io.server_message(str(error))
+            io.server_message("Info is missing: " + str(error))
         # create new start
         new_start = dict(**doc, an_config=self.config.to_dict(), pdfstream_version=pdfstream.__version__)
         return super(AnalysisStream, self).start(new_start)
@@ -196,7 +196,7 @@ class AnalysisStream(LiveDispatcher):
             )
         except ValueNotFoundError as error:
             self.dark_image = None
-            io.server_message(str(error))
+            io.server_message("Failed to find the dark: " + str(error))
         return super(AnalysisStream, self).descriptor(doc)
 
     def event(self, doc, _md=None):
