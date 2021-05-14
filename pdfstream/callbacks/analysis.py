@@ -89,6 +89,17 @@ class AnalysisConfig(BasicAnalysisConfig):
         return self.get("METADATA", "sample_name_key", fallback="sample_name")
 
     @property
+    def auto_mask(self):
+        return self.getboolean("ANALYSIS", "auto_mask", fallback=True)
+
+    @property
+    def user_mask(self):
+        mask_file = self.get("ANALYSIS", "user_mask", fallback="")
+        if not mask_file:
+            return None
+        return io.load_matrix_flexible(mask_file)
+
+    @property
     def mask_setting(self):
         return {
             "alpha": self.getfloat("ANALYSIS", "alpha", fallback=2.5),
@@ -202,6 +213,8 @@ class AnalysisStream(LiveDispatcher):
         an_data = process(
             raw_img=raw_img,
             ai=self.ai,
+            user_mask=self.config.user_mask,
+            auto_mask=self.config.auto_mask,
             dk_img=self.dark_image,
             integ_setting=self.config.integ_setting,
             mask_setting=self.config.mask_setting,
@@ -226,6 +239,8 @@ def process(
     *,
     raw_img: np.ndarray,
     ai: tp.Union[None, AzimuthalIntegrator],
+    user_mask: np.ndarray = None,
+    auto_mask: bool = True,
     dk_img: np.ndarray = None,
     integ_setting: dict = None,
     mask_setting: dict = None,
@@ -258,7 +273,10 @@ def process(
     if ai is None:
         return data
     # do auto masking if specified
-    data["mask"], _ = integ.auto_mask(data["dk_sub_image"], ai, mask_setting=mask_setting)
+    if auto_mask:
+        data["mask"], _ = integ.auto_mask(data["dk_sub_image"], ai, mask_setting=mask_setting, user_mask=user_mask)
+    elif user_mask is not None:
+        data["mask"] = user_mask
     # integration
     x, y = ai.integrate1d(data["dk_sub_image"], mask=data["mask"], **integ_setting)
     chi_max_ind = np.argmax(y)
@@ -358,31 +376,8 @@ class ExporterFactory:
             cb = StackedNumpyTextExporter(
                 str(data_folder.joinpath("integration")),
                 file_prefix=file_prefix,
-                data_keys=["chi_Q", "chi_I"]
-            )
-            callbacks.append(cb)
-            cb = StackedNumpyTextExporter(
-                str(data_folder.joinpath("iq")),
-                file_prefix=file_prefix,
-                data_keys=["iq_Q", "iq_I"]
-            )
-            callbacks.append(cb)
-            cb = StackedNumpyTextExporter(
-                str(data_folder.joinpath("sq")),
-                file_prefix=file_prefix,
-                data_keys=["sq_Q", "sq_S"]
-            )
-            callbacks.append(cb)
-            cb = StackedNumpyTextExporter(
-                str(data_folder.joinpath("fq")),
-                file_prefix=file_prefix,
-                data_keys=["fq_Q", "fq_F"]
-            )
-            callbacks.append(cb)
-            cb = StackedNumpyTextExporter(
-                str(data_folder.joinpath("pdf")),
-                file_prefix=file_prefix,
-                data_keys=["gr_r", "gr_G"]
+                data_keys=[("chi_Q", "chi_I"), ("iq_Q", "iq_I"), ("sq_Q", "sq_S"), ("fq_Q", "fq_F"),
+                           ("gr_r", "gr_G")]
             )
             callbacks.append(cb)
         return callbacks, []

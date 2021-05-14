@@ -171,7 +171,24 @@
           "description": "the value of r at the maximum of G in the reduced pair distribution function G(r)"
         }
       },
-      "required": []
+      "required": [
+        "dk_sub_image",
+        "mask",
+        "chi_Q",
+        "chi_I",
+        "chi_max",
+        "chi_argmax",
+        "iq_Q",
+        "iq_I",
+        "sq_Q",
+        "sq_S",
+        "fq_Q",
+        "fq_F",
+        "gr_r",
+        "gr_G",
+        "gr_max",
+        "gr_argmax"
+      ]
     },
     "uid": {
       "type": "string",
