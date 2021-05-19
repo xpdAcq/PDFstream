@@ -1,26 +1,39 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>PDFstream Change Log &mdash; PDFstream 0.4.6 documentation</title>
+  <title>PDFstream Change Log &mdash; PDFstream 0.4.7 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/plot_directive.css" type="text/css" />
+  <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
+
+  
   
 
   
   
-  
+
   
 
   
-  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
@@ -30,19 +43,10 @@
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
-  <link rel="stylesheet" href="_static/gallery.css" type="text/css" />
-  <link rel="stylesheet" href="_static/gallery-binder.css" type="text/css" />
-  <link rel="stylesheet" href="_static/gallery-dataframe.css" type="text/css" />
-  <link rel="stylesheet" href="_static/gallery-rendered-html.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Minimum Version of Python and NumPy" href="min_versions.html" />
-    <link rel="prev" title="XPD Analyzer" href="tutorials2/plot_xpd_analyzer.html" /> 
+    <link rel="prev" title="XPDVis Server" href="tutorials1/xpdvis_server.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -66,7 +70,7 @@
             
             
               <div class="version">
-                0.4.6
+                0.4.7
               </div>
             
           
@@ -83,6 +87,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -94,8 +99,8 @@
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials0/index.html">Users Documents</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials1/index.html">Beamline Scientists Documents</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials2/index.html">Advanced Users Documents</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">PDFstream Change Log</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#v0-4-7">v0.4.7</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#v0-4-6">v0.4.6</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#v0-4-5">v0.4.5</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#v0-4-4">v0.4.4</a></li>
@@ -121,6 +126,7 @@
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -155,18 +161,20 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="index.html">Docs</a> &raquo;</li>
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
       <li>PDFstream Change Log</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="_sources/changelog.rst.txt" rel="nofollow"> View page source</a>
           
         
@@ -182,6 +190,27 @@
             
   <div class="section" id="pdfstream-change-log">
 <h1>PDFstream Change Log<a class="headerlink" href="#pdfstream-change-log" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="v0-4-7">
+<h2>v0.4.7<a class="headerlink" href="#v0-4-7" title="Permalink to this headline">¶</a></h2>
+<p><strong>Added:</strong></p>
+<ul class="simple">
+<li><p>Add AreaDetectorTiffHandler for the xpd and lsq servers.</p></li>
+</ul>
+<p><strong>Changed:</strong></p>
+<ul class="simple">
+<li><p>The image data can be any array with dimensions N as long as N &gt;= 2. The first N - 2 dimensions will be averaged.</p></li>
+<li><p>Simplify the configuration for the servers.</p></li>
+</ul>
+<p><strong>Deprecated:</strong></p>
+<ul class="simple">
+<li><p>Deprecate the background subtraction functionality because of the stability.</p></li>
+</ul>
+<p><strong>Fixed:</strong></p>
+<ul class="simple">
+<li><p>Use v1 databroker interface for the query of dark images info due to the broken xarray conversion in v2 databroker.</p></li>
+<li><p>Fix the bug that server cannot deal with the data for which the background measurement failed.</p></li>
+</ul>
+</div>
 <div class="section" id="v0-4-6">
 <h2>v0.4.6<a class="headerlink" href="#v0-4-6" title="Permalink to this headline">¶</a></h2>
 <p><strong>Changed:</strong></p>
@@ -377,29 +406,29 @@
            
           </div>
           <footer>
-  
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="min_versions.html" class="btn btn-neutral float-right" title="Minimum Version of Python and NumPy" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="tutorials2/plot_xpd_analyzer.html" class="btn btn-neutral float-left" title="XPD Analyzer" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+        <a href="min_versions.html" class="btn btn-neutral float-right" title="Minimum Version of Python and NumPy" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="tutorials1/xpdvis_server.html" class="btn btn-neutral float-left" title="XPDVis Server" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2020, Songsheng Tao
+        &#169; Copyright 2020, Songsheng Tao.
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 
@@ -407,7 +436,6 @@
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {

@@ -1,26 +1,39 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>XPDVis Server &mdash; PDFstream 0.4.6 documentation</title>
+  <title>XPDVis Server &mdash; PDFstream 0.4.7 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/plot_directive.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+
+  
   
 
   
   
-  
+
   
 
   
-  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
@@ -30,18 +43,9 @@
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/gallery.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/gallery-binder.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/gallery-dataframe.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/gallery-rendered-html.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Advanced Users Documents" href="../tutorials2/index.html" />
+    <link rel="next" title="PDFstream Change Log" href="../changelog.html" />
     <link rel="prev" title="XPD Server" href="xpd_server.html" /> 
 </head>
 
@@ -66,7 +70,7 @@
             
             
               <div class="version">
-                0.4.6
+                0.4.7
               </div>
             
           
@@ -83,6 +87,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -108,7 +113,6 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorials2/index.html">Advanced Users Documents</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../changelog.html">PDFstream Change Log</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../min_versions.html">Minimum Version of Python and NumPy</a></li>
 </ul>
@@ -116,6 +120,7 @@
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -150,11 +155,13 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="../index.html">Docs</a> &raquo;</li>
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
         
           <li><a href="index.html">Beamline Scientists Documents</a> &raquo;</li>
         
@@ -163,7 +170,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../_sources/tutorials1/xpdvis_server.rst.txt" rel="nofollow"> View page source</a>
           
         
@@ -190,299 +197,76 @@ that file.</p>
 <h3>Write the configuration file<a class="headerlink" href="#write-the-configuration-file" title="Permalink to this headline">¶</a></h3>
 <p>The server needs a .ini file. This file contains all the configuration to build a server. An example of the file
 is shown below. Please read the comments in the file to know what are the meaning of the parameters.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># the basic information of the configuration, users do not need to chang this section</span>
-<span class="p">[</span><span class="n">BASIC</span><span class="p">]</span>
-<span class="c1"># the name of the server configuration</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">BASIC</span><span class="p">]</span>
 <span class="n">name</span> <span class="o">=</span> <span class="n">xpd</span>
-<span class="c1"># the version of the server configuration</span>
-<span class="n">version</span> <span class="o">=</span> <span class="mf">1.0</span><span class="o">.</span><span class="mi">0</span>
+<span class="n">version</span> <span class="o">=</span> <span class="mf">1.0.0</span>
 
-<span class="c1"># the information about the proxy and the message from the proxy</span>
-<span class="c1"># the proxy is the one that sends the message to your server</span>
-<span class="p">[</span><span class="n">LISTEN</span> <span class="n">TO</span><span class="p">]</span>
-<span class="c1"># the name or the IP address of the host for the proxy</span>
-<span class="c1"># &quot;localhost&quot; means that the proxy runs on the same machine where your server runs</span>
-<span class="n">host</span> <span class="o">=</span> <span class="n">xf28id1</span><span class="o">-</span><span class="n">ca1</span>
-<span class="c1"># the port that the server is listening to</span>
-<span class="n">port</span> <span class="o">=</span> <span class="mi">5578</span>
-<span class="c1"># the prefix of the message that the server listens to</span>
-<span class="c1"># the server will only listen to the message starting with the prefix</span>
-<span class="c1"># if you would like the server to listen to any message, delete the row below</span>
-<span class="n">prefix</span> <span class="o">=</span> <span class="n">raw</span>
-
-<span class="c1"># the control for whether the server will run certain functionality</span>
-<span class="c1"># if a functionality is turned to False, all the settings below related to the functionality will be inactive</span>
 <span class="p">[</span><span class="n">FUNCTIONALITY</span><span class="p">]</span>
-<span class="c1"># whether to do the calibration if the server receives the data of standard powder</span>
-<span class="c1"># if False, server will ignore the data of standard sample and the CALIBRATION section will be inactivate</span>
 <span class="n">do_calibration</span> <span class="o">=</span> <span class="kc">True</span>
-<span class="c1"># whether to dump the processed data and the data of independent variables in a data base</span>
-<span class="c1"># if False, the an_db in [DATABASE] section will be inactive</span>
 <span class="n">dump_to_db</span> <span class="o">=</span> <span class="kc">True</span>
-<span class="c1"># whether to export the processed data to files in the file system</span>
-<span class="c1"># if False, all the [FILE SETTING] sections will be inactivate</span>
-<span class="n">export_files</span> <span class="o">=</span> <span class="kc">False</span>
-<span class="c1"># whether to export the processed data to files in the file system with a file structure like XpdAn</span>
-<span class="c1"># if False, all the [FILE SETTING] sections will be inactivate</span>
-<span class="n">export_files_in_xpdan_style</span> <span class="o">=</span> <span class="kc">True</span>
-<span class="c1"># whether to visualize the processed data in figures</span>
-<span class="c1"># if False, all the [VIS DATA] sections will be inactivate</span>
+<span class="n">export_files</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="n">visualize_data</span> <span class="o">=</span> <span class="kc">True</span>
-<span class="c1"># whether to send the messages of the processed data to a server</span>
-<span class="c1"># this functionality allows you to send the processed data into a internal network automatically</span>
-<span class="c1"># if False, the [PUBLISH TO] section will be inactivate</span>
 <span class="n">send_messages</span> <span class="o">=</span> <span class="kc">False</span>
 
-<span class="c1"># the information about the proxy server and the message that will be sent</span>
-<span class="c1"># the proxy is the one that will received the message of processed data from this server and distribute it to</span>
-<span class="c1"># other servers</span>
-<span class="c1"># this proxy can be the same proxy that sends the message to this server</span>
-<span class="p">[</span><span class="n">PUBLISH</span> <span class="n">TO</span><span class="p">]</span>
-<span class="c1"># the name or the IP address of the host for the proxy</span>
-<span class="c1"># &quot;localhost&quot; means that the proxy runs on the same machine where your server runs</span>
-<span class="c1"># host =</span>
-<span class="c1"># the port that message be sent to</span>
-<span class="c1"># port =</span>
-<span class="c1"># the prefix of the message that will be sent by the server</span>
-<span class="c1"># prefix =</span>
+<span class="p">[</span><span class="n">LISTEN</span> <span class="n">TO</span><span class="p">]</span>
+<span class="n">host</span> <span class="o">=</span> <span class="n">xf28id1</span><span class="o">-</span><span class="n">ca1</span>
+<span class="n">port</span> <span class="o">=</span> <span class="mi">5568</span>
+<span class="n">prefix</span> <span class="o">=</span> <span class="n">raw</span>
 
-<span class="c1"># the information about database used by the server</span>
+<span class="p">[</span><span class="n">PUBLISH</span> <span class="n">TO</span><span class="p">]</span>
+<span class="n">host</span> <span class="o">=</span> <span class="n">xf28id1</span><span class="o">-</span><span class="n">ca1</span>
+<span class="n">port</span> <span class="o">=</span> <span class="mi">5567</span>
+<span class="n">prefix</span> <span class="o">=</span> <span class="n">an</span>
+
 <span class="p">[</span><span class="n">DATABASE</span><span class="p">]</span>
-<span class="c1"># the name of the database for raw diffraction image data in the databroker catalog</span>
-<span class="c1"># uncomment the line below to activate</span>
 <span class="n">raw_db</span> <span class="o">=</span> <span class="n">pdf</span>
-<span class="c1"># the name of the database to dump the processed data in the databroker catalog</span>
-<span class="c1"># uncomment the line below to activate</span>
 <span class="n">an_db</span> <span class="o">=</span> <span class="n">pdf</span><span class="o">-</span><span class="n">analysis</span>
 
-<span class="c1"># the folders where the server will dump the files to</span>
-<span class="p">[</span><span class="n">FILE</span> <span class="n">SYSTEM</span><span class="p">]</span>
-<span class="c1"># the folder where all the processed data will be saved</span>
-<span class="c1"># please use the same value as the &#39;tiff_base&#39; in &#39;glbl&#39; of xpdacq</span>
-<span class="n">tiff_base</span> <span class="o">=</span> <span class="o">/</span><span class="n">nsls2</span><span class="o">/</span><span class="n">xf28id1</span><span class="o">/</span><span class="n">xpdacq_data</span><span class="o">/</span><span class="n">user_data</span><span class="o">/</span><span class="n">tiff_base</span>
-<span class="c1"># the folder where the calibration data will be saved</span>
-<span class="c1"># please use the same value as the &#39;config_base&#39; in &#39;glbl&#39; of xpdacq</span>
-<span class="n">calib_base</span> <span class="o">=</span> <span class="o">/</span><span class="n">nsls2</span><span class="o">/</span><span class="n">xf28id1</span><span class="o">/</span><span class="n">xpdacq_data</span><span class="o">/</span><span class="n">user_data</span><span class="o">/</span><span class="n">config_base</span>
-
-<span class="c1"># the keys for the metadata in the start document</span>
-<span class="c1"># the server will obtain the metadata according to the keys</span>
-<span class="c1"># users usually do not need to change this</span>
 <span class="p">[</span><span class="n">METADATA</span><span class="p">]</span>
-<span class="c1"># the identifier if a run is a dark frame image run</span>
 <span class="n">dk_identifier</span> <span class="o">=</span> <span class="n">dark_frame</span>
-<span class="c1"># the identifier if a run is a calibration run</span>
 <span class="n">calib_identifier</span> <span class="o">=</span> <span class="n">is_calibration</span>
-<span class="c1"># the key to run id of the dark frame run</span>
 <span class="n">dk_id_key</span> <span class="o">=</span> <span class="n">sc_dk_field_uid</span>
-<span class="c1"># the key to the calibration data</span>
 <span class="n">calibration_md_key</span> <span class="o">=</span> <span class="n">calibration_md</span>
-<span class="c1"># the key to the sample composition</span>
 <span class="n">composition_key</span> <span class="o">=</span> <span class="n">sample_composition</span>
-<span class="c1"># the key to the wavelength of the beam</span>
 <span class="n">wavelength_key</span> <span class="o">=</span> <span class="n">bt_wavelength</span>
-<span class="c1"># the key to the name of the background sample</span>
 <span class="n">bkgd_sample_name_key</span> <span class="o">=</span> <span class="n">bkgd_sample_name</span>
-<span class="c1"># the key to the name of the sample</span>
 <span class="n">sample_name_key</span> <span class="o">=</span> <span class="n">sample_name</span>
-<span class="c1"># the key to the type of the detector</span>
 <span class="n">detector_key</span> <span class="o">=</span> <span class="n">detector</span>
-<span class="c1"># the key to the name of the standard powder sample</span>
-<span class="n">calibrant_key</span> <span class="o">=</span> <span class="n">sample_name</span>
+<span class="n">calibrant_key</span> <span class="o">=</span> <span class="n">sample_composition</span>
 
-<span class="c1"># the configuration about calibration</span>
 <span class="p">[</span><span class="n">CALIBRATION</span><span class="p">]</span>
-<span class="c1"># the name of the .poni file for calibration data</span>
-<span class="c1"># please use the same value as the &#39;calib_config_name&#39; in &#39;glbl&#39; of xdpacq</span>
+<span class="n">calib_base</span> <span class="o">=</span> <span class="o">/</span><span class="n">nsls2</span><span class="o">/</span><span class="n">xf28id1</span><span class="o">/</span><span class="n">xpdacq_data</span><span class="o">/</span><span class="n">user_data</span><span class="o">/</span><span class="n">config_base</span>
 <span class="n">poni_file</span> <span class="o">=</span> <span class="n">xpdAcq_calib_info</span><span class="o">.</span><span class="n">poni</span>
-<span class="c1"># the default composition of standard powder if it is not specified</span>
 <span class="n">default_calibrant</span> <span class="o">=</span> <span class="n">Ni</span>
 
-<span class="c1"># the settings for the auto-masking</span>
-<span class="p">[</span><span class="n">MASK</span> <span class="n">SETTING</span><span class="p">]</span>
-<span class="c1"># the parameter of how strict the criterion is for the masking</span>
-<span class="c1"># the pixels with intensity out of the range (median - alpha * std, median + alpha * std) will be masked</span>
-<span class="c1"># mean is the average intensity of all pixels in a bin and std is the standard deviation in that bin</span>
-<span class="n">alpha</span> <span class="o">=</span> <span class="mf">2.0</span>
-<span class="c1"># how many pixels at each edge of the figure will be masked</span>
-<span class="c1"># for example, if edge = 20, the unmasked region of a 2048 * 2048 pixel images will be a 2008 * 2008 pixels</span>
-<span class="c1"># in the center</span>
+<span class="p">[</span><span class="n">ANALYSIS</span><span class="p">]</span>
+<span class="n">auto_mask</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="c1"># mask_file =</span>
+<span class="n">alpha</span> <span class="o">=</span> <span class="mf">2.5</span>
 <span class="n">edge</span> <span class="o">=</span> <span class="mi">20</span>
-<span class="c1"># the lower threshold, any pixels whose intensity is below the lower threshold will be masked</span>
 <span class="n">lower_thresh</span> <span class="o">=</span> <span class="mf">0.</span>
-<span class="c1"># the upper threshold, any pixels whose intensity is above the upper threshold will be masked</span>
 <span class="c1"># upper_thresh =</span>
-
-<span class="c1"># the settings for azimuthal integration</span>
-<span class="p">[</span><span class="n">INTEGRATION</span> <span class="n">SETTING</span><span class="p">]</span>
-<span class="c1"># the number of points in the XRD data</span>
 <span class="n">npt</span> <span class="o">=</span> <span class="mi">1024</span>
-<span class="c1"># whether to do the solid angle correction</span>
 <span class="n">correctSolidAngle</span> <span class="o">=</span> <span class="kc">False</span>
-<span class="c1"># the polarization correction factor, 0.99 is the usual value for synchrotron</span>
 <span class="n">polarization_factor</span> <span class="o">=</span> <span class="mf">0.99</span>
-<span class="c1"># the algorithm for the binning, see pyFAI(https://pyfai.readthedocs.io/en/master/index.html) for details</span>
 <span class="n">method</span> <span class="o">=</span> <span class="n">splitpixel</span>
-<span class="c1"># the normalization factor for the diffraction image</span>
 <span class="n">normalization_factor</span> <span class="o">=</span> <span class="mf">1.0</span>
-
-<span class="c1"># the settings for the transformation from XRD data to PDF data</span>
-<span class="p">[</span><span class="n">TRANSFORMATION</span> <span class="n">SETTING</span><span class="p">]</span>
-<span class="c1"># the high limit for the range of r used in data correction, unit: angstrom</span>
-<span class="c1"># the assumption is that the oscillation of PDF in range 0 &lt;= r &lt;= rpoly is all noise and should be removed</span>
-<span class="n">rpoly</span> <span class="o">=</span> <span class="mf">1.0</span>
-<span class="c1"># the high limit (included) of the range of Q the polynomial fitting, unit: inverse angstrom</span>
-<span class="c1"># the assumption is that the XRD in Q &lt;= qmaxinst are valid data without obvious discontinuity</span>
+<span class="n">rpoly</span> <span class="o">=</span> <span class="mf">1.2</span>
 <span class="n">qmaxinst</span> <span class="o">=</span> <span class="mf">24.0</span>
-<span class="c1"># the low limit (included) of the range of the Fourier transformation of the F(Q), unit: inverse angstrom</span>
 <span class="n">qmin</span> <span class="o">=</span> <span class="mf">0.0</span>
-<span class="c1"># the high limit (included) of the range of the Fourier transformation of the F(Q), unit: inverse angstrom</span>
 <span class="n">qmax</span> <span class="o">=</span> <span class="mf">22.0</span>
-
-<span class="c1"># the settings for the r-grid of PDF data</span>
-<span class="c1"># for example, this settings below will give a r-grid [0.00, 0.01, 0.02, 0.03, ...., 29.99, 30.00]</span>
-<span class="p">[</span><span class="n">PDF</span> <span class="n">SETTING</span><span class="p">]</span>
-<span class="c1"># the low limit (included) of r, unit: inverse angstrom</span>
 <span class="n">rmin</span> <span class="o">=</span> <span class="mf">0.0</span>
-<span class="c1"># the high limit (included) of r, unit: inverse angstrom</span>
 <span class="n">rmax</span> <span class="o">=</span> <span class="mf">30.0</span>
-<span class="c1"># the interval between two data points on r-grid, unit: inverse angstrom</span>
 <span class="n">rstep</span> <span class="o">=</span> <span class="mf">0.01</span>
 
-<span class="c1"># the settings to export dark subtracted images, background subtracted image and masks in tiff files</span>
-<span class="p">[</span><span class="n">TIFF</span> <span class="n">SETTING</span><span class="p">]</span>
-<span class="c1"># whether to export the data or not</span>
-<span class="n">enable</span> <span class="o">=</span> <span class="kc">True</span>
-<span class="c1"># the prefix of the file name</span>
+<span class="p">[</span><span class="n">SUITCASE</span><span class="p">]</span>
+<span class="n">tiff_base</span> <span class="o">=</span> <span class="o">/</span><span class="n">nsls2</span><span class="o">/</span><span class="n">xf28id1</span><span class="o">/</span><span class="n">xpdacq_data</span><span class="o">/</span><span class="n">user_data</span><span class="o">/</span><span class="n">tiff_base</span>
+<span class="n">directory_template</span> <span class="o">=</span> <span class="p">{</span><span class="n">start</span><span class="p">[</span><span class="n">sample_name</span><span class="p">]}</span><span class="n">_data</span>
 <span class="n">file_prefix</span> <span class="o">=</span> <span class="p">{</span><span class="n">start</span><span class="p">[</span><span class="n">original_run_uid</span><span class="p">]}</span><span class="n">_</span><span class="p">{</span><span class="n">start</span><span class="p">[</span><span class="n">sample_name</span><span class="p">]}</span><span class="n">_</span>
+<span class="n">exports</span> <span class="o">=</span> <span class="n">tiff</span><span class="p">,</span><span class="n">json</span><span class="p">,</span><span class="n">csv</span><span class="p">,</span><span class="n">txt</span>
 
-<span class="c1"># the settings to export the metadata in json files</span>
-<span class="p">[</span><span class="n">JSON</span> <span class="n">SETTING</span><span class="p">]</span>
-<span class="c1"># whether to export the data or not</span>
-<span class="n">enable</span> <span class="o">=</span> <span class="kc">True</span>
-<span class="c1"># the prefix of the file name</span>
-<span class="n">file_prefix</span> <span class="o">=</span> <span class="p">{</span><span class="n">start</span><span class="p">[</span><span class="n">original_run_uid</span><span class="p">]}</span><span class="n">_</span><span class="p">{</span><span class="n">start</span><span class="p">[</span><span class="n">sample_name</span><span class="p">]}</span><span class="n">_</span>
-
-<span class="c1"># the settings to export the scalar data in csv files</span>
-<span class="p">[</span><span class="n">CSV</span> <span class="n">SETTING</span><span class="p">]</span>
-<span class="c1"># whether to export the data or not</span>
-<span class="n">enable</span> <span class="o">=</span> <span class="kc">True</span>
-<span class="c1"># the prefix of the file name</span>
-<span class="n">file_prefix</span> <span class="o">=</span> <span class="p">{</span><span class="n">start</span><span class="p">[</span><span class="n">original_run_uid</span><span class="p">]}</span><span class="n">_</span><span class="p">{</span><span class="n">start</span><span class="p">[</span><span class="n">sample_name</span><span class="p">]}</span><span class="n">_</span>
-
-<span class="c1"># the settings to export the reduced data (like XRD and PDF) in csv files</span>
-<span class="p">[</span><span class="n">NPY</span> <span class="n">SETTING</span><span class="p">]</span>
-<span class="c1"># whether to export the data or not</span>
-<span class="n">enable</span> <span class="o">=</span> <span class="kc">True</span>
-<span class="c1"># the prefix of the file name</span>
-<span class="n">file_prefix</span> <span class="o">=</span> <span class="p">{</span><span class="n">start</span><span class="p">[</span><span class="n">original_run_uid</span><span class="p">]}</span><span class="n">_</span><span class="p">{</span><span class="n">start</span><span class="p">[</span><span class="n">sample_name</span><span class="p">]}</span><span class="n">_</span>
-
-<span class="c1"># the settings to export the reduced data (like XRD and PDF) in txt files</span>
-<span class="p">[</span><span class="n">NPY</span> <span class="n">TXT</span> <span class="n">SETTING</span><span class="p">]</span>
-<span class="n">enable</span> <span class="o">=</span> <span class="kc">True</span>
-<span class="n">file_prefix</span> <span class="o">=</span> <span class="p">{</span><span class="n">start</span><span class="p">[</span><span class="n">original_run_uid</span><span class="p">]}</span><span class="n">_</span><span class="p">{</span><span class="n">start</span><span class="p">[</span><span class="n">sample_name</span><span class="p">]}</span><span class="n">_</span>
-
-<span class="c1"># the settings to export the mask in npy files</span>
-<span class="p">[</span><span class="n">MASK</span> <span class="n">NPY</span> <span class="n">SETTING</span><span class="p">]</span>
-<span class="n">enable</span> <span class="o">=</span> <span class="kc">True</span>
-<span class="n">file_prefix</span> <span class="o">=</span> <span class="p">{</span><span class="n">start</span><span class="p">[</span><span class="n">original_run_uid</span><span class="p">]}</span><span class="n">_</span><span class="p">{</span><span class="n">start</span><span class="p">[</span><span class="n">sample_name</span><span class="p">]}</span><span class="n">_</span>
-
-<span class="c1"># the settings to visualize the masked image (already dark subtracted and background subtracted)</span>
-<span class="p">[</span><span class="n">VIS</span> <span class="n">MASKED</span> <span class="n">IMAGE</span><span class="p">]</span>
-<span class="c1"># whether to visualize the data or not</span>
-<span class="n">enable</span> <span class="o">=</span> <span class="kc">True</span>
-<span class="c1"># the color map of the image</span>
-<span class="n">cmap</span> <span class="o">=</span> <span class="n">viridis</span>
-
-<span class="c1"># the settings to visualize the background subtracted image (already dark subtracted)</span>
-<span class="p">[</span><span class="n">VIS</span> <span class="n">BG</span> <span class="n">SUB</span> <span class="n">IMAGE</span><span class="p">]</span>
-<span class="c1"># whether to visualize the data or not</span>
-<span class="n">enable</span> <span class="o">=</span> <span class="kc">False</span>
-<span class="c1"># the color map of the image</span>
-<span class="n">cmap</span> <span class="o">=</span> <span class="n">viridis</span>
-
-<span class="c1"># the settings to visualize the dark subtracted image</span>
-<span class="p">[</span><span class="n">VIS</span> <span class="n">DK</span> <span class="n">SUB</span> <span class="n">IMAGE</span><span class="p">]</span>
-<span class="c1"># whether to visualize the data or not</span>
-<span class="n">enable</span> <span class="o">=</span> <span class="kc">False</span>
-<span class="c1"># the color map of the image</span>
-<span class="n">cmap</span> <span class="o">=</span> <span class="n">viridis</span>
-
-<span class="c1"># the settings to visualize the intensity as a function of momentum transfer (XRD data)</span>
-<span class="p">[</span><span class="n">VIS</span> <span class="n">CHI</span><span class="p">]</span>
-<span class="c1"># whether to visualize the data or not</span>
-<span class="n">enable</span> <span class="o">=</span> <span class="kc">True</span>
-<span class="c1"># the x and y axis labels, if not specified, use the default labels</span>
-<span class="c1"># uncomment the line below to activate</span>
-<span class="c1"># xlabel =</span>
-<span class="c1"># ylabel =</span>
-
-<span class="c1"># the settings to visualize the interpolated XRD data</span>
-<span class="p">[</span><span class="n">VIS</span> <span class="n">IQ</span><span class="p">]</span>
-<span class="c1"># whether to visualize the data or not</span>
-<span class="n">enable</span> <span class="o">=</span> <span class="kc">False</span>
-<span class="c1"># the x and y axis labels, if not specified, use the default labels</span>
-<span class="c1"># uncomment the line below to activate</span>
-<span class="c1"># xlabel =</span>
-<span class="c1"># ylabel =</span>
-
-<span class="c1"># the settings to visualize the structure factor as a function of momentum transfer</span>
-<span class="p">[</span><span class="n">VIS</span> <span class="n">SQ</span><span class="p">]</span>
-<span class="c1"># whether to visualize the data or not</span>
-<span class="n">enable</span> <span class="o">=</span> <span class="kc">False</span>
-<span class="c1"># the x and y axis labels, if not specified, use the default labels</span>
-<span class="c1"># uncomment the line below to activate</span>
-<span class="c1"># xlabel =</span>
-<span class="c1"># ylabel =</span>
-
-<span class="c1"># the settings to visualize the reduced structure factor as a function of momentum transfer</span>
-<span class="p">[</span><span class="n">VIS</span> <span class="n">FQ</span><span class="p">]</span>
-<span class="c1"># whether to visualize the data or not</span>
-<span class="n">enable</span> <span class="o">=</span> <span class="kc">True</span>
-<span class="c1"># the x and y axis labels, if not specified, use the default labels</span>
-<span class="c1"># uncomment the line below to activate</span>
-<span class="c1"># xlabel =</span>
-<span class="c1"># ylabel =</span>
-
-<span class="c1"># the settings to visualize the reduced pair distribution function (PDF data)</span>
-<span class="p">[</span><span class="n">VIS</span> <span class="n">GR</span><span class="p">]</span>
-<span class="c1"># whether to visualize the data or not</span>
-<span class="n">enable</span> <span class="o">=</span> <span class="kc">True</span>
-<span class="c1"># the x and y axis labels, if not specified, use the default labels</span>
-<span class="c1"># uncomment the line below to activate</span>
-<span class="c1"># xlabel =</span>
-<span class="c1"># ylabel =</span>
-
-<span class="c1"># the settings to visualize the maximum value of PDF</span>
-<span class="p">[</span><span class="n">VIS</span> <span class="n">GR</span> <span class="n">MAX</span><span class="p">]</span>
-<span class="c1"># whether to visualize the data or not</span>
-<span class="n">enable</span> <span class="o">=</span> <span class="kc">True</span>
-<span class="c1"># the y axis labels, if not specified, use the default label</span>
-<span class="c1"># uncomment the line below to activate</span>
-<span class="c1"># ylabel =</span>
-
-<span class="c1"># the settings to visualize the r value at the maximum point of PDF</span>
-<span class="p">[</span><span class="n">VIS</span> <span class="n">GR</span> <span class="n">ARGMAX</span><span class="p">]</span>
-<span class="c1"># whether to visualize the data or not</span>
-<span class="n">enable</span> <span class="o">=</span> <span class="kc">True</span>
-<span class="c1"># the y axis labels, if not specified, use the default label</span>
-<span class="c1"># uncomment the line below to activate</span>
-<span class="c1"># ylabel =</span>
-
-<span class="c1"># the settings to visualize the maximum value of XRD</span>
-<span class="p">[</span><span class="n">VIS</span> <span class="n">CHI</span> <span class="n">MAX</span><span class="p">]</span>
-<span class="c1"># whether to visualize the data or not</span>
-<span class="n">enable</span> <span class="o">=</span> <span class="kc">True</span>
-<span class="c1"># the y axis labels, if not specified, use the default label</span>
-<span class="c1"># uncomment the line below to activate</span>
-<span class="c1"># ylabel =</span>
-
-<span class="c1"># the settings to visualize the Q value at he maximum point of XRD</span>
-<span class="p">[</span><span class="n">VIS</span> <span class="n">CHI</span> <span class="n">ARGMAX</span><span class="p">]</span>
-<span class="c1"># whether to visualize the data or not</span>
-<span class="n">enable</span> <span class="o">=</span> <span class="kc">True</span>
-<span class="c1"># the y axis labels, if not specified, use the default label</span>
-<span class="c1"># uncomment the line below to activate</span>
-<span class="c1"># ylabel =</span>
+<span class="p">[</span><span class="n">VISUALIZATION</span><span class="p">]</span>
+<span class="n">visualizers</span> <span class="o">=</span> <span class="n">dk_sub_image</span><span class="p">,</span><span class="n">masked_image</span><span class="p">,</span><span class="n">chi</span><span class="p">,</span><span class="n">fq</span><span class="p">,</span><span class="n">gr</span><span class="p">,</span><span class="n">best_effort</span>
 </pre></div>
 </div>
 <p>The parameters you can change are the values that behind the equity symbol in each row. Usually, you don’t need
@@ -540,29 +324,29 @@ terminal so that you don’t need to start the server every time. To do this, in
            
           </div>
           <footer>
-  
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="../tutorials2/index.html" class="btn btn-neutral float-right" title="Advanced Users Documents" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="xpd_server.html" class="btn btn-neutral float-left" title="XPD Server" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+        <a href="../changelog.html" class="btn btn-neutral float-right" title="PDFstream Change Log" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="xpd_server.html" class="btn btn-neutral float-left" title="XPD Server" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2020, Songsheng Tao
+        &#169; Copyright 2020, Songsheng Tao.
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 
@@ -570,7 +354,6 @@ terminal so that you don’t need to start the server every time. To do this, in
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {
