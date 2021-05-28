@@ -122,17 +122,22 @@ class DataFrameExporter(ArrayExporter):
 class MyLiveImage(LiveImage):
     """A customized LiveImage."""
 
+    def update(self, data):
+        data_arr = np.asarray(data)
+        super(MyLiveImage, self).update(data_arr)
+
     def show(self):
         self.cs._fig.show()
 
 
-class LiveMaskedImage(MyLiveImage):
+class LiveMaskedImage(LiveImage):
     """Live image show of a image with a mask."""
 
     def __init__(self, field: str, msk_field: str, *, cmap: str, norm: tp.Callable = None,
                  limit_func: tp.Callable = None, auto_draw: bool = True, interpolation: str = None,
                  window_title: str = None, db: Broker = None):
         self.msk_field = msk_field
+        self.msk_array = None
         super(LiveMaskedImage, self).__init__(
             field, cmap=cmap, norm=norm, limit_func=limit_func,
             auto_redraw=auto_draw, interpolation=interpolation, window_title=window_title, db=db
@@ -140,8 +145,11 @@ class LiveMaskedImage(MyLiveImage):
 
     def event(self, doc):
         super(LiveImage, self).event(doc)
-        data = np.ma.masked_array(doc["data"][self.field], doc["data"][self.msk_field])
-        self.update(data)
+        data_arr = np.ma.masked_array(doc["data"][self.field], doc["data"][self.msk_field])
+        self.update(data_arr)
+
+    def show(self):
+        self.cs._fig.show()
 
 
 class MyWaterfall(Waterfall):
