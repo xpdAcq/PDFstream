@@ -34,11 +34,6 @@ except ImportError:
     _PDFGETX_AVAILABLE = False
 
 
-def no_need_to_refresh_db(db: tp.Union[None, Broker], name: tp.Union[None, str]):
-    """If there is no need to refresh the db, return True. Used in configparser."""
-    return (db is not None and name == db.name) or (db is None and name is None)
-
-
 class BasicAnalysisConfig(ConfigParser):
     """The basic configuration that is shared by analysis and calibration."""
 
@@ -257,8 +252,8 @@ def process(
         "mask": np.zeros_like(raw_img),
         "chi_Q": np.array([0.]),
         "chi_I": np.array([0.]),
-        "chi_max": 0.,
-        "chi_argmax": 0.,
+        "chi_max": np.float(0.),
+        "chi_argmax": np.float(0.),
         "iq_Q": np.array([0.]),
         "iq_I": np.array([0.]),
         "sq_Q": np.array([0.]),
@@ -267,8 +262,8 @@ def process(
         "fq_F": np.array([0.]),
         "gr_r": np.array([0.]),
         "gr_G": np.array([0.]),
-        "gr_max": 0.,
-        "gr_argmax": 0.
+        "gr_max": np.float(0.),
+        "gr_argmax": np.float(0.)
     }
     # dark subtraction
     if dk_img is not None:
@@ -304,6 +299,9 @@ def process(
             "gr_r": gr[0], "gr_G": gr[1], "gr_max": gr[1][gr_max_ind], "gr_argmax": gr[0][gr_max_ind]
         }
     )
+    # turn numpy objects to list or int or float
+    for key, value in data.items():
+        data[key] = value.tolist()
     return data
 
 

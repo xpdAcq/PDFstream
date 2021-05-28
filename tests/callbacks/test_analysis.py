@@ -23,11 +23,12 @@ def test_AnalysisStream(db_with_img_and_bg_img, use_db):
     # validate that output data
     out_validator = Validator(analysis_out_schemas)
     ld.subscribe(out_validator)
-    ld.subscribe(print)
+    ld.subscribe(lambda name, doc: print(list(map(type, doc["data"].values()))), name="event")
     # validate the input data
     in_validator = Validator(analysis_in_schemas)
     for name, doc in db[-1].canonical(fill="yes", strict_order=True):
         in_validator(name, doc)
+        # test no numpy array
         ld(name, doc)
 
 
@@ -115,7 +116,6 @@ def test_user_mask1(db_with_img_and_bg_img):
     config.read(fn)
     ld = an.AnalysisStream(config)
     ld.db = db.v1
-    ld.subscribe(print, "event")
     for name, doc in db[-1].canonical(fill="yes", strict_order=True):
         if name == "start":
             doc = dict(**doc, user_config={"auto_mask": False})
@@ -128,7 +128,6 @@ def test_user_mask2(db_with_img_and_bg_img, test_data):
     config.read(fn)
     ld = an.AnalysisStream(config)
     ld.db = db.v1
-    ld.subscribe(print, "event")
     for name, doc in db[-1].canonical(fill="yes", strict_order=True):
         if name == "start":
             doc = dict(**doc, user_config={"auto_mask": False, "mask_file": test_data["mask_file"]})
