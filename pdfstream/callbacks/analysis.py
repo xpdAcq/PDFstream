@@ -380,7 +380,7 @@ class ExporterFactory:
             callbacks.append(cb)
         if "txt" in exports:
             cb = StackedNumpyTextExporter(
-                str(data_folder.joinpath("integration")),
+                str(data_folder.joinpath("array_data")),
                 file_prefix=file_prefix,
                 data_keys=[("chi_Q", "chi_I"), ("iq_Q", "iq_I"), ("sq_Q", "sq_S"), ("fq_Q", "fq_F"),
                            ("gr_r", "gr_G")]
