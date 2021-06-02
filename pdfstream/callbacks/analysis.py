@@ -299,9 +299,6 @@ def process(
             "gr_r": gr[0], "gr_G": gr[1], "gr_max": gr[1][gr_max_ind], "gr_argmax": gr[0][gr_max_ind]
         }
     )
-    # turn numpy objects to list or int or float
-    for key, value in data.items():
-        data[key] = value.tolist()
     return data
 
 
