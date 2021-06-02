@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Search &mdash; PDFstream 0.4.7 documentation</title>
+  <title>Beamline Scientist Document &mdash; PDFstream 0.4.7 documentation</title>
   
 
   
@@ -27,7 +27,6 @@
   
 
   
-    
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -44,10 +43,10 @@
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
     
-    <script type="text/javascript" src="_static/searchtools.js"></script>
-    <script type="text/javascript" src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="#" /> 
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="PDFstream Change Log" href="changelog.html" />
+    <link rel="prev" title="XPDVis Server" href="tutorials1/xpdvis_server.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -78,7 +77,7 @@
 
           
 <div role="search">
-  <form id="rtd-search-form" class="wy-form" action="#" method="get">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
@@ -96,11 +95,14 @@
               
             
             
-              <ul>
+              <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials0/index.html">Users Documents</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials1/index.html">Beamline Scientists Documents</a></li>
-<li class="toctree-l1"><a class="reference internal" href="beamline_doc.html">Beamline Scientist Document</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Beamline Scientist Document</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#test-at-the-beamline">Test at the beamline</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">PDFstream Change Log</a></li>
 <li class="toctree-l1"><a class="reference internal" href="min_versions.html">Minimum Version of Python and NumPy</a></li>
 </ul>
@@ -151,10 +153,14 @@
     
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
-      <li>Search</li>
+      <li>Beamline Scientist Document</li>
     
     
       <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/beamline_doc.rst.txt" rel="nofollow"> View page source</a>
+          
         
       </li>
     
@@ -166,23 +172,39 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <noscript>
-  <div id="fallback" class="admonition warning">
-    <p class="last">
-      Please activate JavaScript to enable the search functionality.
-    </p>
-  </div>
-  </noscript>
+  <div class="section" id="beamline-scientist-document">
+<h1>Beamline Scientist Document<a class="headerlink" href="#beamline-scientist-document" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="test-at-the-beamline">
+<h2>Test at the beamline<a class="headerlink" href="#test-at-the-beamline" title="Permalink to this headline">¶</a></h2>
+<p>In terminal, run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">xpdAcq</span><span class="o">/</span><span class="n">PDFstream</span><span class="o">.</span><span class="n">git</span>
+</pre></div>
+</div>
+<p>The repo <cite>pdfstream</cite> will be cloned. Then, install <cite>pdfstream</cite> from the repo:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="o">-</span><span class="n">m</span> <span class="n">pip</span> <span class="n">install</span> <span class="o">./</span><span class="n">pdfstream</span> <span class="o">--</span><span class="n">no</span><span class="o">-</span><span class="n">deps</span> <span class="o">--</span><span class="n">ignore</span><span class="o">-</span><span class="n">installed</span> <span class="o">--</span><span class="n">prefix</span> <span class="o">~/</span><span class="n">test_pdfstream</span>
+</pre></div>
+</div>
+<p>The directoty <cite>~/test_pdfstream</cite> is where the package will be installed.</p>
+<p>Run the command line using environment variable <cite>PYTHONPATH</cite>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>export PYTHONPATH=~/test_pdfstream/lib/python3.8/site-packages/:$PYTHONPATH
+</pre></div>
+</div>
+<p>Run the server:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">run_server</span> <span class="n">xpd</span> <span class="o">./</span><span class="n">pdfstream</span><span class="o">/</span><span class="n">pdfstram</span><span class="o">/</span><span class="n">data</span><span class="o">/</span><span class="n">config_files</span><span class="o">/</span><span class="n">xpd_server_pdf_beamline</span><span class="o">.</span><span class="n">ini</span>
+</pre></div>
+</div>
+</div>
+</div>
 
-  
-  <div id="search-results">
-  
-  </div>
 
            </div>
            
           </div>
           <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="changelog.html" class="btn btn-neutral float-right" title="PDFstream Change Log" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="tutorials1/xpdvis_server.html" class="btn btn-neutral float-left" title="XPDVis Server" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
 
   <hr/>
 
@@ -219,14 +241,7 @@
   
   
     
-  
-  <script type="text/javascript">
-    jQuery(function() { Search.loadIndex("searchindex.js"); });
-  </script>
-  
-  <script type="text/javascript" id="searchindexloader"></script>
    
-
 
 </body>
 </html>
