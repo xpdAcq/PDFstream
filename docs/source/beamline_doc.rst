@@ -21,5 +21,5 @@ Run the command line using environment variable `PYTHONPATH`::
 
 Run the server::
 
-    run_server xpd ./pdfstream/pdfstram/data/config_files/xpd_server_pdf_beamline.ini
+    run_server xpd ./pdfstream/pdfstream/data/config_files/xpd_server_pdf_beamline.ini
 
