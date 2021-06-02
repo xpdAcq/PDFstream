@@ -247,7 +247,7 @@ def process(
     """The function to process the data from event."""
     # initialize the data dictionary
     data = {
-        "dk_sub_image": raw_img.copy(),
+        "dk_sub_image": raw_img,
         "mask": np.zeros_like(raw_img),
         "chi_Q": np.array([0.]),
         "chi_I": np.array([0.]),
