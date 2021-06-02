@@ -97,10 +97,16 @@ def test_Exporter(db_with_dark_and_scan, tmpdir):
     for name, doc in db[-1].canonical(fill="yes", strict_order=True):
         ld(name, doc)
     tiff_base = Path(ep_config.tiff_base)
+    # test the files are output
     assert len(list(tiff_base.rglob("*.tiff"))) > 0
     assert len(list(tiff_base.rglob("*.csv"))) > 0
     assert len(list(tiff_base.rglob("*.json"))) > 0
     assert len(list(tiff_base.rglob("*.txt"))) > 0
+    # test the size of the tiff files > 16 MB
+    tiffs = list(tiff_base.rglob("*.tiff"))
+    for tiff in tiffs:
+        size_in_mb = tiff.stat().st_size // (2 ** 20)
+        print(size_in_mb)
 
 
 def test_ExportConfig():

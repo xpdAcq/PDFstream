@@ -12,7 +12,6 @@ from event_model import RunRouter
 from pyFAI.azimuthalIntegrator import AzimuthalIntegrator
 from suitcase.csv import Serializer as CSVSerializer
 from suitcase.json_metadata import Serializer as JsonSerializer
-from suitcase.tiff_series import Serializer as TiffSerializer
 
 import pdfstream
 import pdfstream.callbacks.from_descriptor as from_desc
@@ -21,7 +20,7 @@ import pdfstream.callbacks.from_start as from_start
 import pdfstream.integration.tools as integ
 import pdfstream.io as io
 from pdfstream.callbacks.basic import MyLiveImage, LiveMaskedImage, LiveWaterfall, StackedNumpyTextExporter, \
-    SmartScalarPlot
+    SmartScalarPlot, MyTiffSerializer
 from pdfstream.errors import ValueNotFoundError
 from pdfstream.units import LABELS
 from pdfstream.vend.formatters import SpecialStr
@@ -310,7 +309,7 @@ class ExportConfig(ConfigParser):
         self.add_section("SUITCASE")
 
     def get_exports(self):
-        return set(self.get("SUITCASE", "exports", fallback="tiff,json,csv,txt").replace(" ", "").split(","))
+        return set(self.get("SUITCASE", "exports", fallback="tiff,mask,json,csv,txt").replace(" ", "").split(","))
 
     def get_file_prefix(self):
         return SpecialStr(
@@ -333,6 +332,15 @@ class ExportConfig(ConfigParser):
     @tiff_base.setter
     def tiff_base(self, value: str):
         self.set("SUITCASE", "tiff_base", value)
+
+    @property
+    def tiff_setting(self):
+        return {
+            "astype": self.get("SUITCASE", "tiff_astype", fallback="uint32"),
+            "bigtiff": self.getboolean("SUITCASE", "tiff_bigtiff", fallback=False),
+            "byteorder": self.get("SUITCASE", "tiff_byteorder", fallback=None),
+            "imagej": self.get("SUITCASE", "tiff_imagej", fallback=False)
+        }
 
 
 class Exporter(RunRouter):
@@ -358,9 +366,19 @@ class ExporterFactory:
         exports = self.config.get_exports()
         file_prefix = self.config.get_file_prefix()
         if "tiff" in exports:
-            cb = TiffSerializer(
+            cb = MyTiffSerializer(
                 str(data_folder.joinpath("images")),
-                file_prefix=file_prefix
+                file_prefix=file_prefix,
+                data_keys=["dk_sub_image"],
+                **self.config.tiff_setting
+            )
+            callbacks.append(cb)
+        if "mask" in exports:
+            cb = MyTiffSerializer(
+                str(data_folder.joinpath("masks")),
+                file_prefix=file_prefix,
+                data_keys=["mask"],
+                **self.config.tiff_setting
             )
             callbacks.append(cb)
         if "json" in exports:
