@@ -105,10 +105,10 @@ class AnalysisConfig(BasicAnalysisConfig):
     @property
     def integ_setting(self):
         return {
-            "npt": self.getint("ANALYSIS", "npt", fallback=1024),
+            "npt": self.getint("ANALYSIS", "npt", fallback=2048),
             "correctSolidAngle": self.getboolean("ANALYSIS", "correctSolidAngle", fallback=False),
             "polarization_factor": self.getfloat("ANALYSIS", "polarization_factor", fallback=0.99),
-            "method": self.get("ANALYSIS", "method", fallback="splitpixel"),
+            "method": self.get("ANALYSIS", "method", fallback="bbox,csr,cython"),
             "normalization_factor": self.getfloat("ANALYSIS", "normalization_factor", fallback=1.),
             "unit": "q_A^-1"
         }
