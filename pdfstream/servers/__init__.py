@@ -7,3 +7,4 @@ class ServerNames:
     xpd = "xpd"
     lsq = "lsq"
     xpdvis = "xpdvis"
+    xpdsave = "xpdsave"

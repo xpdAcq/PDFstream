@@ -44,3 +44,11 @@ def test_load_matrix_flexible(tmpdir):
 def test_load_matrix_flexible_error():
     with pytest.raises(ValueError):
         mod.load_matrix_flexible("test.jpg")
+
+
+def test_server_message():
+    mod.server_message("test 1")
+    mod.quiet()
+    mod.server_message("test 2")
+    mod.verbose()
+    mod.server_message("test 3")

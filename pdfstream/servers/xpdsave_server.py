@@ -1,24 +1,19 @@
-from bluesky.callbacks.best_effort import BestEffortCallback
-
-from pdfstream.callbacks.analysis import Visualizer, VisConfig
+from pdfstream.callbacks.analysis import ExportConfig, Exporter
 from pdfstream.servers import CONFIG_DIR, ServerNames
 from pdfstream.servers.base import BaseServer, ServerConfig, find_cfg_file
 
 
-class XPDVisServerConfig(ServerConfig, VisConfig):
-    """A configuration for the XPDVisServer."""
+class XPDSaveServerConfig(ServerConfig, ExportConfig):
+    """A configuration for the XPDSaveServer."""
     pass
 
 
-class XPDVisServer(BaseServer):
-    """A server that visualizes the analyzed data from the xpd server."""
+class XPDSaveServer(BaseServer):
+    """A server that saves the analyzed data from the xpd server."""
 
-    def __init__(self, config: XPDVisServerConfig):
-        super(XPDVisServer, self).__init__(config)
-        bec = BestEffortCallback()
-        bec.disable_plots()
-        self.subscribe(bec)
-        self.subscribe(Visualizer(config))
+    def __init__(self, config: XPDSaveServerConfig):
+        super(XPDSaveServer, self).__init__(config)
+        self.subscribe(Exporter(config))
 
 
 def make_and_run(
@@ -47,10 +42,9 @@ def make_and_run(
         import warnings
         warnings.simplefilter("ignore")
     if not cfg_file:
-        cfg_file = find_cfg_file(CONFIG_DIR, ServerNames.xpdvis)
-    config = XPDVisServerConfig()
+        cfg_file = find_cfg_file(CONFIG_DIR, ServerNames.xpdsave)
+    config = XPDSaveServerConfig()
     config.read(cfg_file)
-    server = XPDVisServer(config)
+    server = XPDSaveServer(config)
     if not test_mode:
-        server.install_qt_kicker()
         server.start()

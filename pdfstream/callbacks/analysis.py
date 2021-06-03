@@ -1,4 +1,5 @@
 import copy
+import datetime
 import typing as tp
 from configparser import ConfigParser
 from pathlib import Path
@@ -12,7 +13,6 @@ from event_model import RunRouter
 from pyFAI.azimuthalIntegrator import AzimuthalIntegrator
 from suitcase.csv import Serializer as CSVSerializer
 from suitcase.json_metadata import Serializer as JsonSerializer
-from suitcase.tiff_series import Serializer as TiffSerializer
 
 import pdfstream
 import pdfstream.callbacks.from_descriptor as from_desc
@@ -21,7 +21,7 @@ import pdfstream.callbacks.from_start as from_start
 import pdfstream.integration.tools as integ
 import pdfstream.io as io
 from pdfstream.callbacks.basic import MyLiveImage, LiveMaskedImage, LiveWaterfall, StackedNumpyTextExporter, \
-    SmartScalarPlot
+    SmartScalarPlot, MyTiffSerializer
 from pdfstream.errors import ValueNotFoundError
 from pdfstream.units import LABELS
 from pdfstream.vend.formatters import SpecialStr
@@ -105,10 +105,10 @@ class AnalysisConfig(BasicAnalysisConfig):
     @property
     def integ_setting(self):
         return {
-            "npt": self.getint("ANALYSIS", "npt", fallback=1024),
+            "npt": self.getint("ANALYSIS", "npt", fallback=2048),
             "correctSolidAngle": self.getboolean("ANALYSIS", "correctSolidAngle", fallback=False),
             "polarization_factor": self.getfloat("ANALYSIS", "polarization_factor", fallback=0.99),
-            "method": self.get("ANALYSIS", "method", fallback="splitpixel"),
+            "method": self.get("ANALYSIS", "method", fallback="bbox,csr,cython"),
             "normalization_factor": self.getfloat("ANALYSIS", "normalization_factor", fallback=1.),
             "unit": "q_A^-1"
         }
@@ -146,6 +146,7 @@ class AnalysisStream(LiveDispatcher):
         self.dark_image = None
 
     def start(self, doc, _md=None):
+        io.server_message("Read the start of {}".format(doc["uid"]))
         self.clear_cache()
         # copy the default config and read the user config
         self.config = copy.deepcopy(self.init_config)
@@ -181,6 +182,7 @@ class AnalysisStream(LiveDispatcher):
             self.event(event_doc)
 
     def descriptor(self, doc):
+        io.server_message("Read the stream {}".format(doc["name"]))
         self.image_key = from_desc.find_one_image(doc)
         try:
             self.dark_image = from_start.query_dk_img(
@@ -195,10 +197,13 @@ class AnalysisStream(LiveDispatcher):
         return super(AnalysisStream, self).descriptor(doc)
 
     def event(self, doc, _md=None):
+        io.server_message("Start processing the event {}".format(doc["seq_num"]))
         data = self.process_data(doc)
+        io.server_message("Finish processing the event {}".format(doc["seq_num"]))
         return self.process_event(dict(data=data, descriptor=doc["descriptor"]))
 
     def stop(self, doc, _md=None):
+        io.server_message("Read the stop of {}".format(doc["run_start"]))
         return super(AnalysisStream, self).stop(doc)
 
     def process_data(self, doc) -> dict:
@@ -248,7 +253,7 @@ def process(
     """The function to process the data from event."""
     # initialize the data dictionary
     data = {
-        "dk_sub_image": raw_img.copy(),
+        "dk_sub_image": raw_img,
         "mask": np.zeros_like(raw_img),
         "chi_Q": np.array([0.]),
         "chi_I": np.array([0.]),
@@ -299,9 +304,6 @@ def process(
             "gr_r": gr[0], "gr_G": gr[1], "gr_max": gr[1][gr_max_ind], "gr_argmax": gr[0][gr_max_ind]
         }
     )
-    # turn numpy objects to list or int or float
-    for key, value in data.items():
-        data[key] = value.tolist()
     return data
 
 
@@ -313,11 +315,11 @@ class ExportConfig(ConfigParser):
         self.add_section("SUITCASE")
 
     def get_exports(self):
-        return set(self.get("SUITCASE", "exports", fallback="tiff,json,csv,txt").replace(" ", "").split(","))
+        return set(self.get("SUITCASE", "exports", fallback="tiff,mask,json,csv,txt").replace(" ", "").split(","))
 
     def get_file_prefix(self):
         return SpecialStr(
-            self.get("SUITCASE", "file_prefix", fallback="{start[original_run_uid]}_{start[sample_name]}_"))
+            self.get("SUITCASE", "file_prefix", fallback="{start[original_run_uid]}_{start[readable_time]}_"))
 
     @property
     def directory_template(self):
@@ -337,13 +339,37 @@ class ExportConfig(ConfigParser):
     def tiff_base(self, value: str):
         self.set("SUITCASE", "tiff_base", value)
 
+    @property
+    def tiff_setting(self):
+        return {
+            "astype": self.get("SUITCASE", "tiff_astype", fallback="uint32"),
+            "bigtiff": self.getboolean("SUITCASE", "tiff_bigtiff", fallback=False),
+            "byteorder": self.get("SUITCASE", "tiff_byteorder", fallback=None),
+            "imagej": self.get("SUITCASE", "tiff_imagej", fallback=False)
+        }
+
 
 class Exporter(RunRouter):
-    """Export the processed data to file systems."""
+    """Export the processed data to file systems. Add readable_time to start doc."""
 
     def __init__(self, config: ExportConfig):
         factory = ExporterFactory(config)
         super().__init__([factory])
+
+    def start(self, start_doc):
+        io.server_message("Copy and inject 'readable_time' in the start of {}".format(start_doc["uid"]))
+        start_doc = copy.deepcopy(start_doc)
+        start_doc["readable_time"] = datetime.datetime.fromtimestamp(start_doc["time"]).strftime(
+            "%Y-%m-%d_%H:%M:%S")
+        return super(Exporter, self).start(start_doc)
+
+    def event(self, doc):
+        io.server_message("Export the event {}".format(doc["seq_num"]))
+        return super(Exporter, self).event(doc)
+
+    def stop(self, doc):
+        io.server_message("Read the stop of {}".format(doc["run_start"]))
+        return super(Exporter, self).stop(doc)
 
 
 class ExporterFactory:
@@ -361,9 +387,19 @@ class ExporterFactory:
         exports = self.config.get_exports()
         file_prefix = self.config.get_file_prefix()
         if "tiff" in exports:
-            cb = TiffSerializer(
+            cb = MyTiffSerializer(
                 str(data_folder.joinpath("images")),
-                file_prefix=file_prefix
+                file_prefix=file_prefix,
+                data_keys=["dk_sub_image"],
+                **self.config.tiff_setting
+            )
+            callbacks.append(cb)
+        if "mask" in exports:
+            cb = MyTiffSerializer(
+                str(data_folder.joinpath("masks")),
+                file_prefix=file_prefix,
+                data_keys=["mask"],
+                **self.config.tiff_setting
             )
             callbacks.append(cb)
         if "json" in exports:

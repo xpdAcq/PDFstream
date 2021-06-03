@@ -20,3 +20,9 @@ def test_StartStopCallback(simple_stream):
     cb = pdfstream.servers.base.StartStopCallback()
     for name, doc in simple_stream:
         cb(name, doc)
+
+
+def test_ServerConfig():
+    with pytest.raises(FileNotFoundError):
+        config = mod.ServerConfig()
+        config.read("A missing file")

@@ -1,18 +1,17 @@
 """The analysis server. Process raw image to PDF."""
 import typing as tp
 
-from area_detector_handlers.handlers import AreaDetectorTiffHandler
+import databroker.core
 from bluesky.callbacks.zmq import Publisher
 from databroker.v1 import Broker
 from event_model import RunRouter
-from ophyd.sim import NumpySeqHandler
 
 import pdfstream.io as io
 from pdfstream.callbacks.analysis import AnalysisConfig, VisConfig, ExportConfig, AnalysisStream, Exporter, \
     Visualizer
 from pdfstream.callbacks.calibration import CalibrationConfig, Calibration
 from pdfstream.servers import CONFIG_DIR, ServerNames
-from pdfstream.servers.base import ServerConfig, find_cfg_file, BaseServer, StartStopCallback
+from pdfstream.servers.base import ServerConfig, find_cfg_file, BaseServer
 
 
 class XPDConfig(AnalysisConfig, VisConfig, ExportConfig, CalibrationConfig):
@@ -48,7 +47,7 @@ class XPDConfig(AnalysisConfig, VisConfig, ExportConfig, CalibrationConfig):
         }
 
 
-class XPDServerConfig(XPDConfig, ServerConfig):
+class XPDServerConfig(ServerConfig, XPDConfig):
     """The configuration for xpd server."""
     pass
 
@@ -56,8 +55,7 @@ class XPDServerConfig(XPDConfig, ServerConfig):
 class XPDServer(BaseServer):
     """The server of XPD data analysis. It is a live dispatcher with XPDRouter subscribed."""
     def __init__(self, config: XPDServerConfig):
-        super(XPDServer, self).__init__(config.address, prefix=config.prefix)
-        self.subscribe(StartStopCallback())
+        super(XPDServer, self).__init__(config)
         self.subscribe(XPDRouter(config))
 
 
@@ -104,10 +102,7 @@ class XPDRouter(RunRouter):
         factory = XPDFactory(config)
         super(XPDRouter, self).__init__(
             [factory],
-            handler_registry={
-                "NPY_SEQ": NumpySeqHandler,
-                "AD_TIFF": AreaDetectorTiffHandler
-            }
+            handler_registry=databroker.core.discover_handlers()
         )
 
 

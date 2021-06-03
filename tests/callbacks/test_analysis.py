@@ -97,10 +97,38 @@ def test_Exporter(db_with_dark_and_scan, tmpdir):
     for name, doc in db[-1].canonical(fill="yes", strict_order=True):
         ld(name, doc)
     tiff_base = Path(ep_config.tiff_base)
+    # test the files are output
     assert len(list(tiff_base.rglob("*.tiff"))) > 0
     assert len(list(tiff_base.rglob("*.csv"))) > 0
     assert len(list(tiff_base.rglob("*.json"))) > 0
     assert len(list(tiff_base.rglob("*.txt"))) > 0
+
+
+def test_filenames(db_with_dark_and_scan, tmpdir):
+    """Test exported file names and sizes from Exporter."""
+    db = db_with_dark_and_scan
+    config = an.AnalysisConfig()
+    config.read(fn)
+    ld = an.AnalysisStream(config)
+    ld.db = db.v1
+    ep_config = pdfstream.callbacks.analysis.ExportConfig()
+    ep_config.read(fn)
+    ep_config.tiff_base = str(tmpdir)
+    ep = pdfstream.callbacks.analysis.Exporter(ep_config)
+    ld.subscribe(ep)
+    for name, doc in db[-1].canonical(fill="yes", strict_order=True):
+        ld(name, doc)
+    tiff_base = Path(ep_config.tiff_base)
+    # test tiff names and sizes
+    tiffs = list(tiff_base.rglob("*.tiff"))
+    for tiff in tiffs:
+        size_in_mb = tiff.stat().st_size // (2 ** 20)
+        assert size_in_mb == 16
+        print(tiff.name)
+    # test array names
+    txts = list(tiff_base.rglob("*.txt"))
+    for txt in txts:
+        print(txt.name)
 
 
 def test_ExportConfig():

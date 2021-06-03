@@ -10,6 +10,7 @@ import yaml
 from numpy import ndarray
 from tifffile import TiffWriter
 
+import pdfstream.data
 from pdfstream.vend.loaddata import load_data
 
 
@@ -76,8 +77,19 @@ def _str_none(dct: Dict[str, Any]) -> Dict[str, Any]:
 
 def server_message(msg: str):
     """Print a message to a uniform format of server message."""
-    t = datetime.now().strftime("%x %X")
-    print("[{}] {}".format(t, msg))
+    if not pdfstream.data.QUIET:
+        t = datetime.now().strftime("%x %X")
+        print("[{}] {}".format(t, msg))
+
+
+def quiet():
+    """Turn the server to be quiet."""
+    pdfstream.data.QUIET = True
+
+
+def verbose():
+    """Turn the server to be verbose"""
+    pdfstream.data.QUIET = False
 
 
 def load_matrix_flexible(matrix_file: str) -> ndarray:
