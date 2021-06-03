@@ -1,11 +1,10 @@
 """The analysis server. Process raw image to PDF."""
 import typing as tp
 
-from area_detector_handlers.handlers import AreaDetectorTiffHandler
+import databroker.core
 from bluesky.callbacks.zmq import Publisher
 from databroker.v1 import Broker
 from event_model import RunRouter
-from ophyd.sim import NumpySeqHandler
 
 import pdfstream.io as io
 from pdfstream.callbacks.analysis import AnalysisConfig, VisConfig, ExportConfig, AnalysisStream, Exporter, \
@@ -104,10 +103,7 @@ class XPDRouter(RunRouter):
         factory = XPDFactory(config)
         super(XPDRouter, self).__init__(
             [factory],
-            handler_registry={
-                "NPY_SEQ": NumpySeqHandler,
-                "AD_TIFF": AreaDetectorTiffHandler
-            }
+            handler_registry=databroker.core.discover_handlers()
         )
 
 
