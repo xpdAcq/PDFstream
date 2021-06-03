@@ -1,6 +1,6 @@
 from pdfstream.callbacks.analysis import ExportConfig, Exporter
 from pdfstream.servers import CONFIG_DIR, ServerNames
-from pdfstream.servers.base import BaseServer, ServerConfig, find_cfg_file, StartStopCallback
+from pdfstream.servers.base import BaseServer, ServerConfig, find_cfg_file
 
 
 class XPDSaveServerConfig(ServerConfig, ExportConfig):
@@ -14,7 +14,6 @@ class XPDSaveServer(BaseServer):
     def __init__(self, config: XPDSaveServerConfig):
         super(XPDSaveServer, self).__init__(config)
         self.subscribe(Exporter(config))
-        self.subscribe(StartStopCallback())
 
 
 def make_and_run(

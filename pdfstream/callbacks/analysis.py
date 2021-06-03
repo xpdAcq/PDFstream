@@ -314,7 +314,7 @@ class ExportConfig(ConfigParser):
 
     def get_file_prefix(self):
         return SpecialStr(
-            self.get("SUITCASE", "file_prefix", fallback="{start[original_run_uid]}_{start[time]}_"))
+            self.get("SUITCASE", "file_prefix", fallback="{start[original_run_uid]}_{start[readable_time]}_"))
 
     @property
     def directory_template(self):
@@ -345,17 +345,17 @@ class ExportConfig(ConfigParser):
 
 
 class Exporter(RunRouter):
-    """Export the processed data to file systems."""
+    """Export the processed data to file systems. Add readable_time to start doc."""
 
     def __init__(self, config: ExportConfig):
         factory = ExporterFactory(config)
         super().__init__([factory])
 
-    def __call__(self, name, doc, validate=False):
-        if name == "start":
-            # convert to human-readable time
-            doc["time"] = datetime.datetime.fromtimestamp(doc["time"]).strftime("%Y-%m-%d_%H:%M:%S")
-        return super(Exporter, self).__call__(name, doc, validate=validate)
+    def start(self, start_doc):
+        start_doc = copy.deepcopy(start_doc)
+        start_doc["readable_time"] = datetime.datetime.fromtimestamp(start_doc["time"]).strftime(
+            "%Y-%m-%d_%H:%M:%S")
+        return super(Exporter, self).start(start_doc)
 
 
 class ExporterFactory:

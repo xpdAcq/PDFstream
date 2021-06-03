@@ -2,6 +2,7 @@ import typing
 import typing as tp
 
 from pdfstream.errors import ValueNotFoundError
+from pdfstream.vend.formatters import SpecialStr
 
 
 def find_one_array(data_keys: dict) -> str:
@@ -34,10 +35,10 @@ def get_units(data_keys: dict, indeps: typing.Iterable[str]) -> typing.Dict[str,
     }
 
 
-def get_indep_str(data: dict, indep2unit: typing.Dict[str, str]) -> str:
+def get_indep_str(data: dict, indep2unit: typing.Dict[str, str]) -> SpecialStr:
     """Get a string of independent variables and their value and their units to export in the file name."""
     stack = []
     for indep, unit in indep2unit.items():
         if indep in data:
             stack.append("{}_{:.2f}{}_".format(indep, data[indep], unit))
-    return ''.join(stack)
+    return SpecialStr(''.join(stack))

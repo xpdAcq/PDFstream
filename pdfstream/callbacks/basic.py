@@ -302,7 +302,7 @@ class SmartScalarPlot(CallbackBase):
 class MyTiffSerializer(TiffSerializer):
     """A TiffSerializer that allows specific data keys to be exported."""
 
-    def __init__(self, directory, file_prefix='{start[uid]}-', data_keys=None, astype='uint32',
+    def __init__(self, directory, file_prefix: SpecialStr, data_keys=None, astype='uint32',
                  bigtiff=False, byteorder=None, imagej=False, **kwargs):
         super(MyTiffSerializer, self).__init__(directory, file_prefix=file_prefix, astype=astype,
                                                bigtiff=bigtiff, byteorder=byteorder, imagej=imagej, **kwargs)
@@ -321,7 +321,8 @@ class MyTiffSerializer(TiffSerializer):
     def event(self, doc):
         # add indep
         _file_prefix = copy.copy(self._file_prefix)
-        self._file_prefix += fd.get_indep_str(doc["data"], self._indep2unit)
+        indep_str = fd.get_indep_str(doc["data"], self._indep2unit)
+        self._file_prefix = SpecialStr(_file_prefix + indep_str)
         # select data key
         if not self.data_keys:
             returned = super(MyTiffSerializer, self).event(doc)
