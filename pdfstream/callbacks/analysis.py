@@ -146,6 +146,7 @@ class AnalysisStream(LiveDispatcher):
         self.dark_image = None
 
     def start(self, doc, _md=None):
+        io.server_message("Read the start of {}".format(doc["uid"]))
         self.clear_cache()
         # copy the default config and read the user config
         self.config = copy.deepcopy(self.init_config)
@@ -181,6 +182,7 @@ class AnalysisStream(LiveDispatcher):
             self.event(event_doc)
 
     def descriptor(self, doc):
+        io.server_message("Read the stream {}".format(doc["name"]))
         self.image_key = from_desc.find_one_image(doc)
         try:
             self.dark_image = from_start.query_dk_img(
@@ -195,10 +197,13 @@ class AnalysisStream(LiveDispatcher):
         return super(AnalysisStream, self).descriptor(doc)
 
     def event(self, doc, _md=None):
+        io.server_message("Start processing the event {}".format(doc["seq_num"]))
         data = self.process_data(doc)
+        io.server_message("Finish processing the event {}".format(doc["seq_num"]))
         return self.process_event(dict(data=data, descriptor=doc["descriptor"]))
 
     def stop(self, doc, _md=None):
+        io.server_message("Read the stop of {}".format(doc["run_start"]))
         return super(AnalysisStream, self).stop(doc)
 
     def process_data(self, doc) -> dict:
@@ -352,10 +357,19 @@ class Exporter(RunRouter):
         super().__init__([factory])
 
     def start(self, start_doc):
+        io.server_message("Copy and inject 'readable_time' in the start of {}".format(start_doc["uid"]))
         start_doc = copy.deepcopy(start_doc)
         start_doc["readable_time"] = datetime.datetime.fromtimestamp(start_doc["time"]).strftime(
             "%Y-%m-%d_%H:%M:%S")
         return super(Exporter, self).start(start_doc)
+
+    def event(self, doc):
+        io.server_message("Export the event {}".format(doc["seq_num"]))
+        return super(Exporter, self).event(doc)
+
+    def stop(self, doc):
+        io.server_message("Read the stop of {}".format(doc["run_start"]))
+        return super(Exporter, self).stop(doc)
 
 
 class ExporterFactory:
