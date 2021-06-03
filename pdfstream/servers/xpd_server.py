@@ -55,7 +55,7 @@ class XPDServerConfig(ServerConfig, XPDConfig):
 class XPDServer(BaseServer):
     """The server of XPD data analysis. It is a live dispatcher with XPDRouter subscribed."""
     def __init__(self, config: XPDServerConfig):
-        super(XPDServer, self).__init__(config.address, prefix=config.prefix)
+        super(XPDServer, self).__init__(config)
         self.subscribe(XPDRouter(config))
         self.subscribe(StartStopCallback())
 

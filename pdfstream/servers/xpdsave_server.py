@@ -12,7 +12,7 @@ class XPDSaveServer(BaseServer):
     """A server that saves the analyzed data from the xpd server."""
 
     def __init__(self, config: XPDSaveServerConfig):
-        super(XPDSaveServer, self).__init__(config.address, prefix=config.prefix)
+        super(XPDSaveServer, self).__init__(config)
         self.subscribe(Exporter(config))
         self.subscribe(StartStopCallback())
 

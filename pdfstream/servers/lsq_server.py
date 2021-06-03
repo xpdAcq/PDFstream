@@ -96,7 +96,7 @@ class LSQServer(BaseServer):
     and save the data and visualize the residual of the decomposition and the PDF data transformed from it."""
 
     def __init__(self, config: LSQServerConfig):
-        super(LSQServer, self).__init__(config.address, prefix=config.prefix)
+        super(LSQServer, self).__init__(config)
         self.subscribe(LSQRunRouter(config))
 
     @classmethod

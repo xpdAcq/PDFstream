@@ -14,7 +14,7 @@ class XPDVisServer(BaseServer):
     """A server that visualizes the analyzed data from the xpd server."""
 
     def __init__(self, config: XPDVisServerConfig):
-        super(XPDVisServer, self).__init__(config.address, prefix=config.prefix)
+        super(XPDVisServer, self).__init__(config)
         bec = BestEffortCallback()
         bec.disable_plots()
         self.subscribe(bec)

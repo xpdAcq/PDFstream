@@ -1,3 +1,4 @@
+import typing
 from configparser import ConfigParser, Error
 from pathlib import Path
 
@@ -31,8 +32,8 @@ class ServerConfig(ConfigParser):
     def prefix(self):
         return self.get("LISTEN TO", "prefix", fallback="raw").encode()
 
-    def read(self, filename, *args, **kwargs) -> typing.List[str]:
-        returned = super(ServerConfig, self).read(filename, *args, **kwargs)
+    def read(self, filenames, encoding=None) -> typing.List[str]:
+        returned = super(ServerConfig, self).read(filenames, encoding=encoding)
         if not returned:
             raise FileNotFoundError("No such configuration file {}".format(filename))
         return returned
@@ -41,9 +42,13 @@ class ServerConfig(ConfigParser):
 class BaseServer(RemoteDispatcher):
     """The basic server class."""
 
+    def __init__(self, config: ServerConfig):
+        super(BaseServer, self).__init__(config.address, prefix=config.prefix)
+        self._config = config
+
     def start(self):
         try:
-            server_message("Server is started.")
+            server_message("Server is started. Listen to {}:{}.".format(self._config.host, self._config.port))
             super(BaseServer, self).start()
         except KeyboardInterrupt:
             server_message("Server is terminated.")
