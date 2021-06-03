@@ -1,4 +1,5 @@
 import copy
+import datetime
 import typing as tp
 from configparser import ConfigParser
 from pathlib import Path
@@ -313,7 +314,7 @@ class ExportConfig(ConfigParser):
 
     def get_file_prefix(self):
         return SpecialStr(
-            self.get("SUITCASE", "file_prefix", fallback="{start[original_run_uid]}_{start[sample_name]}_"))
+            self.get("SUITCASE", "file_prefix", fallback="{start[original_run_uid]}_{start[time]}_"))
 
     @property
     def directory_template(self):
@@ -349,6 +350,12 @@ class Exporter(RunRouter):
     def __init__(self, config: ExportConfig):
         factory = ExporterFactory(config)
         super().__init__([factory])
+
+    def __call__(self, name, doc, validate=False):
+        if name == "start":
+            # convert to human-readable time
+            doc["time"] = datetime.datetime.fromtimestamp(doc["time"]).strftime("%Y-%m-%d_%H:%M:%S")
+        return super(Exporter, self).__call__(name, doc, validate=validate)
 
 
 class ExporterFactory:

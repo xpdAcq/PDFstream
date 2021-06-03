@@ -1,3 +1,4 @@
+import copy
 import typing as tp
 from pathlib import Path
 
@@ -21,31 +22,38 @@ from pdfstream.vend.formatters import SpecialStr
 
 class ArrayExporter(CallbackBase):
     """An base class for the callbacks to find and export the 1d array."""
-    file_suffix = ""
-    file_stem = ""
+    _file_suffix = ""
+    _file_stem = "{descriptor[name]}-{field}-{event[seq_num]}"
 
     def __init__(self, directory: str, *, file_prefix: str, data_keys: list = None):
         super(ArrayExporter, self).__init__()
         self.directory = Path(directory)
         self.directory.mkdir(parents=True, exist_ok=True)
-        self.file_template = SpecialStr(
-            file_prefix + self.file_stem + self.file_suffix
-        )
+        self._file_prefix = file_prefix
+        self._file_template = ""
         self.data_keys = data_keys
-        self.start_doc = None
-        self.descriptor_doc = None
+        self.start_doc = {}
+        self.descriptor_doc = {}
+        self._indeps = set()
+        self._indep2unit = {}
 
     def start(self, doc):
         self.start_doc = doc
+        self._indeps = fs.get_indeps(doc, exclude={"time"})
         super(ArrayExporter, self).start(doc)
 
     def descriptor(self, doc):
         if not self.data_keys:
             self.data_keys = list(fd.yield_1d_array(doc["data_keys"]))
         self.descriptor_doc = doc
+        self._indep2unit = fd.get_units(doc["data_keys"], self._indeps)
         super(ArrayExporter, self).descriptor(doc)
 
     def event(self, doc):
+        indep_str = fd.get_indep_str(doc["data"], self._indep2unit)
+        self._file_template = SpecialStr(
+            self._file_prefix + indep_str + self._file_stem + self._file_suffix
+        )
         self.export(doc)
         super(ArrayExporter, self).event(doc)
 
@@ -54,8 +62,6 @@ class ArrayExporter(CallbackBase):
             self.event(event)
 
     def stop(self, doc):
-        self.start_doc = None
-        self.descriptor_doc = None
         super(ArrayExporter, self).stop(doc)
 
     def export(self, doc):
@@ -64,43 +70,40 @@ class ArrayExporter(CallbackBase):
 
 class NumpyExporter(ArrayExporter):
     """An exporter to export the array data one by one in .npy file."""
-    file_suffix = ".npy"
-    file_stem = "{descriptor[name]}-{field}-{event[seq_num]}"
+    _file_suffix = ".npy"
 
     def export(self, doc):
         for data_key in self.data_keys:
             arr: np.ndarray = doc["data"][data_key]
-            filename = self.file_template.format(start=self.start_doc, descriptor=self.descriptor_doc, event=doc,
-                                                 field=data_key)
+            filename = self._file_template.format(start=self.start_doc, descriptor=self.descriptor_doc, event=doc,
+                                                  field=data_key)
             filepath = self.directory.joinpath(filename)
             np.save(str(filepath), arr)
 
 
 class StackedNumpyExporter(ArrayExporter):
     """An exporter to export the column-stacked array data in .npy file."""
-    file_suffix = ".npy"
-    file_stem = "{descriptor[name]}-{field}-{event[seq_num]}"
+    _file_suffix = ".npy"
 
     def export(self, doc):
         arr: np.ndarray = np.stack([doc["data"][data_key] for data_key in self.data_keys], axis=-1)
-        field = "-".join(self.data_keys)
-        filename = self.file_template.format(start=self.start_doc, descriptor=self.descriptor_doc, event=doc,
-                                             field=field)
+        field = "_".join(self.data_keys)
+        filename = self._file_template.format(start=self.start_doc, descriptor=self.descriptor_doc, event=doc,
+                                              field=field)
         filepath = self.directory.joinpath(filename)
         np.save(str(filepath), arr)
 
 
 class StackedNumpyTextExporter(ArrayExporter):
     """An exporter to export the column-stacked array data in .txt file."""
-    file_suffix = ".txt"
-    file_stem = "{descriptor[name]}-{field}-{event[seq_num]}"
+    _file_suffix = ".txt"
 
     def export(self, doc):
         for data_key_tup in self.data_keys:
             arr: np.ndarray = np.stack([doc["data"][data_key] for data_key in data_key_tup], axis=-1)
-            field = "-".join(data_key_tup)
-            filename = self.file_template.format(start=self.start_doc, descriptor=self.descriptor_doc, event=doc,
-                                                 field=field)
+            field = "_".join(data_key_tup)
+            filename = self._file_template.format(start=self.start_doc, descriptor=self.descriptor_doc, event=doc,
+                                                  field=field)
             filepath = self.directory.joinpath(filename)
             header = " ".join(data_key_tup)
             np.savetxt(str(filepath), arr, header=header)
@@ -108,14 +111,13 @@ class StackedNumpyTextExporter(ArrayExporter):
 
 class DataFrameExporter(ArrayExporter):
     """An exporter to export data in a dataframe in the .csv file."""
-    file_suffix = ".csv"
-    file_stem = "{descriptor[name]}-{field}-{event[seq_num]}"
+    _file_suffix = ".csv"
 
     def export(self, doc):
         _data = {data_key: pd.Series(doc["data"][data_key]) for data_key in self.data_keys}
         df = pd.DataFrame(data=_data)
-        filename = self.file_template.format(start=self.start_doc, descriptor=self.descriptor_doc, event=doc,
-                                             field="data")
+        filename = self._file_template.format(start=self.start_doc, descriptor=self.descriptor_doc, event=doc,
+                                              field="data")
         filepath = self.directory.joinpath(filename)
         df.to_csv(str(filepath))
 
@@ -305,10 +307,28 @@ class MyTiffSerializer(TiffSerializer):
         super(MyTiffSerializer, self).__init__(directory, file_prefix=file_prefix, astype=astype,
                                                bigtiff=bigtiff, byteorder=byteorder, imagej=imagej, **kwargs)
         self.data_keys = data_keys
+        self._indeps = frozenset()
+        self._indep2unit = dict()
+
+    def start(self, doc):
+        self._indeps = fs.get_indeps(doc, exclude={"time"})
+        return super(MyTiffSerializer, self).start(doc)
+
+    def descriptor(self, doc):
+        self._indep2unit = fd.get_units(doc["data_keys"], self._indeps)
+        return super(MyTiffSerializer, self).descriptor(doc)
 
     def event(self, doc):
+        # add indep
+        _file_prefix = copy.copy(self._file_prefix)
+        self._file_prefix += fd.get_indep_str(doc["data"], self._indep2unit)
+        # select data key
         if not self.data_keys:
-            return super(MyTiffSerializer, self).event(doc)
-        doc = dict(doc)
-        doc["data"] = {k: v for k, v in doc["data"].items() if k in self.data_keys}
-        return super(MyTiffSerializer, self).event(doc)
+            returned = super(MyTiffSerializer, self).event(doc)
+        else:
+            doc = dict(doc)
+            doc["data"] = {k: v for k, v in doc["data"].items() if k in self.data_keys}
+            returned = super(MyTiffSerializer, self).event(doc)
+        # go back to original data key
+        self._file_prefix = _file_prefix
+        return returned
