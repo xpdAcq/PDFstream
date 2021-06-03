@@ -5,7 +5,7 @@ from pdfstream.servers import CONFIG_DIR, ServerNames
 from pdfstream.servers.base import BaseServer, ServerConfig, find_cfg_file
 
 
-class XPDVisServerConfig(VisConfig, ServerConfig):
+class XPDVisServerConfig(ServerConfig, VisConfig):
     """A configuration for the XPDVisServer."""
     pass
 

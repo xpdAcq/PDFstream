@@ -12,7 +12,7 @@ from pdfstream.callbacks.analysis import AnalysisConfig, VisConfig, ExportConfig
     Visualizer
 from pdfstream.callbacks.calibration import CalibrationConfig, Calibration
 from pdfstream.servers import CONFIG_DIR, ServerNames
-from pdfstream.servers.base import ServerConfig, find_cfg_file, BaseServer
+from pdfstream.servers.base import ServerConfig, find_cfg_file, BaseServer, StartStopCallback
 
 
 class XPDConfig(AnalysisConfig, VisConfig, ExportConfig, CalibrationConfig):
@@ -48,7 +48,7 @@ class XPDConfig(AnalysisConfig, VisConfig, ExportConfig, CalibrationConfig):
         }
 
 
-class XPDServerConfig(XPDConfig, ServerConfig):
+class XPDServerConfig(ServerConfig, XPDConfig):
     """The configuration for xpd server."""
     pass
 
@@ -58,6 +58,7 @@ class XPDServer(BaseServer):
     def __init__(self, config: XPDServerConfig):
         super(XPDServer, self).__init__(config.address, prefix=config.prefix)
         self.subscribe(XPDRouter(config))
+        self.subscribe(StartStopCallback())
 
 
 def make_and_run(
