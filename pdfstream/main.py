@@ -34,10 +34,13 @@ def run_server():
     import pdfstream.servers.xpd_server as xpd_server
     import pdfstream.servers.lsq_server as lsq_server
     import pdfstream.servers.xpdvis_server as xpdvis_server
-    SERVERS = {}
-    SERVERS.update({ServerNames.xpd: xpd_server.make_and_run})
-    SERVERS.update({ServerNames.lsq: lsq_server.make_and_run})
-    SERVERS.update({ServerNames.xpdvis: xpdvis_server.make_and_run})
+    import pdfstream.servers.xpdsave_server as xpdsave_server
+    SERVERS = {
+        ServerNames.xpd: xpd_server.make_and_run,
+        ServerNames.lsq: lsq_server.make_and_run,
+        ServerNames.xpdvis: xpdvis_server.make_and_run,
+        ServerNames.xpdsave: xpdsave_server.make_and_run
+    }
     fire.Fire(SERVERS)
 
 
