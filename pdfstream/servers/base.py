@@ -35,7 +35,7 @@ class ServerConfig(ConfigParser):
     def read(self, filenames, encoding=None) -> typing.List[str]:
         returned = super(ServerConfig, self).read(filenames, encoding=encoding)
         if not returned:
-            raise FileNotFoundError("No such configuration file {}".format(filename))
+            raise FileNotFoundError("No such configuration file {}".format(filenames))
         return returned
 
 
