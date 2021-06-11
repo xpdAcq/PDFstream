@@ -360,7 +360,7 @@ class Exporter(RunRouter):
         io.server_message("Copy and inject 'readable_time' in the start of {}".format(start_doc["uid"]))
         start_doc = copy.deepcopy(start_doc)
         start_doc["readable_time"] = datetime.datetime.fromtimestamp(start_doc["time"]).strftime(
-            "%Y-%m-%d_%H:%M:%S")
+            "%Y%m%d-%H%M%S")
         return super(Exporter, self).start(start_doc)
 
     def event(self, doc):
