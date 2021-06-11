@@ -255,6 +255,7 @@ def process(
     data = {
         "dk_sub_image": raw_img,
         "mask": np.zeros_like(raw_img),
+        "chi_2theta": np.array([0.]),
         "chi_Q": np.array([0.]),
         "chi_I": np.array([0.]),
         "chi_max": np.float(0.),
