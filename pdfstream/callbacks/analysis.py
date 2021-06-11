@@ -417,7 +417,7 @@ class ExporterFactory:
         if "txt" in exports:
             cb = StackedNumpyTextExporter(
                 file_prefix,
-                "integration", ("chi_Q", "chi_I"), ".chi",
+                "integration", ("chi_Q", "chi_I"), "mean_q.chi",
                 "sq", ("sq_Q", "sq_S"), ".sq",
                 "fq", ("fq_Q", "fq_F"), ".fq",
                 "gr", ("gr_r", "gr_G"), ".gr"
