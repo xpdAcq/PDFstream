@@ -16,7 +16,7 @@ def test_StackedNumpyExporter(tmpdir, array_stream):
 
 
 def test_StackedNumpyTextExporter(tmpdir, array_stream):
-    cb = mod.StackedNumpyTextExporter(str(tmpdir), file_prefix="{start[sample_name]}_", data_keys=[["x0"]])
+    cb = mod.StackedNumpyTextExporter("{start[sample_name]}_", str(tmpdir), ["x0"], ".x0")
     for name, doc in array_stream:
         cb(name, doc)
     assert len(tmpdir.listdir()) > 0

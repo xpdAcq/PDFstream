@@ -91,22 +91,61 @@ class StackedNumpyExporter(ArrayExporter):
         filename = self._file_template.format(start=self.start_doc, descriptor=self.descriptor_doc, event=doc,
                                               field=field)
         filepath = self.directory.joinpath(filename)
-        np.save(str(filepath), arr)
+        np.save(str(filepath), arr.T)
 
 
-class StackedNumpyTextExporter(ArrayExporter):
-    """An exporter to export the column-stacked array data in .txt file."""
-    _file_suffix = ".txt"
+class StackedNumpyTextExporter(CallbackBase):
+    """An base class for the callbacks to find and export the 1d array."""
+    _file_stem = "{descriptor[name]}-{event[seq_num]}"
+
+    def __init__(self, file_prefix: str, *args):
+        """Args are sequences of 'directory to export', 'data keys to combine', 'file suffix'."""
+        super(StackedNumpyTextExporter, self).__init__()
+        self._file_prefix = file_prefix
+        self._file_template = ""
+        self.directories = tuple(map(Path, args[::3]))
+        self.data_keys = args[1::3]
+        self.file_suffixes = args[2::3]
+        self.start_doc = {}
+        self.descriptor_doc = {}
+        self._indeps = set()
+        self._indep2unit = {}
+        for directory in self.directories:
+            directory.mkdir(exist_ok=True, parents=True)
+
+    def start(self, doc):
+        self.start_doc = doc
+        self._indeps = fs.get_indeps(doc, exclude={"time"})
+        super(StackedNumpyTextExporter, self).start(doc)
+
+    def descriptor(self, doc):
+        self.descriptor_doc = doc
+        self._indep2unit = fd.get_units(doc["data_keys"], self._indeps)
+        super(StackedNumpyTextExporter, self).descriptor(doc)
+
+    def event(self, doc):
+        indep_str = fd.get_indep_str(doc["data"], self._indep2unit)
+        self._file_template = SpecialStr(
+            self._file_prefix + indep_str + self._file_stem
+        )
+        self.export(doc)
+        super(StackedNumpyTextExporter, self).event(doc)
+
+    def event_page(self, doc):
+        for event in unpack_event_page(doc):
+            self.event(event)
+
+    def stop(self, doc):
+        super(StackedNumpyTextExporter, self).stop(doc)
 
     def export(self, doc):
-        for data_key_tup in self.data_keys:
+        for directory, data_key_tup, file_suffix in zip(self.directories, self.data_keys, self.file_suffixes):
             arr: np.ndarray = np.stack([doc["data"][data_key] for data_key in data_key_tup], axis=-1)
-            field = "_".join(data_key_tup)
-            filename = self._file_template.format(start=self.start_doc, descriptor=self.descriptor_doc, event=doc,
-                                                  field=field)
-            filepath = self.directory.joinpath(filename)
+            filename = self._file_template.format(start=self.start_doc, descriptor=self.descriptor_doc, event=doc)
+            filename += file_suffix
+            filepath = directory.joinpath(filename)
             header = " ".join(data_key_tup)
-            np.savetxt(str(filepath), arr, header=header)
+            np.savetxt(str(filepath), arr.T, header=header)
 
 
 class DataFrameExporter(ArrayExporter):

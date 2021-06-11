@@ -388,7 +388,7 @@ class ExporterFactory:
         file_prefix = self.config.get_file_prefix()
         if "tiff" in exports:
             cb = MyTiffSerializer(
-                str(data_folder.joinpath("images")),
+                str(data_folder.joinpath("dark_sub")),
                 file_prefix=file_prefix,
                 data_keys=["dk_sub_image"],
                 **self.config.tiff_setting
@@ -396,7 +396,7 @@ class ExporterFactory:
             callbacks.append(cb)
         if "mask" in exports:
             cb = MyTiffSerializer(
-                str(data_folder.joinpath("masks")),
+                str(data_folder.joinpath("mask")),
                 file_prefix=file_prefix,
                 data_keys=["mask"],
                 **self.config.tiff_setting
@@ -404,7 +404,7 @@ class ExporterFactory:
             callbacks.append(cb)
         if "json" in exports:
             cb = JsonSerializer(
-                str(data_folder.joinpath("metadata")),
+                str(data_folder.joinpath("meta")),
                 file_prefix=file_prefix
             )
             callbacks.append(cb)
@@ -416,10 +416,11 @@ class ExporterFactory:
             callbacks.append(cb)
         if "txt" in exports:
             cb = StackedNumpyTextExporter(
-                str(data_folder.joinpath("array_data")),
-                file_prefix=file_prefix,
-                data_keys=[("chi_Q", "chi_I"), ("iq_Q", "iq_I"), ("sq_Q", "sq_S"), ("fq_Q", "fq_F"),
-                           ("gr_r", "gr_G")]
+                file_prefix,
+                "integration", ("chi_Q", "chi_I"), ".chi",
+                "sq", ("sq_Q", "sq_S"), ".sq",
+                "fq", ("fq_Q", "fq_F"), ".fq",
+                "gr", ("gr_r", "gr_G"), ".gr"
             )
             callbacks.append(cb)
         return callbacks, []
