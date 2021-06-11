@@ -110,7 +110,7 @@ class AnalysisConfig(BasicAnalysisConfig):
             "polarization_factor": self.getfloat("ANALYSIS", "polarization_factor", fallback=0.99),
             "method": self.get("ANALYSIS", "method", fallback="bbox,csr,cython"),
             "normalization_factor": self.getfloat("ANALYSIS", "normalization_factor", fallback=1.),
-            "unit": "q_A^-1"
+            "unit": "2th_deg"
         }
 
     @property
@@ -282,11 +282,12 @@ def process(
     elif user_mask is not None:
         data["mask"] = user_mask
     # integration
-    x, y = ai.integrate1d(data["dk_sub_image"], mask=data["mask"], **integ_setting)
+    tth, y = ai.integrate1d(data["dk_sub_image"], mask=data["mask"], **integ_setting)
+    x = 4. * np.pi / (ai.get_wavelength() * 1e10) * np.sin(np.deg2rad(tth / 2.))
     chi_max_ind = np.argmax(y)
     data.update(
         {
-            "chi_Q": x, "chi_I": y, "chi_max": y[chi_max_ind], "chi_argmax": x[chi_max_ind]
+            "chi_2theta": tth, "chi_Q": x, "chi_I": y, "chi_max": x[chi_max_ind], "chi_argmax": y[chi_max_ind]
         }
     )
     # transformation
@@ -417,10 +418,11 @@ class ExporterFactory:
         if "txt" in exports:
             cb = StackedNumpyTextExporter(
                 file_prefix,
-                "integration", ("chi_Q", "chi_I"), "mean_q.chi",
+                "integration", ("chi_2theta", "chi_I"), "_mean_tth.chi",
+                "integration", ("chi_Q", "chi_I"), "_mean_q.chi",
                 "sq", ("sq_Q", "sq_S"), ".sq",
                 "fq", ("fq_Q", "fq_F"), ".fq",
-                "gr", ("gr_r", "gr_G"), ".gr"
+                "gr", ("gr_r", "gr_G"), ".gr",
             )
             callbacks.append(cb)
         return callbacks, []
@@ -461,6 +463,13 @@ class VisConfig(ConfigParser):
         return {
             "cmap": "viridis",
             "limit_func": _get_vlim
+        }
+
+    @property
+    def vis_2theta(self):
+        return {
+            "xlabel": LABELS.tth[0],
+            "ylabel": LABELS.tth[1]
         }
 
     @property
@@ -529,6 +538,7 @@ class VisFactory:
             )
         # one dimensional array waterfall
         for xfield, yfield, tag, vis_config in [
+            ("chi_2theta", "chi_I", "chi", self.config.vis_2theta),
             ("chi_Q", "chi_I", "chi", self.config.vis_chi),
             ("iq_Q", "iq_I", "iq", self.config.vis_iq),
             ("sq_Q", "sq_S", "sq", self.config.vis_sq),

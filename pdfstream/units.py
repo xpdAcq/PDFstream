@@ -9,7 +9,7 @@ DEG = r"deg"
 RAD = r"rad"
 ARB = "a. u."
 
-LABELS = namedtuple("LABELS", ["xy", "chi", "iq", "sq", "fq", "gr", "fgr"])
+LABELS = namedtuple("LABELS", ["xy", "chi", "iq", "sq", "fq", "gr", "fgr", "tth"])
 LABELS.xy = (r"Q ($\mathrm{\AA}^{-1}$)", r"I (A. U.)")
 LABELS.chi = (r"Q ($\mathrm{\AA}^{-1}$)", r"I (A. U.)")
 LABELS.iq = (r"Q ($\mathrm{\AA}^{-1}$)", r"I (A. U.)")
@@ -17,6 +17,7 @@ LABELS.sq = (r"Q ($\mathrm{\AA}^{-1}$)", r"S")
 LABELS.fq = (r"Q ($\mathrm{\AA}^{-1}$)", r"F ($\mathrm{\AA}^{-1}$)")
 LABELS.gr = (r"r ($\mathrm{\AA}$)", r"G ($\mathrm{\AA}^{-2}$)")
 LABELS.fgr = (r"r ($\mathrm{\AA}$)", r"G ($\mathrm{\AA}^{-2}$)")
+LABELS.tth = (r"$2\theta$ (deg)", r"I (A. U.)")
 
 MAP_PYFAI_TO_MPL = {
     "q_nm^-1": INV_NM,
