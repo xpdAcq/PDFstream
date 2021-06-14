@@ -1,3 +1,5 @@
+import numpy as np
+
 import pdfstream.callbacks.basic as mod
 
 
@@ -16,10 +18,13 @@ def test_StackedNumpyExporter(tmpdir, array_stream):
 
 
 def test_StackedNumpyTextExporter(tmpdir, array_stream):
-    cb = mod.StackedNumpyTextExporter("{start[sample_name]}_", str(tmpdir), ["x0"], ".x0")
+    cb = mod.StackedNumpyTextExporter("{start[sample_name]}_", str(tmpdir), ["x0", "x1"], ".x")
     for name, doc in array_stream:
         cb(name, doc)
-    assert len(tmpdir.listdir()) > 0
+    files = tmpdir.listdir()
+    assert len(files) > 0
+    arr = np.loadtxt((files[0]))
+    print(arr)
 
 
 def test_DataFrameExporter(tmpdir, array_stream):

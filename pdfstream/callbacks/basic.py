@@ -91,7 +91,7 @@ class StackedNumpyExporter(ArrayExporter):
         filename = self._file_template.format(start=self.start_doc, descriptor=self.descriptor_doc, event=doc,
                                               field=field)
         filepath = self.directory.joinpath(filename)
-        np.save(str(filepath), arr.T)
+        np.save(str(filepath), arr)
 
 
 class StackedNumpyTextExporter(CallbackBase):
@@ -145,7 +145,7 @@ class StackedNumpyTextExporter(CallbackBase):
             filename += file_suffix
             filepath = directory.joinpath(filename)
             header = " ".join(data_key_tup)
-            np.savetxt(str(filepath), arr.T, header=header)
+            np.savetxt(str(filepath), arr, header=header)
 
 
 class DataFrameExporter(ArrayExporter):

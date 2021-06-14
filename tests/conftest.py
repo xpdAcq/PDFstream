@@ -102,8 +102,8 @@ def ymax_stream(request):
 def array_stream():
     return gen_stream(
         [
-            {"x0": np.zeros(3), "x1": np.zeros(5)},
-            {"x0": np.ones(3), "x1": np.ones(5)},
+            {"x0": np.zeros(5), "x1": np.zeros(5)},
+            {"x0": np.ones(5), "x1": np.ones(5)},
         ],
         {}
     )
