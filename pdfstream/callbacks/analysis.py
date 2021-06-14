@@ -419,11 +419,11 @@ class ExporterFactory:
         if "txt" in exports:
             cb = StackedNumpyTextExporter(
                 file_prefix,
-                "integration", ("chi_2theta", "chi_I"), "_mean_tth.chi",
-                "integration", ("chi_Q", "chi_I"), "_mean_q.chi",
-                "sq", ("sq_Q", "sq_S"), ".sq",
-                "fq", ("fq_Q", "fq_F"), ".fq",
-                "gr", ("gr_r", "gr_G"), ".gr",
+                str(data_folder.joinpath("integration")), ("chi_2theta", "chi_I"), "_mean_tth.chi",
+                str(data_folder.joinpath("integration")), ("chi_Q", "chi_I"), "_mean_q.chi",
+                str(data_folder.joinpath("sq")), ("sq_Q", "sq_S"), ".sq",
+                str(data_folder.joinpath("fq")), ("fq_Q", "fq_F"), ".fq",
+                str(data_folder.joinpath("gr")), ("gr_r", "gr_G"), ".gr",
             )
             callbacks.append(cb)
         return callbacks, []
