@@ -13,7 +13,7 @@ Create the environment::
     conda create -f env-test.yaml
     conda activate test_pdfstream
 
-Install the diffpy.pdfgetx.
+Install the diffpy.pdfgetx::
 
     python -m pip install <diffpy.pdfgetx-xxxx-xx-xx.whl>
 
