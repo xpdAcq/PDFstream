@@ -1,25 +1,44 @@
-===========================
-Beamline Scientist Document
-===========================
-
 Test at the beamline
---------------------
+====================
+
+Installation
+------------
 
 In terminal, run::
 
     git clone https://github.com/xpdAcq/PDFstream.git
 
-The repo `pdfstream` will be cloned. Then, install `pdfstream` from the repo::
+Create the environment::
 
-    python -m pip install ./pdfstream --no-deps --ignore-installed --prefix ~/test_pdfstream
+    conda create -f env-test.yaml
+    conda activate test_pdfstream
 
-The directoty `~/test_pdfstream` is where the package will be installed.
+Install the diffpy.pdfgetx.
 
-Run the command line using environment variable `PYTHONPATH`::
+    python -m pip install <diffpy.pdfgetx-xxxx-xx-xx.whl>
 
-    export PYTHONPATH=~/test_pdfstream/lib/python3.8/site-packages/:$PYTHONPATH
+The repo `PDFstream` will be cloned. Then, install `PDFstream` from the repo::
 
-Run the server::
+    python -m pip install -e ./PDFstream --no-deps --ignore-installed
 
-    run_server xpd ./pdfstream/pdfstream/data/config_files/xpd_server_pdf_beamline.ini
 
+Run servers
+-----------
+
+The configuration files are inside the `PDFstream/pdfstream/data/config_files/` folder::
+
+    cd PDFstream/pdfstream/data/config_files/
+
+Run the xpd server::
+
+    run_server xpd_server_pdf_beamline.ini
+
+Run the xpdvis server::
+
+    run_server xpdvis_server_pdf_beamline.ini
+
+Run the xpdsave server::
+
+    run_server xpdsave_server_pdf_beamline.ini
+
+The order is not important here. The servers should be running in different terminal sessions.
