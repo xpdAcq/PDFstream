@@ -18,13 +18,13 @@ This is the instructions for the users. It is suggested to install it in a clean
 
 At the command line::
 
-    conda create -n pdfstream_env -c defaults -c nsls2forge pdfstream
+    conda create -n pdfstream -c nsls2forge -c defaults pdfstream
 
 The ``pdfstream_env`` in the command is the name of the environment. It can be changed to any name.
 
 Activate the environment::
 
-    conda activate pdfstream_env
+    conda activate pdfstream
 
 (Optional) Install the `diffpy.pdfgetx` using .whl file::
 
@@ -49,11 +49,11 @@ Remember to change ``<your account>`` to the name of your github account.
 
 Change directory::
 
-    cd pdfstream
+    cd PDFstream
 
 Create an environment with all the requirements::
 
-    conda create
+    conda create -f env-dev.yaml
 
 Activate the environment::
 

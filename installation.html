@@ -186,12 +186,12 @@ If you are not using the functionality in pdfstream related to the PDF, this pac
 <h2>General Installation<a class="headerlink" href="#general-installation" title="Permalink to this headline">¶</a></h2>
 <p>This is the instructions for the users. It is suggested to install it in a clean environment.</p>
 <p>At the command line:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">create</span> <span class="o">-</span><span class="n">n</span> <span class="n">pdfstream_env</span> <span class="o">-</span><span class="n">c</span> <span class="n">defaults</span> <span class="o">-</span><span class="n">c</span> <span class="n">nsls2forge</span> <span class="n">pdfstream</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">create</span> <span class="o">-</span><span class="n">n</span> <span class="n">pdfstream</span> <span class="o">-</span><span class="n">c</span> <span class="n">nsls2forge</span> <span class="o">-</span><span class="n">c</span> <span class="n">defaults</span> <span class="n">pdfstream</span>
 </pre></div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">pdfstream_env</span></code> in the command is the name of the environment. It can be changed to any name.</p>
 <p>Activate the environment:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">activate</span> <span class="n">pdfstream_env</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">activate</span> <span class="n">pdfstream</span>
 </pre></div>
 </div>
 <p>(Optional) Install the <cite>diffpy.pdfgetx</cite> using .whl file:</p>
@@ -213,11 +213,11 @@ If you are not using the functionality in pdfstream related to the PDF, this pac
 </div>
 <p>Remember to change <code class="docutils literal notranslate"><span class="pre">&lt;your</span> <span class="pre">account&gt;</span></code> to the name of your github account.</p>
 <p>Change directory:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="n">pdfstream</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="n">PDFstream</span>
 </pre></div>
 </div>
 <p>Create an environment with all the requirements:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">create</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">create</span> <span class="o">-</span><span class="n">f</span> <span class="n">env</span><span class="o">-</span><span class="n">dev</span><span class="o">.</span><span class="n">yaml</span>
 </pre></div>
 </div>
 <p>Activate the environment:</p>
