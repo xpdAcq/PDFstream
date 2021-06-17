@@ -114,6 +114,10 @@
           "$ref": "#/definitions/data_key",
           "description": "the array of mask where 0 is good pixel and 1 is bad pixel"
         },
+        "chi_2theta": {
+          "$ref": "#/definitions/data_key",
+          "description": "the array of two theta in azimuthal integration result I(Q)"
+        },
         "chi_Q": {
           "$ref": "#/definitions/data_key",
           "description": "the array of momentum transfer Q in azimuthal integration result I(Q)"
