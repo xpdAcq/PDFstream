@@ -128,14 +128,14 @@ class XPDFactory:
         if name == "start":
             if doc.get(self.config.dark_identifier):
                 # dark frame run
-                io.server_message("Ignore dark frame.")
+                io.server_message("Receive a dark frame run. Ignore it.")
                 return [], []
             elif doc.get(self.config.calib_identifier):
                 # calibration run
-                io.server_message("Start calibration.")
+                io.server_message("Receive a calibration run. Ready to start the calibration.")
                 return self.calibration, []
             else:
                 # light frame run
-                io.server_message("Start data reduction.")
+                io.server_message("Receive a measurement run. Ready to start processing the data.")
                 return self.analysis, []
         return [], []

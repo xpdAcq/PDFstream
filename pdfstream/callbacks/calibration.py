@@ -79,10 +79,12 @@ class Calibration(CallbackBase):
             detector_key=self.config.detector_key,
             calibrant_key=self.config.calibrant_key
         )
+        io.server_message("Read the calibration data from the start of '{}'.".format(doc["uid"]))
 
     def descriptor(self, doc):
         super(Calibration, self).descriptor(doc)
         self.cache["det_name"] = fd.find_one_image(doc)
+        io.server_message("Calibrate the detector '{}'.".format(self.cache["det_name"]))
         try:
             self.cache["dk_img"] = fs.query_dk_img(
                 self.cache["start"],
@@ -115,6 +117,7 @@ class Calibration(CallbackBase):
             self.cache["dk_img"],
             tiff_path
         )
+        io.server_message("Run pyFAI-calib2 on the image '{}'.".format(str(tiff_path)))
         run_calibration_gui(
             tiff_path,
             poni_path,
