@@ -3,6 +3,7 @@ from pathlib import Path
 import pytest
 from pkg_resources import resource_filename
 
+import pdfstream.main
 import pdfstream.servers
 import pdfstream.servers.base as mod
 
@@ -14,7 +15,7 @@ fn = Path(resource_filename("tests", "configs"))
     ["xpd_server", "lsq_server", pytest.param("unknown", marks=pytest.mark.xfail(raises=FileNotFoundError))]
 )
 def test_find_cfg_file(name):
-    mod.find_cfg_file(fn, name)
+    pdfstream.main.find_cfg_file(str(fn), name)
 
 
 def test_StartStopCallback(simple_stream):

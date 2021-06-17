@@ -1,6 +1,5 @@
 import typing
-from configparser import ConfigParser, Error
-from pathlib import Path
+from configparser import ConfigParser
 
 from bluesky.callbacks import CallbackBase
 from bluesky.callbacks.zmq import RemoteDispatcher
@@ -58,28 +57,6 @@ class BaseServer(RemoteDispatcher):
 
     def install_qt_kicker(self):
         install_qt_kicker(self.loop)
-
-
-def find_cfg_file(directory: Path, name: str) -> str:
-    """Find the configuration file by matching the value of BASIC section name paramter to the name variable."""
-    ini_files = []
-    for filename in directory.glob("*.ini"):
-        try:
-            config = ConfigParser()
-            ini_files.extend(config.read(str(filename)))
-            if name == config["BASIC"]["name"]:
-                return str(filename)
-        except Error:
-            continue
-    raise FileNotFoundError(
-        "\n".join(
-            [
-                "These are the ini_files found in the {}:".format(str(directory)),
-                "\n".join(ini_files),
-                "No .ini file satisfies that parameter 'name = {}' in section [BASIC]".format(name)
-            ]
-        )
-    )
 
 
 class StartStopCallback(CallbackBase):

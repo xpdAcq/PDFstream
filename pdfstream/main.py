@@ -1,6 +1,9 @@
 from configparser import ConfigParser
+from pathlib import Path
 
 import fire
+
+CONFIG_DIR = str(Path("~/.config/pdfstream/").expanduser())
 
 
 def main():
@@ -41,6 +44,9 @@ def _run_server(cfg_file: str):
     except ImportError:
         print("Warning: diffpy.pdfgetx is not installed. Some servers may encounter errors.")
     # read configs
+    cfg_path = Path(cfg_file)
+    if not cfg_path.is_file():
+        cfg_file = find_cfg_file(CONFIG_DIR, cfg_file)
     config = ConfigParser()
     results = config.read(cfg_file)
     if not results:
@@ -67,5 +73,12 @@ def run_server():
 
 def print_server_config_dir():
     """The CLI entry point. Print the configuration directory for servers."""
-    from pdfstream.servers import CONFIG_DIR
     fire.Fire(lambda: print(str(CONFIG_DIR)))
+
+
+def find_cfg_file(directory: str, name: str) -> str:
+    """Find the configuration file by matching the value of BASIC section name paramter to the name variable."""
+    filepath = Path(directory).joinpath(name).with_suffix(".ini")
+    if not filepath.is_file():
+        raise FileNotFoundError("No such file: {}".format(str(filepath)))
+    return str(filepath)
