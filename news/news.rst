@@ -4,6 +4,8 @@
 
 * Add `xpdvis` server and `xpdsave` server so that the data processing, visualization and exporting can be run in parallel.
 
+* Add `chi_2theta` in the outputs.
+
 **Changed:**
 
 * Data emitted from AnalysisStream changes from numpy objects like numpy.ndarray, numpy.float64 to built-in python objects like list, float.
