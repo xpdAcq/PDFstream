@@ -1,0 +1,27 @@
+name: dev_pdfstream
+channels:
+  - nsls2forge
+  - conda-forge
+dependencies:
+  - fire
+  - numba
+  - pyfai
+  - pyopencl
+  - scikit-beam
+  - bluesky
+  - databroker
+  - xpdview
+  - xray-vision
+  - suitcase-csv
+  - suitcase-tiff
+  - suitcase-json-metadata
+  - area-detector-handlers
+  - ipython
+  - matplotlib
+  - sphinx
+  - numpydoc
+  - sphinx-copybutton
+  - sphinx_rtd_theme
+  - flake8
+  - coverage
+  - pytest

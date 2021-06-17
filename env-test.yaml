@@ -1,0 +1,7 @@
+name: test_pdfstream
+channels:
+  - nsls2forge
+dependencies:
+  - xpdacq
+  - pdfstream
+  - area-detector-handlers
