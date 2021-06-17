@@ -453,7 +453,7 @@ class VisConfig(ConfigParser):
             self.get(
                 "VISUALIZATION",
                 "visualizers",
-                fallback="masked_image,chi,fq,gr,chi_max,chi_argmax"
+                fallback="dk_sub_image,masked_image,chi,chi_2theta,iq,sq,fq,gr,chi_max,chi_argmax,gr_max,gr_argmax"
             ).replace(" ", "").split(",")
         )
 
