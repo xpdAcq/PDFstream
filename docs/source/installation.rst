@@ -53,11 +53,11 @@ Change directory::
 
 Create an environment with all the requirements::
 
-    conda create -n pdfstream_env -c defaults -c nsls2forge -c conda-forge --file requirements/build.txt --file requirements/run.txt --file requirements/test.txt --file requirements/docs.txt --file requirements/release.txt
+    conda create
 
 Activate the environment::
 
-    conda activate pdfstream_env
+    conda activate dev_pdfstream
 
 Install the necessary pypi packages::
 
@@ -72,4 +72,3 @@ Install the `PDFstream` in development mode::
 Install the `diffpy.pdfgetx` using .whl file::
 
     pdfstream_install <path to .whl file>
-

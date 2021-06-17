@@ -1,5 +1,5 @@
-XPDVis Server
-=============
+XPDSave Server
+==============
 
 The XPDSave server is the server that save the data from the XPD server. If users would like to separate the
 data processing with the data exporting, they could run the XPDSave server together with the XPD server on
