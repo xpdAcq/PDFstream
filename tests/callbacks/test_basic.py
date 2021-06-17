@@ -1,6 +1,7 @@
 import numpy as np
 
 import pdfstream.callbacks.basic as mod
+from pdfstream.callbacks.composer import gen_stream
 
 
 def test_NumpyExporter(tmpdir, array_stream):
@@ -39,3 +40,20 @@ def test_SmartScalarPlot(ymax_stream):
     for name, doc in ymax_stream:
         cb(name, doc)
     cb.show()
+
+
+def test_CalibrationExporter(tmpdir):
+    # case 1
+    start = {}
+    ce = mod.CalibrationExporter(tmpdir)
+    for name, doc in gen_stream([{}], start):
+        ce(name, doc)
+    files = tmpdir.listdir()
+    assert len(files) == 0
+    # case 2
+    start = {"calibration_md": {"distance": 2, "wavelength": 2}}
+    for name, doc in gen_stream([{}], start):
+        ce(name, doc)
+    files = tmpdir.listdir()
+    assert len(files) > 0
+    print(files[0].read_text(encoding="utf-8"))

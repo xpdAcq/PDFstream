@@ -98,10 +98,15 @@ def test_Exporter(db_with_dark_and_scan, tmpdir):
         ld(name, doc)
     tiff_base = Path(ep_config.tiff_base)
     # test the files are output
-    assert len(list(tiff_base.rglob("*.tiff"))) > 0
-    assert len(list(tiff_base.rglob("*.csv"))) > 0
-    assert len(list(tiff_base.rglob("*.json"))) > 0
-    assert len(list(tiff_base.rglob("*.txt"))) > 0
+    assert len(list(tiff_base.rglob("dark_sub/*.tiff"))) > 0
+    assert len(list(tiff_base.rglob("mask/*.tiff"))) > 0
+    assert len(list(tiff_base.rglob("scalar_data/*.csv"))) > 0
+    assert len(list(tiff_base.rglob("integration/*.chi"))) > 1
+    assert len(list(tiff_base.rglob("meta/*.json"))) > 0
+    assert len(list(tiff_base.rglob("sq/*.sq"))) > 0
+    assert len(list(tiff_base.rglob("fq/*.fq"))) > 0
+    assert len(list(tiff_base.rglob("gr/*.gr"))) > 0
+    assert len(list(tiff_base.rglob("calib/*.poni"))) > 0
 
 
 def test_filenames(db_with_dark_and_scan, tmpdir):
@@ -123,7 +128,7 @@ def test_filenames(db_with_dark_and_scan, tmpdir):
     tiffs = list(tiff_base.rglob("*.tiff"))
     for tiff in tiffs:
         size_in_mb = tiff.stat().st_size // (2 ** 20)
-        assert size_in_mb == 16
+        print(size_in_mb)
         print(tiff.name)
     # test array names
     txts = list(tiff_base.rglob("*.txt"))

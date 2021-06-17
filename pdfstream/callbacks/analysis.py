@@ -21,7 +21,7 @@ import pdfstream.callbacks.from_start as from_start
 import pdfstream.integration.tools as integ
 import pdfstream.io as io
 from pdfstream.callbacks.basic import MyLiveImage, LiveMaskedImage, LiveWaterfall, StackedNumpyTextExporter, \
-    SmartScalarPlot, MyTiffSerializer
+    SmartScalarPlot, MyTiffSerializer, CalibrationExporter
 from pdfstream.errors import ValueNotFoundError
 from pdfstream.units import LABELS
 from pdfstream.vend.formatters import SpecialStr
@@ -317,7 +317,8 @@ class ExportConfig(ConfigParser):
         self.add_section("SUITCASE")
 
     def get_exports(self):
-        return set(self.get("SUITCASE", "exports", fallback="tiff,mask,json,csv,txt").replace(" ", "").split(","))
+        return set(
+            self.get("SUITCASE", "exports", fallback="poni,tiff,mask,json,csv,txt").replace(" ", "").split(","))
 
     def get_file_prefix(self):
         return SpecialStr(
@@ -425,6 +426,9 @@ class ExporterFactory:
                 str(data_folder.joinpath("fq")), ("fq_Q", "fq_F"), ".fq",
                 str(data_folder.joinpath("gr")), ("gr_r", "gr_G"), ".gr",
             )
+            callbacks.append(cb)
+        if "poni" in exports:
+            cb = CalibrationExporter(str(data_folder.joinpath("calib")), file_prefix=file_prefix)
             callbacks.append(cb)
         return callbacks, []
 

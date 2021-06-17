@@ -12,11 +12,13 @@ from event_model import unpack_event_page
 from matplotlib import pyplot as plt
 from matplotlib.axes import Axes
 from matplotlib.widgets import Slider
+from pyFAI.io.ponifile import PoniFile
 from suitcase.tiff_series import Serializer as TiffSerializer
 from xpdview.waterfall import Waterfall
 
 import pdfstream.callbacks.from_descriptor as fd
 import pdfstream.callbacks.from_start as fs
+import pdfstream.io as io
 from pdfstream.vend.formatters import SpecialStr
 
 
@@ -372,3 +374,28 @@ class MyTiffSerializer(TiffSerializer):
         # go back to original data key
         self._file_prefix = _file_prefix
         return returned
+
+
+class CalibrationExporter(CallbackBase):
+    """Export the calibration metadata in poni file."""
+
+    def __init__(self, directory: str, file_prefix: str = "start[uid]_", md_key: str = "calibration_md"):
+        super(CalibrationExporter, self).__init__()
+        self._directory = Path(directory)
+        self._file_prefix = SpecialStr(file_prefix)
+        self._md_key = md_key
+        self._directory.mkdir(exist_ok=True, parents=True)
+
+    def start(self, doc):
+        if self._md_key in doc:
+            calibration_md = doc[self._md_key]
+            pf = PoniFile()
+            pf.read_from_dict(calibration_md)
+            file_prefix = self._file_prefix.format(start=doc)
+            file_name = file_prefix + "calib"
+            file_path = self._directory.joinpath(file_name).with_suffix(".poni")
+            with file_path.open("w") as f:
+                pf.write(f)
+        else:
+            io.server_message("Missing 'calibration_md' in the start.")
+        return super(CalibrationExporter, self).start(doc)
