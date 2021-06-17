@@ -14,8 +14,7 @@ from ophyd.sim import NumpySeqHandler
 
 import pdfstream.units as units
 from pdfstream.callbacks.basic import LiveWaterfall, NumpyExporter
-from pdfstream.servers import CONFIG_DIR, ServerNames
-from pdfstream.servers.base import ServerConfig, find_cfg_file, BaseServer
+from pdfstream.servers.base import ServerConfig, BaseServer
 
 
 class LSQConfig(ConfigParser):
@@ -320,8 +319,6 @@ class ExporterFactory:
 
 def make_and_run(cfg_file: str = None, test_mode: bool = False):
     """Make and run LSQ server."""
-    if not cfg_file:
-        cfg_file = find_cfg_file(CONFIG_DIR, ServerNames.lsq)
     server = LSQServer.from_cfg_file(cfg_file)
     if not test_mode:
         server.install_qt_kicker()

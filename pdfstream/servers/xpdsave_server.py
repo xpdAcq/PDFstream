@@ -1,6 +1,5 @@
 from pdfstream.callbacks.analysis import ExportConfig, Exporter
-from pdfstream.servers import CONFIG_DIR, ServerNames
-from pdfstream.servers.base import BaseServer, ServerConfig, find_cfg_file
+from pdfstream.servers.base import BaseServer, ServerConfig
 
 
 class XPDSaveServerConfig(ServerConfig, ExportConfig):
@@ -41,8 +40,6 @@ def make_and_run(
     if suppress_warning:
         import warnings
         warnings.simplefilter("ignore")
-    if not cfg_file:
-        cfg_file = find_cfg_file(CONFIG_DIR, ServerNames.xpdsave)
     config = XPDSaveServerConfig()
     config.read(cfg_file)
     server = XPDSaveServer(config)

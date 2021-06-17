@@ -10,8 +10,7 @@ import pdfstream.io as io
 from pdfstream.callbacks.analysis import AnalysisConfig, VisConfig, ExportConfig, AnalysisStream, Exporter, \
     Visualizer
 from pdfstream.callbacks.calibration import CalibrationConfig, Calibration
-from pdfstream.servers import CONFIG_DIR, ServerNames
-from pdfstream.servers.base import ServerConfig, find_cfg_file, BaseServer
+from pdfstream.servers.base import ServerConfig, BaseServer
 
 
 class XPDConfig(AnalysisConfig, VisConfig, ExportConfig, CalibrationConfig):
@@ -84,8 +83,6 @@ def make_and_run(
     if suppress_warning:
         import warnings
         warnings.simplefilter("ignore")
-    if not cfg_file:
-        cfg_file = find_cfg_file(CONFIG_DIR, ServerNames.xpd)
     config = XPDServerConfig()
     config.read(cfg_file)
     server = XPDServer(config)

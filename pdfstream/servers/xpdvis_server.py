@@ -1,8 +1,7 @@
 from bluesky.callbacks.best_effort import BestEffortCallback
 
 from pdfstream.callbacks.analysis import Visualizer, VisConfig
-from pdfstream.servers import CONFIG_DIR, ServerNames
-from pdfstream.servers.base import BaseServer, ServerConfig, find_cfg_file
+from pdfstream.servers.base import BaseServer, ServerConfig
 
 
 class XPDVisServerConfig(ServerConfig, VisConfig):
@@ -46,8 +45,6 @@ def make_and_run(
     if suppress_warning:
         import warnings
         warnings.simplefilter("ignore")
-    if not cfg_file:
-        cfg_file = find_cfg_file(CONFIG_DIR, ServerNames.xpdvis)
     config = XPDVisServerConfig()
     config.read(cfg_file)
     server = XPDVisServer(config)
