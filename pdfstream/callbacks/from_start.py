@@ -133,12 +133,12 @@ def query_bt_info(
                 "Cannot parse composition '{}'. Use default '{}'".format(composition, default_composition))
             composition_str = default_composition
     else:
-        io.server_message("'{}' is not in start.".format(composition_key))
+        io.server_message("'{}' is not in start. Use default '{}'".format(composition_key, default_composition))
         composition_str = default_composition
     if wavelength_key in start:
         wavelength = float(start[wavelength_key])
     else:
-        io.server_message("'{}' is not in start.".format(wavelength_key))
+        io.server_message("'{}' is not in start. Use None.".format(wavelength_key))
         wavelength = None
     return {
         "composition": composition_str,
