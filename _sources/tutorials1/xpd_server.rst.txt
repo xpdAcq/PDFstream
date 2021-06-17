@@ -121,7 +121,7 @@ To know where the default configuration folder is, run the command::
 
 You will find the path to the directory. Put the .ini file in that directory and then you can just run::
 
-    run_server xpd
+    run_server xpd_server
 
 The server will start.
 
@@ -132,11 +132,11 @@ The server will start.
 Similar to what you have done with the proxy, you can also run the server in background and detach it from the
 terminal so that you don't need to start the server every time. To do this, in terminal, run command::
 
-    nohup run_server xpd ~/xpd_server.ini &
+    nohup run_server ~/xpd_server.ini &
 
 If you have put the "xpd_server.ini" in default folder, run this instead::
 
-    nohup run_server xpd &
+    nohup run_server xpd_server &
 
 You will find the message from the server in file "nohup.out".
 

@@ -132,9 +132,10 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="xpdvis_server.html">XPDVis Server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="xpdsave_server.html">XPDVis Server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="test.html">Beamline Scientist Document</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../beamline_doc.html">Beamline Scientist Document</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../changelog.html">PDFstream Change Log</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../min_versions.html">Minimum Version of Python and NumPy</a></li>
 </ul>
@@ -331,7 +332,7 @@ is shown below. Please read the comments in the file to know what are the meanin
 <span class="n">tiff_base</span> <span class="o">=</span> <span class="o">/</span><span class="n">nsls2</span><span class="o">/</span><span class="n">xf28id1</span><span class="o">/</span><span class="n">xpdacq_data</span><span class="o">/</span><span class="n">user_data</span><span class="o">/</span><span class="n">tiff_base</span>
 <span class="n">directory_template</span> <span class="o">=</span> <span class="p">{</span><span class="n">start</span><span class="p">[</span><span class="n">sample_name</span><span class="p">]}</span><span class="n">_data</span>
 <span class="n">file_prefix</span> <span class="o">=</span> <span class="p">{</span><span class="n">start</span><span class="p">[</span><span class="n">original_run_uid</span><span class="p">]}</span><span class="n">_</span><span class="p">{</span><span class="n">start</span><span class="p">[</span><span class="n">sample_name</span><span class="p">]}</span><span class="n">_</span>
-<span class="n">exports</span> <span class="o">=</span> <span class="n">tiff</span><span class="p">,</span><span class="n">json</span><span class="p">,</span><span class="n">csv</span><span class="p">,</span><span class="n">txt</span>
+<span class="n">exports</span> <span class="o">=</span> <span class="n">poni</span><span class="p">,</span><span class="n">tiff</span><span class="p">,</span><span class="n">mask</span><span class="p">,</span><span class="n">json</span><span class="p">,</span><span class="n">csv</span><span class="p">,</span><span class="n">txt</span>
 
 <span class="p">[</span><span class="n">VISUALIZATION</span><span class="p">]</span>
 <span class="n">visualizers</span> <span class="o">=</span> <span class="n">dk_sub_image</span><span class="p">,</span><span class="n">masked_image</span><span class="p">,</span><span class="n">chi</span><span class="p">,</span><span class="n">fq</span><span class="p">,</span><span class="n">gr</span><span class="p">,</span><span class="n">best_effort</span>
@@ -361,7 +362,7 @@ configuration file.</p>
 </pre></div>
 </div>
 <p>You will find the path to the directory. Put the .ini file in that directory and then you can just run:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">run_server</span> <span class="n">xpd</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">run_server</span> <span class="n">xpd_server</span>
 </pre></div>
 </div>
 <p>The server will start.</p>
@@ -370,11 +371,11 @@ configuration file.</p>
 <h3>(Optional) Run the server in a detached background process<a class="headerlink" href="#optional-run-the-server-in-a-detached-background-process" title="Permalink to this headline">¶</a></h3>
 <p>Similar to what you have done with the proxy, you can also run the server in background and detach it from the
 terminal so that you don’t need to start the server every time. To do this, in terminal, run command:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nohup</span> <span class="n">run_server</span> <span class="n">xpd</span> <span class="o">~/</span><span class="n">xpd_server</span><span class="o">.</span><span class="n">ini</span> <span class="o">&amp;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nohup</span> <span class="n">run_server</span> <span class="o">~/</span><span class="n">xpd_server</span><span class="o">.</span><span class="n">ini</span> <span class="o">&amp;</span>
 </pre></div>
 </div>
 <p>If you have put the “xpd_server.ini” in default folder, run this instead:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nohup</span> <span class="n">run_server</span> <span class="n">xpd</span> <span class="o">&amp;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nohup</span> <span class="n">run_server</span> <span class="n">xpd_server</span> <span class="o">&amp;</span>
 </pre></div>
 </div>
 <p>You will find the message from the server in file “nohup.out”.</p>

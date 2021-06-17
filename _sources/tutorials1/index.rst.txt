@@ -14,3 +14,5 @@ start a proxy.
    zmq_proxy
    xpd_server
    xpdvis_server
+   xpdsave_server
+   test
