@@ -162,3 +162,4 @@ local
 # Rever
 rever/
 /docs/examples/outputs/
+.vscode/settings.json
