@@ -1,7 +1,9 @@
 import matplotlib.pyplot as plt
+import xarray as xr
 import pytest
 
 import pdfstream.visualization.main as vis
+import numpy as np
 
 
 @pytest.mark.parametrize(
@@ -21,6 +23,30 @@ def test_waterfall(test_data, keys, kwargs):
     vis.waterfall((test_data[k] for k in keys), **kwargs)
     plt.show(block=False)
     plt.close()
+
+
+def test_waterfall_xarray():
+    x = np.arange(0., 11., 1.)
+    y = np.zeros_like(x)
+    ds = xr.Dataset({"y": (["x"], y), "ycalc": (["x"], y)}, coords={"x": x})
+    vis.waterfall_xarray(ds, "x", "y")
+    plt.show(block=False)
+    plt.clf()
+    vis.waterfall_xarray(ds, "x", "y", "ycalc")
+    plt.show(block=False)
+    plt.clf()
+
+
+def test_waterfall_xarray_hue(test_data):
+    x = np.arange(0., 11., 1.)
+    y = np.zeros_like(x)
+    ds = xr.Dataset({"y": (["z", "x"], [y, y]), "ycalc": (["z", "x"], [y, y])}, coords={"x": x, "z": [1, 2]})
+    vis.waterfall_xarray(ds, "x", "y", hue="z")
+    plt.show(block=False)
+    plt.clf()
+    vis.waterfall_xarray(ds, "x", "y", "ycalc", hue="z")
+    plt.show(block=False)
+    plt.clf()
 
 
 def test_waterfall_error(test_data):

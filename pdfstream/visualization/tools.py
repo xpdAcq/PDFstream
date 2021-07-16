@@ -37,7 +37,9 @@ def normalize(vis_data: ndarray):
         The data to visualize. The first row is independent variables and the later rows are dependent variables.
     """
     vis_data = np.copy(vis_data)
-    vis_data[1:] /= np.max(vis_data[1]) - np.min(vis_data[1])
+    bound = np.max(vis_data[1]) - np.min(vis_data[1])
+    if bound > 0:
+        vis_data[1:] /= bound
     return vis_data
 
 

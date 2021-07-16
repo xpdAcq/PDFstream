@@ -1,6 +1,7 @@
 import itertools
 import typing as tp
 
+import xarray as xr
 import matplotlib.pyplot as plt
 from matplotlib.axes import Axes
 from numpy import ndarray
@@ -170,6 +171,81 @@ def waterfall(
     return ax
 
 
+def waterfall_xarray(data: xr.Dataset, x: str, y: str, ycalc: str = None, hue: str = None, **kwargs) -> Axes:
+    """The visualization function to realize waterfall, and comparison plot.
+
+    Parameters
+    ----------
+    data :
+        The data set.
+        If mode = 'line', data = (x_array, y_array)
+        If mode = 'fit', data = (x_array, y_array, ycalc_array)
+
+    xy_kwargs, xycalc_kwargs, xydiff_kwargs, xyzero_kwargs:
+        The kwargs arguments for the plotting of each data. It depends on mode.
+        If mode = 'line', kwargs in ('xy_kwargs',).
+        If mode = 'fit', kwargs in ('xy_kwargs', 'xycalc_kwargs', 'xydiff_kwargs', 'xyzero_kwargs',
+        'fill_kwargs', 'yzero').
+
+    ax :
+        The axes to visualize the data. If None, use current axes.
+
+    normal :
+        If True, the second and the following rows in data will be normalized by (max - min). Else, do nothing.
+
+    stack :
+        If True, the second and the third rows will be shifted so that there will be a gap between data (
+        waterfall plot). Else, the data will be plotted without shifting (comparison plot).
+
+    gap :
+        The gap between the adjacent curves. It is defined by the nearest points in vertical direction.
+
+    texts :
+        The texts to annotate the curves. It has the same order as the curves.
+
+    text_xy :
+        The tuple of x and y position of the annotation in data coordinates. If None, use the default in the
+        'tools.auto_text'.
+
+    label :
+        The label type used in automatic labeling. Acceptable types are listed in 'tools._LABELS'
+
+    minor_tick :
+        How many parts that the minor ticks separate the space between the two adjacent major ticks. Default 2.
+        If None, no minor ticks.
+
+    legends :
+        The legend labels for the curves.
+
+    colors :
+        The color of the plots. It will be the value for the key 'color' in 'xy_kwargs' in kwargs. If None,
+        use default color.
+
+    kwargs :
+        The key words for the 'plot_method'. The
+
+    Returns
+    -------
+    ax : Axes
+        The axes with the plot inside.
+    """
+    dataset = []
+    kwargs["mode"] = "fit" if ycalc else "line"
+    if hue:
+        for i in range(data.dims[hue]):
+            sel_data = data.isel({hue: i})
+            xy = [sel_data[x].values, sel_data[y].values]
+            if ycalc:
+                xy.append(sel_data[ycalc].values)
+            dataset.append(xy)
+    else:
+        xy = [data[x].values, data[y].values]
+        if ycalc:
+            xy.append(data[ycalc].values)
+        dataset.append(xy)
+    return waterfall(dataset, **kwargs)
+
+
 def visualize(
     data: ndarray, ax: Axes = None, mode: str = "line", normal: bool = False,
     text: str = None, text_xy: tuple = None, label: str = None,
@@ -224,7 +300,6 @@ def visualize(
     ax :
         The axes with the plot inside.
     """
-
     return waterfall(
         (data,), ax=ax, mode=mode, normal=normal, texts=(text,), text_xy=text_xy,
         label=label, minor_tick=minor_tick, stack=False,
