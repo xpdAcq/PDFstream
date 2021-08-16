@@ -25,7 +25,7 @@ class CalibrationConfig(BasicAnalysisConfig):
 
     @property
     def calib_identifier(self):
-        return self.get("METADATA", "calib_identifier", fallback="calibration_md")
+        return self.get("METADATA", "calib_identifier", fallback="is_calibration")
 
     @property
     def default_calibrant(self):

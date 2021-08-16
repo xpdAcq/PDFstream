@@ -317,6 +317,10 @@ class ExportConfig(ConfigParser):
         super(ExportConfig, self).__init__(*args, **kwargs)
         self.add_section("SUITCASE")
 
+    @property
+    def calib_identifier(self):
+        return self.get("METADATA", "calib_identifier", fallback="is_calibration")
+
     def get_exports(self):
         return set(
             self.get("SUITCASE", "exports", fallback="poni,tiff,mask,json,csv,txt").replace(" ", "").split(","))
@@ -429,7 +433,7 @@ class ExporterFactory:
                 str(data_folder.joinpath("gr")), ("gr_r", "gr_G"), ".gr",
             )
             callbacks.append(cb)
-        if "poni" in exports:
+        if "poni" in exports and doc.get(self.config.calib_identifier, False):
             cb = CalibrationExporter(str(data_folder.joinpath("calib")), file_prefix=file_prefix)
             callbacks.append(cb)
         return callbacks, []
