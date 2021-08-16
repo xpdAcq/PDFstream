@@ -359,6 +359,7 @@ class Exporter(RunRouter):
     def __init__(self, config: ExportConfig):
         factory = ExporterFactory(config)
         super().__init__([factory])
+        io.server_message("Data will be exported in '{}'.".format(str(config.tiff_base)))
 
     def start(self, start_doc):
         io.server_message("Inject 'readable_time' in the start of '{}'.".format(start_doc["uid"]))
