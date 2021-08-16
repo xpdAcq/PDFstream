@@ -123,17 +123,6 @@ def test_filenames(db_with_dark_and_scan, tmpdir):
     ld.subscribe(ep)
     for name, doc in db[-1].canonical(fill="yes", strict_order=True):
         ld(name, doc)
-    tiff_base = Path(ep_config.tiff_base)
-    # test tiff names and sizes
-    tiffs = list(tiff_base.rglob("*.tiff"))
-    for tiff in tiffs:
-        size_in_mb = tiff.stat().st_size // (2 ** 20)
-        print(size_in_mb)
-        print(tiff.name)
-    # test array names
-    txts = list(tiff_base.rglob("*.txt"))
-    for txt in txts:
-        print(txt.name)
 
 
 def test_ExportConfig():
