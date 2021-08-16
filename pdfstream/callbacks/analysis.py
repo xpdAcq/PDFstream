@@ -21,7 +21,7 @@ import pdfstream.callbacks.from_start as from_start
 import pdfstream.integration.tools as integ
 import pdfstream.io as io
 from pdfstream.callbacks.basic import MyLiveImage, LiveMaskedImage, LiveWaterfall, StackedNumpyTextExporter, \
-    SmartScalarPlot, MyTiffSerializer, CalibrationExporter
+    SmartScalarPlot, MyTiffSerializer, CalibrationExporter, NumpyExporter
 from pdfstream.errors import ValueNotFoundError
 from pdfstream.units import LABELS
 from pdfstream.vend.formatters import SpecialStr
@@ -404,11 +404,10 @@ class ExporterFactory:
             )
             callbacks.append(cb)
         if "mask" in exports:
-            cb = MyTiffSerializer(
+            cb = NumpyExporter(
                 str(data_folder.joinpath("mask")),
                 file_prefix=file_prefix,
-                data_keys=["mask"],
-                **self.config.tiff_setting
+                data_keys=["mask"]
             )
             callbacks.append(cb)
         if "json" in exports:
