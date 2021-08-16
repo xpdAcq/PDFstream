@@ -346,7 +346,7 @@ class ExportConfig(ConfigParser):
     @property
     def tiff_setting(self):
         return {
-            "astype": self.get("SUITCASE", "tiff_astype", fallback="uint32"),
+            "astype": self.get("SUITCASE", "tiff_astype", fallback="float32"),
             "bigtiff": self.getboolean("SUITCASE", "tiff_bigtiff", fallback=False),
             "byteorder": self.get("SUITCASE", "tiff_byteorder", fallback=None),
             "imagej": self.get("SUITCASE", "tiff_imagej", fallback=False)
