@@ -102,7 +102,7 @@ Assume that you have written a configuration file and the path to it is "~/xpd_s
 
 In terminal, run the command::
 
-    run_server xpd ~/xpd_server.ini
+    run_server ~/xpd_server.ini
 
 The server will start in terminal.
 
