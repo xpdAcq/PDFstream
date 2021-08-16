@@ -100,9 +100,10 @@ class StackedNumpyTextExporter(CallbackBase):
     """An base class for the callbacks to find and export the 1d array."""
     _file_stem = "{descriptor[name]}-{event[seq_num]}"
 
-    def __init__(self, file_prefix: str, *args):
+    def __init__(self, file_prefix: str, *args, no_single_value: bool = True):
         """Args are sequences of 'directory to export', 'data keys to combine', 'file suffix'."""
         super(StackedNumpyTextExporter, self).__init__()
+        self._no_single_value = no_single_value
         self._file_prefix = file_prefix
         self._file_template = ""
         self.directories = tuple(map(Path, args[::3]))
@@ -112,8 +113,6 @@ class StackedNumpyTextExporter(CallbackBase):
         self.descriptor_doc = {}
         self._indeps = set()
         self._indep2unit = {}
-        for directory in self.directories:
-            directory.mkdir(exist_ok=True, parents=True)
 
     def start(self, doc):
         self.start_doc = doc
@@ -143,8 +142,11 @@ class StackedNumpyTextExporter(CallbackBase):
     def export(self, doc):
         for directory, data_key_tup, file_suffix in zip(self.directories, self.data_keys, self.file_suffixes):
             arr: np.ndarray = np.stack([doc["data"][data_key] for data_key in data_key_tup], axis=-1)
+            if arr.ndim == 2 and arr.shape[0] <= 1 and self._no_single_value:
+                continue
             filename = self._file_template.format(start=self.start_doc, descriptor=self.descriptor_doc, event=doc)
             filename += file_suffix
+            directory.mkdir(exist_ok=True, parents=True)
             filepath = directory.joinpath(filename)
             header = " ".join(data_key_tup)
             np.savetxt(str(filepath), arr, header=header)
