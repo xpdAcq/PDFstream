@@ -176,6 +176,8 @@ class AnalysisStream(LiveDispatcher):
             io.server_message("Encounter error when searching the metadata: {}.".format(str(error)))
         # create new start
         new_start = dict(**doc, an_config=self.config.to_dict(), pdfstream_version=pdfstream.__version__)
+        # add sample_name and if it is not there
+        new_start.setdefault("sample_name", "unnamed_sample")
         return super(AnalysisStream, self).start(new_start)
 
     def event_page(self, doc):
