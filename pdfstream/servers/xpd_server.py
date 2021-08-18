@@ -13,7 +13,7 @@ from pdfstream.callbacks.calibration import CalibrationConfig, Calibration
 from pdfstream.servers.base import ServerConfig, BaseServer
 
 
-class XPDConfig(AnalysisConfig, VisConfig, ExportConfig, CalibrationConfig):
+class XPDConfig(CalibrationConfig, AnalysisConfig, VisConfig, ExportConfig):
     """The configuration for the xpd data reduction. It consists of analysis, visualization and exportation."""
 
     def __init__(self, *args, **kwargs):
@@ -119,7 +119,15 @@ class XPDFactory:
         if self.functionality["visualize_data"]:
             self.analysis[0].subscribe(Visualizer(config))
         if self.functionality["send_messages"]:
-            self.analysis[0].subscribe(Publisher(**self.config.publisher_config))
+            pub_config = self.config.publisher_config
+            io.server_message(
+                "Data will be published to {}:{} with prefix {}.".format(
+                    pub_config["address"][0], pub_config["address"][1], pub_config["prefix"]
+                )
+            )
+            self.analysis[0].subscribe(Publisher(**pub_config))
+            if self.calibration:
+                self.calibration[0].subscribe(Publisher(**pub_config))
 
     def __call__(self, name: str, doc: dict) -> tp.Tuple[list, list]:
         if name == "start":

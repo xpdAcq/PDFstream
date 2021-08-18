@@ -326,13 +326,13 @@ class SmartScalarPlot(CallbackBase):
 
     def event(self, doc):
         super(SmartScalarPlot, self).event(doc)
-        self.callback.event(doc)
+        self.callback.event(doc, )
         if self.ylabel:
             self.ax.set_ylabel(self.ylabel)
 
     def stop(self, doc):
         super(SmartScalarPlot, self).stop(doc)
-        self.callback.stop(doc)
+        self.callback.stop(doc, )
 
     def clear(self):
         self.ax.cla()

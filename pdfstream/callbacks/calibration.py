@@ -1,22 +1,25 @@
+import shutil
 import subprocess
 import typing as tp
 from pathlib import Path
 
 import event_model
 import numpy as np
-from bluesky.callbacks.core import CallbackBase
+from bluesky.callbacks.stream import LiveDispatcher
 from databroker.v1 import Broker
 from tifffile import TiffWriter
 
+import pdfstream
+import pdfstream.callbacks.analysis as an
 import pdfstream.callbacks.from_descriptor as fd
 import pdfstream.callbacks.from_event as fe
 import pdfstream.callbacks.from_start as fs
 import pdfstream.io as io
 from pdfstream.errors import ValueNotFoundError
-from .analysis import BasicAnalysisConfig
+from .analysis import AnalysisConfig
 
 
-class CalibrationConfig(BasicAnalysisConfig):
+class CalibrationConfig(AnalysisConfig):
     """The configuration of the calibration callbacks."""
 
     def __init__(self, *args, **kwargs):
@@ -56,7 +59,7 @@ class CalibrationConfig(BasicAnalysisConfig):
         return self.get("CALIBRATION", "poni_file", fallback="xpdAcq_calib_info.poni")
 
 
-class Calibration(CallbackBase):
+class Calibration(LiveDispatcher):
     """Run the calibration in a gui and save the results which will be used by xpdacq."""
 
     def __init__(self, config: CalibrationConfig, *, test: bool = False):
@@ -66,9 +69,11 @@ class Calibration(CallbackBase):
         raw_db = self.config.raw_db
         self.db = Broker.named(raw_db) if raw_db else None
         self.test = test
+        self.start_doc = {}
+        self.event_doc = {}
 
-    def start(self, doc):
-        super(Calibration, self).start(doc)
+    def start(self, doc, **kwargs):
+        self.start_doc = doc
         self.cache = dict()
         self.cache["img_sum"] = 0
         self.cache["img_num"] = 0
@@ -82,7 +87,6 @@ class Calibration(CallbackBase):
         io.server_message("Read the calibration data from the start of '{}'.".format(doc["uid"]))
 
     def descriptor(self, doc):
-        super(Calibration, self).descriptor(doc)
         self.cache["det_name"] = fd.find_one_image(doc)
         io.server_message("Calibrate the detector '{}'.".format(self.cache["det_name"]))
         try:
@@ -95,26 +99,27 @@ class Calibration(CallbackBase):
         except ValueNotFoundError as error:
             self.cache["dk_img"] = None
             io.server_message("Failed to find dark: " + str(error))
+        return super(Calibration, self).descriptor(doc)
 
     def event_page(self, doc):
         for event_doc in event_model.unpack_event_page(doc):
-            self.event(event_doc)
+            self.event(event_doc, )
 
-    def event(self, doc):
-        super(Calibration, self).event(doc)
+    def event(self, doc, **kwargs):
+        self.event_doc = doc
         raw_img = fe.get_image_from_event(doc, self.cache["det_name"])
         self.cache["img_sum"] += raw_img
         self.cache["img_num"] += 1
 
-    def stop(self, doc):
-        super(Calibration, self).stop(doc)
+    def stop(self, doc, **kwargs):
         self.config.calib_base.mkdir(parents=True, exist_ok=True)
         poni_path = self.config.calib_base.joinpath(self.config.poni_file)
         tiff_path = self.config.calib_base.joinpath("{}-calib.tiff".format(self.cache["start"]["uid"]))
+        avg_img = np.divide(self.cache["img_sum"], self.cache["img_num"])
+        dk_img = self.cache["dk_img"]
         calc_image_and_save(
-            self.cache["img_sum"],
-            self.cache["img_num"],
-            self.cache["dk_img"],
+            avg_img,
+            dk_img,
             tiff_path
         )
         io.server_message("Run pyFAI-calib2 on the image '{}'.".format(str(tiff_path)))
@@ -124,13 +129,44 @@ class Calibration(CallbackBase):
             **self.cache["calib_info"],
             test=self.test
         )
+        shutil.rmtree(tiff_path, ignore_errors=True)
+        if self.test:
+            return
+        # emit start
+        io.server_message("Process the data using the calibration.")
+        ai = io.load_ai_from_poni_file(str(poni_path))
+        new_start = dict(
+            **self.start_doc,
+            an_config=self.config.to_dict(),
+            pdfstream_version=pdfstream.__version__
+        )
+        new_start[self.config.calibration_md_key] = ai.getPyFAI()
+        bt_info = fs.query_bt_info(
+            new_start,
+            composition_key=self.config.composition_key,
+            wavelength_key=self.config.wavelength_key
+        )
+        new_start["hints"] = {'dimensions': [[['time'], 'primary']]}
+        super(Calibration, self).start(new_start)
+        # emit descriptor and event
+        data = an.process(
+            raw_img=avg_img,
+            ai=ai,
+            dk_img=dk_img,
+            integ_setting=self.config.integ_setting,
+            pdfgetx_setting=dict(**self.config.trans_setting, **bt_info),
+            mask_setting=self.config.mask_setting
+        )
+        io.server_message("Emit the processed data.")
+        super(Calibration, self).process_event({"data": data, "descriptor": self.event_doc["descriptor"]})
+        # emit stop
         self.cache = dict()
+        return super(Calibration, self).stop(doc)
 
 
-def calc_image_and_save(img_sum: np.ndarray, img_num: int, dk_img: tp.Union[None, np.ndarray],
+def calc_image_and_save(avg_img: np.ndarray, dk_img: tp.Union[None, np.ndarray],
                         tiff_path: tp.Union[str, Path]) -> None:
     """Average the image, subtract the dark image and export the image in a tiff file."""
-    avg_img = img_sum / img_num
     if dk_img is not None:
         avg_img = avg_img - dk_img
     tw = TiffWriter(tiff_path)
@@ -139,13 +175,13 @@ def calc_image_and_save(img_sum: np.ndarray, img_num: int, dk_img: tp.Union[None
 
 
 def run_calibration_gui(
-    tiff_file: Path,
-    poni_file: Path,
-    *,
-    wavelength: float = "",
-    calibrant: str = "",
-    detector: str = "",
-    test: bool = False
+        tiff_file: Path,
+        poni_file: Path,
+        *,
+        wavelength: str = "",
+        calibrant: str = "",
+        detector: str = "",
+        test: bool = False
 ) -> int:
     """Run the gui of calibration."""
     args = ["pyFAI-calib2", "--poni", str(poni_file)]
