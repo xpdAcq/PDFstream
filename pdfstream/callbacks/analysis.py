@@ -369,7 +369,7 @@ class ExportConfig(ConfigParser):
 
     def get_exports(self):
         return set(
-            self.get("SUITCASE", "exports", fallback="poni,tiff,mask,yaml,csv").replace(" ", "").split(","))
+            self.get("SUITCASE", "exports", fallback="poni,tiff,mask,yaml,csv,txt").replace(" ", "").split(","))
 
     def get_file_prefix(self):
         return SpecialStr(
@@ -478,10 +478,7 @@ class ExporterFactory:
             cb = StackedNumpyTextExporter(
                 file_prefix,
                 str(data_folder.joinpath("integration")), ("chi_2theta", "chi_I"), "_mean_tth.chi",
-                str(data_folder.joinpath("integration")), ("chi_Q", "chi_I"), "_mean_q.chi",
-                str(data_folder.joinpath("sq")), ("sq_Q", "sq_S"), ".sq",
-                str(data_folder.joinpath("fq")), ("fq_Q", "fq_F"), ".fq",
-                str(data_folder.joinpath("gr")), ("gr_r", "gr_G"), ".gr",
+                str(data_folder.joinpath("integration")), ("chi_Q", "chi_I"), "_mean_q.chi"
             )
             callbacks.append(cb)
         if "poni" in exports and doc.get(self.config.calib_identifier, False):
