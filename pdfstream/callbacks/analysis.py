@@ -325,7 +325,7 @@ class ExportConfig(ConfigParser):
 
     def get_exports(self):
         return set(
-            self.get("SUITCASE", "exports", fallback="poni,tiff,mask,yaml,csv,txt").replace(" ", "").split(","))
+            self.get("SUITCASE", "exports", fallback="poni,tiff,mask,yaml,csv").replace(" ", "").split(","))
 
     def get_file_prefix(self):
         return SpecialStr(
