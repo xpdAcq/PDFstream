@@ -417,8 +417,8 @@ class YamlSerializer(CallbackBase):
 
     def start(self, doc):
         file_prefix = self._file_prefix.format(start=doc)
-        filename = file_prefix + "meta"
-        file_path = self._directory.joinpath(filename).with_suffix(".yml")
+        filename = file_prefix.strip("_")
+        file_path = self._directory.joinpath(filename).with_suffix(".yaml")
         with file_path.open("w") as f:
             self._yaml.dump(doc, f)
         return super(YamlSerializer, self).start(doc)
