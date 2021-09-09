@@ -241,7 +241,7 @@ class AnalysisStream(LiveDispatcher):
         # get filename
         if self.directory and self.file_prefix:
             indep_str = from_desc.get_indep_str(doc["data"], self.indep2unit)
-            filename = self.file_prefix + indep_str
+            filename = self.file_prefix + indep_str + "{:04d}".format(doc["seq_num"])
             filename = SpecialStr(self.directory.joinpath(filename))
         else:
             filename = None
