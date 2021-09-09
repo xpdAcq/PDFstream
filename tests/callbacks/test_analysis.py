@@ -13,18 +13,17 @@ fn = resource_filename("tests", "configs/xpd_server.ini")
 
 
 @pytest.mark.parametrize("use_db", [True, False])
-def test_AnalysisStream(db_with_img_and_bg_img, use_db, tmpdir):
+def test_AnalysisStream(db_with_img_and_bg_img, use_db, tmp_path):
     db = db_with_img_and_bg_img
     config = an.AnalysisConfig()
     config.read(fn)
-    config["ANALYSIS"]["tiff_base"] = str(tmpdir)
+    config["ANALYSIS"]["tiff_base"] = str(tmp_path)
     ld = an.AnalysisStream(config)
     if use_db:
         ld.db = db.v1
     # validate that output data
     out_validator = Validator(analysis_out_schemas)
     ld.subscribe(out_validator)
-    ld.subscribe(lambda name, doc: print(list(map(type, doc["data"].values()))), name="event")
     # validate the input data
     in_validator = Validator(analysis_in_schemas)
     for name, doc in db[-1].canonical(fill="yes", strict_order=True):

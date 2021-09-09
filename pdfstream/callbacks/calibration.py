@@ -1,3 +1,4 @@
+import datetime
 import shutil
 import subprocess
 import typing as tp
@@ -71,6 +72,8 @@ class Calibration(LiveDispatcher):
         self.test = test
         self.start_doc = {}
         self.event_doc = {}
+        self.dirc = None
+        self.file_prefix = None
 
     def start(self, doc, **kwargs):
         self.start_doc = doc
@@ -84,7 +87,6 @@ class Calibration(LiveDispatcher):
             detector_key=self.config.detector_key,
             calibrant_key=self.config.calibrant_key
         )
-        io.server_message("Read the calibration data from the start of '{}'.".format(doc["uid"]))
 
     def descriptor(self, doc):
         self.cache["det_name"] = fd.find_one_image(doc)
@@ -147,7 +149,22 @@ class Calibration(LiveDispatcher):
             wavelength_key=self.config.wavelength_key
         )
         new_start["hints"] = {'dimensions': [[['time'], 'primary']]}
+        # inject readable time
+        new_start["readable_time"] = datetime.datetime.fromtimestamp(doc["time"]).strftime(
+            "%Y%m%d-%H%M%S")
+        # add sample_name and if it is not there
+        new_start.setdefault("sample_name", "unnamed_sample")
+        new_start.setdefault("original_run_uid", doc["uid"])
+        # emit
         super(Calibration, self).start(new_start)
+        # get the filename of the gr, sq, fq
+        d = self.config.directory
+        self.dirc = Path(d).expanduser().joinpath(new_start["sample_name"])
+        self.dirc.mkdir(parents=True, exist_ok=True)
+        # create file prefix
+        fp = self.config.file_prefix
+        self.file_prefix = fp.format(start=new_start)
+        filename = self.file_prefix + "0001"
         # emit descriptor and event
         data = an.process(
             raw_img=avg_img,
@@ -155,7 +172,9 @@ class Calibration(LiveDispatcher):
             dk_img=dk_img,
             integ_setting=self.config.integ_setting,
             pdfgetx_setting=dict(**self.config.trans_setting, **bt_info),
-            mask_setting=self.config.mask_setting
+            mask_setting=self.config.mask_setting,
+            filename=filename,
+            directory=str(self.dirc)
         )
         io.server_message("Emit the processed data.")
         super(Calibration, self).process_event({"data": data, "descriptor": self.event_doc["descriptor"]})

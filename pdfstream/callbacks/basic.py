@@ -413,7 +413,7 @@ class YamlSerializer(CallbackBase):
         self._directory = Path(directory).expanduser()
         self._directory.mkdir(exist_ok=True, parents=True)
         self._file_prefix = file_prefix
-        self._yaml = YAML()
+        self._yaml = YAML(typ="unsafe")
 
     def start(self, doc):
         file_prefix = self._file_prefix.format(start=doc)

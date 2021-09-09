@@ -129,7 +129,7 @@ class AnalysisConfig(BasicAnalysisConfig):
 
     @property
     def directory(self):
-        return self.get("ANALYSIS", "tiff_base", fallback=None)
+        return self.get("ANALYSIS", "tiff_base", fallback=".")
 
     @property
     def file_prefix(self):
@@ -156,8 +156,8 @@ class AnalysisStream(LiveDispatcher):
         self.dark_image = None
         self.indeps = None
         self.indep2unit = None
-        self.directory: typing.Union[None, Path] = None
-        self.file_prefix: typing.Union[None, str] = None
+        self.dirc = None
+        self.file_prefix = None
 
     def start(self, doc, _md=None):
         io.server_message("Receive the start of '{}'.".format(doc["uid"]))
@@ -167,12 +167,6 @@ class AnalysisStream(LiveDispatcher):
         # copy the default config and read the user config
         self.config = copy.deepcopy(self.init_config)
         self.config.read_user_config(doc.get("user_config", {}))
-        # get directory name and create
-        d = self.config.directory
-        if d is not None:
-            self.directory = Path(d).joinpath(doc.get("sample_name", "unnamed_sample"))
-            self.directory.mkdir(exist_ok=True, parents=True)
-            self.file_prefix = self.config.file_prefix.format(start=doc)
         # record start doc for later use
         self.start_doc = doc
         # find ai
@@ -198,8 +192,19 @@ class AnalysisStream(LiveDispatcher):
             io.server_message("Encounter error when searching the metadata: {}.".format(str(error)))
         # create new start
         new_start = dict(**doc, an_config=self.config.to_dict(), pdfstream_version=pdfstream.__version__)
+        # inject readable time
+        new_start["readable_time"] = datetime.datetime.fromtimestamp(doc["time"]).strftime(
+            "%Y%m%d-%H%M%S")
         # add sample_name and if it is not there
         new_start.setdefault("sample_name", "unnamed_sample")
+        new_start.setdefault("original_run_uid", doc["uid"])
+        # create directory
+        d = self.config.directory
+        self.dirc = Path(d).expanduser().joinpath(new_start["sample_name"])
+        self.dirc.mkdir(parents=True, exist_ok=True)
+        # create file prefix
+        fp = self.config.file_prefix
+        self.file_prefix = fp.format(start=new_start)
         return super(AnalysisStream, self).start(new_start)
 
     def event_page(self, doc):
@@ -239,12 +244,8 @@ class AnalysisStream(LiveDispatcher):
         # copy the data
         raw_data = {k: copy.copy(v) for k, v in doc["data"].items() if k != self.image_key}
         # get filename
-        if self.directory and self.file_prefix:
-            indep_str = from_desc.get_indep_str(doc["data"], self.indep2unit)
-            filename = self.file_prefix + indep_str + "{:04d}".format(doc["seq_num"])
-            filename = SpecialStr(self.directory.joinpath(filename))
-        else:
-            filename = None
+        indep_str = from_desc.get_indep_str(doc["data"], self.indep2unit)
+        filename = self.file_prefix + indep_str + "{:04d}".format(doc["seq_num"])
         # process the data output a dictionary
         an_data = process(
             raw_img=raw_img,
@@ -258,7 +259,8 @@ class AnalysisStream(LiveDispatcher):
                 **self.bt_info,
                 **self.config.trans_setting
             ),
-            filename=filename
+            filename=filename,
+            directory=str(self.dirc)
         )
         # the final output data is a combination of the independent variables and processed data
         return dict(**raw_data, **an_data)
@@ -273,12 +275,15 @@ class AnalysisStream(LiveDispatcher):
         self.dark_image = None
 
 
-def write_out_pdfgetter(pdfgetter: PDFGetter, filename: str):
+def write_out_pdfgetter(pdfgetter: PDFGetter, dirc: str, filename: str):
+    n = 3
     names = ["sq", "fq", "gr"]
     folders = ["sq", "fq", "pdf"]
     suffixes = [".sq", ".fq", ".gr"]
-    for i in range(4):
-        out_file = Path(folders[i]).joinpath(filename).with_suffix(suffixes[i])
+    for i in range(n):
+        out_dir = Path(dirc).joinpath(folders[i])
+        out_dir.mkdir(exist_ok=True)
+        out_file = out_dir.joinpath(filename).with_suffix(suffixes[i])
         pdfgetter.writeOutput(str(out_file), names[i])
     return
 
@@ -291,9 +296,10 @@ def process(
         auto_mask: bool = True,
         dk_img: np.ndarray = None,
         integ_setting: dict = None,
-    mask_setting: dict = None,
-    pdfgetx_setting: dict = None,
-        filename: str = None
+        mask_setting: dict = None,
+        pdfgetx_setting: dict = None,
+        filename: str = None,
+        directory: str = None
 ) -> dict:
     """The function to process the data from event."""
     # initialize the data dictionary
@@ -351,8 +357,9 @@ def process(
             "gr_r": gr[0], "gr_G": gr[1], "gr_max": gr[1][gr_max_ind], "gr_argmax": gr[0][gr_max_ind]
         }
     )
-    if filename:
-        write_out_pdfgetter(pdfgetter, filename)
+    if filename and directory:
+        io.server_message("Save the PDF data in '{}' using file name '{}'.".format(directory, filename))
+        write_out_pdfgetter(pdfgetter, directory, filename)
     return data
 
 
@@ -412,10 +419,7 @@ class Exporter(RunRouter):
         io.server_message("Data will be exported in '{}'.".format(str(config.tiff_base)))
 
     def start(self, start_doc):
-        io.server_message("Inject 'readable_time' in the start of '{}'.".format(start_doc["uid"]))
-        start_doc = copy.deepcopy(start_doc)
-        start_doc["readable_time"] = datetime.datetime.fromtimestamp(start_doc["time"]).strftime(
-            "%Y%m%d-%H%M%S")
+        io.server_message("Receive the start of '{}'.".format(start_doc["uid"]))
         return super(Exporter, self).start(start_doc)
 
     def event(self, doc):
