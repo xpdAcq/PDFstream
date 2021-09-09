@@ -396,7 +396,7 @@ class CalibrationExporter(CallbackBase):
             pf = PoniFile()
             pf.read_from_dict(calibration_md)
             file_prefix = self._file_prefix.format(start=doc)
-            file_name = file_prefix + "calib"
+            file_name = file_prefix.strip("_")
             file_path = self._directory.joinpath(file_name).with_suffix(".poni")
             with file_path.open("w") as f:
                 pf.write(f)
