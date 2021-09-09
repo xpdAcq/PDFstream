@@ -40,5 +40,5 @@ def get_indep_str(data: dict, indep2unit: typing.Dict[str, str]) -> SpecialStr:
     stack = []
     for indep, unit in indep2unit.items():
         if indep in data:
-            stack.append("{}_{:.2f}{}_".format(indep, data[indep], unit))
+            stack.append("{}_{:.2f}{}_".format(indep, data[indep], unit).replace(".", ","))
     return SpecialStr(''.join(stack))
