@@ -274,9 +274,9 @@ class AnalysisStream(LiveDispatcher):
 
 
 def write_out_pdfgetter(pdfgetter: PDFGetter, filename: str):
-    names = ["iq", "sq", "fq", "gr"]
-    folders = ["iq", "sq", "fq", "pdf"]
-    suffixes = [".iq", ".sq", ".fq", ".gr"]
+    names = ["sq", "fq", "gr"]
+    folders = ["sq", "fq", "pdf"]
+    suffixes = [".sq", ".fq", ".gr"]
     for i in range(4):
         out_file = Path(folders[i]).joinpath(filename).with_suffix(suffixes[i])
         pdfgetter.writeOutput(str(out_file), names[i])
