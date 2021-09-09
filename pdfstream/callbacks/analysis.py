@@ -1,5 +1,6 @@
 import copy
 import datetime
+import typing
 import typing as tp
 from configparser import ConfigParser
 from pathlib import Path
@@ -126,6 +127,15 @@ class AnalysisConfig(BasicAnalysisConfig):
             "dataformat": "QA"
         }
 
+    @property
+    def directory(self):
+        return self.get("ANALYSIS", "tiff_base", fallback=None)
+
+    @property
+    def file_prefix(self):
+        return SpecialStr(
+            self.get("ANALYSIS", "file_prefix", fallback="{start[original_run_uid]}_{start[readable_time]}_"))
+
 
 class AnalysisStream(LiveDispatcher):
     """The secondary stream for data analysis.
@@ -136,7 +146,7 @@ class AnalysisStream(LiveDispatcher):
     def __init__(self, config: AnalysisConfig):
         super(AnalysisStream, self).__init__()
         self.init_config = config
-        self.config = None
+        self.config: typing.Union[AnalysisConfig, None] = None
         db_name = config.raw_db
         self.db = Broker.named(db_name) if db_name else None
         self.start_doc = {}
@@ -144,13 +154,25 @@ class AnalysisStream(LiveDispatcher):
         self.bt_info = {}
         self.image_key = ""
         self.dark_image = None
+        self.indeps = None
+        self.indep2unit = None
+        self.directory: typing.Union[None, Path] = None
+        self.file_prefix: typing.Union[None, str] = None
 
     def start(self, doc, _md=None):
         io.server_message("Receive the start of '{}'.".format(doc["uid"]))
         self.clear_cache()
+        # get indeps
+        self.indeps = from_start.get_indeps(doc, exclude={"time"})
         # copy the default config and read the user config
         self.config = copy.deepcopy(self.init_config)
         self.config.read_user_config(doc.get("user_config", {}))
+        # get directory name and create
+        d = self.config.directory
+        if d is not None:
+            self.directory = Path(d).joinpath(doc.get("sample_name", "unnamed_sample"))
+            self.directory.mkdir(exist_ok=True, parents=True)
+            self.file_prefix = self.config.file_prefix.format(start=doc)
         # record start doc for later use
         self.start_doc = doc
         # find ai
@@ -185,6 +207,7 @@ class AnalysisStream(LiveDispatcher):
             self.event(event_doc)
 
     def descriptor(self, doc):
+        self.indep2unit = from_desc.get_units(doc["data_keys"], self.indeps)
         self.image_key = from_desc.find_one_image(doc)
         io.server_message("Find the data key '{}' in the stream '{}'.".format(self.image_key, doc["name"]))
         try:
@@ -215,6 +238,13 @@ class AnalysisStream(LiveDispatcher):
         raw_img = from_event.get_image_from_event(doc, det_name=self.image_key)
         # copy the data
         raw_data = {k: copy.copy(v) for k, v in doc["data"].items() if k != self.image_key}
+        # get filename
+        if self.directory and self.file_prefix:
+            indep_str = from_desc.get_indep_str(doc["data"], self.indep2unit)
+            filename = self.file_prefix + indep_str
+            filename = SpecialStr(self.directory.joinpath(filename))
+        else:
+            filename = None
         # process the data output a dictionary
         an_data = process(
             raw_img=raw_img,
@@ -227,7 +257,8 @@ class AnalysisStream(LiveDispatcher):
             pdfgetx_setting=dict(
                 **self.bt_info,
                 **self.config.trans_setting
-            )
+            ),
+            filename=filename
         )
         # the final output data is a combination of the independent variables and processed data
         return dict(**raw_data, **an_data)
@@ -242,16 +273,27 @@ class AnalysisStream(LiveDispatcher):
         self.dark_image = None
 
 
+def write_out_pdfgetter(pdfgetter: PDFGetter, filename: str):
+    names = ["iq", "sq", "fq", "gr"]
+    folders = ["iq", "sq", "fq", "pdf"]
+    suffixes = [".iq", ".sq", ".fq", ".gr"]
+    for i in range(4):
+        out_file = Path(folders[i]).joinpath(filename).with_suffix(suffixes[i])
+        pdfgetter.writeOutput(str(out_file), names[i])
+    return
+
+
 def process(
-    *,
-    raw_img: np.ndarray,
-    ai: tp.Union[None, AzimuthalIntegrator],
-    user_mask: np.ndarray = None,
-    auto_mask: bool = True,
-    dk_img: np.ndarray = None,
-    integ_setting: dict = None,
+        *,
+        raw_img: np.ndarray,
+        ai: tp.Union[None, AzimuthalIntegrator],
+        user_mask: np.ndarray = None,
+        auto_mask: bool = True,
+        dk_img: np.ndarray = None,
+        integ_setting: dict = None,
     mask_setting: dict = None,
     pdfgetx_setting: dict = None,
+        filename: str = None
 ) -> dict:
     """The function to process the data from event."""
     # initialize the data dictionary
@@ -309,6 +351,8 @@ def process(
             "gr_r": gr[0], "gr_G": gr[1], "gr_max": gr[1][gr_max_ind], "gr_argmax": gr[0][gr_max_ind]
         }
     )
+    if filename:
+        write_out_pdfgetter(pdfgetter, filename)
     return data
 
 

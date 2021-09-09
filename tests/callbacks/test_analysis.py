@@ -13,10 +13,11 @@ fn = resource_filename("tests", "configs/xpd_server.ini")
 
 
 @pytest.mark.parametrize("use_db", [True, False])
-def test_AnalysisStream(db_with_img_and_bg_img, use_db):
+def test_AnalysisStream(db_with_img_and_bg_img, use_db, tmpdir):
     db = db_with_img_and_bg_img
     config = an.AnalysisConfig()
     config.read(fn)
+    config["ANALYSIS"]["tiff_base"] = str(tmpdir)
     ld = an.AnalysisStream(config)
     if use_db:
         ld.db = db.v1
