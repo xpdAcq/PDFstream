@@ -13,6 +13,7 @@ from matplotlib import pyplot as plt
 from matplotlib.axes import Axes
 from matplotlib.widgets import Slider
 from pyFAI.io.ponifile import PoniFile
+from ruamel.yaml import YAML
 from suitcase.tiff_series import Serializer as TiffSerializer
 from xpdview.waterfall import Waterfall
 
@@ -383,7 +384,8 @@ class CalibrationExporter(CallbackBase):
 
     def __init__(self, directory: str, file_prefix: str = "start[uid]_", md_key: str = "calibration_md"):
         super(CalibrationExporter, self).__init__()
-        self._directory = Path(directory)
+        self._directory = Path(directory).expanduser()
+        self._directory.mkdir(exist_ok=True, parents=True)
         self._file_prefix = SpecialStr(file_prefix)
         self._md_key = md_key
         self._directory.mkdir(exist_ok=True, parents=True)
@@ -401,3 +403,22 @@ class CalibrationExporter(CallbackBase):
         else:
             io.server_message("Missing 'calibration_md' in the start.")
         return super(CalibrationExporter, self).start(doc)
+
+
+class YamlSerializer(CallbackBase):
+    """Export the start document in yaml file."""
+
+    def __init__(self, directory: str, file_prefix: str = "start[uid]_"):
+        super(YamlSerializer, self).__init__()
+        self._directory = Path(directory).expanduser()
+        self._directory.mkdir(exist_ok=True, parents=True)
+        self._file_prefix = file_prefix
+        self._yaml = YAML()
+
+    def start(self, doc):
+        file_prefix = self._file_prefix.format(start=doc)
+        filename = file_prefix + "meta"
+        file_path = self._directory.joinpath(filename).with_suffix(".yml")
+        with file_path.open("w") as f:
+            self._yaml.dump(doc, f)
+        return super(YamlSerializer, self).start(doc)

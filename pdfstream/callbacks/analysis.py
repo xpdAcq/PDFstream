@@ -21,7 +21,7 @@ import pdfstream.callbacks.from_start as from_start
 import pdfstream.integration.tools as integ
 import pdfstream.io as io
 from pdfstream.callbacks.basic import MyLiveImage, LiveMaskedImage, LiveWaterfall, StackedNumpyTextExporter, \
-    SmartScalarPlot, MyTiffSerializer, CalibrationExporter, NumpyExporter
+    SmartScalarPlot, MyTiffSerializer, CalibrationExporter, NumpyExporter, YamlSerializer
 from pdfstream.errors import ValueNotFoundError
 from pdfstream.units import LABELS
 from pdfstream.vend.formatters import SpecialStr
@@ -325,7 +325,7 @@ class ExportConfig(ConfigParser):
 
     def get_exports(self):
         return set(
-            self.get("SUITCASE", "exports", fallback="poni,tiff,mask,json,csv,txt").replace(" ", "").split(","))
+            self.get("SUITCASE", "exports", fallback="poni,tiff,mask,yaml,csv,txt").replace(" ", "").split(","))
 
     def get_file_prefix(self):
         return SpecialStr(
@@ -414,6 +414,12 @@ class ExporterFactory:
             callbacks.append(cb)
         if "json" in exports:
             cb = JsonSerializer(
+                str(data_folder.joinpath("meta")),
+                file_prefix=file_prefix
+            )
+            callbacks.append(cb)
+        if "yaml" in exports:
+            cb = YamlSerializer(
                 str(data_folder.joinpath("meta")),
                 file_prefix=file_prefix
             )
