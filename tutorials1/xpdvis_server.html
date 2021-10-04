@@ -1,81 +1,41 @@
-
-
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
-  
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
   <title>XPDVis Server &mdash; PDFstream 0.4.7 documentation</title>
-  
-
-  
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/plot_directive.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
-
-  
-  
-
-  
-  
-
-  
-
-  
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/plot_directive.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
         <script src="../_static/clipboard.min.js"></script>
         <script src="../_static/copybutton.js"></script>
-    
-    <script type="text/javascript" src="../_static/js/theme.js"></script>
-
-    
+    <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="XPDSave Server" href="xpdsave_server.html" />
     <link rel="prev" title="XPD Server" href="xpd_server.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
-
-          
             <a href="../index.html" class="icon icon-home"> PDFstream
-          
-
-          
           </a>
-
-          
-            
-            
               <div class="version">
                 0.4.7
               </div>
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -83,18 +43,7 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials0/index.html">Users Documents</a></li>
@@ -119,83 +68,41 @@
 <li class="toctree-l1"><a class="reference internal" href="../min_versions.html">Minimum Version of Python and NumPy</a></li>
 </ul>
 
-            
-          
         </div>
-        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../index.html">PDFstream</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-        
           <li><a href="index.html">Beamline Scientists Documents</a> &raquo;</li>
-        
       <li>XPDVis Server</li>
-    
-    
       <li class="wy-breadcrumbs-aside">
-        
-          
             <a href="../_sources/tutorials1/xpdvis_server.rst.txt" rel="nofollow"> View page source</a>
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
-  <div class="section" id="xpdvis-server">
+             
+  <section id="xpdvis-server">
 <h1>XPDVis Server<a class="headerlink" href="#xpdvis-server" title="Permalink to this headline">¶</a></h1>
 <p>The XPDVis server is the server that visualize the data from the XPD server. If users would like to separate the
 data processing with the data visualization, they could run the XPDVis server together with the XPD server on
 the same or different machine.</p>
-<div class="section" id="how-to-setup-a-xpdvis-server">
+<section id="how-to-setup-a-xpdvis-server">
 <h2>How to setup a XPDVis Server?<a class="headerlink" href="#how-to-setup-a-xpdvis-server" title="Permalink to this headline">¶</a></h2>
 <p>There are only two steps: first, write a configuration file or download one; start a server in terminal using
 that file.</p>
-<div class="section" id="write-the-configuration-file">
+<section id="write-the-configuration-file">
 <h3>Write the configuration file<a class="headerlink" href="#write-the-configuration-file" title="Permalink to this headline">¶</a></h3>
 <p>The server needs a .ini file. This file contains all the configuration to build a server. An example of the file
 is shown below. Please read the comments in the file to know what are the meaning of the parameters.</p>
@@ -274,8 +181,8 @@ is shown below. Please read the comments in the file to know what are the meanin
 <p>The parameters you can change are the values that behind the equity symbol in each row. Usually, you don’t need
 to change the file structure but if you would like to do that, you can find what file structure is supported
 <a class="reference external" href="https://docs.python.org/3/library/configparser.html#supported-ini-file-structure">here</a>.</p>
-</div>
-<div class="section" id="start-the-server">
+</section>
+<section id="start-the-server">
 <h3>Start the server<a class="headerlink" href="#start-the-server" title="Permalink to this headline">¶</a></h3>
 <p>Assume that you have written a configuration file and the path to it is “~/xpd_server.ini”.</p>
 <p>In terminal, run the command:</p>
@@ -284,8 +191,8 @@ to change the file structure but if you would like to do that, you can find what
 </div>
 <p>The server will start in terminal.</p>
 <p>If you would like to terminate the server, press <code class="docutils literal notranslate"><span class="pre">CTRL</span> <span class="pre">+</span> <span class="pre">C</span></code>.</p>
-</div>
-<div class="section" id="recommended-put-the-configuration-file-in-default-folder">
+</section>
+<section id="recommended-put-the-configuration-file-in-default-folder">
 <h3>(Recommended) Put the configuration file in default folder<a class="headerlink" href="#recommended-put-the-configuration-file-in-default-folder" title="Permalink to this headline">¶</a></h3>
 <p>If you are tired of typing the path to the configuration file, you can put the .ini file in the default folder,
 the software will find the configuration file for the server according to the name parameter in the
@@ -299,8 +206,8 @@ configuration file.</p>
 </pre></div>
 </div>
 <p>The server will start.</p>
-</div>
-<div class="section" id="optional-run-the-server-in-a-detached-background-process">
+</section>
+<section id="optional-run-the-server-in-a-detached-background-process">
 <h3>(Optional) Run the server in a detached background process<a class="headerlink" href="#optional-run-the-server-in-a-detached-background-process" title="Permalink to this headline">¶</a></h3>
 <p>Similar to what you have done with the proxy, you can also run the server in background and detach it from the
 terminal so that you don’t need to start the server every time. To do this, in terminal, run command:</p>
@@ -317,56 +224,39 @@ terminal so that you don’t need to start the server every time. To do this, in
 </pre></div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">&lt;job</span> <span class="pre">ID&gt;</span></code> is a number that shows up after you run the command <code class="docutils literal notranslate"><span class="pre">nohup</span> <span class="pre">run_server</span> <span class="pre">xpd</span> <span class="pre">&amp;</span></code>.</p>
-</div>
-</div>
-</div>
+</section>
+</section>
+</section>
 
 
            </div>
-           
           </div>
-          <footer>
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="xpdsave_server.html" class="btn btn-neutral float-right" title="XPDSave Server" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="xpd_server.html" class="btn btn-neutral float-left" title="XPD Server" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="xpdsave_server.html" class="btn btn-neutral float-right" title="XPDSave Server" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &#169; Copyright 2020, Songsheng Tao.
-
-    </p>
+    <p>&#169; Copyright 2020, Songsheng Tao.</p>
   </div>
-    
-    
-    
-    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>
