@@ -147,6 +147,10 @@ class AnalysisConfig(BasicAnalysisConfig):
     def save_file(self):
         return self.getboolean("ANALYSIS", "save_file", fallback=True)
 
+    @property
+    def pdfgetx(self):
+        return self.getboolean("ANALTSIS", "pdfgetx", fallback=True)
+
 
 class AnalysisStream(LiveDispatcher):
     """The secondary stream for data analysis.
@@ -276,7 +280,8 @@ class AnalysisStream(LiveDispatcher):
                 **self.config.trans_setting
             ),
             filename=filename,
-            directory=directory
+            directory=directory,
+            pdfgetx=self.config.pdfgetx
         )
         # filter the data
         if self.valid_keys:
@@ -321,7 +326,8 @@ def process(
         mask_setting: dict = None,
         pdfgetx_setting: dict = None,
         filename: str = None,
-        directory: str = None
+        directory: str = None,
+        pdfgetx: bool = True
 ) -> dict:
     """The function to process the data from event."""
     # initialize the data dictionary
@@ -365,6 +371,8 @@ def process(
         }
     )
     # transformation
+    if not pdfgetx:
+        return data
     if not _PDFGETX_AVAILABLE:
         io.server_message("diffpy.pdfgetx is not installed. No use [0.] for all the relevant data.")
         return data
