@@ -206,13 +206,14 @@ class AnalysisStream(LiveDispatcher):
         # add sample_name and if it is not there
         new_start.setdefault("sample_name", "unnamed_sample")
         new_start.setdefault("original_run_uid", doc["uid"])
-        # create directory
+        # create directoy
         d = self.config.directory
-        self.dirc = Path(d).expanduser().joinpath(new_start["sample_name"])
-        self.dirc.mkdir(parents=True, exist_ok=True)
-        # create file prefix
         fp = self.config.file_prefix
-        self.file_prefix = fp.format(start=new_start)
+        if d and fp:
+            self.dirc = Path(d).expanduser().joinpath(new_start["sample_name"])
+            self.dirc.mkdir(parents=True, exist_ok=True)
+            # create file prefix
+            self.file_prefix = fp.format(start=new_start)
         return super(AnalysisStream, self).start(new_start)
 
     def event_page(self, doc):
