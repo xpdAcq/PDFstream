@@ -214,7 +214,8 @@ class AnalysisStream(LiveDispatcher):
         d = self.config.directory
         fp = self.config.file_prefix
         self.dirc = Path(d).expanduser().joinpath(new_start["sample_name"])
-        self.dirc.mkdir(parents=True, exist_ok=True)
+        if self.config.save_file:
+            self.dirc.mkdir(parents=True, exist_ok=True)
         # create file prefix
         self.file_prefix = fp.format(start=new_start)
         return super(AnalysisStream, self).start(new_start)
