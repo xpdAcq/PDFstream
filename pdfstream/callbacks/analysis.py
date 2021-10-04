@@ -149,7 +149,7 @@ class AnalysisConfig(BasicAnalysisConfig):
 
     @property
     def pdfgetx(self):
-        return self.getboolean("ANALTSIS", "pdfgetx", fallback=True)
+        return self.getboolean("ANALYSIS", "pdfgetx", fallback=True)
 
 
 class AnalysisStream(LiveDispatcher):
