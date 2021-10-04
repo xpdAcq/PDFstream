@@ -136,6 +136,13 @@ class AnalysisConfig(BasicAnalysisConfig):
         return SpecialStr(
             self.get("ANALYSIS", "file_prefix", fallback="{start[original_run_uid]}_{start[readable_time]}_"))
 
+    @property
+    def valid_keys(self):
+        res = set(self.get("ANALYSIS", "valid_keys", fallback="").replace(" ", "").split(","))
+        if "" in res:
+            res.remove("")
+        return res
+
 
 class AnalysisStream(LiveDispatcher):
     """The secondary stream for data analysis.
@@ -149,6 +156,7 @@ class AnalysisStream(LiveDispatcher):
         self.config: typing.Union[AnalysisConfig, None] = None
         db_name = config.raw_db
         self.db = Broker.named(db_name) if db_name else None
+        self.valid_keys = config.valid_keys
         self.start_doc = {}
         self.ai = None
         self.bt_info = {}
@@ -262,8 +270,14 @@ class AnalysisStream(LiveDispatcher):
             filename=filename,
             directory=str(self.dirc)
         )
+        # filter the data
+        if self.valid_keys:
+            an_data = self.filter(an_data)
         # the final output data is a combination of the independent variables and processed data
         return dict(**raw_data, **an_data)
+
+    def filter(self, data: dict):
+        return {k: v for k, v in data.items() if k in self.valid_keys}
 
     def clear_cache(self):
         """Clear the cache."""
