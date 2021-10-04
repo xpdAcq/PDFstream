@@ -129,12 +129,12 @@ class AnalysisConfig(BasicAnalysisConfig):
 
     @property
     def directory(self):
-        return self.get("ANALYSIS", "tiff_base", fallback="")
+        return self.get("ANALYSIS", "tiff_base", fallback=".")
 
     @property
     def file_prefix(self):
         return SpecialStr(
-            self.get("ANALYSIS", "file_prefix", fallback=""))
+            self.get("ANALYSIS", "file_prefix", fallback="start[uid]_"))
 
     @property
     def valid_keys(self):
@@ -142,6 +142,10 @@ class AnalysisConfig(BasicAnalysisConfig):
         if "" in res:
             res.remove("")
         return res
+
+    @property
+    def save_file(self):
+        return self.getboolean("ANALYSIS", "save_file", fallback=True)
 
 
 class AnalysisStream(LiveDispatcher):
@@ -209,11 +213,10 @@ class AnalysisStream(LiveDispatcher):
         # create directoy
         d = self.config.directory
         fp = self.config.file_prefix
-        if d and fp:
-            self.dirc = Path(d).expanduser().joinpath(new_start["sample_name"])
-            self.dirc.mkdir(parents=True, exist_ok=True)
-            # create file prefix
-            self.file_prefix = fp.format(start=new_start)
+        self.dirc = Path(d).expanduser().joinpath(new_start["sample_name"])
+        self.dirc.mkdir(parents=True, exist_ok=True)
+        # create file prefix
+        self.file_prefix = fp.format(start=new_start)
         return super(AnalysisStream, self).start(new_start)
 
     def event_page(self, doc):
@@ -255,6 +258,9 @@ class AnalysisStream(LiveDispatcher):
         # get filename
         indep_str = from_desc.get_indep_str(doc["data"], self.indep2unit)
         filename = self.file_prefix + indep_str + "{:04d}".format(doc["seq_num"])
+        directory = str(self.dirc)
+        if not self.config.save_file:
+            filename, directory = None, None
         # process the data output a dictionary
         an_data = process(
             raw_img=raw_img,
@@ -269,7 +275,7 @@ class AnalysisStream(LiveDispatcher):
                 **self.config.trans_setting
             ),
             filename=filename,
-            directory=str(self.dirc)
+            directory=directory
         )
         # filter the data
         if self.valid_keys:
