@@ -129,12 +129,12 @@ class AnalysisConfig(BasicAnalysisConfig):
 
     @property
     def directory(self):
-        return self.get("ANALYSIS", "tiff_base", fallback=".")
+        return self.get("ANALYSIS", "tiff_base", fallback="")
 
     @property
     def file_prefix(self):
         return SpecialStr(
-            self.get("ANALYSIS", "file_prefix", fallback="{start[original_run_uid]}_{start[readable_time]}_"))
+            self.get("ANALYSIS", "file_prefix", fallback=""))
 
     @property
     def valid_keys(self):
