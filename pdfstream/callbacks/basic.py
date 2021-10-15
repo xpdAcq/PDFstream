@@ -4,6 +4,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+import yaml
 from bluesky.callbacks import CallbackBase
 from bluesky.callbacks.best_effort import LivePlot, LiveScatter
 from bluesky.callbacks.broker import LiveImage
@@ -13,7 +14,6 @@ from matplotlib import pyplot as plt
 from matplotlib.axes import Axes
 from matplotlib.widgets import Slider
 from pyFAI.io.ponifile import PoniFile
-from ruamel.yaml import YAML
 from suitcase.tiff_series import Serializer as TiffSerializer
 from xpdview.waterfall import Waterfall
 
@@ -413,12 +413,11 @@ class YamlSerializer(CallbackBase):
         self._directory = Path(directory).expanduser()
         self._directory.mkdir(exist_ok=True, parents=True)
         self._file_prefix = file_prefix
-        self._yaml = YAML(typ="unsafe")
 
     def start(self, doc):
         file_prefix = self._file_prefix.format(start=doc)
         filename = file_prefix.strip("_")
         file_path = self._directory.joinpath(filename).with_suffix(".yaml")
         with file_path.open("w") as f:
-            self._yaml.dump(doc, f)
+            yaml.dump(doc, f)
         return super(YamlSerializer, self).start(doc)
