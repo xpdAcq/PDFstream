@@ -4,6 +4,16 @@ PDFstream Change Log
 
 .. current developments
 
+v0.5.1
+====================
+
+**Fixed:**
+
+* The visualization server will clear the plot when the descriptor is received. Before, it clears when the start
+is received. The plot will remain longer time before the clear.
+
+
+
 v0.5.0
 ====================
 
