@@ -631,7 +631,7 @@ class VisFactory:
             )
         # one dimensional array waterfall
         for xfield, yfield, tag, vis_config in [
-            ("chi_2theta", "chi_I", "chi", self.config.vis_2theta),
+            ("chi_2theta", "chi_I", "chi_2theta", self.config.vis_2theta),
             ("chi_Q", "chi_I", "chi", self.config.vis_chi),
             ("iq_Q", "iq_I", "iq", self.config.vis_iq),
             ("sq_Q", "sq_S", "sq", self.config.vis_sq),

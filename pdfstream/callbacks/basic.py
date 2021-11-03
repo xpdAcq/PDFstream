@@ -275,8 +275,8 @@ class LiveWaterfall(CallbackBase):
         self.ax = ax
         self.waterfall = MyWaterfall(xlabel=xlabel, ylabel=ylabel, ax=self.ax, **kwargs)
 
-    def start(self, doc):
-        super(LiveWaterfall, self).start(doc)
+    def descriptor(self, doc):
+        super(LiveWaterfall, self).descriptor(doc)
         self.waterfall.clear()
 
     def event(self, doc):
