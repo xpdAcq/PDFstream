@@ -4,6 +4,15 @@ PDFstream Change Log
 
 .. current developments
 
+v0.5.2
+====================
+
+**Fixed:**
+
+* The waterfall plot will be auto scaled after each update and delete.
+
+
+
 v0.5.1
 ====================
 
