@@ -288,6 +288,7 @@ class LiveWaterfall(CallbackBase):
 
     def update(self, key: str, int_data: tp.Tuple[np.ndarray, np.ndarray]):
         self.waterfall.update(key_list=[key], int_data_list=[int_data])
+        self.ax.autoscale()
 
     def show(self):
         self.ax.figure.show()

@@ -1,3 +1,4 @@
+import matplotlib.pyplot as plt
 import numpy as np
 
 import pdfstream.callbacks.basic as mod
@@ -57,3 +58,22 @@ def test_CalibrationExporter(tmpdir):
     files = tmpdir.listdir()
     assert len(files) > 0
     print(files[0].read_text(encoding="utf-8"))
+
+
+def test_MyWaterFall():
+    fig, ax = plt.subplots()
+    cb = mod.LiveWaterfall("x", "y", xlabel="x", ylabel="y", ax=ax)
+    x = np.arange(0., 1.001, 0.01)
+    data1 = [
+        {"x": x, "y": 0.01 * x}
+    ]
+    data2 = [
+        {"x": x, "y": 100. * x}
+    ]
+    for name, doc in gen_stream(data1, {}):
+        cb(name, doc)
+    # cb.show()
+    for name, doc in gen_stream(data2, {}):
+        cb(name, doc)
+    # cb.show()
+    plt.clf()
