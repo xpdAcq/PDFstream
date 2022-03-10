@@ -54,3 +54,4 @@ Change directory::
 Run the bash script::
 
     bash install.sh
+
