@@ -367,7 +367,7 @@ def process(
     chi_max_ind = np.argmax(y)
     data.update(
         {
-            "chi_2theta": tth, "chi_Q": x, "chi_I": y, "chi_max": x[chi_max_ind], "chi_argmax": y[chi_max_ind]
+            "chi_2theta": tth, "chi_Q": x, "chi_I": y, "chi_max": y[chi_max_ind], "chi_argmax": x[chi_max_ind]
         }
     )
     # transformation
