@@ -18,7 +18,7 @@ This is the instructions for the users. It is suggested to install it in a clean
 
 At the command line::
 
-    conda create -n pdfstream -c nsls2forge -c defaults pdfstream
+    conda create -n pdfstream -c conda-forge pdfstream
 
 The ``pdfstream_env`` in the command is the name of the environment. It can be changed to any name.
 
@@ -51,24 +51,6 @@ Change directory::
 
     cd PDFstream
 
-Create an environment with all the requirements::
+Run the bash script::
 
-    conda create -f env-dev.yaml
-
-Activate the environment::
-
-    conda activate dev_pdfstream
-
-Install the necessary pypi packages::
-
-    python -m pip install -r requirements/pip.txt
-
-Change the ``<path to .whl file>`` to the path of the .whl file on your computer.
-
-Install the `PDFstream` in development mode::
-
-    python -m pip install -e . --no-deps
-
-Install the `diffpy.pdfgetx` using .whl file::
-
-    pdfstream_install <path to .whl file>
+    bash install.sh
