@@ -18,8 +18,7 @@ v0.5.1
 
 **Fixed:**
 
-* The visualization server will clear the plot when the descriptor is received. Before, it clears when the start
-is received. The plot will remain longer time before the clear.
+* The visualization server will clear the plot when the descriptor is received. Before, it clears when the start is received. The plot will remain longer time before the clear.
 
 
 
