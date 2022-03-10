@@ -463,12 +463,12 @@ directory <code class="docutils literal notranslate"><span class="pre">/nsls2/xf
 <code class="docutils literal notranslate"><span class="pre">user_config</span></code> in the xrun to specify the mask file that they would like to use.
 The maks file can be a tiff file, a npy file or a numpy text file.
 Below is an example of the code.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">xrun</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">user_config</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;mask_file&quot;</span><span class="p">:</span> <span class="s2">&quot;./my_mask.tiff&quot;</span><span class="p">})</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">xrun</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">user_config</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;user_mask&quot;</span><span class="p">:</span> <span class="s2">&quot;./my_mask.tiff&quot;</span><span class="p">})</span>
 </pre></div>
 </div>
 <p>If users would like to use their mask file as it is without any further auto masking, they can add a statement
 like the example below.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">xrun</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">user_config</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;auto_mask&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;mask_file&quot;</span><span class="p">:</span> <span class="s2">&quot;./my_mask.tiff&quot;</span><span class="p">})</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">xrun</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">user_config</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;auto_mask&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;user_mask&quot;</span><span class="p">:</span> <span class="s2">&quot;./my_mask.tiff&quot;</span><span class="p">})</span>
 </pre></div>
 </div>
 <p>If users don’t want any masking, they can disable the auto masking with applying the mask as the following.</p>
