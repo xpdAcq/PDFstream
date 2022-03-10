@@ -34,7 +34,7 @@ Change the ``<path to .whl file>`` to the path of the .whl file on your computer
 
 Before using the `PDFstream`, remember to activate the environment::
 
-    conda activate pdfstream_env
+    conda activate pdfstream
 
 Development Installation
 ------------------------
@@ -54,3 +54,4 @@ Change directory::
 Run the bash script::
 
     bash install.sh
+
