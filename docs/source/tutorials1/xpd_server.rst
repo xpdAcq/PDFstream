@@ -346,14 +346,14 @@ Below is an example of the code.
 
 .. code-block:: python
 
-    xrun(0, 0, user_config={"mask_file": "./my_mask.tiff"})
+    xrun(0, 0, user_config={"user_mask": "./my_mask.tiff"})
 
 If users would like to use their mask file as it is without any further auto masking, they can add a statement
 like the example below.
 
 .. code-block:: python
 
-    xrun(0, 0, user_config={"auto_mask": False, "mask_file": "./my_mask.tiff"})
+    xrun(0, 0, user_config={"auto_mask": False, "user_mask": "./my_mask.tiff"})
 
 If users don't want any masking, they can disable the auto masking with applying the mask as the following.
 
