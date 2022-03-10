@@ -94,7 +94,7 @@ If you are not using the functionality in pdfstream related to the PDF, this pac
 <h2>General Installation<a class="headerlink" href="#general-installation" title="Permalink to this headline">¶</a></h2>
 <p>This is the instructions for the users. It is suggested to install it in a clean environment.</p>
 <p>At the command line:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">create</span> <span class="o">-</span><span class="n">n</span> <span class="n">pdfstream</span> <span class="o">-</span><span class="n">c</span> <span class="n">nsls2forge</span> <span class="o">-</span><span class="n">c</span> <span class="n">defaults</span> <span class="n">pdfstream</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">create</span> <span class="o">-</span><span class="n">n</span> <span class="n">pdfstream</span> <span class="o">-</span><span class="n">c</span> <span class="n">conda</span><span class="o">-</span><span class="n">forge</span> <span class="n">pdfstream</span>
 </pre></div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">pdfstream_env</span></code> in the command is the name of the environment. It can be changed to any name.</p>
@@ -124,25 +124,8 @@ If you are not using the functionality in pdfstream related to the PDF, this pac
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="n">PDFstream</span>
 </pre></div>
 </div>
-<p>Create an environment with all the requirements:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">create</span> <span class="o">-</span><span class="n">f</span> <span class="n">env</span><span class="o">-</span><span class="n">dev</span><span class="o">.</span><span class="n">yaml</span>
-</pre></div>
-</div>
-<p>Activate the environment:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">activate</span> <span class="n">dev_pdfstream</span>
-</pre></div>
-</div>
-<p>Install the necessary pypi packages:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="o">-</span><span class="n">m</span> <span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">r</span> <span class="n">requirements</span><span class="o">/</span><span class="n">pip</span><span class="o">.</span><span class="n">txt</span>
-</pre></div>
-</div>
-<p>Change the <code class="docutils literal notranslate"><span class="pre">&lt;path</span> <span class="pre">to</span> <span class="pre">.whl</span> <span class="pre">file&gt;</span></code> to the path of the .whl file on your computer.</p>
-<p>Install the <cite>PDFstream</cite> in development mode:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="o">-</span><span class="n">m</span> <span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">e</span> <span class="o">.</span> <span class="o">--</span><span class="n">no</span><span class="o">-</span><span class="n">deps</span>
-</pre></div>
-</div>
-<p>Install the <cite>diffpy.pdfgetx</cite> using .whl file:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pdfstream_install</span> <span class="o">&lt;</span><span class="n">path</span> <span class="n">to</span> <span class="o">.</span><span class="n">whl</span> <span class="n">file</span><span class="o">&gt;</span>
+<p>Run the bash script:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">bash</span> <span class="n">install</span><span class="o">.</span><span class="n">sh</span>
 </pre></div>
 </div>
 </section>
