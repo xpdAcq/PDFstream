@@ -2,7 +2,7 @@ import numpy as np
 import pytest
 from diffpy.pdfgetx import PDFConfig
 
-import pdfstream.callbacks.from_start as mod
+import pdfstream.old_callbacks.from_start as mod
 from pdfstream.data import ni_dspacing_file
 
 

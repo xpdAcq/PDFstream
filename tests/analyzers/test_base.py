@@ -2,7 +2,7 @@ import databroker
 import pytest
 
 import pdfstream.analyzers.base as mod
-from pdfstream.callbacks.composer import gen_stream
+from pdfstream.old_callbacks.composer import gen_stream
 
 
 @pytest.fixture(scope="function")

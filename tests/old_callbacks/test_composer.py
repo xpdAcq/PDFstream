@@ -1,6 +1,6 @@
 import pytest
 
-import pdfstream.callbacks.composer as mod
+import pdfstream.old_callbacks.composer as mod
 
 
 @pytest.fixture

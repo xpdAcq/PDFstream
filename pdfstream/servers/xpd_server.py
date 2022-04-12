@@ -7,9 +7,9 @@ from databroker.v1 import Broker
 from event_model import RunRouter
 
 import pdfstream.io as io
-from pdfstream.callbacks.analysis import AnalysisConfig, VisConfig, ExportConfig, AnalysisStream, Exporter, \
+from pdfstream.old_callbacks.analysis import AnalysisConfig, VisConfig, ExportConfig, AnalysisStream, Exporter, \
     Visualizer
-from pdfstream.callbacks.calibration import CalibrationConfig, Calibration
+from pdfstream.old_callbacks.calibration import CalibrationConfig, Calibration
 from pdfstream.servers.base import ServerConfig, BaseServer
 
 

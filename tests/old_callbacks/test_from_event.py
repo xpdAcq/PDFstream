@@ -1,7 +1,7 @@
 import numpy
 import pytest
 
-import pdfstream.callbacks.from_event as mod
+import pdfstream.old_callbacks.from_event as mod
 
 EVENT0 = {
     'time': [0.0],

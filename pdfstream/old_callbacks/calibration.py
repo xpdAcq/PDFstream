@@ -11,10 +11,10 @@ from databroker.v1 import Broker
 from tifffile import TiffWriter
 
 import pdfstream
-import pdfstream.callbacks.analysis as an
-import pdfstream.callbacks.from_descriptor as fd
-import pdfstream.callbacks.from_event as fe
-import pdfstream.callbacks.from_start as fs
+import pdfstream.old_callbacks.analysis as an
+import pdfstream.old_callbacks.from_descriptor as fd
+import pdfstream.old_callbacks.from_event as fe
+import pdfstream.old_callbacks.from_start as fs
 import pdfstream.io as io
 from pdfstream.errors import ValueNotFoundError
 from .analysis import AnalysisConfig

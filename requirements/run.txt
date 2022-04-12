@@ -7,7 +7,9 @@ bluesky
 databroker
 xpdview
 xray-vision
+fronzendict
 suitcase-csv
 suitcase-tiff
 suitcase-json-metadata
 area-detector-handlers
+xpdacq

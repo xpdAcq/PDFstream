@@ -1,6 +1,6 @@
 from pkg_resources import resource_filename
 
-import pdfstream.callbacks.calibration as mod
+import pdfstream.old_callbacks.calibration as mod
 
 fn = resource_filename("tests", "configs/xpd_server.ini")
 

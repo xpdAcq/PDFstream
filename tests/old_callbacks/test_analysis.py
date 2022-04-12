@@ -5,8 +5,8 @@ import matplotlib.pyplot as plt
 import pytest
 from pkg_resources import resource_filename
 
-import pdfstream.callbacks
-import pdfstream.callbacks.analysis as an
+import pdfstream.old_callbacks
+import pdfstream.old_callbacks.analysis as an
 from pdfstream.schemas import analysis_out_schemas, analysis_in_schemas, Validator
 
 fn = resource_filename("tests", "configs/xpd_server.ini")
@@ -73,10 +73,10 @@ def test_Visualizer(db_with_dark_and_scan):
     config.read(fn)
     ld = an.AnalysisStream(config)
     ld.db = db.v1
-    config1 = pdfstream.callbacks.analysis.VisConfig()
+    config1 = pdfstream.old_callbacks.analysis.VisConfig()
     config1.read(fn)
     config1.fig = plt.figure()
-    cb = pdfstream.callbacks.analysis.Visualizer(config1)
+    cb = pdfstream.old_callbacks.analysis.Visualizer(config1)
     ld.subscribe(cb)
     for name, doc in db[-1].canonical(fill="yes", strict_order=True):
         ld(name, doc)
@@ -89,10 +89,10 @@ def test_Exporter(db_with_dark_and_scan, tmpdir):
     config.read(fn)
     ld = an.AnalysisStream(config)
     ld.db = db.v1
-    ep_config = pdfstream.callbacks.analysis.ExportConfig()
+    ep_config = pdfstream.old_callbacks.analysis.ExportConfig()
     ep_config.read(fn)
     ep_config.tiff_base = str(tmpdir)
-    ep = pdfstream.callbacks.analysis.Exporter(ep_config)
+    ep = pdfstream.old_callbacks.analysis.Exporter(ep_config)
     ld.subscribe(ep)
     for name, doc in db[-1].canonical(fill="yes", strict_order=True):
         ld(name, doc)
@@ -115,17 +115,17 @@ def test_filenames(db_with_dark_and_scan, tmpdir):
     config.read(fn)
     ld = an.AnalysisStream(config)
     ld.db = db.v1
-    ep_config = pdfstream.callbacks.analysis.ExportConfig()
+    ep_config = pdfstream.old_callbacks.analysis.ExportConfig()
     ep_config.read(fn)
     ep_config.tiff_base = str(tmpdir)
-    ep = pdfstream.callbacks.analysis.Exporter(ep_config)
+    ep = pdfstream.old_callbacks.analysis.Exporter(ep_config)
     ld.subscribe(ep)
     for name, doc in db[-1].canonical(fill="yes", strict_order=True):
         ld(name, doc)
 
 
 def test_ExportConfig():
-    config = pdfstream.callbacks.analysis.ExportConfig()
+    config = pdfstream.old_callbacks.analysis.ExportConfig()
     config.read(fn)
     with pytest.raises(Error):
         assert config.tiff_base

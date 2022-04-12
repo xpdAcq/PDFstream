@@ -1,6 +1,6 @@
 from bluesky.callbacks.best_effort import BestEffortCallback
 
-from pdfstream.callbacks.analysis import Visualizer, VisConfig
+from pdfstream.old_callbacks.analysis import Visualizer, VisConfig
 from pdfstream.servers.base import BaseServer, ServerConfig
 
 

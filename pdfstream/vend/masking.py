@@ -217,3 +217,36 @@ def generate_map_bin(geo, img_shape):
     if np.max(q) > qbin[-1]:
         qbin[-1] = np.max(q)
     return q, qbin
+
+
+def mask_img_pyfai(
+    img,
+    binner,
+    tmsk=None,
+    **kwargs
+):
+    """
+    Mask an image based off of various methods
+
+    Parameters
+    ----------
+    img: np.ndarray
+        The image to be masked
+    binner : BinnedStatistic1D instance
+        The binned statistics information
+    tmsk: np.ndarray, optional
+        The starting mask to be compounded on. Defaults to None. If None mask
+        generated from scratch.
+    **kwargs:
+        Other kwargs for the `mask_img`.
+
+    Returns
+    -------
+    tmsk: np.ndarray
+        The mask as a int array. 0 pixels are good pixels, 1 pixels
+        are masked out.
+    """
+    mask = np.invert(tmsk.astype(bool)) if tmsk is not None else None
+    mask = mask_img(img, binner, tmsk=mask)
+    mask = np.invert(mask).astype(int)
+    return mask

@@ -1,6 +1,6 @@
 import pytest
 
-import pdfstream.callbacks.from_descriptor as mod
+import pdfstream.old_callbacks.from_descriptor as mod
 
 DCT0 = {'camera_image': {'dtype': 'number',
                          'shape': [512, 512],

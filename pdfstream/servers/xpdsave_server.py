@@ -1,4 +1,4 @@
-from pdfstream.callbacks.analysis import ExportConfig, Exporter
+from pdfstream.old_callbacks.analysis import ExportConfig, Exporter
 from pdfstream.servers.base import BaseServer, ServerConfig
 
 

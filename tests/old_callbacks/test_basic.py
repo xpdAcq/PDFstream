@@ -1,8 +1,8 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-import pdfstream.callbacks.basic as mod
-from pdfstream.callbacks.composer import gen_stream
+import pdfstream.old_callbacks.basic as mod
+from pdfstream.old_callbacks.composer import gen_stream
 
 
 def test_NumpyExporter(tmpdir, array_stream):

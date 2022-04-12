@@ -5,7 +5,7 @@ import pytest
 from pkg_resources import resource_filename
 
 import pdfstream.servers.lsq_server as mod
-from pdfstream.callbacks.composer import gen_stream
+from pdfstream.old_callbacks.composer import gen_stream
 
 cfg_file = resource_filename("tests", "configs/lsq_server.ini")
 

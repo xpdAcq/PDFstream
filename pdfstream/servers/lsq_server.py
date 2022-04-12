@@ -13,7 +13,7 @@ from event_model import RunRouter
 from ophyd.sim import NumpySeqHandler
 
 import pdfstream.units as units
-from pdfstream.callbacks.basic import LiveWaterfall, NumpyExporter
+from pdfstream.old_callbacks.basic import LiveWaterfall, NumpyExporter
 from pdfstream.servers.base import ServerConfig, BaseServer
 
 

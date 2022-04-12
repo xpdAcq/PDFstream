@@ -12,8 +12,12 @@ import pytest
 from databroker.v2 import Broker
 from diffpy.pdfgetx import PDFConfig, PDFGetter
 from pkg_resources import resource_filename
+from xpdacq.tests.conftest import fresh_xrun
+from xpdacq.ipysetup import UserInterface
+from xpdsim import xpd_pe1c, shctl1, cs700, fb, ring_current
+import bluesky.plans as bp
 
-from pdfstream.callbacks.composer import gen_stream
+from pdfstream.old_callbacks.composer import gen_stream
 from pdfstream.io import load_img, load_array
 
 # do not show any figures in test otherwise they will block the tests
@@ -213,4 +217,30 @@ def db_with_dark_bg_no_calib() -> Broker:
         db.v1.insert(name, doc)
     for name, doc in gen_stream(img_data, img_meta):
         db.v1.insert(name, doc)
+    return db
+
+
+@pytest.fixture(scope="session")
+def db_with_new_xpdacq() -> Broker:
+    db = databroker.v2.temp()
+    ui = UserInterface(
+        area_dets=[xpd_pe1c],
+        det_zs=[None],
+        shutter=shctl1,
+        temp_controller=cs700,
+        filter_bank=fb,
+        ring_current=ring_current,
+        db=db,
+        test=True
+    )
+    cpp0 = ui.xrun.calib_preprocessors[0]
+    calib_data = cpp0.read(NI_PONI_FILE)
+    cpp0.add_calib_result({}, calib_data)
+    sample = {"sample_name": "Test_Sample", "composition_str": "Ni"}
+    plan = bp.list_scan([xpd_pe1c], cs700, [300., 400., 500.])
+    ui.xrun(sample, plan)
+    # check
+    run = db[-1]
+    assert hasattr(run, "dark")
+    assert hasattr(run, "calib")
     return db

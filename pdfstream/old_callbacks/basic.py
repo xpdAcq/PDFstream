@@ -17,8 +17,8 @@ from pyFAI.io.ponifile import PoniFile
 from suitcase.tiff_series import Serializer as TiffSerializer
 from xpdview.waterfall import Waterfall
 
-import pdfstream.callbacks.from_descriptor as fd
-import pdfstream.callbacks.from_start as fs
+import pdfstream.old_callbacks.from_descriptor as fd
+import pdfstream.old_callbacks.from_start as fs
 import pdfstream.io as io
 from pdfstream.vend.formatters import SpecialStr
 

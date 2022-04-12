@@ -16,12 +16,12 @@ from suitcase.csv import Serializer as CSVSerializer
 from suitcase.json_metadata import Serializer as JsonSerializer
 
 import pdfstream
-import pdfstream.callbacks.from_descriptor as from_desc
-import pdfstream.callbacks.from_event as from_event
-import pdfstream.callbacks.from_start as from_start
+import pdfstream.old_callbacks.from_descriptor as from_desc
+import pdfstream.old_callbacks.from_event as from_event
+import pdfstream.old_callbacks.from_start as from_start
 import pdfstream.integration.tools as integ
 import pdfstream.io as io
-from pdfstream.callbacks.basic import MyLiveImage, LiveMaskedImage, LiveWaterfall, StackedNumpyTextExporter, \
+from pdfstream.old_callbacks.basic import MyLiveImage, LiveMaskedImage, LiveWaterfall, StackedNumpyTextExporter, \
     SmartScalarPlot, MyTiffSerializer, CalibrationExporter, NumpyExporter, YamlSerializer
 from pdfstream.errors import ValueNotFoundError
 from pdfstream.units import LABELS
