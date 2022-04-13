@@ -7,7 +7,7 @@ bluesky
 databroker
 xpdview
 xray-vision
-fronzendict
+frozendict
 suitcase-csv
 suitcase-tiff
 suitcase-json-metadata
