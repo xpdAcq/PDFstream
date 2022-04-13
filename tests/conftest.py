@@ -3,6 +3,7 @@ import json
 import uuid
 from pathlib import Path
 
+import bluesky.plans as bp
 import databroker
 import matplotlib.pyplot as plt
 import numpy
@@ -11,18 +12,16 @@ import pyFAI
 import pytest
 from databroker.v2 import Broker
 from diffpy.pdfgetx import PDFConfig, PDFGetter
-from pkg_resources import resource_filename
-from xpdacq.tests.conftest import fresh_xrun
-from xpdacq.ipysetup import UserInterface
-from xpdsim import xpd_pe1c, shctl1, cs700, fb, ring_current
-import bluesky.plans as bp
-
+from pdfstream.io import load_array, load_img
 from pdfstream.old_callbacks.composer import gen_stream
-from pdfstream.io import load_img, load_array
+from pkg_resources import resource_filename
+from xpdacq.preprocessors import (CalibPreprocessor, DarkPreprocessor,
+                                  ShutterConfig, ShutterPreprocessor)
+from xpdacq.simulators import WorkSpace
 
 # do not show any figures in test otherwise they will block the tests
 plt.ioff()
-
+# here are test data files
 NI_PONI_FILE = resource_filename('tests', 'test_data/Ni_poni_file.poni')
 NI_GR_FILE = resource_filename('tests', 'test_data/Ni_gr_file.gr')
 NI_CHI_FILE = resource_filename('tests', 'test_data/Ni_chi_file.chi')
@@ -221,26 +220,30 @@ def db_with_dark_bg_no_calib() -> Broker:
 
 
 @pytest.fixture(scope="session")
+def local_dir() -> Path:
+    _dir = Path(__file__).parent.joinpath("local/")
+    _dir.mkdir(exist_ok=True)
+    return _dir
+
+
+@pytest.fixture(scope="session")
 def db_with_new_xpdacq() -> Broker:
-    db = databroker.v2.temp()
-    ui = UserInterface(
-        area_dets=[xpd_pe1c],
-        det_zs=[None],
-        shutter=shctl1,
-        temp_controller=cs700,
-        filter_bank=fb,
-        ring_current=ring_current,
-        db=db,
-        test=True
-    )
-    cpp0 = ui.xrun.calib_preprocessors[0]
+    ws = WorkSpace()
+    # create CalibPreprocessor
+    cpp0 = CalibPreprocessor(detector=ws.det)
     calib_data = cpp0.read(NI_PONI_FILE)
     cpp0.add_calib_result({}, calib_data)
+    # create DarkPreprocessor
+    sc = ShutterConfig(ws.shutter, "open", "closed")
+    dpp0 = DarkPreprocessor(detector=ws.det, shutter_config=sc)
+    # create ShutterPreprocessor
+    spp0 = ShutterPreprocessor(detector=ws.det, shutter_config=sc)
+    # add preprocessors
+    ws.RE.preprocessors.append(dpp0)
+    ws.RE.preprocessors.append(cpp0)
+    ws.RE.preprocessors.append(spp0)
+    # run
     sample = {"sample_name": "Test_Sample", "composition_str": "Ni"}
-    plan = bp.list_scan([xpd_pe1c], cs700, [300., 400., 500.])
-    ui.xrun(sample, plan)
-    # check
-    run = db[-1]
-    assert hasattr(run, "dark")
-    assert hasattr(run, "calib")
-    return db
+    plan = bp.list_scan([ws.det], ws.eurotherm, [300., 400., 500.])
+    ws.RE(plan, md=sample)
+    return ws.db
