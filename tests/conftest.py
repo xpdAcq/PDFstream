@@ -23,6 +23,7 @@ from xpdacq.simulators import WorkSpace
 plt.ioff()
 # here are test data files
 NI_PONI_FILE = resource_filename('tests', 'test_data/Ni_poni_file.poni')
+DETEECTOR_PONI_FILE = resource_filename('tests', 'test_data/calibration_for_detector.poni')
 NI_GR_FILE = resource_filename('tests', 'test_data/Ni_gr_file.gr')
 NI_CHI_FILE = resource_filename('tests', 'test_data/Ni_chi_file.chi')
 NI_FGR_FILE = resource_filename('tests', 'test_data/Ni_fgr_file.fgr')
@@ -231,7 +232,7 @@ def db_with_new_xpdacq() -> Broker:
     ws = WorkSpace()
     # create CalibPreprocessor
     cpp0 = CalibPreprocessor(detector=ws.det)
-    calib_data = cpp0.read(NI_PONI_FILE)
+    calib_data = cpp0.read(DETEECTOR_PONI_FILE)
     cpp0.add_calib_result({}, calib_data)
     # create DarkPreprocessor
     sc = ShutterConfig(ws.shutter, "open", "closed")
