@@ -79,7 +79,7 @@ class Analyzer(event_model.DocumentRouter):
         return
 
     def _set_composition(self, doc: dict) -> None:
-        key = self._config.composition_key
+        key = self._config.composition_str
         if key in doc:
             composition = doc[key]
             self._pdfgetter.config.composition = composition

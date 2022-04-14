@@ -36,14 +36,26 @@ class Config(ConfigParser):
     def __init__(self, *args, **kwargs):
         super(Config, self).__init__(*args, **kwargs)
         self.add_section("DATABASE")
+        self.add_section("PROXY")
         self.add_section("METADATA")
         self.add_section("ANALYSIS")
-        self.add_section("SUITCASE")
         self.add_section("VISUALIZATION")
 
     @cached_property
-    def sample_name_key(self) -> str:
-        return self.get("METADATA", "sample_name_key", fallback="sample_name")
+    def is_calibration(self) -> str:
+        return self.get("METADATA", "is_calibration", fallback="is_calibration")
+
+    @cached_property
+    def composition_str(self) -> str:
+        return self.get("METADATA", "composition_str", fallback="composition_str")
+
+    @cached_property
+    def sample_name(self) -> str:
+        return self.get("METADATA", "sample_name", fallback="sample_name")
+
+    @cached_property
+    def user_config(self) -> str:
+        return self.get("METADATA", "user_config", fallback="user_config")
 
     @cached_property
     def image_fields(self) -> T.List:
@@ -111,10 +123,6 @@ class Config(ConfigParser):
         }
 
     @cached_property
-    def directory(self) -> str:
-        return self.get("SUITCASE", "tiff_base", fallback=".")
-
-    @cached_property
     def file_prefix(self) -> str:
         return SpecialStr(
             self.get("ANALYSIS", "file_prefix", fallback="start[uid]_"))
@@ -128,44 +136,32 @@ class Config(ConfigParser):
         return self.get("DATABASE", "raw_db", fallback="")
 
     @cached_property
-    def composition_key(self) -> str:
-        return self.get("METADATA", "composition_key", fallback="composition_str")
-
-    @cached_property
-    def calib_identifier(self) -> str:
-        return self.get("METADATA", "calib_identifier", fallback="is_calibration")
-
-    @cached_property
     def exports(self) -> set:
-        v = self.get("SUITCASE", "exports", fallback="poni,tiff,mask,yaml,csv,txt")
+        v = self.get("ANALYSIS", "exports", fallback="poni,tiff,mask,yaml,csv,txt")
         return _get_set(v)
 
     @cached_property
     def file_prefix(self) -> SpecialStr:
         return SpecialStr(
-            self.get("SUITCASE", "file_prefix", fallback="{start[original_run_uid]}_{start[readable_time]}_"))
+            self.get("ANALYSIS", "file_prefix", fallback="{start[original_run_uid]}_{start[readable_time]}_"))
 
     @cached_property
     def directory_template(self) -> SpecialStr:
-        return SpecialStr(self.get("SUITCASE", "directory_template", fallback="{start[sample_name]}_data"))
+        return SpecialStr(self.get("ANALYSIS", "directory_template", fallback="{start[sample_name]}_data"))
 
     @cached_property
     def tiff_base(self) -> Path:
         """Settings for the base folder."""
-        dir_path = self.get("SUITCASE", "tiff_base")
-        if not dir_path:
-            dir_path = "~/pdfstream_data"
-            io.server_message("Missing tiff_base in configuration. Use '{}'".format(dir_path))
-        path = Path(dir_path).expanduser()
-        return path
+        dir_path = self.get("ANALYSIS", "tiff_base", fallback="~/acqsim/xpdUser/tiff_base") 
+        return Path(dir_path).expanduser()
 
     @cached_property
     def tiff_setting(self) -> dict:
         return {
-            "astype": self.get("SUITCASE", "tiff_astype", fallback="float32"),
-            "bigtiff": self.getboolean("SUITCASE", "tiff_bigtiff", fallback=False),
-            "byteorder": self.get("SUITCASE", "tiff_byteorder", fallback=None),
-            "imagej": self.get("SUITCASE", "tiff_imagej", fallback=False)
+            "astype": self.get("ANALYSIS", "tiff_astype", fallback="float32"),
+            "bigtiff": self.getboolean("ANALYSIS", "tiff_bigtiff", fallback=False),
+            "byteorder": self.get("ANALYSIS", "tiff_byteorder", fallback=None),
+            "imagej": self.get("ANALYSIS", "tiff_imagej", fallback=False)
         }
 
     @cached_property
@@ -233,10 +229,27 @@ class Config(ConfigParser):
             "ylabel": LABELS.gr[1]
         }
 
+    @property
+    def host(self):
+        return self.get("PROXY", "host", fallback="localhost")
+
+    @property
+    def port(self):
+        return self.getint("PROXY", "port", fallback=5568)
+
+    @property
+    def address(self):
+        return self.host, self.port
+
+    @property
+    def prefix(self):
+        return self.get("PROXY", "prefix", fallback="raw").encode()
+
     def to_dict(self) -> ConfigDict:
         """Convert the configuration to a dictionary."""
         return {s: dict(self.items(s)) for s in self.sections()}
 
     def read_user_config(self, user_config: dict) -> None:
+        """Read the user configuration. It only changes the ANALSIS section."""
         self.read_dict({"ANALYSIS": user_config})
         return
