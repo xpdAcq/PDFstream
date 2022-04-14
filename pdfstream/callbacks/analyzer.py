@@ -61,8 +61,8 @@ class Analyzer(event_model.DocumentRouter):
         super().__init__()
         self._datakeys: DataKeys = datakeys
         self._config: Config = config
-        self._calib_keys: CalibKeys = list()
-        self._calib_data: CalibData = frozendict({})
+        self._calib_keys: tp.Optional[CalibKeys] = None
+        self._calib_data: tp.Optional[CalibData] = None
         self._calib_descriptor: str = ""
         self._primary_descriptor: str = ""
         self._pdfgetter: tp.Optional[PDFGetter] = None
@@ -272,6 +272,9 @@ class Analyzer(event_model.DocumentRouter):
         return
 
     def _set_calib_data(self, doc: dict) -> None:
+        if self._calib_keys is None:
+            io.server_message("No calibration data keys.")
+            return
         data = doc["data"]
         self._calib_data = frozendict(
             {
