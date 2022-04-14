@@ -1,4 +1,4 @@
-import typing as tp
+import typing as T
 from functools import lru_cache
 
 import event_model
@@ -17,12 +17,12 @@ try:
     _PDFGETX_AVAILABLE = True
 except ImportError:
     _PDFGETX_AVAILABLE = False
-Keys = tp.List[str]
-Data = tp.Dict[str, tp.Any]
-Units = tp.List[str]
+Keys = T.List[str]
+Data = T.Dict[str, T.Any]
+Units = T.List[str]
 DeviceName = str
 CalibData = frozendict
-CalibKeys = tp.List[str]
+CalibKeys = T.List[str]
 
 
 @lru_cache(maxsize=16)
@@ -61,11 +61,11 @@ class Analyzer(event_model.DocumentRouter):
         super().__init__()
         self._datakeys: DataKeys = datakeys
         self._config: Config = config
-        self._calib_keys: tp.Optional[CalibKeys] = None
-        self._calib_data: tp.Optional[CalibData] = None
+        self._calib_keys: T.Optional[CalibKeys] = None
+        self._calib_data: T.Optional[CalibData] = None
         self._calib_descriptor: str = ""
         self._primary_descriptor: str = ""
-        self._pdfgetter: tp.Optional[PDFGetter] = None
+        self._pdfgetter: T.Optional[PDFGetter] = None
         self._set_pdfgetter()
 
     def _set_pdfgetter(self) -> None:
@@ -168,7 +168,7 @@ class Analyzer(event_model.DocumentRouter):
         self,
         data: dict,
         keys: DataKeys,
-        user_mask: tp.Optional[np.ndarray],
+        user_mask: T.Optional[np.ndarray],
         calib: frozendict
     ) -> None:
         mask_setting = self._config.mask_setting
