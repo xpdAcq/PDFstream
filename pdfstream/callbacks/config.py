@@ -1,53 +1,33 @@
-import copy
-import datetime
-import typing
-import typing as tp
+import typing as T
 from configparser import ConfigParser
-from pathlib import Path
 from functools import cached_property
+from pathlib import Path
 
-import event_model
-import matplotlib.pyplot as plt
 import numpy as np
-from bluesky.callbacks.stream import LiveDispatcher
-from databroker.v1 import Broker
-from event_model import RunRouter
-from pyFAI.azimuthalIntegrator import AzimuthalIntegrator
-from suitcase.csv import Serializer as CSVSerializer
-from suitcase.json_metadata import Serializer as JsonSerializer
-
-import pdfstream
-import pdfstream.old_callbacks.from_descriptor as from_desc
-import pdfstream.old_callbacks.from_event as from_event
-import pdfstream.old_callbacks.from_start as from_start
-import pdfstream.integration.tools as integ
 import pdfstream.io as io
-from pdfstream.old_callbacks.basic import MyLiveImage, LiveMaskedImage, LiveWaterfall, StackedNumpyTextExporter, \
-    SmartScalarPlot, MyTiffSerializer, CalibrationExporter, NumpyExporter, YamlSerializer
-from pdfstream.errors import ValueNotFoundError
 from pdfstream.units import LABELS
 from pdfstream.vend.formatters import SpecialStr
 
-try:
-    from diffpy.pdfgetx import PDFConfig, PDFGetter
-
-    _PDFGETX_AVAILABLE = True
-except ImportError:
-    _PDFGETX_AVAILABLE = False
+SectionDict = T.Dict[str, str]
+ConfigDict = T.Dict[str, SectionDict]
 
 
-SectionDict = tp.Dict[str, str]
-ConfigDict = tp.Dict[str, SectionDict]
-
-
-def _get_vlim(image: np.ndarray) -> tp.Tuple[float, float]:
+def _get_vlim(image: np.ndarray) -> T.Tuple[float, float]:
     m = np.mean(image)
     std = np.std(image)
     return max(m - 2 * std, 0), m + 2 * std
 
 
-def _get_set(value_str: str) -> set:
-    return set(value_str.replace(" ", "").split(",")) - {''}
+def _get_set(value_str: str) -> T.Set:
+    if not value_str:
+        return set()
+    return set(value_str.replace(" ", "").split(","))
+
+
+def _get_list(value_str: str) -> T.List:
+    if not value_str:
+        return list()
+    return list(value_str.replace(" ", "").split(","))
 
 
 class Config(ConfigParser):
@@ -66,14 +46,14 @@ class Config(ConfigParser):
         return self.get("METADATA", "sample_name_key", fallback="sample_name")
 
     @cached_property
-    def image_keys(self) -> set:
-        v = self.get("ANALYSIS", "cameras", fallback="pe1_image,pe2_image,dexela_image")
-        return _get_set(v)
+    def image_fields(self) -> T.List:
+        v = self.get("ANALYSIS", "image_fields", fallback="pe1_image,pe2_image,dexela_image")
+        return _get_list(v)
 
     @cached_property
-    def detectors(self) -> set:
-        iks = self.image_keys
-        return {ik.split("_")[0] for ik in iks}
+    def detectors(self) -> T.List:
+        v = self.get("ANALYSIS", "image_fields", fallback="pe1,pe2,dexela")
+        return _get_list(v)
 
     @cached_property
     def auto_mask(self) -> str:
@@ -85,7 +65,7 @@ class Config(ConfigParser):
         return _get_set(v)
 
     @cached_property
-    def user_mask(self) -> tp.Optional[np.ndarray]:
+    def user_mask(self) -> T.Optional[np.ndarray]:
         if len(self.user_mask_files) == 0:
             return None
         fs = iter(self.user_mask_files)
@@ -187,13 +167,13 @@ class Config(ConfigParser):
             "byteorder": self.get("SUITCASE", "tiff_byteorder", fallback=None),
             "imagej": self.get("SUITCASE", "tiff_imagej", fallback=False)
         }
-    
+
     @cached_property
     def visualizers(self) -> set:
         v = self.get(
-                "VISUALIZATION",
-                "visualizers",
-                fallback="dk_sub_image,masked_image,chi,chi_2theta,iq,sq,fq,gr,chi_max,chi_argmax,gr_max,gr_argmax"
+            "VISUALIZATION",
+            "visualizers",
+            fallback="dk_sub_image,masked_image,chi,chi_2theta,iq,sq,fq,gr,chi_max,chi_argmax,gr_max,gr_argmax"
         )
         return _get_set(v)
 
@@ -252,15 +232,6 @@ class Config(ConfigParser):
             "xlabel": LABELS.gr[0],
             "ylabel": LABELS.gr[1]
         }
-
-    @property
-    def composition(self) -> str:
-        return self.get("ANALYSIS", "composition", fallback="Ni")
-
-    @composition.setter
-    def composition(self, value: str) -> None:
-        self["ANALYSIS"]["composition"] = value
-        return
 
     def to_dict(self) -> ConfigDict:
         """Convert the configuration to a dictionary."""
