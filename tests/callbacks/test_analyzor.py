@@ -36,14 +36,14 @@ def test_Analyzer(db_with_new_xpdacq: Broker, local_dir: Path):
 
     def plot_and_save(doc: dict, x: str, y: str, name: str) -> None:
         fig, ax = plt.subplots()
-        ax.plot(doc["data"][x], doc["data"][y], vmax=6000)
+        ax.plot(doc["data"][x], doc["data"][y])
         save(fig, name)
         return
 
     def show_and_save(doc: dict, image: str, mask: str, name: str) -> None:
         fig, ax = plt.subplots()
         masked_image = np.ma.masked_array(doc["data"][image], doc["data"][mask], copy=False)
-        ax.imshow(masked_image, interpolation="none")
+        ax.imshow(masked_image, interpolation="none", vmax=6000)
         save(fig, name)
         return
 
