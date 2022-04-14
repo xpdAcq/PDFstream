@@ -10,11 +10,20 @@ DocumentPair = T.Tuple[str, dict]
 
 
 class AnalysisPipeline:
+    """The analysis pipeline.
+
+    The pipeline includes a sequence of dark subtraction, a sequence of analyzers and a sequence of publishers. These document routers  are generated based on the `image_fields` and `detectors` in the configuration. Their settings are also determined by the configuration. In default, one pipeline is created for a single run so that the cached data in one run won't affect others.
+
+    Parameters
+    ----------
+    config : Config
+        The configuration of the analysis pipeline.
+    """
 
     def __init__(self, config: Config) -> None:
         self._config = config
         self._dark_subtractions = list()
-        self._analyzors = list()
+        self._analyzers = list()
         self._publishers = list()
         self._populate_analyzors()
         self._populate_dark_subtractions()
@@ -32,7 +41,7 @@ class AnalysisPipeline:
         config = self._config
         for image, detector in zip(config.image_fields, config.detectors):
             datakeys = DataKeys(detector, image)
-            self._analyzors.append(
+            self._analyzers.append(
                 Analyzer(datakeys, config)
             )
         return
@@ -47,7 +56,7 @@ class AnalysisPipeline:
     def __call__(self, name: str, doc: dict) -> DocumentPair:
         for dark_subtraction in self._dark_subtractions:
             name, doc = dark_subtraction(name, doc)
-        for analyzer in self._analyzors:
+        for analyzer in self._analyzers:
             name, doc = analyzer(name, doc)
         copied_doc = dict(doc)
         for publisher in self._publishers:
