@@ -64,7 +64,7 @@ class Config(ConfigParser):
 
     @cached_property
     def detectors(self) -> T.List:
-        v = self.get("ANALYSIS", "image_fields", fallback="pe1,pe2,dexela")
+        v = self.get("ANALYSIS", "detectors", fallback="pe1,pe2,dexela")
         return _get_list(v)
 
     @cached_property
