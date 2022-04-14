@@ -7,4 +7,4 @@ exclude =
     versioneer.py,
     pdfstream/_version.py,
     docs/*.py
-max-line-length = 115
+ignore = E501
