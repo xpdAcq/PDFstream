@@ -53,13 +53,13 @@ class DarkSubtraction(event_model.DocumentRouter):
 
          This is actually pre subtracted from the dark frame for efficiency.
 
-         Defaults to 100.
+         Defaults to 0.
     """
     def __init__(self,
                  field,
                  light_stream_name='primary',
                  dark_stream_name='dark',
-                 pedestal=100):
+                 pedestal=0):
         self.field = field
         self.light_stream_name = light_stream_name
         self.dark_stream_name = dark_stream_name
