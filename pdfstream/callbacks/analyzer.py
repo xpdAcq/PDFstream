@@ -37,6 +37,7 @@ def _get_binner(calib: frozendict, shape: tuple):
 
 
 class AnalyzerError(Exception):
+    """Exception of Analyzer."""
 
     pass
 
@@ -44,8 +45,16 @@ class AnalyzerError(Exception):
 class Analyzer(event_model.DocumentRouter):
     """The callback function to analyze the data.
 
-    The analysis includes filename composition, automasking, integration and transformation.
-    The analyzed data will be emitted out to the subscribers of this callback.
+    It manipulates the documents in place and return them. It add data_keys in the descriptors and update the data in the events in the primary stream. It averages the image to a 2D array and update it in place. It creates a mask for the image and adds it to data. It runs the pyFAI integration and adds the 2theta, Q, I in the data. It runs the diffpy.pdfgetx and adds the iq, sq, fq, gr arrays in the data. It obtains the maximum peak heights and positions in I(Q) and G(r) and add them in the data.
+
+    One callback only processes one image in the data. If the name of the image is not in the data, it won't do anything. The name of the image is included in the `datakeys`.
+
+    Parameters
+    ----------
+    data_keys : DataKeys
+        The key names of the new data, including the object name of the detector.
+    config : Config 
+        The configuration for the data analysis, including the parameters passed to the pyFAI and diffpy.pdfgetx.
     """
 
     def __init__(self, datakeys: DataKeys, config: Config):
