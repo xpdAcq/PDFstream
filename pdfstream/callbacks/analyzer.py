@@ -63,8 +63,10 @@ class Analyzer(event_model.DocumentRouter):
         self._config: Config = config
         self._calib_keys: T.Optional[CalibKeys] = None
         self._calib_data: T.Optional[CalibData] = None
+        self._user_mask: T.Optional[np.ndarray] = None
         self._calib_descriptor: str = ""
         self._primary_descriptor: str = ""
+        self._mask_descriptor: str = ""
         self._pdfgetter: T.Optional[PDFGetter] = None
         self._set_pdfgetter()
 
@@ -136,6 +138,9 @@ class Analyzer(event_model.DocumentRouter):
             if self._datakeys.detector in doc["object_keys"]:
                 self._calib_descriptor = doc["uid"]
                 self._set_calib_keys(doc)
+        elif doc["name"] == "mask":
+            if self._datakeys.mask in doc["data_keys"]:
+                self._mask_descriptor = doc["uid"]
         return doc
 
     def _average_frames(self, data: dict) -> None:
@@ -184,8 +189,10 @@ class Analyzer(event_model.DocumentRouter):
 
     def _update_mask(self, data: dict) -> None:
         keys = self._datakeys
+        calib = self._calib_data
+        assert calib is not None
         is_auto_mask = self._config.auto_mask
-        user_mask = self._config.user_mask
+        user_mask = self._user_mask
         image_shape = data[keys.image].shape
         if (user_mask is not None) and (user_mask.shape != image_shape):
             io.server_message(
@@ -195,8 +202,7 @@ class Analyzer(event_model.DocumentRouter):
                 )
             )
             user_mask = None
-        calib = self._calib_data
-        if is_auto_mask and (calib is not None):
+        if is_auto_mask:
             self._auto_mask(data, keys, user_mask, calib)
             io.server_message("Do auto masking.")
         elif user_mask is not None:
@@ -212,11 +218,9 @@ class Analyzer(event_model.DocumentRouter):
         return q
 
     def _update_chi(self, data: dict) -> None:
-        keys = self._datakeys
         calib = self._calib_data
-        if calib is None:
-            io.server_message("No calibration data. Skip integration.")
-            return
+        assert calib is not None
+        keys = self._datakeys
         ai = _get_pyfai(calib)
         integ_setting = self._config.integ_setting
         tth, intensity = ai.integrate1d(
@@ -235,10 +239,6 @@ class Analyzer(event_model.DocumentRouter):
 
     def _update_gr(self, data: dict) -> None:
         keys = self._datakeys
-        calib = self._calib_data
-        if calib is None:
-            io.server_message("No calibration data. Skip transformation.")
-            return
         is_pdfgetx = self._config.pdfgetx
         if not is_pdfgetx:
             io.server_message("pdfgetx = False. Skip tranformation.")
@@ -266,6 +266,9 @@ class Analyzer(event_model.DocumentRouter):
         data = doc["data"]
         self._average_frames(data)
         self._set_default(data)
+        if self._calib_data is None:
+            io.server_message("No calibration data. Skip all following steps.")
+            return
         self._update_mask(data)
         self._update_chi(data)
         self._update_gr(data)
@@ -285,11 +288,16 @@ class Analyzer(event_model.DocumentRouter):
         io.server_message("Record calibration data.")
         return
 
+    def _set_user_mask(self, doc: dict) -> None:
+        self._user_mask = doc["data_keys"][self._datakeys.mask]
+
     def event(self, doc):
         if doc["descriptor"] == self._primary_descriptor:
             self._add_analyzed_data(doc)
         elif doc["descriptor"] == self._calib_descriptor:
             self._set_calib_data(doc)
+        elif doc["descriptor"] == self._mask_descriptor:
+            self._set_user_mask(doc)
         return doc
 
     def event_page(self, doc):
