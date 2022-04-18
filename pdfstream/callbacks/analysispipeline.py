@@ -25,8 +25,8 @@ class AnalysisPipeline:
         self._dark_subtractions = list()
         self._analyzers = list()
         self._publishers = list()
-        self._populate_analyzors()
         self._populate_dark_subtractions()
+        self._populate_analyzors()
         self._populate_publishers()
 
     def _populate_dark_subtractions(self) -> None:
@@ -49,7 +49,7 @@ class AnalysisPipeline:
     def _populate_publishers(self) -> None:
         config = self._config
         self._publishers.append(
-            Publisher(config.address, prefix=config.prefix)
+            Publisher(config.inbound_address, prefix=config.analyzed_data_prefix)
         )
         return
 
