@@ -1,7 +1,9 @@
 import typing as T
+import json
 from configparser import ConfigParser
 from functools import cached_property
 from pathlib import Path
+from typing_extensions import Self
 
 import numpy as np
 import pdfstream.io as io
@@ -10,6 +12,50 @@ from pdfstream.vend.formatters import SpecialStr
 
 SectionDict = T.Dict[str, str]
 ConfigDict = T.Dict[str, SectionDict]
+DEFAULT_CONFIGURE = {
+    "METADATA": {
+        "composition_str": "composition_str",
+        "sample_name": "sample_name",
+        "user_config": "user_config"
+    },
+    "ANALYSIS": {
+        "detectors": json.dumps(['pe1', 'pe2', 'dexela']),
+        "image_fields": json.dumps(['pe1_image', 'pe2_image', 'dexela_image']),
+        "auto_mask": "True",
+        "alpha": "2.0",
+        "edge": "20",
+        "lower_thresh": "0.0",
+        "upper_thresh": json.dumps(None),
+        "npt": "3000",
+        "correctSolidAngle": "False",
+        "polarization_factor": "0.99",
+        "method": "bbox,csr,cython",
+        "normalization_factor": "1.",
+        "pdfgetx": "True",
+        "rpoly": "1.2",
+        "qmaxinst": "24.0",
+        "qmax": "22.0",
+        "qmin": "0.0",
+        "rmin": "0.0",
+        "rmax": "30.0",
+        "rstep": "0.01",
+        "composition": "Ni",
+        "exports": json.dumps(['yaml', 'poni', 'tiff', 'mask', 'csv', 'pyfai', 'pdfgetx']),
+        "tiff_base": "~/acqsim/xpdUser/tiff_base",
+        "directory": "{sample_name}",
+        "file_prefix": "{sample_name}_",
+        "additional_hints": json.dumps(None)
+    },
+    "VISUALIZATION": {
+        "visualizers": json.dumps(['image', 'masked_image', 'chi_2theta', 'chi', 'iq', 'sq', 'fq', 'gr', 'qoi']),
+    },
+    "PROXY": {
+        "inbound_address": "localhost:5567",
+        "outbound_address": "localhost:5568",
+        "raw_data_prefix": "raw",
+        "analyzed_data_prefix": "an"
+    }
+}
 
 
 def _get_vlim(image: np.ndarray) -> T.Tuple[float, float]:
@@ -18,142 +64,95 @@ def _get_vlim(image: np.ndarray) -> T.Tuple[float, float]:
     return max(m - 2 * std, 0), m + 2 * std
 
 
-def _get_set(value_str: str) -> T.Set:
-    if not value_str:
-        return set()
-    return set(value_str.replace(" ", "").split(","))
-
-
-def _get_list(value_str: str) -> T.List:
-    if not value_str:
-        return list()
-    return list(value_str.replace(" ", "").split(","))
-
-
 class Config(ConfigParser):
     """The configuration for analysis callbacks."""
 
     def __init__(self, *args, **kwargs):
         super(Config, self).__init__(*args, **kwargs)
-        self.add_section("DATABASE")
-        self.add_section("PROXY")
-        self.add_section("METADATA")
-        self.add_section("ANALYSIS")
-        self.add_section("VISUALIZATION")
+        self.read_dict(DEFAULT_CONFIGURE)
 
     @cached_property
     def is_calibration(self) -> str:
-        return self.get("METADATA", "is_calibration", fallback="is_calibration")
+        return self.get("METADATA", "is_calibration")
 
     @cached_property
     def composition_str(self) -> str:
-        return self.get("METADATA", "composition_str", fallback="composition_str")
+        return self.get("METADATA", "composition_str")
 
     @cached_property
     def sample_name(self) -> str:
-        return self.get("METADATA", "sample_name", fallback="sample_name")
+        return self.get("METADATA", "sample_name")
 
     @cached_property
     def user_config(self) -> str:
-        return self.get("METADATA", "user_config", fallback="user_config")
+        return self.get("METADATA", "user_config")
 
     @cached_property
     def image_fields(self) -> T.List:
-        v = self.get("ANALYSIS", "image_fields", fallback="pe1_image,pe2_image,dexela_image")
-        return _get_list(v)
+        return json.loads(self.get("ANALYSIS", "image_fields"))
 
     @cached_property
     def detectors(self) -> T.List:
-        v = self.get("ANALYSIS", "detectors", fallback="pe1,pe2,dexela")
-        return _get_list(v)
+        return json.loads(self.get("ANALYSIS", "detectors"))
 
     @cached_property
     def auto_mask(self) -> str:
         return self.getboolean("ANALYSIS", "auto_mask", fallback=True)
 
     @cached_property
-    def user_mask_files(self) -> set:
-        v = self.get("ANALYSIS", "user_mask_files", fallback="")
-        return _get_set(v)
-
-    @cached_property
-    def user_mask(self) -> T.Optional[np.ndarray]:
-        if len(self.user_mask_files) == 0:
-            return None
-        fs = iter(self.user_mask_files)
-        f0 = next(fs)
-        mask = io.load_matrix_flexible(f0)
-        for f in fs:
-            _mask = io.load_matrix_flexible(f)
-            mask += _mask
-        return mask
-
-    @cached_property
     def mask_setting(self) -> dict:
         return {
-            "alpha": self.getfloat("ANALYSIS", "alpha", fallback=2.5),
-            "edge": self.getint("ANALYSIS", "edge", fallback=20),
-            "lower_thresh": self.getfloat("ANALYSIS", "lower_thresh", fallback=0.),
-            "upper_thresh": self.getfloat("ANALYSIS", "upper_thresh", fallback=None)
+            "alpha": self.getfloat("ANALYSIS", "alpha"),
+            "edge": self.getint("ANALYSIS", "edge"),
+            "lower_thresh": self.getfloat("ANALYSIS", "lower_thresh"),
+            "upper_thresh": json.loads(self.get("ANALYSIS", "upper_thresh"))
         }
 
     @cached_property
     def integ_setting(self) -> dict:
         return {
-            "npt": self.getint("ANALYSIS", "npt", fallback=3000),
-            "correctSolidAngle": self.getboolean("ANALYSIS", "correctSolidAngle", fallback=False),
-            "polarization_factor": self.getfloat("ANALYSIS", "polarization_factor", fallback=0.99),
-            "method": self.get("ANALYSIS", "method", fallback="bbox,csr,cython"),
-            "normalization_factor": self.getfloat("ANALYSIS", "normalization_factor", fallback=1.),
+            "npt": self.getint("ANALYSIS", "npt"),
+            "correctSolidAngle": self.getboolean("ANALYSIS", "correctSolidAngle"),
+            "polarization_factor": self.getfloat("ANALYSIS", "polarization_factor"),
+            "method": self.get("ANALYSIS", "method"),
+            "normalization_factor": self.getfloat("ANALYSIS", "normalization_factor"),
             "unit": "2th_deg"
         }
 
     @cached_property
     def trans_setting(self) -> dict:
         return {
-            "rpoly": self.getfloat("ANALYSIS", "rpoly", fallback=1.2),
-            "qmaxinst": self.getfloat("ANALYSIS", "qmaxinst", fallback=24.),
-            "qmin": self.getfloat("ANALYSIS", "qmin", fallback=0.),
-            "qmax": self.getfloat("ANALYSIS", "qmax", fallback=22.),
-            "rmin": self.getfloat("ANALYSIS", "rmin", fallback=0.),
-            "rmax": self.getfloat("ANALYSIS", "rmax", fallback=30.),
-            "rstep": self.getfloat("ANALYSIS", "rstep", fallback=0.01),
-            "composition": self.get("ANALYSIS", "composition", fallback="Ni"),
+            "rpoly": self.getfloat("ANALYSIS", "rpoly"),
+            "qmaxinst": self.getfloat("ANALYSIS", "qmaxinst"),
+            "qmin": self.getfloat("ANALYSIS", "qmin"),
+            "qmax": self.getfloat("ANALYSIS", "qmax"),
+            "rmin": self.getfloat("ANALYSIS", "rmin"),
+            "rmax": self.getfloat("ANALYSIS", "rmax"),
+            "rstep": self.getfloat("ANALYSIS", "rstep"),
+            "composition": self.get("ANALYSIS", "composition"),
             "dataformat": "QA"
         }
 
     @cached_property
-    def file_prefix(self) -> str:
-        return SpecialStr(
-            self.get("ANALYSIS", "file_prefix", fallback="start[uid]_"))
-
-    @cached_property
     def pdfgetx(self) -> bool:
-        return self.getboolean("ANALYSIS", "pdfgetx", fallback=True)
-
-    @cached_property
-    def raw_db(self) -> str:
-        return self.get("DATABASE", "raw_db", fallback="")
+        return self.getboolean("ANALYSIS", "pdfgetx")
 
     @cached_property
     def exports(self) -> set:
-        v = self.get("ANALYSIS", "exports", fallback="poni,tiff,mask,yaml,csv,txt")
-        return _get_set(v)
-
-    @cached_property
-    def file_prefix(self) -> SpecialStr:
-        return SpecialStr(
-            self.get("ANALYSIS", "file_prefix", fallback="{start[original_run_uid]}_{start[readable_time]}_"))
-
-    @cached_property
-    def directory_template(self) -> SpecialStr:
-        return SpecialStr(self.get("ANALYSIS", "directory_template", fallback="{start[sample_name]}_data"))
+        return set(json.loads(self.get("ANALYSIS", "exports")))
 
     @cached_property
     def tiff_base(self) -> Path:
         """Settings for the base folder."""
-        dir_path = self.get("ANALYSIS", "tiff_base", fallback="~/acqsim/xpdUser/tiff_base") 
-        return Path(dir_path).expanduser()
+        return Path(self.get("ANALYSIS", "tiff_base")).expanduser()
+
+    @cached_property
+    def directory(self) -> SpecialStr:
+        return SpecialStr(self.get("ANALYSIS", "directory"))
+
+    @cached_property
+    def file_prefix(self) -> str:
+        return SpecialStr(self.get("ANALYSIS", "file_prefix"))
 
     @cached_property
     def tiff_setting(self) -> dict:
@@ -166,12 +165,7 @@ class Config(ConfigParser):
 
     @cached_property
     def visualizers(self) -> set:
-        v = self.get(
-            "VISUALIZATION",
-            "visualizers",
-            fallback="dk_sub_image,masked_image,chi,chi_2theta,iq,sq,fq,gr,chi_max,chi_argmax,gr_max,gr_argmax"
-        )
-        return _get_set(v)
+        return set(json.loads(self.get("VISUALIZATION", "visualizers")))
 
     @cached_property
     def vis_masked_image(self) -> dict:
@@ -229,27 +223,40 @@ class Config(ConfigParser):
             "ylabel": LABELS.gr[1]
         }
 
-    @property
-    def host(self):
-        return self.get("PROXY", "host", fallback="localhost")
+    @cached_property
+    def inbound_address(self):
+        return self.get("PROXY", "inbound_address")
 
-    @property
-    def port(self):
-        return self.getint("PROXY", "port", fallback=5568)
+    @cached_property
+    def outbound_address(self):
+        return self.get("PROXY", "outbound_address")
 
-    @property
-    def address(self):
-        return self.host, self.port
+    @cached_property
+    def raw_data_prefix(self):
+        return self.get("PROXY", "raw_data_prefix").encode()
 
-    @property
-    def prefix(self):
-        return self.get("PROXY", "prefix", fallback="raw").encode()
+    @cached_property
+    def analyzed_data_prefix(self):
+        return self.get("PROXY", "analyzed_data_prefix").encode()
 
     def to_dict(self) -> ConfigDict:
         """Convert the configuration to a dictionary."""
         return {s: dict(self.items(s)) for s in self.sections()}
 
-    def read_user_config(self, user_config: dict) -> None:
-        """Read the user configuration. It only changes the ANALSIS section."""
+    def read_user_config(self, doc: dict) -> None:
+        """Read the user configuration from the start document. It only changes the ANALSIS section."""
+        user_config = doc.get(self.user_config, {})
+        user_config = {str(k): json.dumps(v) for k, v in user_config.items()}
         self.read_dict({"ANALYSIS": user_config})
+        return
+
+    def read_composition(self, doc: dict) -> None:
+        """Read composition string from the start docment."""
+        key = self.composition_str
+        if key in doc:
+            composition = doc[key]
+            self.set("ANALYSIS", "composition", composition)
+            io.server_message("Sample composition is '{}'.".format(composition))
+        else:
+            io.server_message("No '{}' in the start document.".format(key))
         return
