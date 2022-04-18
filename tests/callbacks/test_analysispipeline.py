@@ -22,8 +22,7 @@ def test_AnalysisPipeline(db_with_new_xpdacq: Broker, local_dir: Path):
     db = db_with_new_xpdacq
     run = db[-1]
     config = Config()
-    config["ANALYSIS"]["detectors"] = "pe1"
-    config["ANALYSIS"]["image_fields"] = "pe1_image"
+    config.read_user_config({"detectors": ["pe1"], "image_fields": ["pe1_image"]})
     data_keys = DataKeys("pe1", "pe1_image")
     pipeline = AnalysisPipeline(config)
 
