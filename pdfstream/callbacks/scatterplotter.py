@@ -1,4 +1,5 @@
 import typing as T
+from pathlib import Path
 
 import matplotlib.pyplot as plt
 from bluesky.callbacks import CallbackBase
@@ -10,18 +11,22 @@ from matplotlib.figure import Figure
 class ScatterPlotter(CallbackBase):
     """Scatter plot of the quantity of intests."""
 
-    def __init__(self, y: str, *, ax: Axes = None, ylabel: str = None, name: str = "scatter", **kwargs):
+    def __init__(self, y: str, *, ax: Axes = None, ylabel: str = None, name: str = "scatter", save: bool = False, suffix: str = ".png", **kwargs):
         super(ScatterPlotter, self).__init__()
         if ax is None:
             _, ax = plt.subplots()
         kwargs.setdefault("marker", "o")
         self.y_field = y
         self.name = name
+        self.save = save
+        self.suffix = suffix
         self._fig = ax.get_figure()
         self._ax = ax
         self._ylabel = ylabel
         self._kwargs = kwargs
         self._callback = None
+        self._directory = None
+        self._filename = ""
 
     @property
     def figure(self) -> Figure:
@@ -35,6 +40,12 @@ class ScatterPlotter(CallbackBase):
                 hints.extend(data_keys)
         return hints
 
+    def savefig(self) -> None:
+        f = self._filename + "_" + self.name + self.suffix
+        fpath = self._directory.joinpath(f)
+        self.figure.savefig(fpath)
+        return
+
     def start(self, doc):
         self._ax.cla()
         indeps = self._get_hints(doc)
@@ -45,6 +56,10 @@ class ScatterPlotter(CallbackBase):
         else:
             self._callback = LivePlot(self.y_field, x="time", ax=self._ax, **self._kwargs)
         self._callback.start(doc)
+        if self.save:
+            self._filename = doc["filename"]
+            self._directory = Path(doc["directory"])
+            self._directory.mkdir(exist_ok=True, parents=True)
         return
 
     def descriptor(self, doc):
@@ -62,5 +77,7 @@ class ScatterPlotter(CallbackBase):
 
     def stop(self, doc):
         self._callback.stop(doc)
+        if self.save:
+            self.savefig()
         return
     

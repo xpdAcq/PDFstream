@@ -1,4 +1,5 @@
 import typing as T
+from pathlib import Path
 
 import numpy as np
 from bluesky.callbacks import CallbackBase
@@ -34,17 +35,38 @@ class Waterfall(OldWaterfall):
 class WaterfallPlotter(CallbackBase):
     """A live waterfall plot for the two columns data."""
 
-    def __init__(self, x: str, y: str, xlabel: str, ylabel: str, name: str = "waterfall", **kwargs):
+    def __init__(self, x: str, y: str, xlabel: str, ylabel: str, name: str = "waterfall", save: bool = False, suffix: str = ".png", **kwargs):
         super().__init__()
         self.x_field = x
         self.y_field = y
         self.name = name
+        self.save = save
+        self.suffix = suffix
+        self._directory = None
+        self._filename = ""
         self._waterfall = Waterfall(unit=(xlabel, ylabel), **kwargs)
         self._waterfall.fig.show()
 
     @property
     def figure(self) -> Figure:
         return self._waterfall.fig
+
+    def update(self, key: str, int_data: T.Tuple[np.ndarray, np.ndarray]):
+        self._waterfall.update(key_list=[key], int_data_list=[int_data])
+        return
+
+    def savefig(self) -> None:
+        f = self._filename + "_" + self.name + self.suffix
+        fpath = self._directory.joinpath(f)
+        self.figure.savefig(fpath)
+        return
+
+    def start(self, doc):
+        if self.save:
+            self._directory = Path(doc["directory"])
+            self._filename = doc["filename"]
+            self._directory.mkdir(exist_ok=True, parents=True)
+        return doc
 
     def event(self, doc):
         if int(doc['seq_num']) == 0:
@@ -54,8 +76,9 @@ class WaterfallPlotter(CallbackBase):
         y_data = doc["data"][self.y_field]
         key = doc['seq_num']
         self.update(key, (x_data, y_data))
-        return
+        return doc
 
-    def update(self, key: str, int_data: T.Tuple[np.ndarray, np.ndarray]):
-        self._waterfall.update(key_list=[key], int_data_list=[int_data])
-        return
+    def stop(self, doc):
+        if self.save:
+            self.savefig()
+        return doc

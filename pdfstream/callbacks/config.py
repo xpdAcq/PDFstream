@@ -17,6 +17,7 @@ DEFAULT_CONFIGURE = {
     "ANALYSIS": {
         "detectors": "pe1, pe2 ,dexela",
         "image_fields": "pe1_image, pe2_image, dexela",
+        "fill": False,
         "auto_mask": True,
         "alpha": 2.0,
         "edge": 20,
@@ -39,7 +40,7 @@ DEFAULT_CONFIGURE = {
         "exports": 'yaml, poni, tiff, mask, csv, pyfai, pdfgetx',
         "tiff_base": "~/acqsim/xpdUser/tiff_base",
         "directory": "{sample_name}",
-        "file_prefix": "{sample_name}_",
+        "file_prefix": "{sample_name}",
         "hints": None,
         "save_plots": False
     },
@@ -90,6 +91,10 @@ class Config(ConfigParser):
     @cached_property
     def detectors(self) -> T.List:
         return self.getlist("ANALYSIS", "detectors")
+
+    @cached_property
+    def fill(self) -> bool:
+        return self.getboolean("ANALYSIS", "fill")
 
     @cached_property
     def auto_mask(self) -> str:
@@ -147,12 +152,12 @@ class Config(ConfigParser):
         return SpecialStr(self.get("ANALYSIS", "directory"))
 
     @cached_property
-    def file_prefix(self) -> str:
+    def file_prefix(self) -> SpecialStr:
         return SpecialStr(self.get("ANALYSIS", "file_prefix"))
 
     @cached_property
     def hints(self) -> T.List[str]:
-        return self.getset("ANALYSIS", "hints")
+        return self.getlist("ANALYSIS", "hints")
 
     @cached_property
     def save_plots(self) -> bool:
