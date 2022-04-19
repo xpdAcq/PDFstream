@@ -17,6 +17,7 @@ try:
     _PDFGETX_AVAILABLE = True
 except ImportError:
     _PDFGETX_AVAILABLE = False
+
 Keys = T.List[str]
 Data = T.Dict[str, T.Any]
 Units = T.List[str]
@@ -79,21 +80,6 @@ class Analyzer(event_model.DocumentRouter):
         else:
             io.server_message("No diffpy.pdfgetx package.")
         return
-
-    def _set_composition(self, doc: dict) -> None:
-        key = self._config.composition_str
-        if key in doc:
-            composition = doc[key]
-            self._pdfgetter.config.composition = composition
-            io.server_message("Sample composition is '{}'.".format(composition))
-        else:
-            self._pdfgetter.config.composition = "Ni"
-            io.server_message("No composition info. Use '{}'.".format("Ni"))
-        return
-
-    def start(self, doc):
-        self._set_composition(doc)
-        return doc
 
     def _add_datakeys(self, doc: dict) -> None:
         keys = self._datakeys
@@ -251,9 +237,9 @@ class Analyzer(event_model.DocumentRouter):
         data[keys.iq_Q] = pdfgetter.iq[0]
         data[keys.iq_I] = pdfgetter.iq[1]
         data[keys.sq_Q] = pdfgetter.sq[0]
-        data[keys.sq_I] = pdfgetter.sq[1]
+        data[keys.sq_S] = pdfgetter.sq[1]
         data[keys.fq_Q] = pdfgetter.fq[0]
-        data[keys.fq_I] = pdfgetter.fq[1]
+        data[keys.fq_F] = pdfgetter.fq[1]
         data[keys.gr_r] = pdfgetter.gr[0]
         data[keys.gr_G] = pdfgetter.gr[1]
         idx = np.argmax(data[keys.gr_G])
