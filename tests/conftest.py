@@ -244,7 +244,6 @@ def db_with_new_xpdacq() -> Broker:
     ws.RE.preprocessors.append(cpp0)
     ws.RE.preprocessors.append(spp0)
     # run
-    sample = {"sample_name": "Test_Sample", "composition_str": "Ni"}
     plan = bp.list_scan([ws.det], ws.eurotherm, [300., 400., 500.])
-    ws.RE(plan, md=sample)
+    ws.RE(plan, sample_name="Test_Sample", composition_str="Ni")
     return ws.db
