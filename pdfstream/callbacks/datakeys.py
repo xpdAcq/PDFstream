@@ -13,9 +13,9 @@ class DataKeys:
         self.iq_Q = detector + "_iq_Q"
         self.iq_I = detector + "_iq_I"
         self.sq_Q = detector + "_sq_Q"
-        self.sq_I = detector + "_sq_S"
+        self.sq_S = detector + "_sq_S"
         self.fq_Q = detector + "_fq_Q"
-        self.fq_I = detector + "_fq_F"
+        self.fq_F = detector + "_fq_F"
         self.gr_r = detector + "_gr_r"
         self.gr_G = detector + "_gr_G"
         self.gr_argmax = detector + "_gr_argmax"
@@ -37,9 +37,9 @@ class DataKeys:
             self.iq_Q,
             self.iq_I,
             self.sq_Q,
-            self.sq_I,
+            self.sq_S,
             self.fq_Q,
-            self.fq_I,
+            self.fq_F,
             self.gr_r,
             self.gr_G
         ]
