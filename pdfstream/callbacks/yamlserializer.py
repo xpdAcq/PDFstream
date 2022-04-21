@@ -18,6 +18,6 @@ class YamlSerializer(CallbackBase):
     def start(self, doc):
         file_path = self._get_filepath(doc)
         with file_path.open("w") as f:
-            yaml.dump(doc, f)
+            yaml.safe_dump(doc, f)
         io.server_message("Save start document of '{}'.".format(doc["uid"]))
         return doc
