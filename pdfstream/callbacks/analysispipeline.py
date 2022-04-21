@@ -7,7 +7,6 @@ from event_model import DocumentNames, Filler
 from pdfstream.callbacks.analyzer import Analyzer
 from pdfstream.callbacks.config import Config
 from pdfstream.callbacks.darksubtraction import DarkSubtraction
-from pdfstream.callbacks.datakeys import DataKeys
 from pdfstream.callbacks.filenamerender import FileNameRender
 
 DocumentPair = T.Tuple[str, dict]
@@ -66,6 +65,7 @@ class AnalysisPipeline:
 
     def _populate_dark_subtractions(self) -> None:
         config = self._config
+        self._dark_subtractions = list()
         for field in config.image_fields:
             self._dark_subtractions.append(
                 DarkSubtraction(field)
@@ -79,8 +79,8 @@ class AnalysisPipeline:
 
     def _populate_analyzors(self) -> None:
         config = self._config
-        for image, detector in zip(config.image_fields, config.detectors):
-            datakeys = DataKeys(detector, image)
+        self._analyzers = list()
+        for datakeys in config.datakeys_list:
             self._analyzers.append(
                 Analyzer(datakeys, config)
             )
@@ -93,6 +93,7 @@ class AnalysisPipeline:
 
     def _populate_publishers(self) -> None:
         config = self._config
+        self._publishers = list()
         self._publishers.append(
             Publisher(config.inbound_address, prefix=config.analyzed_data_prefix)
         )
