@@ -4,6 +4,7 @@ from functools import cached_property
 from pathlib import Path
 
 import pdfstream.io as io
+from pdfstream.callbacks.datakeys import DataKeys
 from pdfstream.vend.formatters import SpecialStr
 
 SectionDict = T.Dict[str, str]
@@ -191,6 +192,10 @@ class Config(ConfigParser):
     @cached_property
     def analyzed_data_prefix(self):
         return self.get("PROXY", "analyzed_data_prefix").encode()
+
+    @cached_property
+    def datakeys_list(self) -> T.List[DataKeys]:
+        return [DataKeys(det, img) for det, img in zip(self.detectors, self.image_fields)]
 
     def to_dict(self) -> ConfigDict:
         """Convert the configuration to a dictionary."""
