@@ -30,6 +30,10 @@ class NumpySerializer(CallbackBase):
             io.server_message("Missing '{}' in data.".format(field))
         return
 
+    def start(self, doc):
+        self._directory.mkdir(exist_ok=True, parents=True)
+        return doc
+
     def descriptor(self, doc):
         if doc["name"] == self._stream_name:
             self._descriptor = doc["uid"]

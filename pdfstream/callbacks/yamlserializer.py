@@ -16,6 +16,7 @@ class YamlSerializer(CallbackBase):
         return self._directory.joinpath(doc["filename"]).with_suffix(".yml")
 
     def start(self, doc):
+        self._directory.mkdir(exist_ok=True, parents=True)
         file_path = self._get_filepath(doc)
         with file_path.open("w") as f:
             yaml.safe_dump(doc, f)
