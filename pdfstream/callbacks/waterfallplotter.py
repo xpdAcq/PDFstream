@@ -1,5 +1,6 @@
 import typing as T
 from pathlib import Path
+from unicodedata import name
 
 import numpy as np
 from bluesky.callbacks import CallbackBase
@@ -63,8 +64,8 @@ class WaterfallPlotter(CallbackBase):
 
     def start(self, doc):
         if self.save:
-            self._directory = Path(doc["directory"])
             self._filename = doc["filename"]
+            self._directory = Path(doc["directory"]).joinpath("plots")
             self._directory.mkdir(exist_ok=True, parents=True)
         return doc
 

@@ -1,5 +1,6 @@
 import typing as T
 from pathlib import Path
+from unicodedata import name
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -45,7 +46,7 @@ class ImagePlotter(CallbackBase):
 
     def start(self, doc):
         if self.save:
-            self._directory = Path(doc["directory"])
+            self._directory = Path(doc["directory"]).joinpath("plots")
             self._directory.mkdir(exist_ok=True, parents=True)
         return doc
 

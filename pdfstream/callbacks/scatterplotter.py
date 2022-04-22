@@ -58,7 +58,7 @@ class ScatterPlotter(CallbackBase):
         self._callback.start(doc)
         if self.save:
             self._filename = doc["filename"]
-            self._directory = Path(doc["directory"])
+            self._directory = Path(doc["directory"]).joinpath("plots")
             self._directory.mkdir(exist_ok=True, parents=True)
         return
 
