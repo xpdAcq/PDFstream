@@ -18,13 +18,16 @@ class SerializationPipeline(CallbackBase):
 
     def _create(self, doc: dict):
         directory = Path(doc["directory"])
-        directory.mkdir(exist_ok=True, parents=True)
+        tiff_dir = directory.joinpath("dark_sub")
+        csv_dir = directory.joinpath("scalar_data")
+        mask_dir = directory.joinpath("mask")
         dkss = self._config.datakeys_list
         images = [dks.image for dks in dkss]
         masks = [dks.mask for dks in dkss]
-        self._tiff_serilizer = TiffSerializer(images, str(directory))
-        self._csv_serializer = CSVSerializer(str(directory))
-        self._numpy_serializer = NumpySerializer(masks, str(directory))
+        self._tiff_serilizer = TiffSerializer(images, str(tiff_dir))
+        self._csv_serializer = CSVSerializer(str(csv_dir))
+        self._numpy_serializer = NumpySerializer(masks, str(mask_dir))
+        return
 
     def __call__(self, name, doc):
         if name == "start":
