@@ -1,8 +1,6 @@
-import typing as T
 from pathlib import Path
 
 import matplotlib.pyplot as plt
-import numpy as np
 from databroker import Broker
 from pdfstream.callbacks.analysispipeline import AnalysisPipeline
 from pdfstream.callbacks.config import Config
@@ -12,7 +10,7 @@ from pdfstream.callbacks.visualizationpipeline import VisualizationPipeline
 plt.ioff()
 
 
-def test_VisualizationPipeline(db_with_new_xpdacq: Broker, local_dir: Path):
+def test_Pipelines(db_with_new_xpdacq: Broker, local_dir: Path):
     """Test if the analysis pipeline can correctly subtract dark image, average the frames to get 2D image, integrate 2D image to XRD, transform XRD to PDF and publish the manipluated document.
 
     Parameters
