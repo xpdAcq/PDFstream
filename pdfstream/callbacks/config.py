@@ -38,7 +38,7 @@ DEFAULT_CONFIGURE = {
         "rmax": 30.0,
         "rstep": 0.01,
         "composition": "Ni",
-        "exports": 'yaml, poni, tiff, mask, csv, pyfai, pdfgetx',
+        "exports": 'yaml, poni, tiff, mask, csv, chi, chi_2theta, sq, fq, gr',
         "tiff_base": "~/acqsim/xpdUser/tiff_base",
         "directory": "{sample_name}",
         "file_prefix": "{sample_name}",
@@ -46,7 +46,7 @@ DEFAULT_CONFIGURE = {
         "save_plots": False
     },
     "VISUALIZATION": {
-        "visualizers": 'image, masked_image, chi_2theta, chi, iq, sq, fq, gr, gr_argmax, gr_max, chi_argmax, chi_max',
+        "visualizers": 'image, masked_image, chi_2theta, chi, sq, fq, gr, gr_argmax, gr_max, chi_argmax, chi_max',
     },
     "PROXY": {
         "inbound_address": "localhost:5567",
