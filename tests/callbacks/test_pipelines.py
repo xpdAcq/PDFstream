@@ -34,3 +34,19 @@ def test_Pipelines(db_with_new_xpdacq: Broker, local_dir: Path):
         name, doc = pipeline2(name, doc)
         name, doc = pipeline3(name, doc)
     return
+
+
+def test_Calibration(db_with_new_calib: Broker, local_dir: Path):
+    db = db_with_new_calib
+    run = db[-1]
+    config = Config()
+    config.set_analysis_config({"detectors": "pe1", "image_fields": "pe1_image"})
+    config.set_analysis_config({"tiff_base": str(local_dir), "save_plots": True, "is_test": True})
+    pipeline1 = AnalysisPipeline(config)
+    pipeline2 = VisualizationPipeline(config)
+    pipeline3 = SerializationPipeline(config)
+    for name, doc in run.documents(fill=True):
+        name, doc = pipeline1(name, doc)
+        name, doc = pipeline2(name, doc)
+        name, doc = pipeline3(name, doc)
+    return

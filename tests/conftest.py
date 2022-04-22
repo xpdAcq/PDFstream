@@ -247,3 +247,26 @@ def db_with_new_xpdacq() -> Broker:
     plan = bp.list_scan([ws.det], ws.eurotherm, [300., 400., 500.])
     ws.RE(plan, sample_name="Test_Sample", composition_str="Ni")
     return ws.db
+
+
+@pytest.fixture(scope="session")
+def db_with_new_calib() -> Broker:
+    ws = WorkSpace()
+    # create CalibPreprocessor
+    cpp0 = CalibPreprocessor(detector=ws.det)
+    calib_data = cpp0.read(DETEECTOR_PONI_FILE)
+    cpp0.add_calib_result({}, calib_data)
+    # create DarkPreprocessor
+    sc = ShutterConfig(ws.shutter, "open", "closed")
+    dpp0 = DarkPreprocessor(detector=ws.det, shutter_config=sc)
+    # create ShutterPreprocessor
+    spp0 = ShutterPreprocessor(detector=ws.det, shutter_config=sc)
+    # add preprocessors
+    ws.RE.preprocessors.append(dpp0)
+    ws.RE.preprocessors.append(cpp0)
+    ws.RE.preprocessors.append(spp0)
+    # run
+    plan = bp.count([ws.det])
+    pyfai_calib_kwargs = {"poni": str(DETEECTOR_PONI_FILE)}
+    ws.RE(plan, sample_name="Test_Sample", composition_str="Ni", is_calibration=True, pyfai_calib_kwargs=pyfai_calib_kwargs)
+    return ws.db

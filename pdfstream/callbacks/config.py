@@ -13,11 +13,19 @@ DEFAULT_CONFIGURE = {
     "METADATA": {
         "composition_str": "composition_str",
         "sample_name": "sample_name",
-        "user_config": "user_config"
+        "user_config": "user_config",
+        "is_calibration": "is_calibration",
+        "pyfai_calib_kwargs": "pyfai_calib_kwargs"
+    },
+    "CALIBRATION": {
+        "is_calibration": False,
+        "pyfai_calib_kwargs": "",
+        "poni_file": ""
     },
     "ANALYSIS": {
         "detectors": "pe1, pe2 ,dexela",
         "image_fields": "pe1_image, pe2_image, dexela",
+        "image_dtype": "uint32",
         "fill": False,
         "auto_mask": True,
         "alpha": 2.0,
@@ -43,7 +51,8 @@ DEFAULT_CONFIGURE = {
         "directory": "{sample_name}",
         "file_prefix": "{sample_name}",
         "hints": None,
-        "save_plots": False
+        "save_plots": False,
+        "is_test": False
     },
     "VISUALIZATION": {
         "visualizers": 'image, masked_image, chi_2theta, chi, sq, fq, gr, gr_argmax, gr_max, chi_argmax, chi_max',
@@ -74,20 +83,16 @@ class Config(ConfigParser):
         return set(self.getlist(section, option))
 
     @cached_property
-    def composition_str(self) -> str:
-        return self.get("METADATA", "composition_str")
-
-    @cached_property
-    def sample_name(self) -> str:
-        return self.get("METADATA", "sample_name")
-
-    @cached_property
     def user_config(self) -> str:
         return self.get("METADATA", "user_config")
 
     @cached_property
     def image_fields(self) -> T.List:
         return self.getlist("ANALYSIS", "image_fields")
+
+    @cached_property
+    def image_dtype(self) -> str:
+        return self.get("ANALYSIS", "image_dtype")
 
     @cached_property
     def detectors(self) -> T.List:
@@ -165,6 +170,10 @@ class Config(ConfigParser):
         return self.getboolean("ANALYSIS", "save_plots")
 
     @cached_property
+    def is_test(self) -> bool:
+        return self.getboolean("ANALYSIS", "is_test")
+
+    @cached_property
     def tiff_setting(self) -> dict:
         return {
             "astype": self.get("ANALYSIS", "tiff_astype", fallback="float32"),
@@ -197,6 +206,18 @@ class Config(ConfigParser):
     def datakeys_list(self) -> T.List[DataKeys]:
         return [DataKeys(det, img) for det, img in zip(self.detectors, self.image_fields)]
 
+    @cached_property
+    def is_calibration(self) -> bool:
+        return self.getboolean("CALIBRATION", "is_calibration")
+
+    @cached_property
+    def pyfai_calib_kwargs(self) -> str:
+        return self.get("CALIBRATION", "pyfai_calib_kwargs")
+
+    @cached_property
+    def poni_file(self) -> str:
+        return self.get("CALIBRATION", "poni_file")
+
     def to_dict(self) -> ConfigDict:
         """Convert the configuration to a dictionary."""
         return {s: dict(self.items(s)) for s in self.sections()}
@@ -207,17 +228,37 @@ class Config(ConfigParser):
 
     def read_user_config(self, doc: dict) -> None:
         """Read the user configuration from the start document. It only changes the ANALSIS section."""
-        section = doc.get(self.user_config, {})
+        key = self.get("METADATA", "user_config")
+        section = doc.get(key, {})
         self.set_analysis_config(section)
         return
 
     def read_composition(self, doc: dict) -> None:
         """Read composition string from the start docment."""
-        key = self.composition_str
+        key = self.get("METADATA", "composition_str")
         if key in doc:
             composition = str(doc[key])
             self.set("ANALYSIS", "composition", composition)
             io.server_message("Sample composition is '{}'.".format(composition))
         else:
             io.server_message("No '{}' in the start document.".format(key))
+        return
+
+    def read_calibration(self, doc: dict) -> None:
+        key1 = self.get("METADATA", "is_calibration")
+        if key1 in doc:
+            is_calibration = str(doc[key1])
+            self.set("CALIBRATION", "is_calibration", is_calibration)
+            key2 = self.get("METADATA", "pyfai_calib_kwargs")
+            if key2 in doc:
+                calib_dict = doc[key2]
+                pyfai_calib_kwargs = " ".join(
+                    [
+                        "--{} {}".format(k, v)
+                        for k, v in calib_dict.items()
+                    ]
+                )
+                self.set("CALIBRATION", "pyfai_calib_kwargs", pyfai_calib_kwargs)
+                if "poni" in calib_dict:
+                    self.set("CALIBRATION", "poni_file", calib_dict["poni"])
         return

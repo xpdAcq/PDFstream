@@ -41,6 +41,7 @@ class AnalysisPipeline:
         config = copy.deepcopy(self._default_config)
         config.read_user_config(doc)
         config.read_composition(doc)
+        config.read_calibration(doc)
         self._config = config
         return
 

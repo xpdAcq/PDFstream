@@ -1,5 +1,6 @@
 import typing as T
 from functools import lru_cache
+import subprocess
 
 import event_model
 import numpy as np
@@ -11,6 +12,9 @@ from pdfstream.callbacks.config import Config
 from pdfstream.callbacks.datakeys import DataKeys
 from pdfstream.vend.masking import generate_binner, mask_img_pyfai
 from pyFAI.azimuthalIntegrator import AzimuthalIntegrator
+from tifffile import TiffWriter
+from tempfile import TemporaryDirectory
+from pyFAI.io.ponifile import PoniFile
 
 try:
     from diffpy.pdfgetx import PDFConfig, PDFGetter
@@ -27,6 +31,26 @@ CalibData = frozendict
 CalibKeys = T.List[str]
 
 
+def _load_calib(poni_file: str) -> CalibData:
+    pf = PoniFile()
+    pf.read_from_file(poni_file)
+    dct = pf.as_dict()
+    if "detector_config" in dct:
+        del dct["detector_config"]
+    if "poni_version" in dct:
+        del dct["poni_version"]
+    return frozendict(dict(dct))
+
+
+def _parse_to_cailb(data: Data, keys: CalibKeys) -> CalibData:
+    return frozendict(
+        {
+            k.split('_')[-1]: data[k]
+            for k in keys
+        }
+    )
+
+
 @lru_cache(maxsize=16)
 def _get_pyfai(calib: frozendict) -> AzimuthalIntegrator:
     return AzimuthalIntegrator(**calib)
@@ -36,6 +60,53 @@ def _get_pyfai(calib: frozendict) -> AzimuthalIntegrator:
 def _get_binner(calib: frozendict, shape: tuple):
     ai = _get_pyfai(calib)
     return generate_binner(ai, shape)
+
+
+def _write_tiff(
+    image: np.ndarray,
+    filepath: str
+) -> None:
+    with TiffWriter(filepath) as tw:
+        tw.save(image)
+    return
+
+
+def _run_calibration_gui(
+        tiff_file: str,
+        pyfai_kwargs: str,
+        test: bool
+) -> int:
+    """Run the gui of calibration."""
+    args = ["pyFAI-calib2", pyfai_kwargs]
+    args.append(tiff_file)
+    if test:
+        io.server_message("Run in test mode. No interactive calibration.")
+        return 0
+    cp = subprocess.run(
+        args, 
+        stdin=subprocess.PIPE, 
+        stdout=subprocess.PIPE, 
+        stderr=subprocess.PIPE
+    )
+    if cp.returncode != 0:
+        io.server_message("Error in Calibration. See below:")
+        print(r"$", " ".join(args))
+        print(cp.stdout.decode())
+        print(cp.stderr.decode())
+    return cp.returncode
+
+
+def _run_gui_in_temp(
+    image: np.ndarray,
+    pyfai_kwargs: str,
+    test: bool
+):
+    with TemporaryDirectory() as temp_dir:
+        temp_path = Path(temp_dir)
+        temp_tiff = temp_path.joinpath("calibration.tiff")
+        _write_tiff(image, str(temp_tiff))
+        returncode = _run_calibration_gui(str(temp_tiff), pyfai_kwargs, test)
+    return returncode
 
 
 class AnalyzerError(Exception):
@@ -81,7 +152,7 @@ class Analyzer(event_model.DocumentRouter):
     def _mk_dirs(self, doc: dict):
         if "directory" in doc:
             self._directory: Path = Path(doc["directory"])
-            self._poni_dir: Path = self._directory.joinpath("poni")
+            self._poni_dir: Path = self._directory.joinpath("calib")
             self._integration_dir: Path = self._directory.joinpath("integration")
             self._sq_dir: Path = self._directory.joinpath("sq")
             self._fq_dir: Path = self._directory.joinpath("fq")
@@ -142,7 +213,8 @@ class Analyzer(event_model.DocumentRouter):
 
     def _average_frames(self, data: dict) -> None:
         keys = self._datakeys
-        image: np.ndarray = np.array(data[keys.image])
+        dtype = self._config.image_dtype
+        image: np.ndarray = np.array(data[keys.image], dtype=dtype)
         if image.ndim == 3:
             data[keys.image] = np.mean(image, axis=0, dtype=image.dtype)
             io.server_message("Average frames.")
@@ -164,6 +236,22 @@ class Analyzer(event_model.DocumentRouter):
         for k in keys.get_scalar():
             data[k] = 0.
         io.server_message("Add data keys for '{}'.".format(keys.image))
+        return
+
+    def _pyfai_calibrate(self, data: dict) -> None:
+        io.server_message("Start pyFAI-calib2.")
+        image = data[self._datakeys.image]
+        pyfai_calib_kwargs = self._config.pyfai_calib_kwargs
+        test = self._config.is_test
+        poni_file = self._config.poni_file
+        returned = _run_gui_in_temp(image, pyfai_calib_kwargs, test)
+        if returned != 0:
+            io.server_message("Calibration failed.")
+            return
+        if not poni_file:
+            io.server_message("No poni file is sepcified.")
+            return
+        self._calib_data = _load_calib(poni_file)
         return
 
     def _auto_mask(
@@ -216,7 +304,6 @@ class Analyzer(event_model.DocumentRouter):
 
     def _update_chi(self, data: dict) -> None:
         calib = self._calib_data
-        assert calib is not None
         keys = self._datakeys
         ai = _get_pyfai(calib)
         integ_setting = self._config.integ_setting
@@ -262,6 +349,8 @@ class Analyzer(event_model.DocumentRouter):
     def _add_analyzed_data(self, data: dict) -> None:
         self._average_frames(data)
         self._set_default(data)
+        if self._config.is_calibration:
+            self._pyfai_calibrate(data)
         if self._calib_data is None:
             io.server_message("No calibration data. Skip all following steps.")
             return
@@ -314,13 +403,7 @@ class Analyzer(event_model.DocumentRouter):
         if self._calib_keys is None:
             io.server_message("No calibration data keys.")
             return
-        data = doc["data"]
-        self._calib_data = frozendict(
-            {
-                k.split('_')[-1]: data[k]
-                for k in self._calib_keys
-            }
-        )
+        self._calib_data = _parse_to_cailb(doc["data"], self._calib_keys)
         io.server_message("Record calibration data.")
         return
 
