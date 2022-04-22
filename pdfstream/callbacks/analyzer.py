@@ -4,6 +4,7 @@ from functools import lru_cache
 import event_model
 import numpy as np
 import pdfstream.io as io
+from pathlib import Path
 from frozendict import frozendict
 from pdfstream import __version__
 from pdfstream.callbacks.config import Config
@@ -62,6 +63,12 @@ class Analyzer(event_model.DocumentRouter):
         super().__init__()
         self._datakeys: DataKeys = datakeys
         self._config: Config = config
+        self._directory = None
+        self._poni_dir = None
+        self._integration_dir = None
+        self._sq_dir = None
+        self._fq_dir = None
+        self._gr_dir = None
         self._calib_keys: T.Optional[CalibKeys] = None
         self._calib_data: T.Optional[CalibData] = None
         self._user_mask: T.Optional[np.ndarray] = None
@@ -70,6 +77,24 @@ class Analyzer(event_model.DocumentRouter):
         self._mask_descriptor: str = ""
         self._pdfgetter: T.Optional[PDFGetter] = None
         self._set_pdfgetter()
+
+    def _mk_dirs(self, doc: dict):
+        if "directory" in doc:
+            self._directory: Path = Path(doc["directory"])
+            self._poni_dir: Path = self._directory.joinpath("poni")
+            self._integration_dir: Path = self._directory.joinpath("integration")
+            self._sq_dir: Path = self._directory.joinpath("sq")
+            self._fq_dir: Path = self._directory.joinpath("fq")
+            self._gr_dir: Path = self._directory.joinpath("gr")
+            self._directory.mkdir(exist_ok=True, parents=True)
+            self._poni_dir.mkdir(exist_ok=True)
+            self._integration_dir.mkdir(exist_ok=True)
+            self._sq_dir.mkdir(exist_ok=True)
+            self._fq_dir.mkdir(exist_ok=True)
+            self._gr_dir.mkdir(exist_ok=True)
+        else:
+            io.server_message("No 'directory' key in start. No files will be saved.")
+        return
 
     def _set_pdfgetter(self) -> None:
         if _PDFGETX_AVAILABLE:
@@ -114,20 +139,6 @@ class Analyzer(event_model.DocumentRouter):
     def _set_calib_keys(self, doc: dict) -> None:
         self._calib_keys = doc["object_keys"][self._datakeys.detector]
         return
-
-    def descriptor(self, doc):
-        if doc["name"] == "primary":
-            if self._datakeys.image in doc["data_keys"]:
-                self._primary_descriptor = doc["uid"]
-                self._add_datakeys(doc)
-        elif doc["name"] == "calib":
-            if self._datakeys.detector in doc["object_keys"]:
-                self._calib_descriptor = doc["uid"]
-                self._set_calib_keys(doc)
-        elif doc["name"] == "mask":
-            if self._datakeys.mask in doc["data_keys"]:
-                self._mask_descriptor = doc["uid"]
-        return doc
 
     def _average_frames(self, data: dict) -> None:
         keys = self._datakeys
@@ -248,8 +259,7 @@ class Analyzer(event_model.DocumentRouter):
         io.server_message("Transform the XRD to PDF.")
         return
 
-    def _add_analyzed_data(self, doc: dict) -> None:
-        data = doc["data"]
+    def _add_analyzed_data(self, data: dict) -> None:
         self._average_frames(data)
         self._set_default(data)
         if self._calib_data is None:
@@ -258,6 +268,46 @@ class Analyzer(event_model.DocumentRouter):
         self._update_mask(data)
         self._update_chi(data)
         self._update_gr(data)
+        return
+
+    def _save_pyfai_data(self, data: dict) -> None:
+        exports = self._config.exports
+        calib_data = self._calib_data
+        ai = _get_pyfai(calib_data)
+        dks = self._datakeys
+        if "poni" in exports and self._poni_dir:
+            poni_file = self._poni_dir.joinpath(data["filename"]).with_suffix(".poni")
+            ai.save(poni_file)
+        if "chi_2theta" in exports and self._integration_dir:
+            chi_tth_file = self._integration_dir.joinpath(data["filename"] + "_mean_tth").with_suffix(".chi")
+            ai.save1D(str(chi_tth_file), data[dks.chi_2theta], data[dks.chi_I], dim1_unit="2th_deg")
+        if "chi" in exports and self._integration_dir:
+            chi_q_file = self._integration_dir.joinpath(data["filename"] + "_mean_q").with_suffix(".chi")
+            ai.save1D(str(chi_q_file), data[dks.chi_Q], data[dks.chi_I], dim1_unit="q_A^-1")
+        return
+
+    def _save_pdfgetx_data(self, data: dict) -> None:
+        exports = self._config.exports
+        if "sq" in exports:
+            filename = self._sq_dir.joinpath(data["filename"]).with_suffix(".sq")
+            self._pdfgetter.writeOutput(str(filename), "sq")
+        if "fq" in exports:
+            filename = self._fq_dir.joinpath(data["filename"]).with_suffix(".fq")
+            self._pdfgetter.writeOutput(str(filename), "fq")
+        if "gr" in exports:
+            filename = self._gr_dir.joinpath(data["filename"]).with_suffix(".gr")
+            self._pdfgetter.writeOutput(str(filename), "gr")
+        return
+
+    def _save_analyzed_data(self, data: dict) -> None:
+        if self._calib_data is None:
+            io.server_message("No integration is done. No files output.")
+            return
+        if "filename" not in data:
+            io.server_message("No 'filename' in data. Cannot save files.")
+            return
+        self._save_pyfai_data(data)
+        self._save_pdfgetx_data(data)
         return
 
     def _set_calib_data(self, doc: dict) -> None:
@@ -277,9 +327,28 @@ class Analyzer(event_model.DocumentRouter):
     def _set_user_mask(self, doc: dict) -> None:
         self._user_mask = doc["data_keys"][self._datakeys.mask]
 
+    def start(self, doc):
+        self._mk_dirs(doc)
+        return doc
+
+    def descriptor(self, doc):
+        if doc["name"] == "primary":
+            if self._datakeys.image in doc["data_keys"]:
+                self._primary_descriptor = doc["uid"]
+                self._add_datakeys(doc)
+        elif doc["name"] == "calib":
+            if self._datakeys.detector in doc["object_keys"]:
+                self._calib_descriptor = doc["uid"]
+                self._set_calib_keys(doc)
+        elif doc["name"] == "mask":
+            if self._datakeys.mask in doc["data_keys"]:
+                self._mask_descriptor = doc["uid"]
+        return doc
+
     def event(self, doc):
         if doc["descriptor"] == self._primary_descriptor:
-            self._add_analyzed_data(doc)
+            self._add_analyzed_data(doc["data"])
+            self._save_analyzed_data(doc["data"])
         elif doc["descriptor"] == self._calib_descriptor:
             self._set_calib_data(doc)
         elif doc["descriptor"] == self._mask_descriptor:

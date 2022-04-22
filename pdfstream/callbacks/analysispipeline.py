@@ -16,7 +16,11 @@ HANDLERS = discover_handlers()
 class AnalysisPipeline:
     """The analysis pipeline.
 
-    The pipeline includes a sequence of dark subtraction, a sequence of analyzers and a sequence of publishers. These document routers  are generated based on the `image_fields` and `detectors` in the configuration. Their settings are also determined by the configuration. In default, one pipeline is created for a single run so that the cached data in one run won't affect others.
+    The pipeline includes a sequence of dark subtraction, a sequence of analyzers and a sequence of 
+    publishers. These document routers  are generated based on the `image_fields` and `detectors` 
+    in the configuration. Their settings are also determined by the configuration. In default, 
+    one pipeline is created for a single run so that the cached data in one run won't affect 
+    others.
 
     Parameters
     ----------
