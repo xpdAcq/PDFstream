@@ -6,6 +6,7 @@ from bluesky.callbacks import CallbackBase
 from bluesky.callbacks.mpl_plotting import LivePlot, LiveScatter
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
+import pdfstream.io as io
 
 
 class ScatterPlotter(CallbackBase):
@@ -41,6 +42,12 @@ class ScatterPlotter(CallbackBase):
         return hints
 
     def savefig(self) -> None:
+        if self._filename is None:
+            io.server_message("No filename.")
+            return
+        if self._directory is None:
+            io.server_message("No direcory.")
+            return
         f = self._filename + "_" + self.name + self.suffix
         fpath = self._directory.joinpath(f)
         self.figure.savefig(fpath)
@@ -57,9 +64,16 @@ class ScatterPlotter(CallbackBase):
             self._callback = LivePlot(self.y_field, x="time", ax=self._ax, **self._kwargs)
         self._callback.start(doc)
         if self.save:
-            self._filename = doc["filename"]
-            self._directory = Path(doc["directory"]).joinpath("plots")
-            self._directory.mkdir(exist_ok=True, parents=True)
+            if "filename" in doc:
+                self._filename = doc["filename"]
+            else:
+                io.server_message("No 'filename' in start.")
+                return doc
+            if "directory" in doc:
+                self._directory = Path(doc["directory"]).joinpath("plots")
+                self._directory.mkdir(exist_ok=True, parents=True)
+            else:
+                io.server_message("No 'direcory' in start.")
         return
 
     def descriptor(self, doc):

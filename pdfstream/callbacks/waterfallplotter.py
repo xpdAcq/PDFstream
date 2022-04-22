@@ -1,11 +1,11 @@
 import typing as T
 from pathlib import Path
-from unicodedata import name
 
 import numpy as np
 from bluesky.callbacks import CallbackBase
 from matplotlib.figure import Figure
 from xpdview.waterfall import Waterfall as OldWaterfall
+import pdfstream.io as io
 
 
 class Waterfall(OldWaterfall):
@@ -57,6 +57,12 @@ class WaterfallPlotter(CallbackBase):
         return
 
     def savefig(self) -> None:
+        if self._filename is None:
+            io.server_message("Filename is not specified.")
+            return
+        if self._directory is None:
+            io.server_message("Directory is not specified.")
+            return
         f = self._filename + "_" + self.name + self.suffix
         fpath = self._directory.joinpath(f)
         self.figure.savefig(fpath)
@@ -64,12 +70,25 @@ class WaterfallPlotter(CallbackBase):
 
     def start(self, doc):
         if self.save:
-            self._filename = doc["filename"]
-            self._directory = Path(doc["directory"]).joinpath("plots")
-            self._directory.mkdir(exist_ok=True, parents=True)
+            if "filename" in doc:
+                self._filename = doc["filename"]
+            else:
+                io.server_message("No 'filename' in doc.")
+                return doc
+            if "directory" in doc:
+                self._directory = Path(doc["directory"]).joinpath("plots")
+                self._directory.mkdir(exist_ok=True, parents=True)
+            else:
+                io.server_message("No 'directory' in doc.")
         return doc
 
     def event(self, doc):
+        if self.x_field not in doc["data"]:
+            io.server_message("No '{}' in the data.".format(self.x_field))
+            return doc
+        if self.y_field not in doc["data"]:
+            io.server_message("No '{}' in the data.".format(self.y_field))
+            return doc
         if int(doc['seq_num']) == 0:
             # clear the old data at the first new event
             self._waterfall.clear()
