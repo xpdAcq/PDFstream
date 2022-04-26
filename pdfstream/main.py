@@ -1,7 +1,19 @@
-from configparser import ConfigParser
+from pdfstream.callbacks.config import Config, ConfigError
 from pathlib import Path
+import typing as T
+from pdfstream.callbacks.ananlysisserver import AnalysisServer
+from pdfstream.callbacks.visualizationserver import VisualizationServer
+from pdfstream.callbacks.serializationserver import SerializationServer
 
 import fire
+
+try:
+    import diffpy.pdfgetx
+    PDFGETX_AVAILABLE = True
+    del diffpy.pdfgetx
+except ImportError:
+    PDFGETX_AVAILABLE = False
+    print("Warning: diffpy.pdfgetx is not installed. Some functions may raise errors.")
 
 CONFIG_DIR = str(Path("~/.config/pdfstream/").expanduser())
 
@@ -15,55 +27,39 @@ def main():
         'waterfall': cli.waterfall,
         'visualize': cli.visualize
     }
-    try:
-        import diffpy.pdfgetx
-        del diffpy.pdfgetx
-        PDFGETX_AVAILABLE = True
-    except ImportError:
-        print("Warning: diffpy.pdfgetx is not installed. Some functionalities may not be available.")
-        PDFGETX_AVAILABLE = False
     if PDFGETX_AVAILABLE:
         import pdfstream.transformation.cli
         COMMANDS.update({'transform': pdfstream.transformation.cli.transform})
     fire.Fire(COMMANDS)
+    return
 
 
-def _run_server(cfg_file: str):
-    """Build the server according to the configuration file and run it.
-
-    The servers include:
-
-        xpd server: transer the diffraction image to the pair distribution function.
-        xpdvis server: visualize the results from the xpd server.
-        xpdsave server: visualize the resluts from the xpdsave server.
-        lsq server: decompose the pair distribution function from the xpd server.
-    """
-    try:
-        import diffpy.pdfgetx
-        del diffpy.pdfgetx
-    except ImportError:
-        print("Warning: diffpy.pdfgetx is not installed. Some servers may encounter errors.")
-    # read configs
+def _make_server(cfg_file: str) -> T.Any:
     cfg_path = Path(cfg_file)
     if not cfg_path.is_file():
         cfg_file = find_cfg_file(CONFIG_DIR, cfg_file)
-    config = ConfigParser()
-    results = config.read(cfg_file)
-    if not results:
-        raise FileNotFoundError("Not a valid file: {}".format(cfg_file))
-    server_type = config["BASIC"]["name"]
-    # run the servers
-    import pdfstream.servers.xpd_server as xpd_server
-    import pdfstream.servers.lsq_server as lsq_server
-    import pdfstream.servers.xpdvis_server as xpdvis_server
-    import pdfstream.servers.xpdsave_server as xpdsave_server
+    config = Config()
+    config.read_a_file(cfg_file)
     SERVERS = {
-        "xpd": xpd_server.make_and_run,
-        "lsq": lsq_server.make_and_run,
-        "xpdvis": xpdvis_server.make_and_run,
-        "xpdsave": xpdsave_server.make_and_run
+        "xpd": AnalysisServer,
+        "xpdvis": VisualizationServer,
+        "xpdsave": SerializationServer
     }
-    return SERVERS[server_type](cfg_file)
+    if config.server_name not in SERVERS:
+        raise ConfigError("No server called '{}'.".format(config.server_name))
+    server = SERVERS[config.server_name](config)
+    return server
+
+
+def _run_server(cfg_file: str) -> None:
+    """Start a server.
+
+    What server to start depends on the 'name' option in the 'BASICS' section. The allowed options
+    are xpd, xpdsave and xpdvis.
+    """
+    server = _make_server(cfg_file)
+    server.start()
+    return
 
 
 def run_server():
