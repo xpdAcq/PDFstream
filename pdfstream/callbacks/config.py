@@ -10,6 +10,9 @@ from pdfstream.vend.formatters import SpecialStr
 SectionDict = T.Dict[str, str]
 ConfigDict = T.Dict[str, SectionDict]
 DEFAULT_CONFIGURE = {
+    "BASIC": {
+        "name": ""
+    },
     "METADATA": {
         "composition_str": "composition_str",
         "sample_name": "sample_name",
@@ -64,6 +67,12 @@ DEFAULT_CONFIGURE = {
         "analyzed_data_prefix": "an"
     }
 }
+
+
+class ConfigError(Exception):
+    """The error from the Config."""
+
+    pass
 
 
 class Config(ConfigParser):
@@ -150,7 +159,6 @@ class Config(ConfigParser):
 
     @cached_property
     def tiff_base(self) -> Path:
-        """Settings for the base folder."""
         return Path(self.get("ANALYSIS", "tiff_base")).expanduser()
 
     @cached_property
@@ -218,6 +226,10 @@ class Config(ConfigParser):
     def poni_file(self) -> str:
         return self.get("CALIBRATION", "poni_file")
 
+    @cached_property
+    def server_name(self) -> str:
+        return self.get("BASIC", "name")
+
     def to_dict(self) -> ConfigDict:
         """Convert the configuration to a dictionary."""
         return {s: dict(self.items(s)) for s in self.sections()}
@@ -261,4 +273,11 @@ class Config(ConfigParser):
                 self.set("CALIBRATION", "pyfai_calib_kwargs", pyfai_calib_kwargs)
                 if "poni" in calib_dict:
                     self.set("CALIBRATION", "poni_file", calib_dict["poni"])
+        return
+
+    def read_a_file(self, filename: str) -> None:
+        filename = str(Path(filename))
+        read_ok = self.read([filename])
+        if not read_ok:
+            raise ConfigError("Cannot read '{}'.".format(filename))
         return
