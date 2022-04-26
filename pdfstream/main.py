@@ -1,11 +1,12 @@
-from pdfstream.callbacks.config import Config, ConfigError
-from pathlib import Path
 import typing as T
-from pdfstream.callbacks.ananlysisserver import AnalysisServer
-from pdfstream.callbacks.visualizationserver import VisualizationServer
-from pdfstream.callbacks.serializationserver import SerializationServer
+from pathlib import Path
 
 import fire
+
+from pdfstream.callbacks.ananlysisserver import AnalysisServer
+from pdfstream.callbacks.config import Config, ConfigError
+from pdfstream.callbacks.serializationserver import SerializationServer
+from pdfstream.callbacks.visualizationserver import VisualizationServer
 
 try:
     import diffpy.pdfgetx
@@ -43,7 +44,7 @@ def _make_server(cfg_file: str) -> T.Any:
     SERVERS = {
         "xpd": AnalysisServer,
         "xpdvis": VisualizationServer,
-        "xpdsave": SerializationServer
+        "xpdsave": SerializationServer,
     }
     if config.server_name not in SERVERS:
         raise ConfigError("No server called '{}'.".format(config.server_name))
