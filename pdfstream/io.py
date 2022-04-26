@@ -1,5 +1,5 @@
 """The input / output functions related to file system."""
-from datetime import datetime
+import logging
 from pathlib import Path
 from typing import Dict, Any
 
@@ -77,9 +77,7 @@ def _str_none(dct: Dict[str, Any]) -> Dict[str, Any]:
 
 def server_message(msg: str):
     """Print a message to a uniform format of server message."""
-    if not pdfstream.data.QUIET:
-        t = datetime.now().strftime("%x %X")
-        print("[{}] {}".format(t, msg))
+    return logging.info(msg)
 
 
 def quiet():

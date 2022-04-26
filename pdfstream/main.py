@@ -1,5 +1,7 @@
 import typing as T
 from pathlib import Path
+import multiprocessing, logging
+from multiprocessing import Process
 
 import fire
 
@@ -35,21 +37,18 @@ def main():
     return
 
 
-def _make_server(cfg_file: str) -> T.Any:
-    cfg_path = Path(cfg_file)
-    if not cfg_path.is_file():
-        cfg_file = find_cfg_file(CONFIG_DIR, cfg_file)
-    config = Config()
-    config.read_a_file(cfg_file)
-    SERVERS = {
-        "xpd": AnalysisServer,
-        "xpdvis": VisualizationServer,
-        "xpdsave": SerializationServer,
-    }
-    if config.server_name not in SERVERS:
-        raise ConfigError("No server called '{}'.".format(config.server_name))
-    server = SERVERS[config.server_name](config)
-    return server
+def create_logger(log_file: str):
+    logger = multiprocessing.get_logger()
+    logger.setLevel(logging.INFO)
+    formatter = logging.Formatter(\
+        '[%(asctime)s| %(levelname)s| %(processName)s] %(message)s')
+    handler = logging.FileHandler(log_file)
+    handler.setFormatter(formatter)
+    # this bit will make sure you won't have 
+    # duplicated messages in the output
+    if not len(logger.handlers): 
+        logger.addHandler(handler)
+    return logger
 
 
 def _run_server(cfg_file: str) -> None:
@@ -58,8 +57,15 @@ def _run_server(cfg_file: str) -> None:
     What server to start depends on the 'name' option in the 'BASICS' section. The allowed options
     are xpd, xpdsave and xpdvis.
     """
-    server = _make_server(cfg_file)
-    server.start()
+    cfg_path = Path(cfg_file)
+    if not cfg_path.is_file():
+        cfg_file = find_cfg_file(CONFIG_DIR, cfg_file)
+    config = Config()
+    config.read_a_file(cfg_file)
+    create_logger(config.log_file)
+    servers = (AnalysisServer(config), SerializationServer(config), VisualizationServer(config))
+    for server in servers:
+        Process(target=server.start, name="pdfstream").start()
     return
 
 

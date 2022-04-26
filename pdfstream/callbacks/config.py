@@ -10,8 +10,8 @@ from pdfstream.vend.formatters import SpecialStr
 SectionDict = T.Dict[str, str]
 ConfigDict = T.Dict[str, SectionDict]
 DEFAULT_CONFIGURE = {
-    "BASIC": {
-        "name": ""
+    "SERVER": {
+        "log": "~/pdfstream_server.log",
     },
     "METADATA": {
         "composition_str": "composition_str",
@@ -90,6 +90,11 @@ class Config(ConfigParser):
 
     def getset(self, section: str, option: str) -> T.Set[str]:
         return set(self.getlist(section, option))
+
+    @cached_property
+    def log_file(self) -> Path:
+        filename = self.get("SERVER", "log")
+        return Path(filename).expanduser()
 
     @cached_property
     def user_config(self) -> str:
@@ -225,10 +230,6 @@ class Config(ConfigParser):
     @cached_property
     def poni_file(self) -> str:
         return self.get("CALIBRATION", "poni_file")
-
-    @cached_property
-    def server_name(self) -> str:
-        return self.get("BASIC", "name")
 
     def to_dict(self) -> ConfigDict:
         """Convert the configuration to a dictionary."""
