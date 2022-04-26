@@ -46,7 +46,6 @@ class WaterfallPlotter(CallbackBase):
         self._directory = None
         self._filename = ""
         self._waterfall = Waterfall(unit=(xlabel, ylabel), **kwargs)
-        self._waterfall.fig.show()
 
     @property
     def figure(self) -> Figure:
@@ -92,6 +91,7 @@ class WaterfallPlotter(CallbackBase):
         if int(doc['seq_num']) == 0:
             # clear the old data at the first new event
             self._waterfall.clear()
+            self.figure.show()
         x_data = doc["data"][self.x_field]
         y_data = doc["data"][self.y_field]
         key = doc['seq_num']

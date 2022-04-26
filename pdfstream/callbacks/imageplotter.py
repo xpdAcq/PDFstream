@@ -27,7 +27,6 @@ class ImagePlotter(CallbackBase):
                                 limit_func, auto_redraw, interpolation)
         if window_title:
             self._cs._fig.canvas.set_window_title(window_title)
-        self._cs._fig.show()
 
     @property
     def figure(self) -> Figure:
@@ -60,6 +59,8 @@ class ImagePlotter(CallbackBase):
         if self.image_field not in doc["data"]:
             io.server_message("No '{}' in data.".format(self.image_field))
             return doc
+        if int(doc["seq_num"]) == 0:
+            self.figure.show()
         if self.mask_field in doc["data"]:
             data_arr = np.ma.masked_array(
                 doc["data"][self.image_field],
