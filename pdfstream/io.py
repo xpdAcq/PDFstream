@@ -1,5 +1,5 @@
 """The input / output functions related to file system."""
-import logging
+import multiprocessing
 from pathlib import Path
 from typing import Dict, Any
 
@@ -12,6 +12,8 @@ from tifffile import TiffWriter
 
 import pdfstream.data
 from pdfstream.vend.loaddata import load_data
+
+logger = multiprocessing.get_logger()
 
 
 def load_ai_from_poni_file(poni_file: str) -> pyFAI.AzimuthalIntegrator:
@@ -77,7 +79,7 @@ def _str_none(dct: Dict[str, Any]) -> Dict[str, Any]:
 
 def server_message(msg: str):
     """Print a message to a uniform format of server message."""
-    return logging.info(msg)
+    return print(msg)
 
 
 def quiet():

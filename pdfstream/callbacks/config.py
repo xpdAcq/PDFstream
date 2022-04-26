@@ -11,7 +11,7 @@ SectionDict = T.Dict[str, str]
 ConfigDict = T.Dict[str, SectionDict]
 DEFAULT_CONFIGURE = {
     "SERVER": {
-        "log": "~/pdfstream_server.log",
+        "log": "pdfstream_server.log",
     },
     "METADATA": {
         "composition_str": "composition_str",

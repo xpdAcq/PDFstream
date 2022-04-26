@@ -13,7 +13,7 @@ class VisualizationServer:
         self._dispatcher = RemoteDispatcher(config.outbound_address, prefix=config.analyzed_data_prefix)
         pipeline = VisualizationPipeline(config)
         self._dispatcher.subscribe(pipeline)
-        install_qt_kicker(self._dispatcher.loop)
+        # install_qt_kicker(self._dispatcher.loop)
 
     def start(self) -> None:
         self._dispatcher.start()

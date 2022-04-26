@@ -127,7 +127,7 @@ class AnalysisPipeline:
             name, doc = analyzer(name, doc)
         for publisher in self._publishers:
             publisher(name, doc)
-        if name == DocumentNames.stop:
+        if str(name) == "stop":
             self._del_publishers()
             self._del_analyzors()
             self._del_dark_subtractions()

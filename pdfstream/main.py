@@ -2,6 +2,7 @@ import typing as T
 from pathlib import Path
 import multiprocessing, logging
 from multiprocessing import Process
+import time
 
 import fire
 
@@ -51,6 +52,12 @@ def create_logger(log_file: str):
     return logger
 
 
+def _start_server(server: T.Any, cfg_file: str) -> None:
+    config = Config()
+    config.read_a_file(cfg_file)
+    return server(config).start()
+
+
 def _run_server(cfg_file: str) -> None:
     """Start a server.
 
@@ -62,10 +69,25 @@ def _run_server(cfg_file: str) -> None:
         cfg_file = find_cfg_file(CONFIG_DIR, cfg_file)
     config = Config()
     config.read_a_file(cfg_file)
-    create_logger(config.log_file)
-    servers = (AnalysisServer(config), SerializationServer(config), VisualizationServer(config))
+    create_logger(str(config.log_file))
+    servers = (AnalysisServer, SerializationServer, VisualizationServer)
+    processes = []
     for server in servers:
-        Process(target=server.start, name="pdfstream").start()
+        p = Process(
+            target=_start_server, 
+            args=(server, cfg_file), 
+            name="pdfstream"
+        )
+        processes.append(p)
+    for p in processes:
+        p.start()
+    try:
+        while True:
+            time.sleep(0.5)
+    except KeyboardInterrupt:
+        for p in processes:
+            p.kill()
+            p.join()
     return
 
 

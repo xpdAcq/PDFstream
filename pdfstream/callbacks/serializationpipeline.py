@@ -35,7 +35,7 @@ class SerializationPipeline(CallbackBase):
         return
 
     def __call__(self, name, doc):
-        if name == "start":
+        if str(name) == "start":
             self._create(doc)
         self._tiff_serilizer(name, doc)
         self._csv_serializer(name, doc)
