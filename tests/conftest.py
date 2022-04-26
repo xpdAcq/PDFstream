@@ -1,19 +1,15 @@
 """Configuration of pytest."""
 import json
-import uuid
 from pathlib import Path
 
 import bluesky.plans as bp
-import databroker
 import matplotlib.pyplot as plt
 import numpy
-import numpy as np
 import pyFAI
 import pytest
 from databroker.v2 import Broker
 from diffpy.pdfgetx import PDFConfig, PDFGetter
 from pdfstream.io import load_array, load_img
-from pdfstream.old_callbacks.composer import gen_stream
 from pkg_resources import resource_filename
 from xpdacq.preprocessors import (CalibPreprocessor, DarkPreprocessor,
                                   ShutterConfig, ShutterPreprocessor,
@@ -80,146 +76,6 @@ DB = {
 def test_data():
     """Test configs."""
     return DB
-
-
-@pytest.fixture(scope="function")
-def simple_stream():
-    return gen_stream([{"x": 1}], {})
-
-
-@pytest.fixture(
-    scope="function",
-    params=[
-        {"hints": {}},
-        {"hints": {"dimensions": [(["x0"], "primary")]}},
-        {"hints": {"dimensions": [(["x0"], "primary"), (["x1"], "primary")]}},
-    ]
-)
-def ymax_stream(request):
-    data = [
-        {"ymax": 0, "x0": 0, "x1": 0},
-        {"ymax": 1, "x0": 1, "x1": 1},
-        {"ymax": 2, "x0": 2, "x1": 2}
-    ]
-    return gen_stream(data, request.param)
-
-
-@pytest.fixture(scope="function")
-def array_stream():
-    return gen_stream(
-        [
-            {"x0": np.zeros(5), "x1": np.zeros(5)},
-            {"x0": np.ones(5), "x1": np.ones(5)},
-        ],
-        {}
-    )
-
-
-@pytest.fixture(scope="session")
-def db_with_dark_and_light() -> Broker:
-    """A database with a dark run and a light run inside. The last one is light and the first one is dark."""
-    db = databroker.v2.temp()
-    dark_data = [{"pe1_image": np.zeros_like(NI_FRAMES)}]
-    dark_uid = str(uuid.uuid4())
-    for name, doc in gen_stream(dark_data, {"dark_frame": True}, uid=dark_uid):
-        db.v1.insert(name, doc)
-    light_data = [{"pe1_image": NI_FRAMES}]
-    for name, doc in gen_stream(light_data, dict(**START_DOC, sc_dk_field_uid=dark_uid)):
-        db.v1.insert(name, doc)
-    return db
-
-
-@pytest.fixture(scope="session")
-def db_with_img_and_bg_img() -> Broker:
-    """A database with a dark image, a background image run and a data image run inside. The first one is dark
-    image, the second one is background image, the third one is the data image."""
-    db = databroker.v2.temp()
-    sample_name = "Kapton"
-    dk_uid = str(uuid.uuid4())
-    dk_meta = {"dark_frame": True}
-    dk_data = [{"pe1_image": np.ones_like(NI_FRAMES)}]
-    bg_meta = {"sample_name": sample_name, "sc_dk_field_uid": dk_uid}
-    bg_data = [{"pe1_image": 2 * np.ones_like(NI_FRAMES)}]
-    img_data = [{"pe1_image": 2 * np.ones_like(NI_FRAMES) + NI_FRAMES}]
-    img_meta = dict(**START_DOC, bkgd_sample_name=sample_name, sc_dk_field_uid=dk_uid, sample_name="Ni")
-    for name, doc in gen_stream(dk_data, dk_meta, uid=dk_uid):
-        db.v1.insert(name, doc)
-    for name, doc in gen_stream(bg_data, bg_meta):
-        db.v1.insert(name, doc)
-    for name, doc in gen_stream(img_data, img_meta):
-        db.v1.insert(name, doc)
-    return db
-
-
-@pytest.fixture(scope="session")
-def db_with_dark_and_scan() -> Broker:
-    """A database with a dark run and a motor scan inside. The last one is light and the first one is dark."""
-    db = databroker.v2.temp()
-    dark_data = [{"pe1_image": np.zeros_like(NI_FRAMES)}]
-    dark_uid = str(uuid.uuid4())
-    for name, doc in gen_stream(dark_data, {"dark_frame": True}, uid=dark_uid):
-        db.v1.insert(name, doc)
-    light_data = [
-        {"pe1_image": NI_FRAMES, "temperature": 0},
-        {"pe1_image": NI_FRAMES, "temperature": 1},
-        {"pe1_image": NI_FRAMES, "temperature": 3}
-    ]
-    start = dict(**START_DOC)
-    start.update(
-        {
-            "sc_dk_field_uid": dark_uid,
-            "hints": {"dimensions": [(["temperature"], "primary")]},
-            "sample_name": "Ni"
-        }
-    )
-    for name, doc in gen_stream(light_data, start):
-        db.v1.insert(name, doc)
-    return db
-
-
-@pytest.fixture(scope="session")
-def db_with_dark_and_calib() -> Broker:
-    """A database with a dark run and a light run inside. The last one is light and the first one is dark."""
-    db = databroker.v2.temp()
-    dark_data = [{"pe1_image": np.zeros_like(NI_FRAMES)}]
-    dark_uid = str(uuid.uuid4())
-    for name, doc in gen_stream(dark_data, {"dark_frame": True}, uid=dark_uid):
-        db.v1.insert(name, doc)
-    light_data = [{"pe1_image": NI_FRAMES}]
-    for name, doc in gen_stream(
-        light_data, dict(
-            sample_composition="Ni",
-            sc_dk_field_uid=dark_uid,
-            detector="perkin_elmer",
-            is_calibration=True,
-            bt_wavelength=0.1917
-        )
-    ):
-        db.v1.insert(name, doc)
-    return db
-
-
-@pytest.fixture(scope="session")
-def db_with_dark_bg_no_calib() -> Broker:
-    """A database with a dark image, a background image run and a data image run inside. The first one is dark
-    image, the second one is background image, the third one is the data image."""
-    db = databroker.v2.temp()
-    sample_name = "Kapton"
-    dk_uid = str(uuid.uuid4())
-    dk_meta = {"dark_frame": True}
-    dk_data = [{"pe1_image": np.ones_like(NI_FRAMES)}]
-    bg_meta = {"sample_name": sample_name, "sc_dk_field_uid": dk_uid}
-    bg_data = [{"pe1_image": 2 * np.ones_like(NI_FRAMES)}]
-    img_data = [{"pe1_image": 2 * np.ones_like(NI_FRAMES) + NI_FRAMES}]
-    img_meta = dict(**START_DOC, bkgd_sample_name=sample_name, sc_dk_field_uid=dk_uid, sample_name="Ni")
-    img_meta.pop("calibration_md")
-    for name, doc in gen_stream(dk_data, dk_meta, uid=dk_uid):
-        db.v1.insert(name, doc)
-    for name, doc in gen_stream(bg_data, bg_meta):
-        db.v1.insert(name, doc)
-    for name, doc in gen_stream(img_data, img_meta):
-        db.v1.insert(name, doc)
-    return db
 
 
 @pytest.fixture(scope="session")
