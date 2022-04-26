@@ -408,7 +408,8 @@ class Analyzer(event_model.DocumentRouter):
         return
 
     def _set_user_mask(self, doc: dict) -> None:
-        self._user_mask = doc["data_keys"][self._datakeys.mask]
+        self._user_mask = doc["data"][self._datakeys.mask]
+        return
 
     def start(self, doc):
         self._mk_dirs(doc)
