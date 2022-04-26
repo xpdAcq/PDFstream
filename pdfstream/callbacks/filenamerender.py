@@ -7,15 +7,17 @@ from pdfstream.callbacks.config import Config
 
 class FileNameRender(CallbackBase):
 
-    def __init__(self, config: Config) -> None:
+    def __init__(self, config: Config, stream_name: str = "primary") -> None:
         super().__init__()
         self._config = config
+        self._stream_name = stream_name
         self._uid = ""
         self._hints = list()
         self._units = list()
         self._directory = ""
         self._file_prefix = ""
         self._file_name = ""
+        self._descriptor = ""
 
     def _set_file_prefix(self, doc: dict) -> None:
         template = self._config.file_prefix
@@ -123,10 +125,13 @@ class FileNameRender(CallbackBase):
         return doc
 
     def descriptor(self, doc):
-        self._add_data_keys(doc)
+        if doc["name"] == self._stream_name:
+            self._descriptor = doc['uid']
+            self._add_data_keys(doc)
         return doc
 
     def event(self, doc):
-        self._set_filename(doc)
-        self._add_filename(doc)
+        if doc["descriptor"] == self._descriptor:
+            self._set_filename(doc)
+            self._add_filename(doc)
         return
