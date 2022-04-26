@@ -16,7 +16,8 @@ from pdfstream.io import load_array, load_img
 from pdfstream.old_callbacks.composer import gen_stream
 from pkg_resources import resource_filename
 from xpdacq.preprocessors import (CalibPreprocessor, DarkPreprocessor,
-                                  ShutterConfig, ShutterPreprocessor)
+                                  ShutterConfig, ShutterPreprocessor,
+                                  MaskPreprocessor)
 from xpdacq.simulators import WorkSpace
 
 # do not show any figures in test otherwise they will block the tests
@@ -24,6 +25,7 @@ plt.ioff()
 # here are test data files
 NI_PONI_FILE = resource_filename('tests', 'test_data/Ni_poni_file.poni')
 DETEECTOR_PONI_FILE = resource_filename('tests', 'test_data/calibration_for_detector.poni')
+MASK_BEAMSTOP_FILE = resource_filename('tests', 'test_data/mask_beamstop.npy')
 NI_GR_FILE = resource_filename('tests', 'test_data/Ni_gr_file.gr')
 NI_CHI_FILE = resource_filename('tests', 'test_data/Ni_chi_file.chi')
 NI_FGR_FILE = resource_filename('tests', 'test_data/Ni_fgr_file.fgr')
@@ -246,6 +248,32 @@ def db_with_new_xpdacq() -> Broker:
     # run
     plan = bp.list_scan([ws.det], ws.eurotherm, [300., 400., 500.])
     ws.RE(plan, sample_name="Test_Sample", composition_str="Ni")
+    return ws.db
+
+
+@pytest.fixture(scope="session")
+def db_with_mask_in_run() -> Broker:
+    ws = WorkSpace()
+    # create CalibPreprocessor
+    cpp0 = CalibPreprocessor(detector=ws.det)
+    calib_data = cpp0.read(DETEECTOR_PONI_FILE)
+    cpp0.add_calib_result({}, calib_data)
+    # create DarkPreprocessor
+    sc = ShutterConfig(ws.shutter, "open", "closed")
+    dpp0 = DarkPreprocessor(detector=ws.det, shutter_config=sc)
+    # create ShutterPreprocessor
+    spp0 = ShutterPreprocessor(detector=ws.det, shutter_config=sc)
+    # create MaskPreprocessor
+    mpp0 = MaskPreprocessor(detector=ws.det)
+    mpp0.load_mask(str(MASK_BEAMSTOP_FILE))
+    # add preprocessors
+    ws.RE.preprocessors.append(dpp0)
+    ws.RE.preprocessors.append(cpp0)
+    ws.RE.preprocessors.append(mpp0)
+    ws.RE.preprocessors.append(spp0)
+    # run
+    plan = bp.list_scan([ws.det], ws.eurotherm, [300., 400., 500.])
+    ws.RE(plan, sample_name="Test_Mask", composition_str="Ni")
     return ws.db
 
 
