@@ -31,8 +31,8 @@ def test_Pipelines(db_with_new_xpdacq: Broker, local_dir: Path):
     pipeline3 = SerializationPipeline(config)
     for name, doc in run.documents(fill=True):
         name, doc = pipeline1(name, doc)
-        name, doc = pipeline2(name, doc)
-        name, doc = pipeline3(name, doc)
+        pipeline2(name, doc)
+        pipeline3(name, doc)
     return
 
 
@@ -58,8 +58,8 @@ def test_use_mask(db_with_mask_in_run: Broker, local_dir: Path):
     pipeline3 = SerializationPipeline(config)
     for name, doc in run.documents(fill=True):
         name, doc = pipeline1(name, doc)
-        name, doc = pipeline2(name, doc)
-        name, doc = pipeline3(name, doc)
+        pipeline2(name, doc)
+        pipeline3(name, doc)
     return
 
 
@@ -74,6 +74,6 @@ def test_Calibration(db_with_new_calib: Broker, local_dir: Path):
     pipeline3 = SerializationPipeline(config)
     for name, doc in run.documents(fill=True):
         name, doc = pipeline1(name, doc)
-        name, doc = pipeline2(name, doc)
-        name, doc = pipeline3(name, doc)
+        pipeline2(name, doc)
+        pipeline3(name, doc)
     return
