@@ -3,11 +3,12 @@ import typing as T
 
 from bluesky.callbacks.zmq import Publisher
 from databroker.core import discover_handlers
-from event_model import DocumentNames, Filler
+from event_model import Filler
 from pdfstream.callbacks.analyzer import Analyzer
 from pdfstream.callbacks.config import Config
 from pdfstream.callbacks.darksubtraction import DarkSubtraction
 from pdfstream.callbacks.filenamerender import FileNameRender
+import pdfstream.io as io
 
 DocumentPair = T.Tuple[str, dict]
 HANDLERS = discover_handlers()
@@ -45,27 +46,15 @@ class AnalysisPipeline:
         self._config = config
         return
 
-    def _del_config(self, doc: dict) -> None:
-        self._config = None
-        return
-
     def _set_filler(self) -> None:
         config = self._config
         if config.fill:
             self._filler = Filler(HANDLERS)
         return
 
-    def _del_filler(self) -> None:
-        self._filler = None
-        return
-
     def _set_filename_render(self):
         config = self._config
         self._filename_render = FileNameRender(config)
-        return
-
-    def _del_filename_render(self):
-        self._filename_render = None
         return
 
     def _populate_dark_subtractions(self) -> None:
@@ -77,11 +66,6 @@ class AnalysisPipeline:
             )
         return
 
-    def _del_dark_subtractions(self) -> None:
-        while self._dark_subtractions:
-            self._dark_subtractions.pop()
-        return
-
     def _populate_analyzors(self) -> None:
         config = self._config
         self._analyzers = list()
@@ -89,11 +73,6 @@ class AnalysisPipeline:
             self._analyzers.append(
                 Analyzer(datakeys, config)
             )
-        return
-
-    def _del_analyzors(self) -> None:
-        while self._analyzers:
-            self._analyzers.pop()
         return
 
     def _populate_publishers(self) -> None:
@@ -104,13 +83,9 @@ class AnalysisPipeline:
         )
         return
 
-    def _del_publishers(self) -> None:
-        while self._publishers:
-            self._publishers.pop()
-        return
-
     def __call__(self, name: str, doc: dict) -> DocumentPair:
         doc = dict(doc)  # shallow copy so that we can mutate the doc
+        io.server_message("Received the {}.".format(name))
         if str(name) == "start":
             self._set_config(doc)
             self._set_filler()
@@ -127,11 +102,5 @@ class AnalysisPipeline:
             name, doc = analyzer(name, doc)
         for publisher in self._publishers:
             publisher(name, doc)
-        if str(name) == "stop":
-            self._del_publishers()
-            self._del_analyzors()
-            self._del_dark_subtractions()
-            self._del_filler()
-            self._del_filename_render()
-            self._del_config()
+        io.server_message("Sent out the {}.".format(name))
         return name, doc

@@ -29,6 +29,8 @@ class FileNameRender(CallbackBase):
         template = self._config.directory
         base = self._config.tiff_base
         d = template.format(**doc)
+        if not d:
+            d = "unnamed_sample"
         self._directory = str(base.joinpath(d))
         return
 

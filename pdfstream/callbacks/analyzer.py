@@ -445,7 +445,3 @@ class Analyzer(event_model.DocumentRouter):
             event = self.event(event_doc)
             events.append(event)
         return event_model.pack_event_page(*events)
-
-    def stop(self, doc):
-        io.server_message("Finish the analysis of '{}'.".format(doc["run_start"]))
-        return super().stop(doc)
