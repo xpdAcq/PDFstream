@@ -4,6 +4,7 @@ from pathlib import Path
 import numpy as np
 import event_model
 from tifffile import TiffWriter
+from pdfstream.io import server_message
 
 
 class TiffSerializer(event_model.DocumentRouter):
@@ -26,6 +27,7 @@ class TiffSerializer(event_model.DocumentRouter):
         filepath = self._get_filepath(doc["data"]["filename"], field)
         with TiffWriter(str(filepath)) as tf:
             tf.save(image)
+        server_message("Save '{}' in '{}'.".format(field, filepath.name))
         return
 
     def start(self, doc):
