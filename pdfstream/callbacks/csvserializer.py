@@ -44,6 +44,7 @@ class CSVSerializer(event_model.DocumentRouter):
             self._start_found = True
         # format self._file_prefix
         self._templated_file_prefix = doc["filename"]
+        self._directory.mkdir(exist_ok=True)
         return doc
     
     def descriptor(self, doc):
