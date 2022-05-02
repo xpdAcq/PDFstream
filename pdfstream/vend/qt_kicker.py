@@ -25,12 +25,20 @@ def install_qt_kicker(loop=None, update_rate=0.03):
         return
     if not any(p in sys.modules for p in ['PyQt4', 'pyside', 'PyQt5']):
         return
-    import matplotlib.backends.backend_qt5
+    
     from matplotlib.backends.backend_qt5 import _create_qApp
     from matplotlib._pylab_helpers import Gcf
-
+    
     _create_qApp()
-    qApp = matplotlib.backends.backend_qt5.qApp
+
+    try:
+        # old version
+        import matplotlib.backends.backend_qt5
+        qApp = matplotlib.backends.backend_qt5.qApp
+    except AttributeError:
+        # new version
+        from PyQt5 import QtWidgets
+        qApp = QtWidgets.QApplication.instance()
 
     try:
         _draw_all = Gcf.draw_all  # mpl version >= 1.5
