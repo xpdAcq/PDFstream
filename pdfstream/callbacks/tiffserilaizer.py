@@ -2,11 +2,11 @@ import typing as T
 from pathlib import Path
 
 import numpy as np
-from bluesky.callbacks.core import CallbackBase
+import event_model
 from tifffile import TiffWriter
 
 
-class TiffSerializer(CallbackBase):
+class TiffSerializer(event_model.DocumentRouter):
 
     def __init__(self, fields: T.List[str], directory: str, dtype: str = "uint32", stream_name: str = "primary") -> None:
         super().__init__()
@@ -39,6 +39,7 @@ class TiffSerializer(CallbackBase):
 
     def event(self, doc):
         if doc["descriptor"] == self._descriptor:
+            event_model.verify_filled(doc)
             for field in self._fields:
                 if field in doc["data"]:
                     self._export(doc, field)

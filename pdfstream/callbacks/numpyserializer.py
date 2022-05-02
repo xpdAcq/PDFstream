@@ -4,10 +4,9 @@ from pathlib import Path
 import event_model
 import numpy as np
 import pdfstream.io as io
-from bluesky.callbacks.core import CallbackBase
 
 
-class NumpySerializer(CallbackBase):
+class NumpySerializer(event_model.DocumentRouter):
 
     def __init__(self, fields: T.List[str], directory: str, stream_name: str = "primary") -> None:
         self._fields = fields

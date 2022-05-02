@@ -2,10 +2,10 @@ from pathlib import Path
 
 import pdfstream.io as io
 import yaml
-from bluesky.callbacks.core import CallbackBase
+import event_model
 
 
-class YamlSerializer(CallbackBase):
+class YamlSerializer(event_model.DocumentRouter):
     """Export the start document in yaml file."""
 
     def __init__(self, directory: str) -> None:
