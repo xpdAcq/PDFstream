@@ -1,17 +1,17 @@
 from pathlib import Path
 
-from bluesky.callbacks.core import CallbackBase
+import event_model
 from pdfstream.callbacks.config import Config
 from pdfstream.callbacks.csvserializer import CSVSerializer
 from pdfstream.callbacks.numpyserializer import NumpySerializer
 from pdfstream.callbacks.tiffserilaizer import TiffSerializer
 from pdfstream.callbacks.yamlserializer import YamlSerializer
+import pdfstream.io as io
 
 
-class SerializationPipeline(CallbackBase):
+class SerializationPipeline:
 
     def __init__(self, config: Config):
-        super().__init__()
         self._config = config
         self._tiff_serilizer = None
         self._csv_serializer = None
@@ -35,6 +35,7 @@ class SerializationPipeline(CallbackBase):
         return
 
     def __call__(self, name, doc):
+        io.server_message("Received the {}.".format(name))
         if str(name) == "start":
             self._create(doc)
         self._tiff_serilizer(name, doc)
