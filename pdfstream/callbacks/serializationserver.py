@@ -6,13 +6,9 @@ from pdfstream.callbacks.serializationpipeline import SerializationPipeline
 PipeLine = T.ClassVar[Config]
 
 
-class SerializationServer:
+class SerializationServer(RemoteDispatcher):
 
     def __init__(self, config: Config) -> None:
-        self._dispatcher = RemoteDispatcher(config.outbound_address, prefix=config.analyzed_data_prefix)
+        super().__init__(config.outbound_address, prefix=config.analyzed_data_prefix)
         pipeline = SerializationPipeline(config)
-        self._dispatcher.subscribe(pipeline)
-
-    def start(self) -> None:
-        self._dispatcher.start()
-        return
+        self.subscribe(pipeline)
