@@ -37,6 +37,7 @@ class AnalysisPipeline:
         self._dark_subtractions = list()
         self._analyzers = list()
         self._publishers = list()
+        io.server_message("Analysis server is ready.")
 
     def _set_config(self, doc: dict) -> None:
         config = copy.deepcopy(self._default_config)
@@ -85,7 +86,6 @@ class AnalysisPipeline:
 
     def __call__(self, name: str, doc: dict) -> DocumentPair:
         doc = dict(doc)  # shallow copy so that we can mutate the doc
-        io.server_message("Received the {}.".format(name))
         if str(name) == "start":
             self._set_config(doc)
             self._set_filler()
@@ -100,7 +100,4 @@ class AnalysisPipeline:
             name, doc = dark_subtraction(name, doc)
         for analyzer in self._analyzers:
             name, doc = analyzer(name, doc)
-        for publisher in self._publishers:
-            publisher(name, doc)
-        io.server_message("Sent out the {}.".format(name))
         return name, doc

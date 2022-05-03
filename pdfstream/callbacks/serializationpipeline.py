@@ -17,6 +17,7 @@ class SerializationPipeline:
         self._csv_serializer = None
         self._numpy_serializer = None
         self._yaml_serializer = None
+        io.server_message("Serialization server is ready.")
 
     def _create(self, doc: dict):
         directory = Path(doc["directory"])
@@ -35,7 +36,6 @@ class SerializationPipeline:
         return
 
     def __call__(self, name, doc):
-        io.server_message("Received the {}.".format(name))
         if str(name) == "start":
             self._create(doc)
         self._tiff_serilizer(name, doc)

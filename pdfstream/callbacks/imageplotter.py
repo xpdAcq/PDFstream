@@ -59,6 +59,8 @@ class ImagePlotter(CallbackBase):
         if self.image_field not in doc["data"]:
             io.server_message("No '{}' in data.".format(self.image_field))
             return doc
+        if doc["seq_num"] == 1:
+            self.figure.show()
         if self.mask_field in doc["data"]:
             data_arr = np.ma.masked_array(
                 doc["data"][self.image_field],
@@ -67,8 +69,6 @@ class ImagePlotter(CallbackBase):
         else:
             data_arr = np.array(doc["data"][self.image_field])
         self.update(data_arr)
-        if int(doc["seq_num"]) == 0:
-            self.figure.show()
         if self.save:
             if "filename" in doc["data"]:
                 self._filename = doc["data"]["filename"]

@@ -8,8 +8,6 @@ import fire
 
 from pdfstream.callbacks.config import Config
 from pdfstream.callbacks.ananlysisserver import AnalysisServer
-from pdfstream.callbacks.serializationserver import SerializationServer
-from pdfstream.callbacks.visualizationserver import VisualizationServer
 
 try:
     import diffpy.pdfgetx
@@ -51,17 +49,6 @@ def create_logger(log_file: T.Union[str, Path]) -> None:
     return logger
 
 
-def _start_server(server: T.Any, cfg_file: str) -> None:
-    config = Config()
-    config.read_a_file(cfg_file)
-    server = server(config)
-    try:
-        server.start()
-    except KeyboardInterrupt:
-        server.stop()
-    return
-
-
 def _run_server(cfg_file: str) -> None:
     """Start a server.
 
@@ -71,28 +58,10 @@ def _run_server(cfg_file: str) -> None:
     cfg_path = Path(cfg_file)
     if not cfg_path.is_file():
         cfg_file = find_cfg_file(CONFIG_DIR, cfg_file)
-    servers = (AnalysisServer, SerializationServer, VisualizationServer)
-    processes: T.List[Process] = []
-    for server in servers:
-        p = Process(
-            target=_start_server, 
-            args=(server, cfg_file), 
-            name="pdfstream_server"
-        )
-        processes.append(p)
-    for p in processes:
-        p.start()
-    try:
-        while True:
-            time.sleep(0.5)
-    except KeyboardInterrupt:
-        pass
-    finally:
-        for p in processes:
-            if p.is_alive:
-                p.kill()
-            p.join()
-            p.close()
+    config = Config()
+    config.read_a_file(cfg_file)
+    server = AnalysisServer(config)
+    server.start()
     return
 
 

@@ -8,6 +8,7 @@ from pdfstream.callbacks.imageplotter import ImagePlotter
 from pdfstream.callbacks.scatterplotter import ScatterPlotter
 from pdfstream.callbacks.waterfallplotter import WaterfallPlotter
 from pdfstream.units import LABELS
+import pdfstream.io as io
 
 
 class VisualizationPipeline(CallbackBase):
@@ -24,6 +25,7 @@ class VisualizationPipeline(CallbackBase):
         self._populate_image_plotters()
         self._populate_waterfall_plotters()
         self._populate_scatter_plotters()
+        io.server_message("Visualization server is ready.")
 
     def _populate_image_plotters(self) -> None:
         exports = self._config.visualizers

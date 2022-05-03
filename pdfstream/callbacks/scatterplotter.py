@@ -81,15 +81,12 @@ class ScatterPlotter(CallbackBase):
         return
 
     def event(self, doc):
-        if int(doc["seq_num"]) == 0:
+        if int(doc["seq_num"]) == 1:
             self._ax.clear()
-            self.figure.show()
         self._callback.event(doc)
         if self._ylabel:
             self._ax.set_ylabel(self._ylabel)
             self._fig.canvas.draw_idle()
-        if doc["seq_num"] == 0:
-            self.figure.show()
         return
 
     def stop(self, doc):

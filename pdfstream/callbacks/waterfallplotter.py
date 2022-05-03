@@ -88,7 +88,7 @@ class WaterfallPlotter(CallbackBase):
         if self.y_field not in doc["data"]:
             io.server_message("No '{}' in the data.".format(self.y_field))
             return doc
-        if int(doc['seq_num']) == 0:
+        if int(doc['seq_num']) == 1:
             # clear the old data at the first new event
             self._waterfall.clear()
             self.figure.show()
