@@ -105,7 +105,7 @@ class DarkSubtraction(event_model.DocumentRouter):
         if self.field not in doc["data"]:
             return doc
         if doc['descriptor'] == self.dark_descriptor:
-            self.dark_frame, = doc['data'][self.field]
+            self.dark_frame = doc['data'][self.field][0]
             self.dark_frame -= self.pedestal
             numpy.clip(self.dark_frame, a_min=0, a_max=None, out=self.dark_frame)
         elif doc['descriptor'] == self.light_descriptor:
