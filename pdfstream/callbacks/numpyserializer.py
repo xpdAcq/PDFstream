@@ -5,13 +5,14 @@ import event_model
 import numpy as np
 import pdfstream.io as io
 
+from .serializerbase import SerializerBase
 
-class NumpySerializer(event_model.DocumentRouter):
+class NumpySerializer(SerializerBase):
 
-    def __init__(self, fields: T.List[str], directory: str, stream_name: str = "primary") -> None:
+    def __init__(self, fields: T.List[str], stream_name: str = "primary", folder: str = "mask") -> None:
+        super().__init__(folder)
         self._fields = fields
         self._stream_name = stream_name
-        self._directory = Path(directory)
         self._descriptor = ""
 
     def _get_filepath(self, filename: str, field: str) -> Path:
@@ -28,10 +29,6 @@ class NumpySerializer(event_model.DocumentRouter):
         else:
             io.server_message("Missing '{}' in data.".format(field))
         return
-
-    def start(self, doc):
-        self._directory.mkdir(exist_ok=True, parents=True)
-        return doc
 
     def descriptor(self, doc):
         if doc["name"] == self._stream_name:

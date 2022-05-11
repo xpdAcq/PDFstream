@@ -3,25 +3,22 @@ import event_model
 import numpy as np
 import pandas as pd
 
+from .serializerbase import SerializerBase
 
-class CSVSerializer(event_model.DocumentRouter):
+
+class CSVSerializer(SerializerBase):
     
-    def __init__(self, directory: str, file_prefix: str = '{start[uid]}-', flush: bool = False,
-                 **kwargs):
-        self._directory = Path(directory)
+    def __init__(self, folder: str = "scalar_data", **kwargs):
+        super().__init__(folder)
         self._streamnames = {}  # maps descriptor uids to stream_names
         self._files = {}  # maps stream_name to file
-        self._file_prefix = file_prefix
         self._templated_file_prefix = ''
         self._start_found = False
-
         self._has_header = set()  # a set of uids to tell a file has a header
-
         kwargs.setdefault('header', True)
-        self._initial_header_kwarg = kwargs['header']  # to set the headers
         kwargs.setdefault('index_label', 'time')
         kwargs.setdefault('mode', 'a')
-        self._flush = flush
+        self._initial_header_kwarg = kwargs['header']  # to set the headers
         self._kwargs = kwargs
 
     def start(self, doc):
@@ -36,6 +33,7 @@ class CSVSerializer(event_model.DocumentRouter):
             RunStart document
         '''
         # raise an error if this is the second `start` document seen.
+        super().start()
         if self._start_found:
             raise RuntimeError(
                 "The serializer in suitcase.csv expects documents from one "
@@ -44,7 +42,6 @@ class CSVSerializer(event_model.DocumentRouter):
             self._start_found = True
         # format self._file_prefix
         self._templated_file_prefix = doc["filename"]
-        self._directory.mkdir(exist_ok=True)
         return doc
     
     def descriptor(self, doc):
@@ -114,8 +111,6 @@ class CSVSerializer(event_model.DocumentRouter):
             filepath = self._files[streamname]
             with filepath.open("w+") as file:
                 event_data.to_csv(file, **self._kwargs)
-                if self._flush:
-                    file.flush()
             self._has_header.add(streamname)
         return doc
 

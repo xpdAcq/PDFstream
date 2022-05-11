@@ -6,15 +6,15 @@ import event_model
 from tifffile import TiffWriter
 from pdfstream.io import server_message
 
+from .serializerbase import SerializerBase
 
-class TiffSerializer(event_model.DocumentRouter):
+class TiffSerializer(SerializerBase):
 
-    def __init__(self, fields: T.List[str], directory: str, dtype: str = "uint32", stream_name: str = "primary") -> None:
-        super().__init__()
+    def __init__(self, fields: T.List[str], dtype: str, stream_name: str = "primary", folder: str = "dark_sub") -> None:
+        super().__init__(folder)
         self._fields = fields
         self._dtype = dtype
         self._stream_name = stream_name
-        self._directory = Path(directory)
         self._descriptor = ""
 
     def _get_filepath(self, filename: str, field: str) -> Path:
@@ -29,10 +29,6 @@ class TiffSerializer(event_model.DocumentRouter):
             tf.save(image)
         server_message("Save '{}' in '{}'.".format(field, filepath.name))
         return
-
-    def start(self, doc):
-        self._directory.mkdir(exist_ok=True, parents=True)
-        return doc
 
     def descriptor(self, doc):
         if doc["name"] == self._stream_name:
