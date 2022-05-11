@@ -1,20 +1,21 @@
+import copy
+import subprocess
 import typing as T
 from functools import lru_cache
-import subprocess
+from pathlib import Path
+from tempfile import TemporaryDirectory
 
 import event_model
 import numpy as np
 import pdfstream.io as io
-from pathlib import Path
 from frozendict import frozendict
 from pdfstream import __version__
 from pdfstream.callbacks.config import Config
 from pdfstream.callbacks.datakeys import DataKeys
 from pdfstream.vend.masking import generate_binner, mask_img_pyfai
 from pyFAI.azimuthalIntegrator import AzimuthalIntegrator
-from tifffile import TiffWriter
-from tempfile import TemporaryDirectory
 from pyFAI.io.ponifile import PoniFile
+from tifffile import TiffWriter
 
 try:
     from diffpy.pdfgetx import PDFConfig, PDFGetter
@@ -130,10 +131,15 @@ class Analyzer(event_model.DocumentRouter):
         The configuration for the data analysis, including the parameters passed to the pyFAI and diffpy.pdfgetx.
     """
 
-    def __init__(self, datakeys: DataKeys, config: Config):
+    def __init__(self, datakeys: DataKeys, default_config: Config):
         super().__init__()
         self._datakeys: DataKeys = datakeys
-        self._config: Config = config
+        self._default_config = default_config
+        self._config: Config = default_config
+        self._set_pdfgetter()
+        self.clear_cache()
+
+    def clear_cache(self):
         self._directory = None
         self._poni_dir = None
         self._integration_dir = None
@@ -146,8 +152,7 @@ class Analyzer(event_model.DocumentRouter):
         self._calib_descriptor: str = ""
         self._primary_descriptor: str = ""
         self._mask_descriptor: str = ""
-        self._pdfgetter: T.Optional[PDFGetter] = None
-        self._set_pdfgetter()
+        return
 
     def _mk_dirs(self, doc: dict):
         if "directory" in doc:
@@ -175,6 +180,14 @@ class Analyzer(event_model.DocumentRouter):
             io.server_message("Create PDFGetter.")
         else:
             io.server_message("No diffpy.pdfgetx package.")
+        return
+
+    def _set_config(self, doc: dict) -> None:
+        config = copy.deepcopy(self._default_config)
+        config.read_user_config(doc)
+        config.read_composition(doc)
+        config.read_calibration(doc)
+        self._config = config
         return
 
     def _add_datakeys(self, doc: dict) -> None:
@@ -412,6 +425,8 @@ class Analyzer(event_model.DocumentRouter):
         return
 
     def start(self, doc):
+        self.clear_cache()
+        self._set_config(doc)
         self._mk_dirs(doc)
         return doc
 

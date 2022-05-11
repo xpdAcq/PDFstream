@@ -11,6 +11,9 @@ class FileNameRender(CallbackBase):
         super().__init__()
         self._config = config
         self._stream_name = stream_name
+        self.clear_cahce()
+
+    def clear_cahce(self):
         self._uid = ""
         self._hints = list()
         self._units = list()
@@ -18,6 +21,7 @@ class FileNameRender(CallbackBase):
         self._file_prefix = ""
         self._file_name = ""
         self._descriptor = ""
+        return
 
     def _set_file_prefix(self, doc: dict) -> None:
         template = self._config.file_prefix
@@ -118,6 +122,7 @@ class FileNameRender(CallbackBase):
         return
 
     def start(self, doc):
+        self.clear_cahce()
         self._set_uid(doc)
         self._set_file_prefix(doc)
         self._set_directory(doc)

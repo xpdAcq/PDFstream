@@ -30,22 +30,17 @@ class AnalysisPipeline:
     """
 
     def __init__(self, config: Config) -> None:
-        self._default_config = config
-        self._config = None
+        self._config = config
         self._filler = None
         self._filename_render = None
         self._dark_subtractions = list()
         self._analyzers = list()
         self._publishers = list()
+        self._set_filename_render()
+        self._populate_publishers()
+        self._populate_dark_subtractions()
+        self._populate_analyzors()
         io.server_message("Analysis server is ready.")
-
-    def _set_config(self, doc: dict) -> None:
-        config = copy.deepcopy(self._default_config)
-        config.read_user_config(doc)
-        config.read_composition(doc)
-        config.read_calibration(doc)
-        self._config = config
-        return
 
     def _set_filler(self) -> None:
         config = self._config
@@ -60,7 +55,6 @@ class AnalysisPipeline:
 
     def _populate_dark_subtractions(self) -> None:
         config = self._config
-        self._dark_subtractions = list()
         for field in config.image_fields:
             self._dark_subtractions.append(
                 DarkSubtraction(field)
@@ -69,7 +63,6 @@ class AnalysisPipeline:
 
     def _populate_analyzors(self) -> None:
         config = self._config
-        self._analyzers = list()
         for datakeys in config.datakeys_list:
             self._analyzers.append(
                 Analyzer(datakeys, config)
@@ -78,7 +71,6 @@ class AnalysisPipeline:
 
     def _populate_publishers(self) -> None:
         config = self._config
-        self._publishers = list()
         self._publishers.append(
             Publisher(config.inbound_address, prefix=config.analyzed_data_prefix)
         )
@@ -87,12 +79,7 @@ class AnalysisPipeline:
     def __call__(self, name: str, doc: dict) -> DocumentPair:
         doc = dict(doc)  # shallow copy so that we can mutate the doc
         if str(name) == "start":
-            self._set_config(doc)
             self._set_filler()
-            self._set_filename_render()
-            self._populate_dark_subtractions()
-            self._populate_analyzors()
-            self._populate_publishers()
         if self._filler is not None:
             name, doc = self._filler(name, doc)
         name, doc = self._filename_render(name, doc)
@@ -100,4 +87,6 @@ class AnalysisPipeline:
             name, doc = dark_subtraction(name, doc)
         for analyzer in self._analyzers:
             name, doc = analyzer(name, doc)
+        for publisher in self._publishers:
+            publisher(name, doc)
         return name, doc
