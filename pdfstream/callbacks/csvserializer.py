@@ -33,7 +33,7 @@ class CSVSerializer(SerializerBase):
             RunStart document
         '''
         # raise an error if this is the second `start` document seen.
-        super().start()
+        super().start(doc)
         if self._start_found:
             raise RuntimeError(
                 "The serializer in suitcase.csv expects documents from one "

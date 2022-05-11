@@ -17,7 +17,7 @@ class YamlSerializer(SerializerBase):
         return self._directory.joinpath(doc["filename"]).with_suffix(".yml")
 
     def start(self, doc):
-        super().start()
+        super().start(doc)
         file_path = self._get_filepath(doc)
         with file_path.open("w") as f:
             yaml.safe_dump(doc, f)
