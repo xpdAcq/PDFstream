@@ -63,12 +63,17 @@ class DarkSubtraction(event_model.DocumentRouter):
         self.field = field
         self.light_stream_name = light_stream_name
         self.dark_stream_name = dark_stream_name
+        self.pedestal = pedestal
+        self.clear_cache()
+
+    def clear_cache(self):
         self.light_descriptor = None
         self.dark_descriptor = None
         self.dark_frame = None
-        self.pedestal = pedestal
+        return
 
     def start(self, doc):
+        self.clear_cache()
         return doc
 
     def descriptor(self, doc):
