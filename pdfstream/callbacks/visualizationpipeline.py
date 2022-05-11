@@ -1,7 +1,5 @@
 import typing as T
 
-import event_model
-from bluesky.callbacks import CallbackBase
 from pdfstream.callbacks.config import Config
 from pdfstream.callbacks.datakeys import DataKeys
 from pdfstream.callbacks.imageplotter import ImagePlotter
@@ -11,7 +9,7 @@ from pdfstream.units import LABELS
 import pdfstream.io as io
 
 
-class VisualizationPipeline(CallbackBase):
+class VisualizationPipeline:
     """The pipeline for the visualization of image, XRD and PDF data."""
 
     def __init__(self, config: Config, stream_name: str = "primary") -> None:
@@ -72,46 +70,11 @@ class VisualizationPipeline(CallbackBase):
                     self._scatter_plotters.append(plotter)
         return
 
-    def start(self, doc):
+    def __call__(self, name, doc) -> T.Any:
         for plotter in self._image_plotters:
-            plotter.start(doc)
+            plotter(name, doc)
         for plotter in self._waterfall_plotters:
-            plotter.start(doc)
+            plotter(name, doc)
         for plotter in self._scatter_plotters:
-            plotter.start(doc)
-        return doc
-
-    def descriptor(self, doc):
-        if doc["name"] == self._stream_name:
-            self._descriptor: str = doc["uid"]
-            for plotter in self._image_plotters:
-                plotter.descriptor(doc)
-            for plotter in self._waterfall_plotters:
-                plotter.descriptor(doc)
-            for plotter in self._scatter_plotters:
-                plotter.descriptor(doc)
-        return doc
-    
-    def event(self, doc):
-        if doc["descriptor"] == self._descriptor:
-            for plotter in self._image_plotters:
-                plotter.event(doc)
-            for plotter in self._waterfall_plotters:
-                plotter.event(doc)
-            for plotter in self._scatter_plotters:
-                plotter.event(doc)
-        return doc
-
-    def event_page(self, doc):
-        for event in event_model.unpack_event_page(doc):
-            self.event(event)
-        return doc
-
-    def stop(self, doc):
-        for plotter in self._image_plotters:
-            plotter.stop(doc)
-        for plotter in self._waterfall_plotters:
-            plotter.stop(doc)
-        for plotter in self._scatter_plotters:
-            plotter.stop(doc)
-        return doc
+            plotter(name, doc)
+        return
