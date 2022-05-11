@@ -17,7 +17,7 @@ class SerializerBase(DocumentRouter):
     def mkdir(self, doc) -> None:
         if "directory" not in doc:
             raise SerializerBaseError("Missing key 'directory' in the doc.")
-        self._directory = Path(self._folder).joinpath(doc["directory"])
+        self._directory = Path(doc["directory"]).joinpath(self._folder)
         self._directory.mkdir(exist_ok=True, parents=True)
         return
 
