@@ -16,6 +16,18 @@ class VisualizationServer(RemoteDispatcher):
         self.subscribe(pipeline)
         install_qt_kicker(self.loop)
 
-    def start(self):
-        server_message("Start {}".format(self.__class__.__name__))
-        return super().start()
+    def start(self) -> None:
+        server_message("Start {}.".format(self.__class__.__name__))
+        try:
+            super().start()
+        except KeyboardInterrupt:
+            pass
+        return
+
+
+def start(cfg_file: str) -> None:
+    config = Config()
+    config.read_a_file(cfg_file)
+    server = VisualizationServer(config)
+    server.start()
+    return

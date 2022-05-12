@@ -12,14 +12,18 @@ class SerializationServer(RemoteDispatcher):
     def __init__(self, config: Config) -> None:
         super().__init__(config.outbound_address, prefix=config.analyzed_data_prefix)
         pipeline = SerializationPipeline(config)
-        self.subscribe(lambda name, doc: server_message("Secondary server received {}.".format(name)))
+        self.subscribe(pipeline)
 
-    def start(self):
-        server_message("Start {}".format(self.__class__.__name__))
-        return super().start()
+    def start(self) -> None:
+        server_message("Start {}.".format(self.__class__.__name__))
+        try:
+            super().start()
+        except KeyboardInterrupt:
+            pass
+        return
 
 
-def start(cfg_file: str):
+def start(cfg_file: str) -> None:
     config = Config()
     config.read_a_file(cfg_file)
     server = SerializationServer(config)
