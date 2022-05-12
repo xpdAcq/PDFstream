@@ -1,3 +1,4 @@
+from multiprocessing import Process
 import typing as T
 from bluesky.callbacks.zmq import RemoteDispatcher
 from pdfstream.callbacks.config import Config
@@ -31,3 +32,7 @@ def start(cfg_file: str) -> None:
     server = VisualizationServer(config)
     server.start()
     return
+
+
+def get_process(cfg_file: str) -> Process:
+    return Process(target=start, args=(cfg_file))
