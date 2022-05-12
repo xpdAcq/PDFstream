@@ -40,7 +40,7 @@ class PlotterBase(DocumentRouter):
     def save_figure(self) -> None:
         f = self._filename + "_" + self._name + self._suffix
         fpath = self._directory.joinpath(f)
-        self.figure.savefig(fpath)
+        self._figure.savefig(fpath)
         return
 
     def plot_event(self, doc) -> T.Any:
