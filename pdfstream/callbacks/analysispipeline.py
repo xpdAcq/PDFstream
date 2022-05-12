@@ -40,7 +40,6 @@ class AnalysisPipeline:
         self._populate_publishers()
         self._populate_dark_subtractions()
         self._populate_analyzors()
-        io.server_message("Analysis server is ready.")
 
     def _set_filler(self) -> None:
         config = self._config

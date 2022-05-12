@@ -23,7 +23,6 @@ class VisualizationPipeline:
         self._populate_image_plotters()
         self._populate_waterfall_plotters()
         self._populate_scatter_plotters()
-        io.server_message("Visualization server is ready.")
 
     def _populate_image_plotters(self) -> None:
         exports = self._config.visualizers
