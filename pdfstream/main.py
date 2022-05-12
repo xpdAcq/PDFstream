@@ -1,14 +1,14 @@
 import typing as T
+import time
 from pathlib import Path
 import multiprocessing, logging
 from multiprocessing import Process
-import time
 
 import fire
 
-from pdfstream.callbacks.config import Config
-from pdfstream.callbacks.ananlysisserver import AnalysisServer
-
+import pdfstream.callbacks.ananlysisserver as analysis
+import pdfstream.callbacks.serializationserver as serialization
+import pdfstream.callbacks.visualizationserver as visualization
 try:
     import diffpy.pdfgetx
     PDFGETX_AVAILABLE = True
@@ -36,17 +36,18 @@ def main():
     return
 
 
-def create_logger(log_file: T.Union[str, Path]) -> None:
-    logger = multiprocessing.get_logger()
-    logger.setLevel(logging.INFO)
-    # this bit will make sure you won't have 
-    # duplicated messages in the output
-    if not len(logger.handlers): 
-        formatter = logging.Formatter('[%(asctime)s | %(levelname)s | %(processName)s] %(message)s')
-        handler = logging.FileHandler(log_file)
-        handler.setFormatter(formatter)
-        logger.addHandler(handler)
-    return logger
+def _run_processes(ps: T.List[Process], rate: float = 0.5) -> None:
+    for p in ps:
+        p.start()
+    try:
+        while True:
+            time.sleep(rate)
+    except KeyboardInterrupt:
+        for p in ps:
+            p.kill()
+        for p in ps:
+            p.join()
+    return
 
 
 def _run_server(cfg_file: str) -> None:
@@ -58,10 +59,12 @@ def _run_server(cfg_file: str) -> None:
     cfg_path = Path(cfg_file)
     if not cfg_path.is_file():
         cfg_file = find_cfg_file(CONFIG_DIR, cfg_file)
-    config = Config()
-    config.read_a_file(cfg_file)
-    server = AnalysisServer(config)
-    server.start()
+    ps = [
+        analysis.get_process(),
+        serialization.get_process(),
+        visualization.get_process()
+    ]
+    _run_processes(ps)
     return
 
 
