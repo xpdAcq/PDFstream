@@ -9,16 +9,19 @@ class CSVSerializer(SerializerBase):
 
     def __init__(self, folder: str = "scalar_data", **kwargs):
         super().__init__(folder)
-        self._streamnames = {}  # maps descriptor uids to stream_names
-        self._files = {}  # maps stream_name to file
-        self._templated_file_prefix = ''
-        self._start_found = False
-        self._has_header = set()  # a set of uids to tell a file has a header
         kwargs.setdefault('header', True)
         kwargs.setdefault('index_label', 'time')
         kwargs.setdefault('mode', 'a')
         self._initial_header_kwarg = kwargs['header']  # to set the headers
         self._kwargs = kwargs
+        self.clear_cache()
+
+    def clear_cache(self) -> None:
+        self._streamnames = {}  # maps descriptor uids to stream_names
+        self._files = {}  # maps stream_name to file
+        self._templated_file_prefix = ''
+        self._has_header = set()  # a set of uids to tell a file has a header
+        return
 
     def start(self, doc):
         '''Extracts `start` document information for formatting file_prefix.
@@ -31,14 +34,9 @@ class CSVSerializer(SerializerBase):
         doc : dict
             RunStart document
         '''
+        self.clear_cache()
         # raise an error if this is the second `start` document seen.
         super().start(doc)
-        if self._start_found:
-            raise RuntimeError(
-                "The serializer in suitcase.csv expects documents from one "
-                "run only. Two `start` documents where sent to it")
-        else:
-            self._start_found = True
         # format self._file_prefix
         self._templated_file_prefix = doc["filename"]
         return doc
