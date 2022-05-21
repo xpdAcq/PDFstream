@@ -32,7 +32,6 @@ class ScatterPlotter(PlotterBase):
         return hints
 
     def start(self, doc):
-        super().start(doc)
         self._ax.cla()
         indeps = self._get_hints(doc)
         if len(indeps) == 1:
@@ -42,20 +41,22 @@ class ScatterPlotter(PlotterBase):
         else:
             self._callback = LivePlot(self.y_field, x="time", ax=self._ax, **self._kwargs)
         self._callback.start(doc)
-        return
+        return super().start(doc)
 
     def descriptor(self, doc):
-        self._callback.descriptor(doc)
-        return
+        if doc["name"] == self._stream_name:
+            self._callback.descriptor(doc)
+        return super().descriptor(doc)
 
     def plot_event(self, doc):
-        if int(doc["seq_num"]) == 1:
-            self._ax.clear()
+        if self.y_field not in doc["data"]:
+            return
         self._callback.event(doc)
         if self._ylabel:
             self._ax.set_ylabel(self._ylabel)
+        self._updated = True
         return
 
     def stop(self, doc):
         self._callback.stop(doc)
-        return
+        return super().stop(doc)

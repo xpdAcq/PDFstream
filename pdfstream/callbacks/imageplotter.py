@@ -35,13 +35,10 @@ class ImagePlotter(PlotterBase):
     def plot_event(self, doc):
         if self.image_field not in doc["data"]:
             io.server_message("No '{}' in data.".format(self.image_field))
-            return doc
-        if self.mask_field in doc["data"]:
-            data_arr = np.ma.masked_array(
-                doc["data"][self.image_field],
-                doc["data"][self.mask_field]
-            )
-        else:
-            data_arr = np.array(doc["data"][self.image_field])
+            return
+        mask = doc["data"][self.mask_field] if self.mask_field in doc["data"] else None
+        image = doc["data"][self.image_field]
+        data_arr = np.ma.masked_array(image, mask)
         self.update(data_arr)
-        return doc
+        self._updated = True
+        return

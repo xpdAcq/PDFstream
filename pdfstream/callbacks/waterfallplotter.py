@@ -49,10 +49,10 @@ class WaterfallPlotter(PlotterBase):
     def plot_event(self, doc):
         if self.x_field not in doc["data"]:
             io.server_message("No '{}' in the data.".format(self.x_field))
-            return doc
+            return
         if self.y_field not in doc["data"]:
             io.server_message("No '{}' in the data.".format(self.y_field))
-            return doc
+            return
         if int(doc['seq_num']) == 1:
             # clear the old data at the first new event
             self._waterfall.clear()
@@ -60,4 +60,5 @@ class WaterfallPlotter(PlotterBase):
         y_data = doc["data"][self.y_field]
         key = doc['seq_num']
         self.update(key, (x_data, y_data))
+        self._updated = True
         return

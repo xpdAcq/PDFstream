@@ -23,6 +23,7 @@ class PlotterBase(DocumentRouter):
         self._filename = None
         self._directory = None
         self._descriptor = ""
+        self._updated = False
 
     def mkdir(self, doc) -> None:
         if "directory" not in doc:
@@ -47,6 +48,7 @@ class PlotterBase(DocumentRouter):
         return NotImplemented
 
     def start(self, doc):
+        self._updated = False
         if self._save_at_stop or self._save_at_event:
             self.mkdir(doc)
         if self._save_at_stop:
@@ -64,12 +66,12 @@ class PlotterBase(DocumentRouter):
             self._figure.canvas.draw_idle()
             if int(doc['seq_num']) == 1:
                 self._figure.show()
-            if self._save_at_event:
+            if self._save_at_event and self._updated:
                 self.set_filename(doc["data"])
                 self.save_figure()
         return doc
 
     def stop(self, doc):
-        if self._save_at_stop:
+        if self._save_at_stop and self._updated:
             self.save_figure()
         return doc
