@@ -13,6 +13,7 @@ from pdfstream.callbacks.config import Config
 from pdfstream.callbacks.datakeys import DataKeys
 from pdfstream.vend.masking import generate_binner, mask_img_pyfai
 from pyFAI.azimuthalIntegrator import AzimuthalIntegrator
+from pyFAI.io import DefaultAiWriter
 from pyFAI.io.ponifile import PoniFile
 from tifffile import TiffWriter
 
@@ -387,10 +388,12 @@ class Analyzer(event_model.DocumentRouter):
             ai.save(poni_file)
         if "chi_2theta" in exports and self._integration_dir:
             chi_tth_file = self._integration_dir.joinpath(data["filename"] + "_mean_tth").with_suffix(".chi")
-            ai.save1D(str(chi_tth_file), data[dks.chi_2theta], data[dks.chi_I], dim1_unit="2th_deg")
+            writer = DefaultAiWriter(str(chi_tth_file), ai)
+            writer.save1D(str(chi_tth_file), data[dks.chi_2theta], data[dks.chi_I], dim1_unit="2th_deg")
         if "chi" in exports and self._integration_dir:
             chi_q_file = self._integration_dir.joinpath(data["filename"] + "_mean_q").with_suffix(".chi")
-            ai.save1D(str(chi_q_file), data[dks.chi_Q], data[dks.chi_I], dim1_unit="q_A^-1")
+            writer = DefaultAiWriter(str(chi_q_file), ai)
+            writer.save1D(str(chi_q_file), data[dks.chi_Q], data[dks.chi_I], dim1_unit="q_A^-1")
         return
 
     def _save_pdfgetx_data(self, data: dict) -> None:
