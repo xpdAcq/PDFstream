@@ -64,10 +64,12 @@ class PlotterBase(DocumentRouter):
     def event(self, doc):
         if doc["descriptor"] == self._descriptor:
             self.plot_event(doc)
+            if not self._updated:  # nothing is drawn
+                return doc
             self._figure.canvas.draw_idle()
             if int(doc['seq_num']) == 1:
                 self._figure.show()
-            if self._save_at_event and self._updated:
+            if self._save_at_event:
                 self.set_filename(doc["data"])
                 self.save_figure()
         return doc
