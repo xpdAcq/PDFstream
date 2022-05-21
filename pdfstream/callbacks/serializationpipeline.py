@@ -29,4 +29,3 @@ class SerializationPipeline:
         self._tiff_serilizer(name, doc)
         self._numpy_serializer(name, doc)
         return name, doc
-    

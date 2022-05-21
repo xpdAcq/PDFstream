@@ -9,7 +9,6 @@ import event_model
 import numpy as np
 import pdfstream.io as io
 from frozendict import frozendict
-from pdfstream import __version__
 from pdfstream.callbacks.config import Config
 from pdfstream.callbacks.datakeys import DataKeys
 from pdfstream.vend.masking import generate_binner, mask_img_pyfai
@@ -126,7 +125,7 @@ class Analyzer(event_model.DocumentRouter):
     ----------
     data_keys : DataKeys
         The key names of the new data, including the object name of the detector.
-    config : Config 
+    config : Config
         The configuration for the data analysis, including the parameters passed to the pyFAI and diffpy.pdfgetx.
     """
 
@@ -235,7 +234,7 @@ class Analyzer(event_model.DocumentRouter):
         else:
             raise AnalyzerError(
                 "'{}' has ndim = {}. Require 2 or 3.".format(
-                    image.ndim
+                    keys.image, image.ndim
                 )
             )
         return
