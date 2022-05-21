@@ -1,14 +1,14 @@
-import typing as T
 import time
-from pathlib import Path
-import multiprocessing, logging
+import typing as T
 from multiprocessing import Process
+from pathlib import Path
 
 import fire
 
 import pdfstream.callbacks.ananlysisserver as analysis
 import pdfstream.callbacks.serializationserver as serialization
 import pdfstream.callbacks.visualizationserver as visualization
+
 try:
     import diffpy.pdfgetx
     PDFGETX_AVAILABLE = True
