@@ -109,8 +109,7 @@ class CSVSerializer(SerializerBase):
                 self._kwargs['header'] = streamname not in self._has_header
 
             filepath = self._files[streamname]
-            with filepath.open("w+") as file:
-                event_data.to_csv(file, **self._kwargs)
+            event_data.to_csv(filepath, **self._kwargs)
             self._has_header.add(streamname)
         return doc
 
