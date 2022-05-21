@@ -34,4 +34,4 @@ def start(cfg_file: str) -> None:
 
 
 def get_process(cfg_file: str) -> Process:
-    return Process(target=start, args=(cfg_file))
+    return Process(target=start, args=(cfg_file,))

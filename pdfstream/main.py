@@ -60,9 +60,9 @@ def _run_server(cfg_file: str) -> None:
     if not cfg_path.is_file():
         cfg_file = find_cfg_file(CONFIG_DIR, cfg_file)
     ps = [
-        analysis.get_process(),
-        serialization.get_process(),
-        visualization.get_process()
+        analysis.get_process(str(cfg_file)),
+        serialization.get_process(str(cfg_file)),
+        visualization.get_process(str(cfg_file))
     ]
     _run_processes(ps)
     return
