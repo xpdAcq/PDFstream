@@ -83,6 +83,10 @@ class Config(ConfigParser):
         return set(self.getlist(section, option))
 
     @cached_property
+    def sample_name(self) -> str:
+        return self.get("METADATA", "sample_name")
+
+    @cached_property
     def user_config(self) -> str:
         return self.get("METADATA", "user_config")
 

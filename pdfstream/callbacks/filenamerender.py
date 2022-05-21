@@ -23,6 +23,12 @@ class FileNameRender(CallbackBase):
         self._descriptor = ""
         return
 
+    def _check_sample_name(self, doc: dict) -> None:
+        key = self._config.sample_name
+        if key not in doc:
+            doc[key] = "unnamed_sample"
+        return
+
     def _set_file_prefix(self, doc: dict) -> None:
         template = self._config.file_prefix
         self._file_prefix = template.format(**doc)
@@ -33,8 +39,6 @@ class FileNameRender(CallbackBase):
         template = self._config.directory
         base = self._config.tiff_base
         d = template.format(**doc)
-        if not d:
-            d = "unnamed_sample"
         self._directory = str(base.joinpath(d))
         return
 
@@ -123,6 +127,7 @@ class FileNameRender(CallbackBase):
 
     def start(self, doc):
         self.clear_cahce()
+        self._check_sample_name(doc)
         self._set_uid(doc)
         self._set_file_prefix(doc)
         self._set_directory(doc)
