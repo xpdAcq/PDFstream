@@ -1,6 +1,7 @@
+import time
+
 import event_model
 import numpy
-import time
 
 
 class DarkSubtractionError(Exception):
@@ -55,6 +56,7 @@ class DarkSubtraction(event_model.DocumentRouter):
 
          Defaults to 0.
     """
+
     def __init__(self,
                  field,
                  light_stream_name='primary',

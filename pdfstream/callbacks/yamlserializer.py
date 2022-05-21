@@ -2,7 +2,6 @@ from pathlib import Path
 
 import pdfstream.io as io
 import yaml
-import event_model
 
 from .serializerbase import SerializerBase
 

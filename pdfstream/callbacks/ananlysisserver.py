@@ -1,12 +1,13 @@
-from multiprocessing import Process
 import typing as T
+from multiprocessing import Process
+
 from bluesky.callbacks.zmq import RemoteDispatcher
-from pdfstream.callbacks.config import Config
 from pdfstream.callbacks.analysispipeline import AnalysisPipeline
+from pdfstream.callbacks.config import Config
 from pdfstream.io import server_message
 
-
 PipeLine = T.ClassVar[Config]
+
 
 class AnalysisServer(RemoteDispatcher):
 

@@ -1,12 +1,9 @@
 import typing as T
-from pathlib import Path
 
 import matplotlib.pyplot as plt
 import numpy as np
-from bluesky.callbacks import CallbackBase
-from matplotlib.figure import Figure
-from xray_vision.backend.mpl.cross_section_2d import CrossSection
 import pdfstream.io as io
+from xray_vision.backend.mpl.cross_section_2d import CrossSection
 
 from .plotterbase import PlotterBase
 

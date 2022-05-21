@@ -1,12 +1,8 @@
-from pathlib import Path
-
-import event_model
 from pdfstream.callbacks.config import Config
 from pdfstream.callbacks.csvserializer import CSVSerializer
 from pdfstream.callbacks.numpyserializer import NumpySerializer
 from pdfstream.callbacks.tiffserilaizer import TiffSerializer
 from pdfstream.callbacks.yamlserializer import YamlSerializer
-import pdfstream.io as io
 
 
 class SerializationPipeline:

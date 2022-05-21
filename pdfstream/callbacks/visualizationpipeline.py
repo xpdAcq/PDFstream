@@ -6,7 +6,6 @@ from pdfstream.callbacks.imageplotter import ImagePlotter
 from pdfstream.callbacks.scatterplotter import ScatterPlotter
 from pdfstream.callbacks.waterfallplotter import WaterfallPlotter
 from pdfstream.units import LABELS
-import pdfstream.io as io
 
 
 class VisualizationPipeline:

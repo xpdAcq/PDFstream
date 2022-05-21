@@ -1,14 +1,10 @@
 import typing as T
-from pathlib import Path
 
 import matplotlib.pyplot as plt
-from bluesky.callbacks import CallbackBase
 from bluesky.callbacks.mpl_plotting import LivePlot, LiveScatter
-from matplotlib.axes import Axes
-from matplotlib.figure import Figure
-import pdfstream.io as io
 
 from .plotterbase import PlotterBase
+
 
 class ScatterPlotter(PlotterBase):
     """Scatter plot of the quantity of intests."""

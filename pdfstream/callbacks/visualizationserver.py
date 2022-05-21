@@ -1,10 +1,11 @@
-from multiprocessing import Process
 import typing as T
+from multiprocessing import Process
+
 from bluesky.callbacks.zmq import RemoteDispatcher
 from pdfstream.callbacks.config import Config
 from pdfstream.callbacks.visualizationpipeline import VisualizationPipeline
-from pdfstream.vend.qt_kicker import install_qt_kicker
 from pdfstream.io import server_message
+from pdfstream.vend.qt_kicker import install_qt_kicker
 
 PipeLine = T.ClassVar[Config]
 

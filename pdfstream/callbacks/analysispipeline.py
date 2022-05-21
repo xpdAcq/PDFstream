@@ -1,4 +1,3 @@
-import copy
 import typing as T
 
 from bluesky.callbacks.zmq import Publisher
@@ -8,7 +7,6 @@ from pdfstream.callbacks.analyzer import Analyzer
 from pdfstream.callbacks.config import Config
 from pdfstream.callbacks.darksubtraction import DarkSubtraction
 from pdfstream.callbacks.filenamerender import FileNameRender
-import pdfstream.io as io
 
 DocumentPair = T.Tuple[str, dict]
 HANDLERS = discover_handlers()

@@ -1,7 +1,8 @@
-from matplotlib.figure import Figure
 import typing as T
 from pathlib import Path
+
 from event_model import DocumentRouter
+from matplotlib.figure import Figure
 
 
 class PlotterBaseError(Exception):

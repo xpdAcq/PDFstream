@@ -1,5 +1,6 @@
-from event_model import DocumentRouter
 from pathlib import Path
+
+from event_model import DocumentRouter
 
 
 class SerializerBaseError(Exception):

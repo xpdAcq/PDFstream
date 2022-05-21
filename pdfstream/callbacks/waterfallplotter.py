@@ -1,13 +1,11 @@
 import typing as T
-from pathlib import Path
 
 import numpy as np
-from bluesky.callbacks import CallbackBase
-from matplotlib.figure import Figure
-from xpdview.waterfall import Waterfall as OldWaterfall
 import pdfstream.io as io
+from xpdview.waterfall import Waterfall as OldWaterfall
 
 from .plotterbase import PlotterBase
+
 
 class Waterfall(OldWaterfall):
 

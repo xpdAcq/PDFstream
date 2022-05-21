@@ -1,5 +1,6 @@
-from multiprocessing import Process
 import typing as T
+from multiprocessing import Process
+
 from bluesky.callbacks.zmq import RemoteDispatcher
 from pdfstream.callbacks.config import Config
 from pdfstream.callbacks.serializationpipeline import SerializationPipeline

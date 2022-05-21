@@ -7,6 +7,7 @@ import pdfstream.io as io
 
 from .serializerbase import SerializerBase
 
+
 class NumpySerializer(SerializerBase):
 
     def __init__(self, fields: T.List[str], stream_name: str = "primary", folder: str = "mask") -> None:

@@ -19,7 +19,6 @@ from tifffile import TiffWriter
 
 try:
     from diffpy.pdfgetx import PDFConfig, PDFGetter
-
     _PDFGETX_AVAILABLE = True
 except ImportError:
     _PDFGETX_AVAILABLE = False
@@ -84,9 +83,9 @@ def _run_calibration_gui(
         io.server_message("Run in test mode. No interactive calibration.")
         return 0
     cp = subprocess.run(
-        args, 
-        stdin=subprocess.PIPE, 
-        stdout=subprocess.PIPE, 
+        args,
+        stdin=subprocess.PIPE,
+        stdout=subprocess.PIPE,
         stderr=subprocess.PIPE
     )
     if cp.returncode != 0:

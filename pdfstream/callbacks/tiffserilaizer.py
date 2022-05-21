@@ -1,12 +1,13 @@
 import typing as T
 from pathlib import Path
 
-import numpy as np
 import event_model
-from tifffile import TiffWriter
+import numpy as np
 from pdfstream.io import server_message
+from tifffile import TiffWriter
 
 from .serializerbase import SerializerBase
+
 
 class TiffSerializer(SerializerBase):
 

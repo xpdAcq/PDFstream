@@ -1,4 +1,3 @@
-from pathlib import Path
 import event_model
 import numpy as np
 import pandas as pd
@@ -7,7 +6,7 @@ from .serializerbase import SerializerBase
 
 
 class CSVSerializer(SerializerBase):
-    
+
     def __init__(self, folder: str = "scalar_data", **kwargs):
         super().__init__(folder)
         self._streamnames = {}  # maps descriptor uids to stream_names
@@ -43,7 +42,7 @@ class CSVSerializer(SerializerBase):
         # format self._file_prefix
         self._templated_file_prefix = doc["filename"]
         return doc
-    
+
     def descriptor(self, doc):
         '''Use `descriptor` doc to map stream_names to descriptor uid's.
 
