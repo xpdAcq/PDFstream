@@ -16,11 +16,6 @@ DEFAULT_CONFIGURE = {
         "user_config": "user_config",
         "pyfai_calib_kwargs": "pyfai_calib_kwargs"
     },
-    "CALIBRATION": {
-        "is_calibration": False,
-        "pyfai_calib_kwargs": "",
-        "poni_file": ""
-    },
     "ANALYSIS": {
         "detectors": "pe1, pe2 ,dexela",
         "image_fields": "pe1_image, pe2_image, dexela",
@@ -90,6 +85,10 @@ class Config(ConfigParser):
     @cached_property
     def user_config(self) -> str:
         return self.get("METADATA", "user_config")
+
+    @cached_property
+    def pyfai_calib_kwargs(self) -> str:
+        return self.get("METADATA", "pyfai_calib_kwargs")
 
     @cached_property
     def image_fields(self) -> T.List:
@@ -210,18 +209,6 @@ class Config(ConfigParser):
     def datakeys_list(self) -> T.List[DataKeys]:
         return [DataKeys(det, img) for det, img in zip(self.detectors, self.image_fields)]
 
-    @cached_property
-    def is_calibration(self) -> bool:
-        return self.getboolean("CALIBRATION", "is_calibration")
-
-    @cached_property
-    def pyfai_calib_kwargs(self) -> str:
-        return self.get("CALIBRATION", "pyfai_calib_kwargs")
-
-    @cached_property
-    def poni_file(self) -> str:
-        return self.get("CALIBRATION", "poni_file")
-
     def to_dict(self) -> ConfigDict:
         """Convert the configuration to a dictionary."""
         return {s: dict(self.items(s)) for s in self.sections()}
@@ -246,22 +233,6 @@ class Config(ConfigParser):
             io.server_message("Sample composition is '{}'.".format(composition))
         else:
             io.server_message("No '{}' in the start document.".format(key))
-        return
-
-    def read_calibration(self, doc: dict) -> None:
-        key = self.get("METADATA", "pyfai_calib_kwargs")
-        if key in doc:
-            self.set("CALIBRATION", "is_calibration", "True")
-            calib_dict = doc[key]
-            pyfai_calib_kwargs = " ".join(
-                [
-                    "--{} {}".format(k, v)
-                    for k, v in calib_dict.items()
-                ]
-            )
-            self.set("CALIBRATION", "pyfai_calib_kwargs", pyfai_calib_kwargs)
-            if "poni" in calib_dict:
-                self.set("CALIBRATION", "poni_file", calib_dict["poni"])
         return
 
     def read_a_file(self, filename: str) -> None:

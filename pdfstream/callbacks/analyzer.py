@@ -30,6 +30,13 @@ CalibData = frozendict
 CalibKeys = T.List[str]
 
 
+def _add_kwargs(lst: list, dct: dict) -> list:
+    for k, v in dct.items():
+        lst.append("--{}".format(k))
+        lst.append(str(v))
+    return lst
+
+
 def _load_calib(poni_file: str) -> CalibData:
     pf = PoniFile()
     pf.read_from_file(poni_file)
@@ -67,37 +74,31 @@ def _write_tiff(
 ) -> None:
     with TiffWriter(filepath) as tw:
         tw.save(image)
+    io.server_message("Save the image at '{}' for pyFAI-calib2.".format(filepath))
     return
 
 
 def _run_calibration_gui(
         tiff_file: str,
-        pyfai_kwargs: str,
+        pyfai_kwargs: dict,
         test: bool
 ) -> int:
     """Run the gui of calibration."""
-    args = ["pyFAI-calib2", pyfai_kwargs]
+    args = ["pyFAI-calib2"]
+    _add_kwargs(args, pyfai_kwargs)
     args.append(tiff_file)
+    cmd = " ".join(args)
+    io.server_message("Run command 'pyFAI-calib2 {}'.".format(cmd))
     if test:
         io.server_message("Run in test mode. No interactive calibration.")
         return 0
-    cp = subprocess.run(
-        args,
-        stdin=subprocess.PIPE,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE
-    )
-    if cp.returncode != 0:
-        io.server_message("Error in Calibration. See below:")
-        print(r"$", " ".join(args))
-        print(cp.stdout.decode())
-        print(cp.stderr.decode())
+    cp = subprocess.run(args)
     return cp.returncode
 
 
 def _run_gui_in_temp(
     image: np.ndarray,
-    pyfai_kwargs: str,
+    pyfai_kwargs: dict,
     test: bool
 ):
     with TemporaryDirectory() as temp_dir:
@@ -150,6 +151,8 @@ class Analyzer(event_model.DocumentRouter):
         self._calib_descriptor: str = ""
         self._primary_descriptor: str = ""
         self._mask_descriptor: str = ""
+        self._is_calibration: bool = False
+        self._pyfai_calib_kwargs: T.Optional[T.Dict] = None
         return
 
     def _mk_dirs(self, doc: dict):
@@ -184,8 +187,13 @@ class Analyzer(event_model.DocumentRouter):
         config = copy.deepcopy(self._default_config)
         config.read_user_config(doc)
         config.read_composition(doc)
-        config.read_calibration(doc)
         self._config = config
+        return
+
+    def _set_pyfai_calib_kwargs(self, doc: dict) -> None:
+        key = self._config.pyfai_calib_kwargs
+        self._is_calibration = (key in doc)
+        self._pyfai_calib_kwargs = doc.get(key, {})
         return
 
     def _add_datakeys(self, doc: dict) -> None:
@@ -250,11 +258,10 @@ class Analyzer(event_model.DocumentRouter):
         return
 
     def _pyfai_calibrate(self, data: dict) -> None:
-        io.server_message("Start pyFAI-calib2.")
         image = data[self._datakeys.image]
-        pyfai_calib_kwargs = self._config.pyfai_calib_kwargs
+        pyfai_calib_kwargs = self._pyfai_calib_kwargs
+        poni_file = pyfai_calib_kwargs.get("poni")
         test = self._config.is_test
-        poni_file = self._config.poni_file
         returned = _run_gui_in_temp(image, pyfai_calib_kwargs, test)
         if returned != 0:
             io.server_message("Calibration failed.")
@@ -360,7 +367,7 @@ class Analyzer(event_model.DocumentRouter):
     def _add_analyzed_data(self, data: dict) -> None:
         self._average_frames(data)
         self._set_default(data)
-        if self._config.is_calibration:
+        if self._is_calibration:
             self._pyfai_calibrate(data)
         if self._calib_data is None:
             io.server_message("No calibration data. Skip all following steps.")
@@ -425,6 +432,7 @@ class Analyzer(event_model.DocumentRouter):
     def start(self, doc):
         self.clear_cache()
         self._set_config(doc)
+        self._set_pyfai_calib_kwargs(doc)
         self._mk_dirs(doc)
         return doc
 
