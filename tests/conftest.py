@@ -152,5 +152,5 @@ def db_with_new_calib() -> Broker:
     # run
     plan = bp.count([ws.det])
     pyfai_calib_kwargs = {"poni": str(DETEECTOR_PONI_FILE)}
-    ws.RE(plan, sample_name="Test_Sample", composition_str="Ni", is_calibration=True, pyfai_calib_kwargs=pyfai_calib_kwargs)
+    ws.RE(plan, sample_name="Test_Sample", composition_str="Ni", pyfai_calib_kwargs=pyfai_calib_kwargs)
     return ws.db
