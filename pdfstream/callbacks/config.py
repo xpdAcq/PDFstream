@@ -14,7 +14,6 @@ DEFAULT_CONFIGURE = {
         "composition_str": "composition_str",
         "sample_name": "sample_name",
         "user_config": "user_config",
-        "is_calibration": "is_calibration",
         "pyfai_calib_kwargs": "pyfai_calib_kwargs"
     },
     "CALIBRATION": {
@@ -250,22 +249,19 @@ class Config(ConfigParser):
         return
 
     def read_calibration(self, doc: dict) -> None:
-        key1 = self.get("METADATA", "is_calibration")
-        if key1 in doc:
-            is_calibration = str(doc[key1])
-            self.set("CALIBRATION", "is_calibration", is_calibration)
-            key2 = self.get("METADATA", "pyfai_calib_kwargs")
-            if key2 in doc:
-                calib_dict = doc[key2]
-                pyfai_calib_kwargs = " ".join(
-                    [
-                        "--{} {}".format(k, v)
-                        for k, v in calib_dict.items()
-                    ]
-                )
-                self.set("CALIBRATION", "pyfai_calib_kwargs", pyfai_calib_kwargs)
-                if "poni" in calib_dict:
-                    self.set("CALIBRATION", "poni_file", calib_dict["poni"])
+        key = self.get("METADATA", "pyfai_calib_kwargs")
+        if key in doc:
+            self.set("CALIBRATION", "is_calibration", "True")
+            calib_dict = doc[key]
+            pyfai_calib_kwargs = " ".join(
+                [
+                    "--{} {}".format(k, v)
+                    for k, v in calib_dict.items()
+                ]
+            )
+            self.set("CALIBRATION", "pyfai_calib_kwargs", pyfai_calib_kwargs)
+            if "poni" in calib_dict:
+                self.set("CALIBRATION", "poni_file", calib_dict["poni"])
         return
 
     def read_a_file(self, filename: str) -> None:
