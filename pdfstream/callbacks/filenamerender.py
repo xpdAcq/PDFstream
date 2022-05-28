@@ -72,7 +72,7 @@ class FileNameRender(CallbackBase):
         for data_keys, stream_name in dims:
             if stream_name == "primary":
                 hints.extend(data_keys)
-        self._hints = hints
+        self._hints = [h for h in hints if h != "time"]
         io.server_message("The hints are '{}'.".format(hints))
         return
 
@@ -129,6 +129,8 @@ class FileNameRender(CallbackBase):
         self.clear_cahce()
         self._check_sample_name(doc)
         self._set_uid(doc)
+        self._set_hints(doc)
+        self._set_units(doc)
         self._set_file_prefix(doc)
         self._set_directory(doc)
         t = self._get_timestamp(doc)
