@@ -351,8 +351,8 @@ class Analyzer(event_model.DocumentRouter):
             return
         pdfgetter = self._pdfgetter
         pdfgetter(data[keys.chi_Q], data[keys.chi_I])
-        data[keys.iq_Q] = pdfgetter.iq[0]
-        data[keys.iq_I] = pdfgetter.iq[1]
+        data[keys.iq_Q] = data[keys.chi_Q]
+        data[keys.iq_I] = data[keys.chi_I]
         data[keys.sq_Q] = pdfgetter.sq[0]
         data[keys.sq_S] = pdfgetter.sq[1]
         data[keys.fq_Q] = pdfgetter.fq[0]
