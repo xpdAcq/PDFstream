@@ -4,6 +4,8 @@ import pytest
 
 import pdfstream.integration.main as integ
 
+plt.ioff()
+
 
 @pytest.mark.parametrize(
     "img_key, mask, dk_img, bg_img, kwargs",
