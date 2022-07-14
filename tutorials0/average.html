@@ -16,6 +16,7 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
         <script src="../_static/clipboard.min.js"></script>
         <script src="../_static/copybutton.js"></script>
@@ -88,11 +89,11 @@
            <div itemprop="articleBody">
              
   <section id="average">
-<h1>Average<a class="headerlink" href="#average" title="Permalink to this headline">¶</a></h1>
+<h1>Average<a class="headerlink" href="#average" title="Permalink to this heading">¶</a></h1>
 <p>When we have a series of diffraction images for one sample and we would like to calculate the average of them
 to minimize the fluctuation in the intensity, we can use the average tool in <cite>pdfstream</cite>.</p>
 <section id="a-simple-average">
-<h2>A simple average<a class="headerlink" href="#a-simple-average" title="Permalink to this headline">¶</a></h2>
+<h2>A simple average<a class="headerlink" href="#a-simple-average" title="Permalink to this heading">¶</a></h2>
 <p>For example, we have “image1.tiff”, “image2.tiff”, “image3.tiff” and we would like to calculate the average of
 them and save the results in the file “averaged_image.tiff”.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pdfstream.cli</span> <span class="kn">import</span> <span class="n">average</span>
@@ -111,7 +112,7 @@ them and save the results in the file “averaged_image.tiff”.</p>
 </div>
 </section>
 <section id="add-weights">
-<h2>Add weights<a class="headerlink" href="#add-weights" title="Permalink to this headline">¶</a></h2>
+<h2>Add weights<a class="headerlink" href="#add-weights" title="Permalink to this heading">¶</a></h2>
 <p>If we would like to calculated a weighted average, we can use the key <code class="docutils literal notranslate"><span class="pre">weights</span></code>
 For example, “image1.tiff”, “image2.tiff”, “image3.tiff” have weights 0.6, 0.2, 0.2.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">average</span><span class="p">(</span>

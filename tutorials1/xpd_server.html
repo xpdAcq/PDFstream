@@ -16,6 +16,7 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
         <script src="../_static/clipboard.min.js"></script>
         <script src="../_static/copybutton.js"></script>
@@ -115,15 +116,15 @@
            <div itemprop="articleBody">
              
   <section id="xpd-server">
-<h1>XPD Server<a class="headerlink" href="#xpd-server" title="Permalink to this headline">¶</a></h1>
+<h1>XPD Server<a class="headerlink" href="#xpd-server" title="Permalink to this heading">¶</a></h1>
 <p>The XPD Server is a server designed for x-ray powder diffraction experiments. It will process image data from
 a two dimensional detector.</p>
 <section id="what-does-xpd-server-do">
-<span id="xpd-server-functionalities"></span><h2>What does XPD Server do?<a class="headerlink" href="#what-does-xpd-server-do" title="Permalink to this headline">¶</a></h2>
+<span id="xpd-server-functionalities"></span><h2>What does XPD Server do?<a class="headerlink" href="#what-does-xpd-server-do" title="Permalink to this heading">¶</a></h2>
 <p>The XPD Server receives the message from a proxy. Depending on what type of the data is in the message, the server
 will apply different data processing method to it.</p>
 <section id="calibration">
-<h3>Calibration<a class="headerlink" href="#calibration" title="Permalink to this headline">¶</a></h3>
+<h3>Calibration<a class="headerlink" href="#calibration" title="Permalink to this heading">¶</a></h3>
 <p>If the XPD Server finds that the data is intended to be used to calibrate the sample detector distances along with
 other experiment setup in the system, it will start the calibration process as followings:</p>
 <ol class="arabic simple">
@@ -137,7 +138,7 @@ other experiment setup in the system, it will start the calibration process as f
 </ol>
 </section>
 <section id="data-reduction">
-<h3>Data Reduction<a class="headerlink" href="#data-reduction" title="Permalink to this headline">¶</a></h3>
+<h3>Data Reduction<a class="headerlink" href="#data-reduction" title="Permalink to this heading">¶</a></h3>
 <p>If the XPD Server finds that the data is a light frame diffraction image of a sample, it will start the data
 reduction process as followings:</p>
 <ol class="arabic simple">
@@ -160,17 +161,17 @@ reduction process as followings:</p>
 </ol>
 </section>
 <section id="dark-frame">
-<h3>Dark frame<a class="headerlink" href="#dark-frame" title="Permalink to this headline">¶</a></h3>
+<h3>Dark frame<a class="headerlink" href="#dark-frame" title="Permalink to this heading">¶</a></h3>
 <p>If the XPD Server finds that the data is a dark frame image, it will ignore the data and do nothing. It assumes
 that the data frame image has been already record in the database in another process.</p>
 </section>
 </section>
 <section id="how-to-setup-a-xpd-server">
-<h2>How to setup a XPD Server?<a class="headerlink" href="#how-to-setup-a-xpd-server" title="Permalink to this headline">¶</a></h2>
+<h2>How to setup a XPD Server?<a class="headerlink" href="#how-to-setup-a-xpd-server" title="Permalink to this heading">¶</a></h2>
 <p>There are only two steps: first, write a configuration file or download one; start a server in terminal using
 that file.</p>
 <section id="write-the-configuration-file">
-<h3>Write the configuration file<a class="headerlink" href="#write-the-configuration-file" title="Permalink to this headline">¶</a></h3>
+<h3>Write the configuration file<a class="headerlink" href="#write-the-configuration-file" title="Permalink to this heading">¶</a></h3>
 <p>The server needs a .ini file. This file contains all the configuration to build a server. An example of the file
 is shown below. Please read the comments in the file to know what are the meaning of the parameters.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">BASIC</span><span class="p">]</span>
@@ -250,7 +251,7 @@ to change the file structure but if you would like to do that, you can find what
 <a class="reference external" href="https://docs.python.org/3/library/configparser.html#supported-ini-file-structure">here</a>.</p>
 </section>
 <section id="start-the-server">
-<h3>Start the server<a class="headerlink" href="#start-the-server" title="Permalink to this headline">¶</a></h3>
+<h3>Start the server<a class="headerlink" href="#start-the-server" title="Permalink to this heading">¶</a></h3>
 <p>Assume that you have written a configuration file and the path to it is “~/xpd_server.ini”.</p>
 <p>In terminal, run the command:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">run_server</span> <span class="o">~/</span><span class="n">xpd_server</span><span class="o">.</span><span class="n">ini</span>
@@ -260,7 +261,7 @@ to change the file structure but if you would like to do that, you can find what
 <p>If you would like to terminate the server, press <code class="docutils literal notranslate"><span class="pre">CTRL</span> <span class="pre">+</span> <span class="pre">C</span></code>.</p>
 </section>
 <section id="recommended-put-the-configuration-file-in-default-folder">
-<h3>(Recommended) Put the configuration file in default folder<a class="headerlink" href="#recommended-put-the-configuration-file-in-default-folder" title="Permalink to this headline">¶</a></h3>
+<h3>(Recommended) Put the configuration file in default folder<a class="headerlink" href="#recommended-put-the-configuration-file-in-default-folder" title="Permalink to this heading">¶</a></h3>
 <p>If you are tired of typing the path to the configuration file, you can put the .ini file in the default folder,
 the software will find the configuration file for the server according to the name parameter in the
 configuration file.</p>
@@ -275,7 +276,7 @@ configuration file.</p>
 <p>The server will start.</p>
 </section>
 <section id="optional-run-the-server-in-a-detached-background-process">
-<h3>(Optional) Run the server in a detached background process<a class="headerlink" href="#optional-run-the-server-in-a-detached-background-process" title="Permalink to this headline">¶</a></h3>
+<h3>(Optional) Run the server in a detached background process<a class="headerlink" href="#optional-run-the-server-in-a-detached-background-process" title="Permalink to this heading">¶</a></h3>
 <p>Similar to what you have done with the proxy, you can also run the server in background and detach it from the
 terminal so that you don’t need to start the server every time. To do this, in terminal, run command:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nohup</span> <span class="n">run_server</span> <span class="o">~/</span><span class="n">xpd_server</span><span class="o">.</span><span class="n">ini</span> <span class="o">&amp;</span>
@@ -294,7 +295,7 @@ terminal so that you don’t need to start the server every time. To do this, in
 </section>
 </section>
 <section id="how-to-do-the-calibration">
-<h2>How to do the calibration?<a class="headerlink" href="#how-to-do-the-calibration" title="Permalink to this headline">¶</a></h2>
+<h2>How to do the calibration?<a class="headerlink" href="#how-to-do-the-calibration" title="Permalink to this heading">¶</a></h2>
 <p>When you run the <code class="docutils literal notranslate"><span class="pre">run_calibration()</span></code> in <code class="docutils literal notranslate"><span class="pre">bsui</span></code> of xpdacq, the xpd server responds and gives you a window of
 diffraction image. You will finish the calibration using that interface . Please see the
 <a class="reference external" href="https://pyfai.readthedocs.io/en/master/usage/cookbook/calib-gui/index.html">tutorials</a> to learn
@@ -303,21 +304,21 @@ file, please save the file at exact where it is first shown in the finder window
 “SAVE AS PONI” button. Only in this way the software <code class="docutils literal notranslate"><span class="pre">xpdacq</span></code> can find the file and use it.</p>
 </section>
 <section id="how-to-do-the-data-reduction">
-<h2>How to do the data reduction?<a class="headerlink" href="#how-to-do-the-data-reduction" title="Permalink to this headline">¶</a></h2>
+<h2>How to do the data reduction?<a class="headerlink" href="#how-to-do-the-data-reduction" title="Permalink to this heading">¶</a></h2>
 <p>The data reduction is totally automatic after you start the server and finish your calibration run. The server
 will process the streaming data by itself according to the configuration. You will find messages in the terminal
 where the server is running. It tells you if the message of a run is received and if there are any errors.</p>
 </section>
 <section id="how-to-get-the-data-back-home">
-<span id="xpd-server-data"></span><h2>How to get the data back home?<a class="headerlink" href="#how-to-get-the-data-back-home" title="Permalink to this headline">¶</a></h2>
+<span id="xpd-server-data"></span><h2>How to get the data back home?<a class="headerlink" href="#how-to-get-the-data-back-home" title="Permalink to this heading">¶</a></h2>
 <section id="database">
-<h3>Database<a class="headerlink" href="#database" title="Permalink to this headline">¶</a></h3>
+<h3>Database<a class="headerlink" href="#database" title="Permalink to this heading">¶</a></h3>
 <p>The processed data will be archived in the <code class="docutils literal notranslate"><span class="pre">an_db</span></code> database specified in the configuration.
 It is the name of an intake catalog.
 Please use <a class="reference external" href="https://blueskyproject.io/databroker/">databroker</a> to access it.</p>
 </section>
 <section id="files">
-<h3>Files<a class="headerlink" href="#files" title="Permalink to this headline">¶</a></h3>
+<h3>Files<a class="headerlink" href="#files" title="Permalink to this heading">¶</a></h3>
 <p>The processed data will also be exported to the files in the <code class="docutils literal notranslate"><span class="pre">tiff_base</span></code> folder specified in the configuration.</p>
 <p>Here is an example of the file structure that is generated from a temperature ramping.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>tiff_base
@@ -351,7 +352,7 @@ The metadata like the sample information, wavelength of the beam, and the experi
 the .json files in folder <code class="docutils literal notranslate"><span class="pre">metadata</span></code>.</p>
 </section>
 <section id="meaning-of-file-name">
-<h3>Meaning of file name<a class="headerlink" href="#meaning-of-file-name" title="Permalink to this headline">¶</a></h3>
+<h3>Meaning of file name<a class="headerlink" href="#meaning-of-file-name" title="Permalink to this heading">¶</a></h3>
 <p>Here, we use a file <code class="docutils literal notranslate"><span class="pre">014cc82d-0631-4b8b-bbfd-7e6c7d7c8f55_Ni_primary-bg_sub_image-1.tiff</span></code> as an example.</p>
 <p>The prefix of the file is defined in the configuration.
 It usually includes a long non-human-readable string, like <code class="docutils literal notranslate"><span class="pre">014cc82d-0631-4b8b-bbfd-7e6c7d7c8f55</span></code>.
@@ -392,7 +393,7 @@ in terminal:</p>
 <p>You can find the meanings of the data keys in the output.</p>
 </section>
 <section id="i-miss-the-good-old-days">
-<h3>I miss the good old days<a class="headerlink" href="#i-miss-the-good-old-days" title="Permalink to this headline">¶</a></h3>
+<h3>I miss the good old days<a class="headerlink" href="#i-miss-the-good-old-days" title="Permalink to this heading">¶</a></h3>
 <p>The xpd server also offers users the option to go back to the good old days of xpdAn.
 By using <code class="docutils literal notranslate"><span class="pre">export_files_in_xpdan_style</span> <span class="pre">=</span> <span class="pre">True</span></code> in the configuraion file, the xpd server will output the files
 in the same type of what xpdan uses and in the directory structure.</p>
@@ -424,7 +425,7 @@ in the same type of what xpdan uses and in the directory structure.</p>
 </section>
 </section>
 <section id="how-to-see-the-data-during-the-experiment">
-<span id="xpd-server-figures"></span><h2>How to see the data during the experiment?<a class="headerlink" href="#how-to-see-the-data-during-the-experiment" title="Permalink to this headline">¶</a></h2>
+<span id="xpd-server-figures"></span><h2>How to see the data during the experiment?<a class="headerlink" href="#how-to-see-the-data-during-the-experiment" title="Permalink to this heading">¶</a></h2>
 <p>The data will be visualized in windows. The windows will pop up when you start the server and the plot will
 automatically show up when you are running the experiments using xpdacq.</p>
 <p>The images will be plotted in a two dimensional colorful histogram, you can move the cursor onto one point and
@@ -446,10 +447,10 @@ as a function of temperature.</p>
 </figure>
 </section>
 <section id="how-to-user-configuration-during-the-experiment">
-<h2>How to user configuration during the experiment?<a class="headerlink" href="#how-to-user-configuration-during-the-experiment" title="Permalink to this headline">¶</a></h2>
+<h2>How to user configuration during the experiment?<a class="headerlink" href="#how-to-user-configuration-during-the-experiment" title="Permalink to this heading">¶</a></h2>
 <p>Users can give some of their own data to the server and let it use the data to do the analysis.</p>
 <section id="how-to-use-user-defined-calibration">
-<h3>How to use user defined calibration?<a class="headerlink" href="#how-to-use-user-defined-calibration" title="Permalink to this headline">¶</a></h3>
+<h3>How to use user defined calibration?<a class="headerlink" href="#how-to-use-user-defined-calibration" title="Permalink to this heading">¶</a></h3>
 <p>Users can save their own calibration data in the poni file and replace the poni file specified in the
 configuration file of the server with it. Thus, the server will use the calibration data from the user.</p>
 <p>For example, if the setting in the configuration is
@@ -458,7 +459,7 @@ what users need to do is to copy and paste their poni file to replace the <code 
 directory <code class="docutils literal notranslate"><span class="pre">/nsls2/xf28id1/xpdacq_data/user_data/config_base</span></code>.</p>
 </section>
 <section id="how-to-use-a-user-defined-mask">
-<h3>How to use a user defined mask?<a class="headerlink" href="#how-to-use-a-user-defined-mask" title="Permalink to this headline">¶</a></h3>
+<h3>How to use a user defined mask?<a class="headerlink" href="#how-to-use-a-user-defined-mask" title="Permalink to this heading">¶</a></h3>
 <p>If users would like to apply their own mask before the auto masking, they can give a key word argument
 <code class="docutils literal notranslate"><span class="pre">user_config</span></code> in the xrun to specify the mask file that they would like to use.
 The maks file can be a tiff file, a npy file or a numpy text file.

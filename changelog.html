@@ -16,6 +16,7 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/clipboard.min.js"></script>
         <script src="_static/copybutton.js"></script>
@@ -100,23 +101,23 @@
            <div itemprop="articleBody">
              
   <section id="pdfstream-change-log">
-<h1>PDFstream Change Log<a class="headerlink" href="#pdfstream-change-log" title="Permalink to this headline">¶</a></h1>
+<h1>PDFstream Change Log<a class="headerlink" href="#pdfstream-change-log" title="Permalink to this heading">¶</a></h1>
 <section id="v0-5-2">
-<h2>v0.5.2<a class="headerlink" href="#v0-5-2" title="Permalink to this headline">¶</a></h2>
+<h2>v0.5.2<a class="headerlink" href="#v0-5-2" title="Permalink to this heading">¶</a></h2>
 <p><strong>Fixed:</strong></p>
 <ul class="simple">
 <li><p>The waterfall plot will be auto scaled after each update and delete.</p></li>
 </ul>
 </section>
 <section id="v0-5-1">
-<h2>v0.5.1<a class="headerlink" href="#v0-5-1" title="Permalink to this headline">¶</a></h2>
+<h2>v0.5.1<a class="headerlink" href="#v0-5-1" title="Permalink to this heading">¶</a></h2>
 <p><strong>Fixed:</strong></p>
 <ul class="simple">
 <li><p>The visualization server will clear the plot when the descriptor is received. Before, it clears when the start is received. The plot will remain longer time before the clear.</p></li>
 </ul>
 </section>
 <section id="v0-5-0">
-<h2>v0.5.0<a class="headerlink" href="#v0-5-0" title="Permalink to this headline">¶</a></h2>
+<h2>v0.5.0<a class="headerlink" href="#v0-5-0" title="Permalink to this heading">¶</a></h2>
 <p><strong>Added:</strong></p>
 <ul class="simple">
 <li><p>Add <cite>CalibrationExporter</cite>, a callback to export the calibration metadata in poni files.</p></li>
@@ -136,7 +137,7 @@
 </ul>
 </section>
 <section id="v0-4-7">
-<h2>v0.4.7<a class="headerlink" href="#v0-4-7" title="Permalink to this headline">¶</a></h2>
+<h2>v0.4.7<a class="headerlink" href="#v0-4-7" title="Permalink to this heading">¶</a></h2>
 <p><strong>Added:</strong></p>
 <ul class="simple">
 <li><p>Add AreaDetectorTiffHandler for the xpd and lsq servers.</p></li>
@@ -157,7 +158,7 @@
 </ul>
 </section>
 <section id="v0-4-6">
-<h2>v0.4.6<a class="headerlink" href="#v0-4-6" title="Permalink to this headline">¶</a></h2>
+<h2>v0.4.6<a class="headerlink" href="#v0-4-6" title="Permalink to this heading">¶</a></h2>
 <p><strong>Changed:</strong></p>
 <ul class="simple">
 <li><p>If there is no “calibration_md” in start document, the server will still process the diffraction image but doesn’t do the integration and following step. It will use zero for the results depending on the calibration.</p></li>
@@ -165,7 +166,7 @@
 </ul>
 </section>
 <section id="v0-4-5">
-<h2>v0.4.5<a class="headerlink" href="#v0-4-5" title="Permalink to this headline">¶</a></h2>
+<h2>v0.4.5<a class="headerlink" href="#v0-4-5" title="Permalink to this heading">¶</a></h2>
 <p><strong>Added:</strong></p>
 <ul class="simple">
 <li><p>Allow users to use their own mask by adding the file path in the metadata of the run</p></li>
@@ -173,14 +174,14 @@
 </ul>
 </section>
 <section id="v0-4-4">
-<h2>v0.4.4<a class="headerlink" href="#v0-4-4" title="Permalink to this headline">¶</a></h2>
+<h2>v0.4.4<a class="headerlink" href="#v0-4-4" title="Permalink to this heading">¶</a></h2>
 <p><strong>Added:</strong></p>
 <ul class="simple">
 <li><p>An xpdvis server that plots figures of analyzed data from xpd server.</p></li>
 </ul>
 </section>
 <section id="v0-4-3">
-<h2>v0.4.3<a class="headerlink" href="#v0-4-3" title="Permalink to this headline">¶</a></h2>
+<h2>v0.4.3<a class="headerlink" href="#v0-4-3" title="Permalink to this heading">¶</a></h2>
 <p><strong>Added:</strong></p>
 <ul class="simple">
 <li><p>Add the functionality to export files in xpdan style file structure for the xpd server</p></li>
@@ -198,14 +199,14 @@
 </ul>
 </section>
 <section id="v0-4-2">
-<h2>v0.4.2<a class="headerlink" href="#v0-4-2" title="Permalink to this headline">¶</a></h2>
+<h2>v0.4.2<a class="headerlink" href="#v0-4-2" title="Permalink to this heading">¶</a></h2>
 <p><strong>Fixed:</strong></p>
 <ul class="simple">
 <li><p>Fix the bug that the background subtraction and dark substrate do not work in the integration</p></li>
 </ul>
 </section>
 <section id="v0-4-1">
-<h2>v0.4.1<a class="headerlink" href="#v0-4-1" title="Permalink to this headline">¶</a></h2>
+<h2>v0.4.1<a class="headerlink" href="#v0-4-1" title="Permalink to this heading">¶</a></h2>
 <p><strong>Added:</strong></p>
 <ul class="simple">
 <li><p>The XPD server will publish the data to a proxy</p></li>
@@ -216,7 +217,7 @@
 </ul>
 </section>
 <section id="v0-4-0">
-<h2>v0.4.0<a class="headerlink" href="#v0-4-0" title="Permalink to this headline">¶</a></h2>
+<h2>v0.4.0<a class="headerlink" href="#v0-4-0" title="Permalink to this heading">¶</a></h2>
 <p><strong>Added:</strong></p>
 <ul class="simple">
 <li><p>The base objects to process data from bluesky runs.</p></li>
@@ -225,7 +226,7 @@
 </ul>
 </section>
 <section id="v0-3-2">
-<h2>v0.3.2<a class="headerlink" href="#v0-3-2" title="Permalink to this headline">¶</a></h2>
+<h2>v0.3.2<a class="headerlink" href="#v0-3-2" title="Permalink to this heading">¶</a></h2>
 <p><strong>Added:</strong></p>
 <ul class="simple">
 <li><p>Make callback safe for the Exporter and Visualizer in the XPDRouter.</p></li>
@@ -243,14 +244,14 @@
 </ul>
 </section>
 <section id="v0-3-1">
-<h2>v0.3.1<a class="headerlink" href="#v0-3-1" title="Permalink to this headline">¶</a></h2>
+<h2>v0.3.1<a class="headerlink" href="#v0-3-1" title="Permalink to this heading">¶</a></h2>
 <p><strong>Fixed:</strong></p>
 <ul class="simple">
 <li><p>Fix the bug that pdfstream has import error if the diffpy.pdfgetx is not in environment</p></li>
 </ul>
 </section>
 <section id="v0-3-0">
-<h2>v0.3.0<a class="headerlink" href="#v0-3-0" title="Permalink to this headline">¶</a></h2>
+<h2>v0.3.0<a class="headerlink" href="#v0-3-0" title="Permalink to this heading">¶</a></h2>
 <p><strong>Added:</strong></p>
 <ul class="simple">
 <li><p><cite>databroker</cite>, <cite>bluesky</cite> are added in the dependencies</p></li>
@@ -264,17 +265,17 @@
 </ul>
 </section>
 <section id="v0-2-2">
-<h2>v0.2.2<a class="headerlink" href="#v0-2-2" title="Permalink to this headline">¶</a></h2>
+<h2>v0.2.2<a class="headerlink" href="#v0-2-2" title="Permalink to this heading">¶</a></h2>
 <p><strong>Changed:</strong></p>
 <ul class="simple">
 <li><p>Starting from 0.2.2, the package will be released on <cite>diffpy</cite> channel on conda.</p></li>
 </ul>
 </section>
 <section id="v0-2-1">
-<h2>v0.2.1<a class="headerlink" href="#v0-2-1" title="Permalink to this headline">¶</a></h2>
+<h2>v0.2.1<a class="headerlink" href="#v0-2-1" title="Permalink to this heading">¶</a></h2>
 </section>
 <section id="v0-2-0">
-<h2>v0.2.0<a class="headerlink" href="#v0-2-0" title="Permalink to this headline">¶</a></h2>
+<h2>v0.2.0<a class="headerlink" href="#v0-2-0" title="Permalink to this heading">¶</a></h2>
 <p><strong>Added:</strong></p>
 <ul class="simple">
 <li><p><cite>integrate</cite> allows user to supply their own mask</p></li>
@@ -295,7 +296,7 @@
 </ul>
 </section>
 <section id="v0-1-3">
-<h2>v0.1.3<a class="headerlink" href="#v0-1-3" title="Permalink to this headline">¶</a></h2>
+<h2>v0.1.3<a class="headerlink" href="#v0-1-3" title="Permalink to this heading">¶</a></h2>
 <p><strong>Added:</strong></p>
 <ul class="simple">
 <li><p>Set values and bounds for the variables in the recipe.</p></li>
@@ -306,7 +307,7 @@
 </ul>
 </section>
 <section id="v0-1-2">
-<h2>v0.1.2<a class="headerlink" href="#v0-1-2" title="Permalink to this headline">¶</a></h2>
+<h2>v0.1.2<a class="headerlink" href="#v0-1-2" title="Permalink to this heading">¶</a></h2>
 <p><strong>Added:</strong></p>
 <ul class="simple">
 <li><p>Add the <code class="docutils literal notranslate"><span class="pre">parsers</span></code> that parses the information in FitRecipe to mongo-friendly dictionary.</p></li>
@@ -329,10 +330,10 @@
 </ul>
 </section>
 <section id="v0-1-1">
-<h2>v0.1.1<a class="headerlink" href="#v0-1-1" title="Permalink to this headline">¶</a></h2>
+<h2>v0.1.1<a class="headerlink" href="#v0-1-1" title="Permalink to this heading">¶</a></h2>
 </section>
 <section id="v0-1-0">
-<h2>v0.1.0<a class="headerlink" href="#v0-1-0" title="Permalink to this headline">¶</a></h2>
+<h2>v0.1.0<a class="headerlink" href="#v0-1-0" title="Permalink to this heading">¶</a></h2>
 <p><strong>Added:</strong></p>
 <ul class="simple">
 <li><p>Azimuthal integration of diffraction image with auto masking and background subtraction.</p></li>

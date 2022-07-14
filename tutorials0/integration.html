@@ -16,6 +16,7 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
         <script src="../_static/clipboard.min.js"></script>
         <script src="../_static/copybutton.js"></script>
@@ -97,9 +98,9 @@
            <div itemprop="articleBody">
              
   <section id="integration">
-<h1>Integration<a class="headerlink" href="#integration" title="Permalink to this headline">¶</a></h1>
+<h1>Integration<a class="headerlink" href="#integration" title="Permalink to this heading">¶</a></h1>
 <section id="what-does-integration-do">
-<h2>What does integration do?<a class="headerlink" href="#what-does-integration-do" title="Permalink to this headline">¶</a></h2>
+<h2>What does integration do?<a class="headerlink" href="#what-does-integration-do" title="Permalink to this heading">¶</a></h2>
 <p>Integration is to calculate XRD data from diffraction image.
 There are four steps in PDFstream integration:
 background subtraction, auto masking, histogram calculation with corrections, and visualization.</p>
@@ -121,7 +122,7 @@ Before the histogram, polarization correction and other processes will be done a
 can tune the visualization settings to achieve their desired effects.</p>
 </section>
 <section id="how-to-do-integration">
-<h2>How to do integration?<a class="headerlink" href="#how-to-do-integration" title="Permalink to this headline">¶</a></h2>
+<h2>How to do integration?<a class="headerlink" href="#how-to-do-integration" title="Permalink to this heading">¶</a></h2>
 <p>Here shows the python example how to do the integration. Since
 there is a one-to-one relation ship between the python function in <cite>pdfstream</cite> and the command line,
 the same tasks can be done using the command line.</p>
@@ -130,7 +131,7 @@ the same tasks can be done using the command line.</p>
 </pre></div>
 </div>
 <section id="a-simple-integration">
-<h3>A simple integration<a class="headerlink" href="#a-simple-integration" title="Permalink to this headline">¶</a></h3>
+<h3>A simple integration<a class="headerlink" href="#a-simple-integration" title="Permalink to this heading">¶</a></h3>
 <p>For example, we are going to calculate XRD data I(Q) using diffraction image “sample_diffraction.tiff”.
 We have already done the calibration and gotten the .poni file “geometry.poni”.</p>
 <p>We run the following line to calculate XRD data I(Q).</p>
@@ -153,7 +154,7 @@ We have already done the calibration and gotten the .poni file “geometry.poni�
 all in the key word arguments described in the following sections.</p>
 </section>
 <section id="output-directory">
-<h3>Output directory<a class="headerlink" href="#output-directory" title="Permalink to this headline">¶</a></h3>
+<h3>Output directory<a class="headerlink" href="#output-directory" title="Permalink to this heading">¶</a></h3>
 <p>If we would like to output the files in a directory called <code class="docutils literal notranslate"><span class="pre">data</span></code>, we can use key <code class="docutils literal notranslate"><span class="pre">output_dir</span></code>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">integrate</span><span class="p">(</span>
     <span class="s2">&quot;geometry.poni&quot;</span><span class="p">,</span>
@@ -165,7 +166,7 @@ all in the key word arguments described in the following sections.</p>
 <p>If the folder <code class="docutils literal notranslate"><span class="pre">data</span></code> doesn’t exist, it will be created.</p>
 </section>
 <section id="background-subtraction">
-<h3>Background subtraction<a class="headerlink" href="#background-subtraction" title="Permalink to this headline">¶</a></h3>
+<h3>Background subtraction<a class="headerlink" href="#background-subtraction" title="Permalink to this heading">¶</a></h3>
 <p>Continuing with the last example, we would like to subtract the background scattering from the air and the
 container of our sample and the scattering is measured and saved in the “background_diffraction.tiff”.
 We run the following line. Remember that all the arguments except .poni file and image files muse be key word
@@ -189,7 +190,7 @@ the background image.</p>
 </div>
 </section>
 <section id="auto-masking">
-<h3>Auto masking<a class="headerlink" href="#auto-masking" title="Permalink to this headline">¶</a></h3>
+<h3>Auto masking<a class="headerlink" href="#auto-masking" title="Permalink to this heading">¶</a></h3>
 <p>In default, the auto masking is applied using the default setting.</p>
 <p>If we would like to tune the setting, we can use the key <code class="docutils literal notranslate"><span class="pre">mask_setting</span></code></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">integrate</span><span class="p">(</span>
@@ -234,7 +235,7 @@ good and the 1 pixels are bad which will be masked out.</p>
 </div>
 </section>
 <section id="histogram-calculation">
-<h3>Histogram Calculation<a class="headerlink" href="#histogram-calculation" title="Permalink to this headline">¶</a></h3>
+<h3>Histogram Calculation<a class="headerlink" href="#histogram-calculation" title="Permalink to this heading">¶</a></h3>
 <p>In default, the histogram calculation is applied using the default setting.</p>
 <p>The configuration can be tuned by the key <code class="docutils literal notranslate"><span class="pre">integ_setting</span></code>. An example below shows how to tune the configuration
 to calculate a histogram of I(2theta) with 2048 points using the numpy method.</p>
@@ -253,7 +254,7 @@ to calculate a histogram of I(2theta) with 2048 points using the numpy method.</
 <a class="reference external" href="https://pyfai.readthedocs.io/en/latest/usage/cookbook/integration_with_python.html?highlight=integrate1d#Azimuthal-averaging-using-pyFAI">pyFAI</a></p>
 </section>
 <section id="visualization">
-<h3>Visualization<a class="headerlink" href="#visualization" title="Permalink to this headline">¶</a></h3>
+<h3>Visualization<a class="headerlink" href="#visualization" title="Permalink to this heading">¶</a></h3>
 <p>In default, the visualization configuration is applied using the default setting.</p>
 <p>We can use the key <code class="docutils literal notranslate"><span class="pre">img_setting</span></code> to tune how the image is shown. The keys are the same as those of
 <a class="reference external" href="https://matplotlib.org/3.1.1/api/_as_gen/matplotlib.axes.Axes.matshow.html">matplotlib.axes.Axes.matshow</a>.
@@ -289,7 +290,7 @@ For example, we would like to plot a line with green circles.</p>
 </div>
 </section>
 <section id="parallel-computing">
-<h3>Parallel Computing<a class="headerlink" href="#parallel-computing" title="Permalink to this headline">¶</a></h3>
+<h3>Parallel Computing<a class="headerlink" href="#parallel-computing" title="Permalink to this heading">¶</a></h3>
 <p>The <cite>integrate</cite> supports parallel computing for multiple images.
 If we would like to use the parallel computing for the integration for a long list of images, we can use the
 key <code class="docutils literal notranslate"><span class="pre">parallel</span></code>.</p>

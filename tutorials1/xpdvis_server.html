@@ -16,6 +16,7 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
         <script src="../_static/clipboard.min.js"></script>
         <script src="../_static/copybutton.js"></script>
@@ -94,16 +95,16 @@
            <div itemprop="articleBody">
              
   <section id="xpdvis-server">
-<h1>XPDVis Server<a class="headerlink" href="#xpdvis-server" title="Permalink to this headline">¶</a></h1>
+<h1>XPDVis Server<a class="headerlink" href="#xpdvis-server" title="Permalink to this heading">¶</a></h1>
 <p>The XPDVis server is the server that visualize the data from the XPD server. If users would like to separate the
 data processing with the data visualization, they could run the XPDVis server together with the XPD server on
 the same or different machine.</p>
 <section id="how-to-setup-a-xpdvis-server">
-<h2>How to setup a XPDVis Server?<a class="headerlink" href="#how-to-setup-a-xpdvis-server" title="Permalink to this headline">¶</a></h2>
+<h2>How to setup a XPDVis Server?<a class="headerlink" href="#how-to-setup-a-xpdvis-server" title="Permalink to this heading">¶</a></h2>
 <p>There are only two steps: first, write a configuration file or download one; start a server in terminal using
 that file.</p>
 <section id="write-the-configuration-file">
-<h3>Write the configuration file<a class="headerlink" href="#write-the-configuration-file" title="Permalink to this headline">¶</a></h3>
+<h3>Write the configuration file<a class="headerlink" href="#write-the-configuration-file" title="Permalink to this heading">¶</a></h3>
 <p>The server needs a .ini file. This file contains all the configuration to build a server. An example of the file
 is shown below. Please read the comments in the file to know what are the meaning of the parameters.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">BASIC</span><span class="p">]</span>
@@ -183,7 +184,7 @@ to change the file structure but if you would like to do that, you can find what
 <a class="reference external" href="https://docs.python.org/3/library/configparser.html#supported-ini-file-structure">here</a>.</p>
 </section>
 <section id="start-the-server">
-<h3>Start the server<a class="headerlink" href="#start-the-server" title="Permalink to this headline">¶</a></h3>
+<h3>Start the server<a class="headerlink" href="#start-the-server" title="Permalink to this heading">¶</a></h3>
 <p>Assume that you have written a configuration file and the path to it is “~/xpd_server.ini”.</p>
 <p>In terminal, run the command:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">run_server</span> <span class="o">~/</span><span class="n">xpdvis_server</span><span class="o">.</span><span class="n">ini</span>
@@ -193,7 +194,7 @@ to change the file structure but if you would like to do that, you can find what
 <p>If you would like to terminate the server, press <code class="docutils literal notranslate"><span class="pre">CTRL</span> <span class="pre">+</span> <span class="pre">C</span></code>.</p>
 </section>
 <section id="recommended-put-the-configuration-file-in-default-folder">
-<h3>(Recommended) Put the configuration file in default folder<a class="headerlink" href="#recommended-put-the-configuration-file-in-default-folder" title="Permalink to this headline">¶</a></h3>
+<h3>(Recommended) Put the configuration file in default folder<a class="headerlink" href="#recommended-put-the-configuration-file-in-default-folder" title="Permalink to this heading">¶</a></h3>
 <p>If you are tired of typing the path to the configuration file, you can put the .ini file in the default folder,
 the software will find the configuration file for the server according to the name parameter in the
 configuration file.</p>
@@ -208,7 +209,7 @@ configuration file.</p>
 <p>The server will start.</p>
 </section>
 <section id="optional-run-the-server-in-a-detached-background-process">
-<h3>(Optional) Run the server in a detached background process<a class="headerlink" href="#optional-run-the-server-in-a-detached-background-process" title="Permalink to this headline">¶</a></h3>
+<h3>(Optional) Run the server in a detached background process<a class="headerlink" href="#optional-run-the-server-in-a-detached-background-process" title="Permalink to this heading">¶</a></h3>
 <p>Similar to what you have done with the proxy, you can also run the server in background and detach it from the
 terminal so that you don’t need to start the server every time. To do this, in terminal, run command:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nohup</span> <span class="n">run_server</span> <span class="o">~/</span><span class="n">xpd_server</span><span class="o">.</span><span class="n">ini</span> <span class="o">&amp;</span>
