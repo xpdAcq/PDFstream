@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PDFstream Change Log &mdash; PDFstream 0.5.2 documentation</title>
+  <title>PDFstream Change Log &mdash; PDFstream 0.6.0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/plot_directive.css" type="text/css" />
@@ -35,7 +35,7 @@
             <a href="index.html" class="icon icon-home"> PDFstream
           </a>
               <div class="version">
-                0.5.2
+                0.6.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -50,6 +50,7 @@
 <li class="toctree-l1"><a class="reference internal" href="tutorials0/index.html">Users Documents</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials1/index.html">Beamline Scientists Documents</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">PDFstream Change Log</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#v0-6-0">v0.6.0</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#v0-5-2">v0.5.2</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#v0-5-1">v0.5.1</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#v0-5-0">v0.5.0</a></li>
@@ -102,6 +103,55 @@
              
   <section id="pdfstream-change-log">
 <h1>PDFstream Change Log<a class="headerlink" href="#pdfstream-change-log" title="Permalink to this heading">¶</a></h1>
+<section id="v0-6-0">
+<h2>v0.6.0<a class="headerlink" href="#v0-6-0" title="Permalink to this heading">¶</a></h2>
+<p><strong>Added:</strong></p>
+<ul class="simple">
+<li><p>Add new callbacks in the <cite>callback</cite> package for the analysis, serialization and visualization for the new data structure from the new xpdacq.</p></li>
+<li><p>Add <cite>FileNameRender</cite> to compose file name according to the user’s request and put filename in starts and events.</p></li>
+<li><p>Add <cite>Analayzer</cite> to process the data to XRD and PDF and save the processed data in the pyFAI standard and pdfgetx standard file and do calbration if necessary.</p></li>
+<li><p>Add <cite>DarkSubtraction</cite> to do the dark subtraction of the image in place.</p></li>
+<li><p>Add <cite>AnalysisPipeline</cite> that contains the <cite>Analyzer</cite>, <cite>DarkSubtraction</cite> and <cite>Publisher</cite>.</p></li>
+<li><p>Add <cite>PlotterBase</cite> as the basic class of the plotters.</p></li>
+<li><p>Add <cite>ImagePlotter</cite> to plot the image with or without masks and save image in files.</p></li>
+<li><p>Add <cite>WaterfallPlotter</cite> to plot the 1d array in a waterfall plot and save the figure in a file at the end.</p></li>
+<li><p>Add <cite>ScalarPlotter</cite> to plot the scalar array as a function of time or other dimensions and save the figure in a file at the end.</p></li>
+<li><p>Add <cite>VisualizationPipeline</cite> that contains the <cite>ImagePlotter</cite>, <cite>WaterfallPlotter</cite> and <cite>ScalarPlotter</cite>.</p></li>
+<li><p>Add <cite>SerializerBase</cite> as the basic class of the serializers.</p></li>
+<li><p>Add <cite>TiffSerializer</cite> to serialize the images in tiff files.</p></li>
+<li><p>Add <cite>CSVSerializer</cite> to serialize the scalar data, time stamp and the filename of outputs in csv files.</p></li>
+<li><p>Add <cite>YamlSerializer</cite> to serialize the start document in a yaml file using the <cite>safe_dump</cite>.</p></li>
+<li><p>Add <cite>NumpySerializer</cite> to serialize the masks in npy files.</p></li>
+<li><p>Add <cite>SerializationPipeline</cite> that contians <cite>TiffSerializer</cite>, <cite>CSVSerializer</cite>, <cite>YamlSerializer</cite> and <cite>NumpySerializer</cite>.</p></li>
+</ul>
+<p><strong>Changed:</strong></p>
+<ul class="simple">
+<li><p>Make the <cite>callbacks</cite> package contain all the callback classes, including the servers.</p></li>
+<li><p>Make the servers able to process the event data from more than one detectors and mutliple different calibrations in one run.</p></li>
+<li><p>Make <cite>run_server</cite> command start the analysis, serialization and visualization servers separately in three children processes at the same time.</p></li>
+<li><p>Use logging package to stream logs from three processes to <cite>sys.stdout</cite>.</p></li>
+<li><p>Change the sections and some keys in the configuration so that users can adjust the <cite>ANALYSIS</cite> section in the configuration using <cite>user_config</cite> key in the start doc.</p></li>
+<li><p>Cache the calibration data for the integration and the binners for the masking using <cite>lru_cache</cite>. The cache is valid through the whole session unless it is updated.</p></li>
+<li><p>Change the filename pattern of the output files to avoid duplicated file names from different detector images.</p></li>
+<li><p>Make the time in the output event streams and the time stamps in the file names the sames as the time in the input event streams. The time that users see will be the same as the time that the data is measured instead of the time that the analysis code runs.</p></li>
+<li><p>Allow users to include any measured scalar data in the filename using the <cite>user_config</cite> keyword.</p></li>
+<li><p>Allow users to tune whether or not to save the figures, save any kind of data, visualize any kind of data, do the pdfgetx processing or do auto masking.</p></li>
+<li><p>Allower users to tune any configuration for auto masking, pyFAI integration and the pdfgetx.</p></li>
+</ul>
+<p><strong>Deprecated:</strong></p>
+<ul class="simple">
+<li><p>Deprecate the old callbacks and servers for the old data structure from the old xpdacq.</p></li>
+<li><p>Deprecate the dependencies of the suitcase packages.</p></li>
+</ul>
+<p><strong>Removed:</strong></p>
+<ul class="simple">
+<li><p>Remove <cite>servers</cite> package and <cite>analyzer</cite> package.</p></li>
+</ul>
+<p><strong>Fixed:</strong></p>
+<ul class="simple">
+<li><p>Fix the wrong assignment of the <cite>chi_max</cite> and <cite>chi_argmax</cite>.</p></li>
+</ul>
+</section>
 <section id="v0-5-2">
 <h2>v0.5.2<a class="headerlink" href="#v0-5-2" title="Permalink to this heading">¶</a></h2>
 <p><strong>Fixed:</strong></p>
