@@ -1,7 +1,7 @@
 import typing as T
 
 from bluesky.callbacks.zmq import Publisher
-from databroker.core import discover_handlers
+from databroker.mongo_normalized import discover_handlers
 from event_model import Filler
 from pdfstream.callbacks.analyzer import Analyzer
 from pdfstream.callbacks.config import Config

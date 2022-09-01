@@ -37,7 +37,7 @@ def visualize(pdfgetter: PDFGetter, plot_setting: dict = None):
         plot_setting = {}
     # get data
     dct = OrderedDict()
-    for attr in ("iq", "sq", "fq", "gr"):
+    for attr in ("sq", "fq", "gr"):
         tup = getattr(pdfgetter, attr)
         if len(tup) > 0:
             dct[attr] = tup
