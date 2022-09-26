@@ -25,11 +25,19 @@ here = path.abspath(path.dirname(__file__))
 with open(path.join(here, 'README.md'), encoding='utf-8') as readme_file:
     readme = readme_file.read()
 
+with open(path.join(here, 'requirements/run.txt'), encoding='utf-8') as requirements_file:
+    # Parse requirements.txt, ignoring any commented-out lines.
+    requirements = [
+        line
+        for line in requirements_file.read().splitlines()
+        if not line.startswith("#")
+    ]
+
 setup(
     name='pdfstream',
     version='0.6.0',
     description="The configs analysis toolbox for the study on pair distribution function (PDF).",
-    install_requires=[],
+    install_requires=requirements,
     long_description=readme,
     long_description_content_type='text/markdown',
     author="Songsheng Tao",
