@@ -429,7 +429,7 @@ class Analyzer(event_model.DocumentRouter):
         return
 
     def _set_user_mask(self, doc: dict) -> None:
-        self._user_mask = doc["data"][self._datakeys.mask]
+        self._user_mask = np.array(doc["data"][self._datakeys.mask], dtype=np.int64)
         return
 
     def start(self, doc):

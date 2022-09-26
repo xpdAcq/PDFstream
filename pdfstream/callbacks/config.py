@@ -20,7 +20,7 @@ DEFAULT_CONFIGURE = {
         "detectors": "pe1, pe2 ,dexela",
         "image_fields": "pe1_image, pe2_image, dexela",
         "image_dtype": "uint32",
-        "fill": False,
+        "fill": True,
         "auto_mask": True,
         "alpha": 2.0,
         "edge": 20,
@@ -46,6 +46,7 @@ DEFAULT_CONFIGURE = {
         "file_prefix": "{sample_name}",
         "hints": None,
         "save_plots": False,
+        "publish": True,
         "is_test": False
     },
     "VISUALIZATION": {
@@ -245,3 +246,7 @@ class Config(ConfigParser):
         if not read_ok:
             raise ConfigError("Cannot read '{}'.".format(filename))
         return
+
+    @cached_property
+    def publish(self) -> bool:
+        return self.getboolean("ANALYSIS", "publish")

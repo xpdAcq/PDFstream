@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import numpy
 import pyFAI
 import pytest
-from databroker import Broker
+from databroker.v2 import Broker
 from diffpy.pdfgetx import PDFConfig, PDFGetter
 from pdfstream.io import load_array, load_img
 from pkg_resources import resource_filename

@@ -15,7 +15,7 @@ serialize = SerializationPipeline(config)
 # choose a blue sky run in the database, here use the latest as an example
 run = db[-1]
 # pipe the data stream into the pipelines
-for name, doc in run.documents(fill='no'):
+for name, doc in run.documents():
     name, doc = analyze(name, doc)
     visualize(name, doc)
     serialize(name, doc)

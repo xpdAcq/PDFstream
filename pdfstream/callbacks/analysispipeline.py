@@ -68,9 +68,10 @@ class AnalysisPipeline:
 
     def _populate_publishers(self) -> None:
         config = self._config
-        self._publishers.append(
-            Publisher(config.inbound_address, prefix=config.analyzed_data_prefix)
-        )
+        if config.publish:
+            self._publishers.append(
+                Publisher(config.inbound_address, prefix=config.analyzed_data_prefix)
+            )
         return
 
     def __call__(self, name: str, doc: dict) -> DocumentPair:
