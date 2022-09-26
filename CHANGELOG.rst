@@ -4,6 +4,21 @@ PDFstream Change Log
 
 .. current developments
 
+v0.6.1
+====================
+
+**Added:**
+
+* Add the options `publish` to disable publishing to the proxy.
+
+**Fixed:**
+
+* Fix the "python list doesn't have shape" bug when loading masks in python lists.
+
+* Fix the databroker v2.0 API bugs in tests.
+
+
+
 v0.6.0
 ====================
 
