@@ -35,7 +35,7 @@ with open(path.join(here, 'requirements/run.txt'), encoding='utf-8') as requirem
 
 setup(
     name='pdfstream',
-    version='0.6.0',
+    version='0.6.1',
     description="The configs analysis toolbox for the study on pair distribution function (PDF).",
     install_requires=requirements,
     long_description=readme,
