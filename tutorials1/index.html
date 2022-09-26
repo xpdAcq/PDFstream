@@ -18,12 +18,13 @@
         <script src="../_static/underscore.js"></script>
         <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
         <script src="../_static/clipboard.min.js"></script>
         <script src="../_static/copybutton.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="ZMQ Proxy" href="zmq_proxy.html" />
+    <link rel="next" title="Run Servers in One Command" href="run_server.html" />
     <link rel="prev" title="Transformation" href="../tutorials0/transformation.html" /> 
 </head>
 
@@ -49,10 +50,13 @@
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials0/index.html">Users Documents</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Beamline Scientists Documents</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="run_server.html">Run Servers in One Command</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html">Configuration of Servers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="replay_analysis.html">Replay Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="xpd_server.html">Data Processing Server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="xpdvis_server.html">Data Visualization Server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="xpdsave_server.html">Data Serialization Server</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zmq_proxy.html">ZMQ Proxy</a></li>
-<li class="toctree-l2"><a class="reference internal" href="xpd_server.html">XPD Server</a></li>
-<li class="toctree-l2"><a class="reference internal" href="xpdvis_server.html">XPDVis Server</a></li>
-<li class="toctree-l2"><a class="reference internal" href="xpdsave_server.html">XPDSave Server</a></li>
 <li class="toctree-l2"><a class="reference internal" href="test.html">Test at the beamline</a></li>
 </ul>
 </li>
@@ -86,17 +90,18 @@
              
   <section id="beamline-scientists-documents">
 <h1>Beamline Scientists Documents<a class="headerlink" href="#beamline-scientists-documents" title="Permalink to this heading">¶</a></h1>
-<p>If you are a beamline scientist or a user who is conducting experiment at the beamline and you are using the
-bluesky to collect the data, here is the tutorial to setup a server that can process the data in real time.</p>
-<p>In the subsections, you will find several servers that you can run for the real time streaming data analysis.
-Before you start a server, you always needs a proxy running, please look at ZMQ Proxy section to know how to
-start a proxy.</p>
+<p>If you are a beamline scientist or a user who is conducting experiment at the beamline and you are using the bluesky to collect the data, here is the tutorial to setup a server that can process the data in real time.</p>
+<p>There are three servers for data processing, visualization and exporting. They can be started in one command. They all listen to the data stream from one proxy. Usually, this proxy is running on a workstation at the beamline all the time.</p>
+<p>I will introduce how to start the servers, and then show their functionalities.</p>
 <div class="toctree-wrapper compound">
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="run_server.html">Run Servers in One Command</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration of Servers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="replay_analysis.html">Replay Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="xpd_server.html">Data Processing Server</a></li>
+<li class="toctree-l1"><a class="reference internal" href="xpdvis_server.html">Data Visualization Server</a></li>
+<li class="toctree-l1"><a class="reference internal" href="xpdsave_server.html">Data Serialization Server</a></li>
 <li class="toctree-l1"><a class="reference internal" href="zmq_proxy.html">ZMQ Proxy</a></li>
-<li class="toctree-l1"><a class="reference internal" href="xpd_server.html">XPD Server</a></li>
-<li class="toctree-l1"><a class="reference internal" href="xpdvis_server.html">XPDVis Server</a></li>
-<li class="toctree-l1"><a class="reference internal" href="xpdsave_server.html">XPDSave Server</a></li>
 <li class="toctree-l1"><a class="reference internal" href="test.html">Test at the beamline</a></li>
 </ul>
 </div>
@@ -107,7 +112,7 @@ start a proxy.</p>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="../tutorials0/transformation.html" class="btn btn-neutral float-left" title="Transformation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="zmq_proxy.html" class="btn btn-neutral float-right" title="ZMQ Proxy" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="run_server.html" class="btn btn-neutral float-right" title="Run Servers in One Command" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

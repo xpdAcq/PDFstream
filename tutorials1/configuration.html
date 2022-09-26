@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Configuration of Servers &mdash; PDFstream 0.6.0 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/plot_directive.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+        <script src="../_static/clipboard.min.js"></script>
+        <script src="../_static/copybutton.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Replay Analysis" href="replay_analysis.html" />
+    <link rel="prev" title="Run Servers in One Command" href="run_server.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> PDFstream
+          </a>
+              <div class="version">
+                0.6.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials0/index.html">Users Documents</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Beamline Scientists Documents</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="run_server.html">Run Servers in One Command</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Configuration of Servers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#default-configuration">Default Configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#user-configuration">User Configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#example-use-cases">Example Use Cases</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="replay_analysis.html">Replay Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="xpd_server.html">Data Processing Server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="xpdvis_server.html">Data Visualization Server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="xpdsave_server.html">Data Serialization Server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zmq_proxy.html">ZMQ Proxy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="test.html">Test at the beamline</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">PDFstream Change Log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../min_versions.html">Minimum Version of Python and NumPy</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">PDFstream</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="index.html">Beamline Scientists Documents</a> &raquo;</li>
+      <li>Configuration of Servers</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/tutorials1/configuration.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="configuration-of-servers">
+<h1>Configuration of Servers<a class="headerlink" href="#configuration-of-servers" title="Permalink to this heading">¶</a></h1>
+<p>This package uses a two level configuration systems. The ground layer is the default configuration and upon it, there are multiple user configuration.</p>
+<section id="default-configuration">
+<h2>Default Configuration<a class="headerlink" href="#default-configuration" title="Permalink to this heading">¶</a></h2>
+<p>The first level is the default settings for a server. This is static through the life time of the service process and applied to every data stream it receives.</p>
+<p>This is determined by a configuration file. The three servers all use the same configuration as their default configuration settings. Below is an example file.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">METADATA</span><span class="p">]</span>
+<span class="n">composition_str</span> <span class="o">=</span> <span class="n">composition_str</span>
+<span class="n">sample_name</span> <span class="o">=</span> <span class="n">sample_name</span>
+<span class="n">user_config</span> <span class="o">=</span> <span class="n">user_config</span>
+<span class="n">pyfai_calib_kwargs</span> <span class="o">=</span> <span class="n">pyfai_calib_kwargs</span>
+
+<span class="p">[</span><span class="n">ANALYSIS</span><span class="p">]</span>
+<span class="n">detectors</span> <span class="o">=</span> <span class="n">pe1c</span>
+<span class="n">image_fields</span> <span class="o">=</span> <span class="n">pe1c_image</span>
+<span class="n">image_dtype</span> <span class="o">=</span> <span class="n">uint32</span>
+<span class="n">fill</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">auto_mask</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">alpha</span> <span class="o">=</span> <span class="mf">2.0</span>
+<span class="n">edge</span> <span class="o">=</span> <span class="mi">20</span>
+<span class="n">lower_thresh</span> <span class="o">=</span> <span class="mf">0.0</span>
+<span class="n">npt</span> <span class="o">=</span> <span class="mi">3000</span>
+<span class="n">correctsolidangle</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">polarization_factor</span> <span class="o">=</span> <span class="mf">0.99</span>
+<span class="n">method</span> <span class="o">=</span> <span class="n">bbox</span><span class="p">,</span><span class="n">csr</span><span class="p">,</span><span class="n">cython</span>
+<span class="n">normalization_factor</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="n">pdfgetx</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">rpoly</span> <span class="o">=</span> <span class="mf">1.2</span>
+<span class="n">qmaxinst</span> <span class="o">=</span> <span class="mf">24.0</span>
+<span class="n">qmax</span> <span class="o">=</span> <span class="mf">22.0</span>
+<span class="n">qmin</span> <span class="o">=</span> <span class="mf">0.0</span>
+<span class="n">rmin</span> <span class="o">=</span> <span class="mf">0.0</span>
+<span class="n">rmax</span> <span class="o">=</span> <span class="mf">30.0</span>
+<span class="n">rstep</span> <span class="o">=</span> <span class="mf">0.01</span>
+<span class="n">composition</span> <span class="o">=</span> <span class="n">Ni</span>
+<span class="n">exports</span> <span class="o">=</span> <span class="n">yaml</span><span class="p">,</span><span class="n">poni</span><span class="p">,</span><span class="n">tiff</span><span class="p">,</span><span class="n">mask</span><span class="p">,</span><span class="n">csv</span><span class="p">,</span><span class="n">chi</span><span class="p">,</span><span class="n">chi_2theta</span><span class="p">,</span><span class="n">sq</span><span class="p">,</span><span class="n">fq</span><span class="p">,</span><span class="n">gr</span>
+<span class="n">tiff_base</span> <span class="o">=</span> <span class="o">/</span><span class="n">nsls2</span><span class="o">/</span><span class="n">data</span><span class="o">/</span><span class="n">pdf</span><span class="o">/</span><span class="n">legacy</span><span class="o">/</span><span class="n">processed</span><span class="o">/</span><span class="n">xpdacq_data</span><span class="o">/</span><span class="n">user_data</span><span class="o">/</span><span class="n">tiff_base</span>
+<span class="n">directory</span> <span class="o">=</span> <span class="p">{</span><span class="n">sample_name</span><span class="p">}</span>
+<span class="n">file_prefix</span> <span class="o">=</span> <span class="p">{</span><span class="n">sample_name</span><span class="p">}</span>
+<span class="n">save_plots</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">is_test</span> <span class="o">=</span> <span class="kc">False</span>
+
+<span class="p">[</span><span class="n">VISUALIZATION</span><span class="p">]</span>
+<span class="n">visualizers</span> <span class="o">=</span> <span class="n">masked_image</span><span class="p">,</span><span class="n">chi_2theta</span><span class="p">,</span><span class="n">chi</span><span class="p">,</span><span class="n">fq</span><span class="p">,</span><span class="n">gr</span><span class="p">,</span><span class="n">gr_max</span>
+
+<span class="p">[</span><span class="n">PROXY</span><span class="p">]</span>
+<span class="n">inbound_address</span> <span class="o">=</span> <span class="n">xf28id1</span><span class="o">-</span><span class="n">ca1</span><span class="p">:</span><span class="mi">5577</span>
+<span class="n">outbound_address</span> <span class="o">=</span> <span class="n">xf28id1</span><span class="o">-</span><span class="n">ca1</span><span class="p">:</span><span class="mi">5578</span>
+<span class="n">raw_data_prefix</span> <span class="o">=</span> <span class="n">raw</span>
+<span class="n">analyzed_data_prefix</span> <span class="o">=</span> <span class="n">an</span>
+</pre></div>
+</div>
+<p>This is usually set up by the beamline scientist or the developer.</p>
+<p>Below is an introduction about <cite>MEATDATA</cite> section. It is a section defining the important key names in the start document. These are all default settings and usually not need to be changed.</p>
+<ul class="simple">
+<li><p>composition_str: the key to get a string of sample composition, used in PDFGetter.</p></li>
+<li><p>sample_name: the key of a string of sample name, used in naming.</p></li>
+<li><p>user_config: the key of user configuration in the start document, used to update the document.</p></li>
+<li><p>pyfai_calib_kwargs: the key to start the pyFAI-calib2, used to identify whether to start a pyFAI calibration session.</p></li>
+</ul>
+<p>Now, we come to the most important part <cite>ANALYSIS</cite>. These will determine most of the behavior of data processing and serialization.</p>
+<ul class="simple">
+<li><p>detectors: the names of the detectors, used to create the data key names for processed data.</p></li>
+<li><p>image_fields: the names of the detector image data, used to find out the image data in the data keys.</p></li>
+<li><p>image_dtype: the data type of the image to be saved, all images will be converted to this type.</p></li>
+<li><p>fill: whether or not to use a filler to fill in the external data.</p></li>
+<li><p>auto_mask: whether or not to do the auto masking.</p></li>
+<li><p>alpha: the number of standard deviation to be considered as valid.</p></li>
+<li><p>edge: the number of pixels to be masked at the edges.</p></li>
+<li><p>lower_thresh: the lower limit for the valid pixels, used to mask the deal pixels.</p></li>
+<li><p>upper_thresh (optional): the upper limit for the valid pixels, used to mask the hot pixels.</p></li>
+<li><p>npt: number of the data points in the output XRD data.</p></li>
+<li><p>correctsolidangle: whether or not to correct solid angle in the pyFAI.</p></li>
+<li><p>polarization_factor: polarization correction factor in the pyFAI.</p></li>
+<li><p>method: method for the integration in the pyFAI, must be three comma separated value or just one value.</p></li>
+<li><p>normalization_factor: the normalization factor used in pyFAI.</p></li>
+<li><p>pdfgetx: whether or not to run diffpy.pdfgetx to get PDF data, if False, only XRD will be output.</p></li>
+<li><p>rpoly: polynomial correction order in the pdfgetx.</p></li>
+<li><p>qmaxinst: maximum Q to do the polynomial correction in the pdfgetx.</p></li>
+<li><p>qmax: maximum Q to do the Fourier transformation in the pdfgetx.</p></li>
+<li><p>qmin: minimum Q to do the Fourier transformation in the pdfgetx.</p></li>
+<li><p>rmin: minimum in r axis to calculate the PDF.</p></li>
+<li><p>rmax: maximum in r axis to calculate the PDF.</p></li>
+<li><p>rstep: interval of axis to calculate the PDF.</p></li>
+<li><p>composition: the default composition if it is not provided by the start document.</p></li>
+<li><p>exports: what data to save.</p></li>
+<li><p>tiff_base: the root directory to save data.</p></li>
+<li><p>directory: a python format string of directory name template</p></li>
+<li><p>file_prefix: a python format string of file name prefix template.</p></li>
+<li><p>hints (optional): additional signal names to be added in the file name.</p></li>
+<li><p>save_plots: whether to save the plots or not.</p></li>
+<li><p>is_test: whether to run the server in a test mode, used by developer to debug.</p></li>
+</ul>
+<p>The <cite>Visualizer</cite> is the the settings of visualization. This currently only contains one key to specify what to visualize.</p>
+<p>The proxy settings have been introduced in the chapter before.</p>
+</section>
+<section id="user-configuration">
+<h2>User Configuration<a class="headerlink" href="#user-configuration" title="Permalink to this heading">¶</a></h2>
+<p>User configuration, or in other word, experiment specific configuration is read from the start document of an even stream. It is recorded in the key <cite>user_config</cite>. Users can add the <cite>user_config</cite> in the metadata when they run the <cite>xrun</cite> or <cite>RE</cite> in the IPython session.</p>
+<p>The user_config is a dictionary of key value pairs. These keys are the same as the ones in the <cite>ANALYSIS</cite> section in the configuration file. Their values are used to update the values in the default settings. This update is only applied for one specific bluesky run and won’t affect the following runs.</p>
+<p>In this way, users can tune all the parameters in the data processing and serialization. Currently, we don’t allow users to tune the visualization settings.</p>
+<p>Here, we introduce some use cases to customize the data processing.</p>
+</section>
+<section id="example-use-cases">
+<h2>Example Use Cases<a class="headerlink" href="#example-use-cases" title="Permalink to this heading">¶</a></h2>
+<p>For example, I would like to use a new location to save the data from one experiment. This new location is “./new_tiff_base”. Then, I will give the user configuration.</p>
+<p>It will change the configuration of <cite>tiff_base</cite> to <cite>“./new_tiff_base”</cite> for this run. Note that this is only one time change. If I don’t give this option in the next run, the data will be saved in the default location.</p>
+<p>Another example is that I would like to add a specific data in the filename, like “temperature_setpoint”. I will add it as a string.</p>
+<p>Note that there must be the same name as the signal name in your temperature controller ophyd device. If I have more than one key, for example, “temperature_setpoint” and “heat_rate”, I will use comma-separate values.</p>
+<p>Note that all values of the configuration must be a string, just like what I wrote in the configuration file.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="run_server.html" class="btn btn-neutral float-left" title="Run Servers in One Command" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="replay_analysis.html" class="btn btn-neutral float-right" title="Replay Analysis" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2020, Songsheng Tao.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

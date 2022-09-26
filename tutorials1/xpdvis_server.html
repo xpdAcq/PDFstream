@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>XPDVis Server &mdash; PDFstream 0.6.0 documentation</title>
+  <title>Data Visualization Server &mdash; PDFstream 0.6.0 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/plot_directive.css" type="text/css" />
@@ -18,13 +18,14 @@
         <script src="../_static/underscore.js"></script>
         <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
         <script src="../_static/clipboard.min.js"></script>
         <script src="../_static/copybutton.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="XPDSave Server" href="xpdsave_server.html" />
-    <link rel="prev" title="XPD Server" href="xpd_server.html" /> 
+    <link rel="next" title="Data Serialization Server" href="xpdsave_server.html" />
+    <link rel="prev" title="Data Processing Server" href="xpd_server.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -49,19 +50,13 @@
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials0/index.html">Users Documents</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Beamline Scientists Documents</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="run_server.html">Run Servers in One Command</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html">Configuration of Servers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="replay_analysis.html">Replay Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="xpd_server.html">Data Processing Server</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Data Visualization Server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="xpdsave_server.html">Data Serialization Server</a></li>
 <li class="toctree-l2"><a class="reference internal" href="zmq_proxy.html">ZMQ Proxy</a></li>
-<li class="toctree-l2"><a class="reference internal" href="xpd_server.html">XPD Server</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">XPDVis Server</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#how-to-setup-a-xpdvis-server">How to setup a XPDVis Server?</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#write-the-configuration-file">Write the configuration file</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#start-the-server">Start the server</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#recommended-put-the-configuration-file-in-default-folder">(Recommended) Put the configuration file in default folder</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#optional-run-the-server-in-a-detached-background-process">(Optional) Run the server in a detached background process</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="xpdsave_server.html">XPDSave Server</a></li>
 <li class="toctree-l2"><a class="reference internal" href="test.html">Test at the beamline</a></li>
 </ul>
 </li>
@@ -84,7 +79,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="index.html">Beamline Scientists Documents</a> &raquo;</li>
-      <li>XPDVis Server</li>
+      <li>Data Visualization Server</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/tutorials1/xpdvis_server.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -94,147 +89,18 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="xpdvis-server">
-<h1>XPDVis Server<a class="headerlink" href="#xpdvis-server" title="Permalink to this heading">¶</a></h1>
-<p>The XPDVis server is the server that visualize the data from the XPD server. If users would like to separate the
-data processing with the data visualization, they could run the XPDVis server together with the XPD server on
-the same or different machine.</p>
-<section id="how-to-setup-a-xpdvis-server">
-<h2>How to setup a XPDVis Server?<a class="headerlink" href="#how-to-setup-a-xpdvis-server" title="Permalink to this heading">¶</a></h2>
-<p>There are only two steps: first, write a configuration file or download one; start a server in terminal using
-that file.</p>
-<section id="write-the-configuration-file">
-<h3>Write the configuration file<a class="headerlink" href="#write-the-configuration-file" title="Permalink to this heading">¶</a></h3>
-<p>The server needs a .ini file. This file contains all the configuration to build a server. An example of the file
-is shown below. Please read the comments in the file to know what are the meaning of the parameters.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">BASIC</span><span class="p">]</span>
-<span class="n">name</span> <span class="o">=</span> <span class="n">xpd</span>
-<span class="n">version</span> <span class="o">=</span> <span class="mf">1.0.0</span>
-
-<span class="p">[</span><span class="n">FUNCTIONALITY</span><span class="p">]</span>
-<span class="n">do_calibration</span> <span class="o">=</span> <span class="kc">True</span>
-<span class="n">dump_to_db</span> <span class="o">=</span> <span class="kc">True</span>
-<span class="n">export_files</span> <span class="o">=</span> <span class="kc">True</span>
-<span class="n">visualize_data</span> <span class="o">=</span> <span class="kc">True</span>
-<span class="n">send_messages</span> <span class="o">=</span> <span class="kc">False</span>
-
-<span class="p">[</span><span class="n">LISTEN</span> <span class="n">TO</span><span class="p">]</span>
-<span class="n">host</span> <span class="o">=</span> <span class="n">xf28id1</span><span class="o">-</span><span class="n">ca1</span>
-<span class="n">port</span> <span class="o">=</span> <span class="mi">5568</span>
-<span class="n">prefix</span> <span class="o">=</span> <span class="n">raw</span>
-
-<span class="p">[</span><span class="n">PUBLISH</span> <span class="n">TO</span><span class="p">]</span>
-<span class="n">host</span> <span class="o">=</span> <span class="n">xf28id1</span><span class="o">-</span><span class="n">ca1</span>
-<span class="n">port</span> <span class="o">=</span> <span class="mi">5567</span>
-<span class="n">prefix</span> <span class="o">=</span> <span class="n">an</span>
-
-<span class="p">[</span><span class="n">DATABASE</span><span class="p">]</span>
-<span class="n">raw_db</span> <span class="o">=</span> <span class="n">pdf</span>
-<span class="n">an_db</span> <span class="o">=</span> <span class="n">pdf</span><span class="o">-</span><span class="n">analysis</span>
-
-<span class="p">[</span><span class="n">METADATA</span><span class="p">]</span>
-<span class="n">dk_identifier</span> <span class="o">=</span> <span class="n">dark_frame</span>
-<span class="n">calib_identifier</span> <span class="o">=</span> <span class="n">is_calibration</span>
-<span class="n">dk_id_key</span> <span class="o">=</span> <span class="n">sc_dk_field_uid</span>
-<span class="n">calibration_md_key</span> <span class="o">=</span> <span class="n">calibration_md</span>
-<span class="n">composition_key</span> <span class="o">=</span> <span class="n">sample_composition</span>
-<span class="n">wavelength_key</span> <span class="o">=</span> <span class="n">bt_wavelength</span>
-<span class="n">bkgd_sample_name_key</span> <span class="o">=</span> <span class="n">bkgd_sample_name</span>
-<span class="n">sample_name_key</span> <span class="o">=</span> <span class="n">sample_name</span>
-<span class="n">detector_key</span> <span class="o">=</span> <span class="n">detector</span>
-<span class="n">calibrant_key</span> <span class="o">=</span> <span class="n">sample_composition</span>
-
-<span class="p">[</span><span class="n">CALIBRATION</span><span class="p">]</span>
-<span class="n">calib_base</span> <span class="o">=</span> <span class="o">/</span><span class="n">nsls2</span><span class="o">/</span><span class="n">xf28id1</span><span class="o">/</span><span class="n">xpdacq_data</span><span class="o">/</span><span class="n">user_data</span><span class="o">/</span><span class="n">config_base</span>
-<span class="n">poni_file</span> <span class="o">=</span> <span class="n">xpdAcq_calib_info</span><span class="o">.</span><span class="n">poni</span>
-<span class="n">default_calibrant</span> <span class="o">=</span> <span class="n">Ni</span>
-
-<span class="p">[</span><span class="n">ANALYSIS</span><span class="p">]</span>
-<span class="n">auto_mask</span> <span class="o">=</span> <span class="kc">True</span>
-<span class="c1"># mask_file =</span>
-<span class="n">alpha</span> <span class="o">=</span> <span class="mf">2.5</span>
-<span class="n">edge</span> <span class="o">=</span> <span class="mi">20</span>
-<span class="n">lower_thresh</span> <span class="o">=</span> <span class="mf">0.</span>
-<span class="c1"># upper_thresh =</span>
-<span class="n">npt</span> <span class="o">=</span> <span class="mi">1024</span>
-<span class="n">correctSolidAngle</span> <span class="o">=</span> <span class="kc">False</span>
-<span class="n">polarization_factor</span> <span class="o">=</span> <span class="mf">0.99</span>
-<span class="n">method</span> <span class="o">=</span> <span class="n">splitpixel</span>
-<span class="n">normalization_factor</span> <span class="o">=</span> <span class="mf">1.0</span>
-<span class="n">rpoly</span> <span class="o">=</span> <span class="mf">1.2</span>
-<span class="n">qmaxinst</span> <span class="o">=</span> <span class="mf">24.0</span>
-<span class="n">qmin</span> <span class="o">=</span> <span class="mf">0.0</span>
-<span class="n">qmax</span> <span class="o">=</span> <span class="mf">22.0</span>
-<span class="n">rmin</span> <span class="o">=</span> <span class="mf">0.0</span>
-<span class="n">rmax</span> <span class="o">=</span> <span class="mf">30.0</span>
-<span class="n">rstep</span> <span class="o">=</span> <span class="mf">0.01</span>
-
-<span class="p">[</span><span class="n">SUITCASE</span><span class="p">]</span>
-<span class="n">tiff_base</span> <span class="o">=</span> <span class="o">/</span><span class="n">nsls2</span><span class="o">/</span><span class="n">xf28id1</span><span class="o">/</span><span class="n">xpdacq_data</span><span class="o">/</span><span class="n">user_data</span><span class="o">/</span><span class="n">tiff_base</span>
-<span class="n">directory_template</span> <span class="o">=</span> <span class="p">{</span><span class="n">start</span><span class="p">[</span><span class="n">sample_name</span><span class="p">]}</span><span class="n">_data</span>
-<span class="n">file_prefix</span> <span class="o">=</span> <span class="p">{</span><span class="n">start</span><span class="p">[</span><span class="n">original_run_uid</span><span class="p">]}</span><span class="n">_</span><span class="p">{</span><span class="n">start</span><span class="p">[</span><span class="n">sample_name</span><span class="p">]}</span><span class="n">_</span>
-<span class="n">exports</span> <span class="o">=</span> <span class="n">poni</span><span class="p">,</span><span class="n">tiff</span><span class="p">,</span><span class="n">mask</span><span class="p">,</span><span class="n">json</span><span class="p">,</span><span class="n">csv</span><span class="p">,</span><span class="n">txt</span>
-
-<span class="p">[</span><span class="n">VISUALIZATION</span><span class="p">]</span>
-<span class="n">visualizers</span> <span class="o">=</span> <span class="n">dk_sub_image</span><span class="p">,</span><span class="n">masked_image</span><span class="p">,</span><span class="n">chi</span><span class="p">,</span><span class="n">fq</span><span class="p">,</span><span class="n">gr</span><span class="p">,</span><span class="n">best_effort</span>
-</pre></div>
-</div>
-<p>The parameters you can change are the values that behind the equity symbol in each row. Usually, you don’t need
-to change the file structure but if you would like to do that, you can find what file structure is supported
-<a class="reference external" href="https://docs.python.org/3/library/configparser.html#supported-ini-file-structure">here</a>.</p>
-</section>
-<section id="start-the-server">
-<h3>Start the server<a class="headerlink" href="#start-the-server" title="Permalink to this heading">¶</a></h3>
-<p>Assume that you have written a configuration file and the path to it is “~/xpd_server.ini”.</p>
-<p>In terminal, run the command:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">run_server</span> <span class="o">~/</span><span class="n">xpdvis_server</span><span class="o">.</span><span class="n">ini</span>
-</pre></div>
-</div>
-<p>The server will start in terminal.</p>
-<p>If you would like to terminate the server, press <code class="docutils literal notranslate"><span class="pre">CTRL</span> <span class="pre">+</span> <span class="pre">C</span></code>.</p>
-</section>
-<section id="recommended-put-the-configuration-file-in-default-folder">
-<h3>(Recommended) Put the configuration file in default folder<a class="headerlink" href="#recommended-put-the-configuration-file-in-default-folder" title="Permalink to this heading">¶</a></h3>
-<p>If you are tired of typing the path to the configuration file, you can put the .ini file in the default folder,
-the software will find the configuration file for the server according to the name parameter in the
-configuration file.</p>
-<p>To know where the default configuration folder is, run the command:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">print_server_config_dir</span>
-</pre></div>
-</div>
-<p>You will find the path to the directory. Put the .ini file in that directory and then you can just run:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">run_server</span> <span class="n">xpdvis_server</span>
-</pre></div>
-</div>
-<p>The server will start.</p>
-</section>
-<section id="optional-run-the-server-in-a-detached-background-process">
-<h3>(Optional) Run the server in a detached background process<a class="headerlink" href="#optional-run-the-server-in-a-detached-background-process" title="Permalink to this heading">¶</a></h3>
-<p>Similar to what you have done with the proxy, you can also run the server in background and detach it from the
-terminal so that you don’t need to start the server every time. To do this, in terminal, run command:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nohup</span> <span class="n">run_server</span> <span class="o">~/</span><span class="n">xpd_server</span><span class="o">.</span><span class="n">ini</span> <span class="o">&amp;</span>
-</pre></div>
-</div>
-<p>If you have put the “xpd_server.ini” in default folder, run this instead:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nohup</span> <span class="n">run_server</span> <span class="n">xpdvis_server</span> <span class="o">&amp;</span>
-</pre></div>
-</div>
-<p>You will find the message from the server in file “nohup.out”.</p>
-<p>If you would like to terminate the background process, in terminal, run command:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">kill</span> <span class="o">&lt;</span><span class="n">job</span> <span class="n">ID</span><span class="o">&gt;</span>
-</pre></div>
-</div>
-<p>The <code class="docutils literal notranslate"><span class="pre">&lt;job</span> <span class="pre">ID&gt;</span></code> is a number that shows up after you run the command <code class="docutils literal notranslate"><span class="pre">nohup</span> <span class="pre">run_server</span> <span class="pre">xpd</span> <span class="pre">&amp;</span></code>.</p>
-</section>
-</section>
+  <section id="data-visualization-server">
+<h1>Data Visualization Server<a class="headerlink" href="#data-visualization-server" title="Permalink to this heading">¶</a></h1>
+<p>This server is used to start PyQt windows and plot images and curves on it. It receives the data from the proxy server and these data is published by the data processing server, marked by the prefix <cite>an</cite>.</p>
+<p>The visualized data are the masked dark subtracted images, the I(Q), S(Q), F(Q), G(r) curves, and the QOI plots (currently only maximum peaks plots are shown but there will be more user customizable QOI plots in the future).</p>
 </section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="xpd_server.html" class="btn btn-neutral float-left" title="XPD Server" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="xpdsave_server.html" class="btn btn-neutral float-right" title="XPDSave Server" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="xpd_server.html" class="btn btn-neutral float-left" title="Data Processing Server" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="xpdsave_server.html" class="btn btn-neutral float-right" title="Data Serialization Server" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
