@@ -9,17 +9,17 @@ These saved data includes the dark subtracted images, the mask binary array, and
 
 Below is an example of the masked dark subtracted image from a standard nickel x-ray scattering. The other two dimensional data are visualized in the same way.
 
-.. image:: _static/masked_image.png
+.. image:: ../_static/masked_image.png
   :width: 400
 
 
 This is an example of the waterfall plot of G(r) data. The other one dimensional data are visualized in the same manner.
 
-.. image:: _static/gr.png
+.. image:: ../_static/gr.png
   :width: 400
 
 
 Below shows an example of the QOI plotting of highest peak in the data. How it will be plotted is decided based on the scan type. It could be line plot or color mesh plot.
 
-.. image:: _static/max.png
+.. image:: ../_static/max.png
   :width: 400

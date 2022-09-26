@@ -10,8 +10,7 @@ The first level is the default settings for a server. This is static through the
 
 This is determined by a configuration file. The three servers all use the same configuration as their default configuration settings. Below is an example file.
 
-.. literalinclude:: _static/pdf_beamline.ini
-   :text:
+.. literalinclude:: ../_static/pdf_beamline.ini
 
 This is usually set up by the beamline scientist or the developer.
 

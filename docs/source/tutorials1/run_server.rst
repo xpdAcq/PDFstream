@@ -6,8 +6,7 @@ Start the server
 
 I assume that you have written a configuration file and the path to it is "~/xpd_server.ini". If you haven't, here is an example of the configuration file.
 
-.. literalinclude:: _static/pdf_beamline.ini
-   :text:
+.. literalinclude:: ../_static/pdf_beamline.ini
 
 You will find more details about the parameters in the other chapters of the servers. Here, I only show how to use it start a server.
 
