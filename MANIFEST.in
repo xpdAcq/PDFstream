@@ -7,7 +7,8 @@ include requirements/*
 recursive-exclude * __pycache__
 recursive-exclude * *.py[co]
 
+recursive-include docs *.rst conf.py Makefile make.bat
+
 # If including data files in the package, add them like:
 # include path/to/data_file
 include pdfstream/data/*
-include requirements/*
