@@ -4,7 +4,7 @@ $ACTIVITIES = [
     'changelog',
     'tag',
     'push_tag',
-    'ghrelease',
+#    'ghrelease',
     'pypi',
 #    'forge'
 ]
