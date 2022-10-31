@@ -164,7 +164,7 @@ class Analyzer(event_model.DocumentRouter):
             self._sq_dir: Path = self._directory.joinpath("sq")
             self._fq_dir: Path = self._directory.joinpath("fq")
             self._gr_dir: Path = self._directory.joinpath("gr")
-            self._directory.mkdir(exist_ok=True, parents=True)
+            self._directory.mkdir(exist_ok=True)
             self._poni_dir.mkdir(exist_ok=True)
             self._integration_dir.mkdir(exist_ok=True)
             self._sq_dir.mkdir(exist_ok=True)
