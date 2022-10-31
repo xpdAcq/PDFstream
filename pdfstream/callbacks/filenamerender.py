@@ -136,13 +136,13 @@ class FileNameRender(CallbackBase):
         t = self._get_timestamp(doc)
         doc["filename"] = self._file_prefix + "_" + t + "_" + self._uid
         doc["directory"] = self._directory
-        return doc
+        return
 
     def descriptor(self, doc):
         if doc["name"] == self._stream_name:
             self._descriptor = doc['uid']
             self._add_data_keys(doc)
-        return doc
+        return
 
     def event(self, doc):
         if doc["descriptor"] == self._descriptor:

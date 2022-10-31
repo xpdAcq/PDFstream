@@ -80,7 +80,7 @@ class AnalysisPipeline:
             self._set_filler()
         if self._filler is not None:
             name, doc = self._filler(name, doc)
-        name, doc = self._filename_render(name, doc)
+        self._filename_render(name, doc)
         for dark_subtraction in self._dark_subtractions:
             name, doc = dark_subtraction(name, doc)
         for analyzer in self._analyzers:
