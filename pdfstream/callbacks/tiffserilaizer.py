@@ -38,7 +38,6 @@ class TiffSerializer(SerializerBase):
 
     def event(self, doc):
         if doc["descriptor"] == self._descriptor:
-            event_model.verify_filled(doc)
             for field in self._fields:
                 if field in doc["data"]:
                     self._export(doc, field)
