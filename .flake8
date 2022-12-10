@@ -7,4 +7,4 @@ exclude =
     versioneer.py,
     pdfstream/_version.py,
     docs/*.py
-ignore = E501
+ignore = E501,E203
