@@ -5,12 +5,12 @@ from numpy import ndarray
 
 from pdfstream.transformation.tools import make_pdfgetter, use_pdfgetter, visualize
 
-__all__ = [
-    'get_pdf'
-]
+__all__ = ["get_pdf"]
 
 
-def get_pdf(pdfconfig: PDFConfig, chi: ndarray, plot_setting: typing.Union[str, dict] = None) -> PDFGetter:
+def get_pdf(
+    pdfconfig: PDFConfig, chi: ndarray, plot_setting: typing.Union[str, dict] = None
+) -> PDFGetter:
     """Get the PDF from the chi data.
 
     The pdfgetter will be initiated by pdfconfig. It takes the chi data and does the calculation. The results

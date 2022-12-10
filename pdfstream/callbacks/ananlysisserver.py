@@ -10,7 +10,6 @@ PipeLine = T.ClassVar[Config]
 
 
 class AnalysisServer(RemoteDispatcher):
-
     def __init__(self, config: Config) -> None:
         super().__init__(config.outbound_address, prefix=config.raw_data_prefix)
         pipeline = AnalysisPipeline(config)

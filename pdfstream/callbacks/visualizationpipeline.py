@@ -15,7 +15,9 @@ class VisualizationPipeline:
         self._config: Config = config
         self._stream_name: str = stream_name
         self._descriptor: str = ""
-        self._datakeys: T.List[DataKeys] = [DataKeys(d, f) for d, f in zip(config.detectors, config.image_fields)]
+        self._datakeys: T.List[DataKeys] = [
+            DataKeys(d, f) for d, f in zip(config.detectors, config.image_fields)
+        ]
         self._image_plotters: T.List[ImagePlotter] = list()
         self._waterfall_plotters: T.List[WaterfallPlotter] = list()
         self._scatter_plotters: T.List[ScatterPlotter] = list()
@@ -24,19 +26,23 @@ class VisualizationPipeline:
         self._populate_scatter_plotters()
 
     def _populate_image_plotters(self) -> None:
+        bases = self._config.tiff_base
         exports = self._config.visualizers
         save = self._config.save_plots
         if "image" in exports:
             for dk in self._datakeys:
-                image_plotter = ImagePlotter(dk.image, name=dk.image, save=save)
+                image_plotter = ImagePlotter(bases, dk.image, name=dk.image, save=save)
                 self._image_plotters.append(image_plotter)
         if "masked_image" in exports:
             for dk in self._datakeys:
-                image_plotter = ImagePlotter(dk.image, dk.mask, name=("masked_" + dk.image), save=save)
+                image_plotter = ImagePlotter(
+                    bases, dk.image, dk.mask, name=("masked_" + dk.image), save=save
+                )
                 self._image_plotters.append(image_plotter)
         return
 
     def _populate_waterfall_plotters(self) -> None:
+        bases = self._config.tiff_base
         exports = self._config.visualizers
         save = self._config.save_plots
         keys = ["chi_2theta", "chi", "iq", "fq", "sq", "gr"]
@@ -49,22 +55,32 @@ class VisualizationPipeline:
                 for dk in self._datakeys:
                     x_field = getattr(dk, x)
                     y_field = getattr(dk, y)
-                    plotter = WaterfallPlotter(x_field, y_field, *label, name=name, save=save)
+                    plotter = WaterfallPlotter(
+                        bases, x_field, y_field, *label, name=name, save=save
+                    )
                     self._waterfall_plotters.append(plotter)
         return
 
     def _populate_scatter_plotters(self) -> None:
+        bases = self._config.tiff_base
         exports = self._config.visualizers
         save = self._config.save_plots
         keys = ["gr_argmax", "gr_max", "chi_argmax", "chi_max"]
         ys = ["gr_argmax", "gr_max", "chi_argmax", "chi_max"]
         labels = [LABELS.gr[0], LABELS.gr[1], LABELS.chi[0], LABELS.chi[1]]
-        names = ["G_peak_position", "G_peak_height", "Chi_peak_position", "Chi_peak_height"]
+        names = [
+            "G_peak_position",
+            "G_peak_height",
+            "Chi_peak_position",
+            "Chi_peak_height",
+        ]
         for key, y, label, name in zip(keys, ys, labels, names):
             if key in exports:
                 for dk in self._datakeys:
                     y_field = getattr(dk, y)
-                    plotter = ScatterPlotter(y_field, ylabel=label, name=name, save=save)
+                    plotter = ScatterPlotter(
+                        bases, y_field, ylabel=label, name=name, save=save
+                    )
                     self._scatter_plotters.append(plotter)
         return
 

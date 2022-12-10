@@ -54,7 +54,7 @@ analyzer = XPDAnalyzer(config)
 # Below is an example showing the process of retrieving one run from a catalog according to its unique ID.
 
 db = config.raw_db
-run = db['9d320500-b3c8-47a2-8554-ca63fa092c17']
+run = db["9d320500-b3c8-47a2-8554-ca63fa092c17"]
 
 # %%
 # Here, ``db`` is a databroker catalog loaded according to your configuration.
@@ -71,7 +71,7 @@ raw_data
 import matplotlib.pyplot as plt
 
 image = raw_data["pe1_image"]
-image.plot(vmin=0, vmax=image.mean() + 2. * image.std())
+image.plot(vmin=0, vmax=image.mean() + 2.0 * image.std())
 plt.show()
 
 # %%
@@ -110,7 +110,7 @@ import numpy as np
 
 image2 = np.ma.masked_array(an_data["dk_sub_image"], an_data["mask"])
 image2 = np.ma.squeeze(image2)
-plt.matshow(image2, vmin=0., vmax=image2.mean() + 2. * image2.std())
+plt.matshow(image2, vmin=0.0, vmax=image2.mean() + 2.0 * image2.std())
 plt.colorbar()
 plt.show()
 
@@ -137,12 +137,12 @@ plt.show()
 # For example, we think that the ``qmax`` in section ``TRANSFORMATION SETTING``
 # is slightly larger than the ideal and thus we decrease it to 20 inverse angstrom.
 
-config.set("TRANSFORMATION SETTING", "qmax", '20')
+config.set("TRANSFORMATION SETTING", "qmax", "20")
 
 # %%
 # We can also use another way.
 
-config["TRANSFORMATION SETTING"]["qmax"] = '20'
+config["TRANSFORMATION SETTING"]["qmax"] = "20"
 
 # %%
 # Then, we just need to run ``analyzer.analyze(run)``.

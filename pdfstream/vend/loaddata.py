@@ -21,9 +21,10 @@ def load_data(filename, minrows=10, **kwargs):
     See also numpy.loadtxt for more details.
     """
     from numpy import array, loadtxt
+
     # determine the arguments
-    delimiter = kwargs.get('delimiter')
-    usecols = kwargs.get('usecols')
+    delimiter = kwargs.get("delimiter")
+    usecols = kwargs.get("usecols")
     # required at least one column of floating point values
     mincv = (1, 1)
     # but if usecols is specified, require sufficient number of columns
@@ -50,7 +51,7 @@ def load_data(filename, minrows=10, **kwargs):
         return nc, nv
 
     # make sure fid gets cleaned up
-    with open(filename, 'rb') as fid:
+    with open(filename, "rb") as fid:
         # search for the start of datablock
         start = ncvblock = None
         fpos = (0, 0)
@@ -80,6 +81,6 @@ def load_data(filename, minrows=10, **kwargs):
             fid.seek(start)
             # always use usecols argument so that loadtxt does not crash
             # in case of trailing delimiters.
-            kwargs.setdefault('usecols', list(range(ncvblock[0])))
+            kwargs.setdefault("usecols", list(range(ncvblock[0])))
             rv = loadtxt(fid, **kwargs)
     return rv

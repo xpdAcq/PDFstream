@@ -57,11 +57,9 @@ class DarkSubtraction(event_model.DocumentRouter):
          Defaults to 0.
     """
 
-    def __init__(self,
-                 field,
-                 light_stream_name='primary',
-                 dark_stream_name='dark',
-                 pedestal=0):
+    def __init__(
+        self, field, light_stream_name="primary", dark_stream_name="dark", pedestal=0
+    ):
         self.field = field
         self.light_stream_name = light_stream_name
         self.dark_stream_name = dark_stream_name
@@ -81,50 +79,53 @@ class DarkSubtraction(event_model.DocumentRouter):
     def descriptor(self, doc):
         if self.field not in doc["data_keys"]:
             return doc
-        if doc['name'] == self.light_stream_name:
-            self.light_descriptor = doc['uid']
+        if doc["name"] == self.light_stream_name:
+            self.light_descriptor = doc["uid"]
             # add flag that we did the background subtraction
-            doc['data_keys'][f'{self.field}_is_background_subtracted'] = {
-                'source': 'DarkSubtraction',
-                'dtype': 'number',
-                'shape': [],
-                'precsion': 0,
-                'object_name': f'{self.field}_DarkSubtraction'}
-            doc['configuration'][f'{self.field}_DarkSubtraction'] = {
-                'data': {'pedestal': self.pedestal},
-                'timestamps': {'pedestal': time.time()},
-                'data_keys': {
-                    'pedestal': {
-                        'source': 'DarkSubtraction',
-                        'dtype': 'number',
-                        'shape': [],
-                        'precsion': 0,
-                    }
-                }
+            doc["data_keys"][f"{self.field}_is_background_subtracted"] = {
+                "source": "DarkSubtraction",
+                "dtype": "number",
+                "shape": [],
+                "precsion": 0,
+                "object_name": f"{self.field}_DarkSubtraction",
             }
-            doc['object_keys'][f'{self.field}_DarkSubtraction'] = [
-                f'{self.field}_is_background_subtracted']
-        elif doc['name'] == self.dark_stream_name:
-            self.dark_descriptor = doc['uid']
+            doc["configuration"][f"{self.field}_DarkSubtraction"] = {
+                "data": {"pedestal": self.pedestal},
+                "timestamps": {"pedestal": time.time()},
+                "data_keys": {
+                    "pedestal": {
+                        "source": "DarkSubtraction",
+                        "dtype": "number",
+                        "shape": [],
+                        "precsion": 0,
+                    }
+                },
+            }
+            doc["object_keys"][f"{self.field}_DarkSubtraction"] = [
+                f"{self.field}_is_background_subtracted"
+            ]
+        elif doc["name"] == self.dark_stream_name:
+            self.dark_descriptor = doc["uid"]
         return doc
 
     def event(self, doc):
         if self.field not in doc["data"]:
             return doc
-        if doc['descriptor'] == self.dark_descriptor:
-            self.dark_frame = doc['data'][self.field][0]
+        if doc["descriptor"] == self.dark_descriptor:
+            self.dark_frame = doc["data"][self.field][0]
             self.dark_frame -= self.pedestal
             numpy.clip(self.dark_frame, a_min=0, a_max=None, out=self.dark_frame)
-        elif doc['descriptor'] == self.light_descriptor:
+        elif doc["descriptor"] == self.light_descriptor:
             if self.dark_frame is None:
                 raise DarkSubtractionError(
                     "DarkSubtraction has not received a 'dark' Event yet, so "
-                    "it has nothing to subtract.")
-            light = numpy.asarray(doc['data'][self.field])
+                    "it has nothing to subtract."
+                )
+            light = numpy.asarray(doc["data"][self.field])
             subtracted = self.subtract(light, self.dark_frame)
-            doc['data'][self.field] = subtracted
-            doc['data'][f'{self.field}_is_background_subtracted'] = [True]
-            doc['timestamps'][f'{self.field}_is_background_subtracted'] = [time.time()]
+            doc["data"][self.field] = subtracted
+            doc["data"][f"{self.field}_is_background_subtracted"] = [True]
+            doc["timestamps"][f"{self.field}_is_background_subtracted"] = [time.time()]
         return doc
 
     def event_page(self, doc):

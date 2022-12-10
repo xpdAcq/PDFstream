@@ -15,10 +15,7 @@ def test_auto_text():
     tools.auto_text("nothing", ax)
 
 
-@pytest.mark.parametrize(
-    "wrong_data",
-    [np.zeros((4, 5, 1)), np.zeros((2, 5))]
-)
+@pytest.mark.parametrize("wrong_data", [np.zeros((4, 5, 1)), np.zeros((2, 5))])
 def test_plot_fit_eorr(wrong_data):
     fig = plt.figure()
     ax = fig.add_subplot(111)

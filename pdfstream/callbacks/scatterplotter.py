@@ -1,6 +1,7 @@
 import typing as T
 
 import matplotlib.pyplot as plt
+from pathlib import Path
 from bluesky.callbacks.mpl_plotting import LivePlot, LiveScatter
 
 from .plotterbase import PlotterBase
@@ -9,7 +10,17 @@ from .plotterbase import PlotterBase
 class ScatterPlotter(PlotterBase):
     """Scatter plot of the quantity of intests."""
 
-    def __init__(self, y: str, *, ylabel: str = None, name: str = "scatter", save: bool = False, suffix: str = ".png", **kwargs):
+    def __init__(
+        self,
+        bases: T.List[Path],
+        y: str,
+        *,
+        ylabel: str = None,
+        name: str = "scatter",
+        save: bool = False,
+        suffix: str = ".png",
+        **kwargs
+    ):
         fig, ax = plt.subplots()
         kwargs.setdefault("marker", "o")
         self.y_field = y
@@ -17,7 +28,7 @@ class ScatterPlotter(PlotterBase):
         self._ylabel = ylabel
         self._kwargs = kwargs
         self._callback = None
-        super().__init__(name, fig, save_at_stop=save, suffix=suffix)
+        super().__init__(bases, name, fig, save_at_stop=save, suffix=suffix)
 
     def _get_hints(self, doc: dict) -> T.List[str]:
         hints = []
@@ -31,11 +42,17 @@ class ScatterPlotter(PlotterBase):
         self._ax.cla()
         indeps = self._get_hints(doc)
         if len(indeps) == 1:
-            self._callback = LivePlot(self.y_field, x=indeps[0], ax=self._ax, **self._kwargs)
+            self._callback = LivePlot(
+                self.y_field, x=indeps[0], ax=self._ax, **self._kwargs
+            )
         elif len(indeps) == 2:
-            self._callback = LiveScatter(*indeps, self.y_field, ax=self._ax, **self._kwargs)
+            self._callback = LiveScatter(
+                *indeps, self.y_field, ax=self._ax, **self._kwargs
+            )
         else:
-            self._callback = LivePlot(self.y_field, x="time", ax=self._ax, **self._kwargs)
+            self._callback = LivePlot(
+                self.y_field, x="time", ax=self._ax, **self._kwargs
+            )
         self._callback.start(doc)
         return super().start(doc)
 

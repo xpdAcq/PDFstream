@@ -11,11 +11,7 @@ from pyFAI.azimuthalIntegrator import AzimuthalIntegrator
 from pdfstream.vend.masking import generate_binner, mask_img
 
 INTEG_SETTING = dict(
-    npt=1480,
-    correctSolidAngle=False,
-    method='splitpixel',
-    unit='q_A^-1',
-    safe=False
+    npt=1480, correctSolidAngle=False, method="splitpixel", unit="q_A^-1", safe=False
 )
 # default visualization setting
 _LABEL = {
@@ -23,7 +19,7 @@ _LABEL = {
     "q_nm^-1": r"Q ({nm}$^{-1}$)",
     "2th_deg": r"2$\theta$ (deg)",
     "2th_rad": r"2$\theta$ (rad)",
-    "r_mm": r"radius (mm)"
+    "r_mm": r"radius (mm)",
 }
 
 
@@ -42,14 +38,19 @@ def bg_sub(img: ndarray, bg_img: ndarray, bg_scale: float = None) -> ndarray:
         The scale of the the background image.
     """
     if bg_scale is None:
-        bg_scale = 1.
+        bg_scale = 1.0
     if bg_img.shape != img.shape:
-        raise ValueError(f"Unmatched shape between two images: {bg_img.shape}, {img.shape}.")
+        raise ValueError(
+            f"Unmatched shape between two images: {bg_img.shape}, {img.shape}."
+        )
     return img - bg_scale * bg_img
 
 
 def integrate(
-    img: ndarray, ai: AzimuthalIntegrator, mask: ndarray = None, integ_setting: dict = None
+    img: ndarray,
+    ai: AzimuthalIntegrator,
+    mask: ndarray = None,
+    integ_setting: dict = None,
 ) -> Tuple[ndarray, dict]:
     """Use AzimuthalIntegrator to integrate the image.
 
@@ -85,7 +86,9 @@ def integrate(
     return chi, _integ_setting
 
 
-def vis_img(img: ndarray, mask: ndarray = None, img_setting: dict = None, show: bool = True) -> Axes:
+def vis_img(
+    img: ndarray, mask: ndarray = None, img_setting: dict = None, show: bool = True
+) -> Axes:
     """Visualize the processed image. The color map will be determined by statistics of the pixel values. The color map
     is determined by mean +/- z_score * std.
 
@@ -115,11 +118,8 @@ def vis_img(img: ndarray, mask: ndarray = None, img_setting: dict = None, show: 
     if mask is not None:
         img = np.ma.masked_array(img, mask)
     mean, std = img.mean(), img.std()
-    z_score = img_setting.pop('z_score', 2.)
-    kwargs = {
-        'vmin': mean - z_score * std,
-        'vmax': mean + z_score * std
-    }
+    z_score = img_setting.pop("z_score", 2.0)
+    kwargs = {"vmin": mean - z_score * std, "vmax": mean + z_score * std}
     kwargs.update(**img_setting)
     img_obj = ax.matshow(img, **kwargs)
     ax.set_xticks([])
@@ -133,7 +133,9 @@ def vis_img(img: ndarray, mask: ndarray = None, img_setting: dict = None, show: 
     return ax
 
 
-def vis_chi(chi: ndarray, plot_setting: dict = None, unit: str = None, show: bool = True) -> Axes:
+def vis_chi(
+    chi: ndarray, plot_setting: dict = None, unit: str = None, show: bool = True
+) -> Axes:
     """Visualize the chi curve.
 
     Parameters
@@ -162,7 +164,7 @@ def vis_chi(chi: ndarray, plot_setting: dict = None, unit: str = None, show: boo
     ax.plot(chi[0], chi[1], **plot_setting)
     if unit:
         ax.set_xlabel(_LABEL.get(unit))
-    ax.set_ylabel('I (A. U.)')
+    ax.set_ylabel("I (A. U.)")
     if show:
         plt.show(block=False)
     return ax
@@ -172,7 +174,7 @@ def auto_mask(
     img: ndarray,
     ai: AzimuthalIntegrator,
     user_mask: ndarray = None,
-    mask_setting: dict = None
+    mask_setting: dict = None,
 ) -> Tuple[ndarray, dict]:
     """Automatically generate the mask of the image.
 

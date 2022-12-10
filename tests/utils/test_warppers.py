@@ -16,4 +16,4 @@ def test_take_in_namespace():
         return locals()
 
     wrapped_func = wrappers.take_in_namespace(func)
-    assert wrapped_func({'arg0': 0, 'arg1': 1}) == {'arg0': 0, 'arg1': 1}
+    assert wrapped_func({"arg0": 0, "arg1": 1}) == {"arg0": 0, "arg1": 1}

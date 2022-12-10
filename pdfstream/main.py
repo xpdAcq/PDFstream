@@ -11,6 +11,7 @@ import pdfstream.callbacks.visualizationserver as visualization
 
 try:
     import diffpy.pdfgetx
+
     PDFGETX_AVAILABLE = True
     del diffpy.pdfgetx
 except ImportError:
@@ -23,15 +24,17 @@ CONFIG_DIR = str(Path("~/.config/pdfstream/").expanduser())
 def main():
     """The CLI entry point. Run google-fire on the name - function mapping."""
     import pdfstream.cli as cli
+
     COMMANDS = {
-        'average': cli.average,
-        'integrate': cli.integrate,
-        'waterfall': cli.waterfall,
-        'visualize': cli.visualize
+        "average": cli.average,
+        "integrate": cli.integrate,
+        "waterfall": cli.waterfall,
+        "visualize": cli.visualize,
     }
     if PDFGETX_AVAILABLE:
         import pdfstream.transformation.cli
-        COMMANDS.update({'transform': pdfstream.transformation.cli.transform})
+
+        COMMANDS.update({"transform": pdfstream.transformation.cli.transform})
     fire.Fire(COMMANDS)
     return
 
@@ -62,7 +65,7 @@ def _run_server(cfg_file: str) -> None:
     ps = [
         analysis.get_process(str(cfg_file)),
         serialization.get_process(str(cfg_file)),
-        visualization.get_process(str(cfg_file))
+        visualization.get_process(str(cfg_file)),
     ]
     _run_processes(ps)
     return

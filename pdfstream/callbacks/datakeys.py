@@ -3,7 +3,6 @@ from functools import lru_cache
 
 
 class DataKeys:
-
     def __init__(self, detector: str, image: str) -> None:
         self.image = image
         self.detector = detector
@@ -26,10 +25,7 @@ class DataKeys:
 
     @lru_cache(1)
     def get_2d_arrays(self) -> T.List[str]:
-        return [
-            self.image,
-            self.mask
-        ]
+        return [self.image, self.mask]
 
     @lru_cache(1)
     def get_1d_arrays(self) -> T.List[str]:
@@ -44,23 +40,16 @@ class DataKeys:
             self.fq_Q,
             self.fq_F,
             self.gr_r,
-            self.gr_G
+            self.gr_G,
         ]
 
     @lru_cache(1)
     def get_scalar(self) -> T.List[str]:
-        return [
-            self.chi_argmax,
-            self.chi_max,
-            self.gr_argmax,
-            self.gr_max
-        ]
+        return [self.chi_argmax, self.chi_max, self.gr_argmax, self.gr_max]
 
     @lru_cache(1)
     def get_all(self) -> T.List[str]:
-        return self.get_2d_arrays() + \
-            self.get_1d_arrays() + \
-            self.get_scalar()
+        return self.get_2d_arrays() + self.get_1d_arrays() + self.get_scalar()
 
     @lru_cache(1)
     def get_pdfgetx_x(self) -> T.List[str]:

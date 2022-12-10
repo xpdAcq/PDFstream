@@ -24,7 +24,7 @@ MAP_PYFAI_TO_MPL = {
     "q_A^-1": INV_A,
     "2th_deg": DEG,
     "2th_rad": RAD,
-    "r_mm": MM
+    "r_mm": MM,
 }
 
 MAP_PYFAI_TO_XNAME = {
@@ -32,7 +32,7 @@ MAP_PYFAI_TO_XNAME = {
     "q_A^-1": "Q",
     "2th_deg": "twotheta",
     "2th_rad": "twotheta",
-    "r_mm": "r"
+    "r_mm": "r",
 }
 
 MAP_PYFAI_TO_YNAME = {
@@ -40,7 +40,7 @@ MAP_PYFAI_TO_YNAME = {
     "q_A^-1": "I",
     "2th_deg": "I",
     "2th_rad": "I",
-    "r_mm": "I"
+    "r_mm": "I",
 }
 
 MAP_PYFAI_TO_DATAFORMAT = {

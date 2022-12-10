@@ -52,14 +52,23 @@ def transform(
         executor = ProcessPoolExecutor() if not test else ThreadPoolExecutor()
         jobs = [
             executor.submit(
-                _transform, cfg_file, data_file, output_dir=output_dir, plot_setting=plot_setting, test=test
+                _transform,
+                cfg_file,
+                data_file,
+                output_dir=output_dir,
+                plot_setting=plot_setting,
+                test=test,
             )
             for data_file in data_files
         ]
         return [job.result() for job in as_completed(jobs)]
     return [
         _transform(
-            cfg_file, data_file, output_dir=output_dir, plot_setting=plot_setting, test=test
+            cfg_file,
+            data_file,
+            output_dir=output_dir,
+            plot_setting=plot_setting,
+            test=test,
         )
         for data_file in data_files
     ]

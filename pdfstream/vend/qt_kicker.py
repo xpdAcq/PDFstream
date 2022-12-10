@@ -23,7 +23,7 @@ def install_qt_kicker(loop=None, update_rate=0.03):
     global _QT_KICKER_INSTALLED
     if loop in _QT_KICKER_INSTALLED:
         return
-    if not any(p in sys.modules for p in ['PyQt4', 'pyside', 'PyQt5']):
+    if not any(p in sys.modules for p in ["PyQt4", "pyside", "PyQt5"]):
         return
 
     from matplotlib.backends.backend_qt5 import _create_qApp
@@ -34,10 +34,12 @@ def install_qt_kicker(loop=None, update_rate=0.03):
     try:
         # old version
         import matplotlib.backends.backend_qt5
+
         qApp = matplotlib.backends.backend_qt5.qApp
     except AttributeError:
         # new version
         from PyQt5 import QtWidgets
+
         qApp = QtWidgets.QApplication.instance()
 
     try:

@@ -14,7 +14,7 @@ DEFAULT_CONFIGURE = {
         "composition_str": "composition_str",
         "sample_name": "sample_name",
         "user_config": "user_config",
-        "pyfai_calib_kwargs": "pyfai_calib_kwargs"
+        "pyfai_calib_kwargs": "pyfai_calib_kwargs",
     },
     "ANALYSIS": {
         "detectors": "pe1, pe2 ,dexela",
@@ -40,24 +40,24 @@ DEFAULT_CONFIGURE = {
         "rmax": 30.0,
         "rstep": 0.01,
         "composition": "Ni",
-        "exports": 'yaml, poni, tiff, mask, csv, chi, chi_2theta, sq, fq, gr',
+        "exports": "yaml, poni, tiff, mask, csv, chi, chi_2theta, sq, fq, gr",
         "tiff_base": "~/acqsim/xpdUser/tiff_base",
         "directory": "{sample_name}",
         "file_prefix": "{sample_name}",
         "hints": None,
         "save_plots": False,
         "publish": True,
-        "is_test": False
+        "is_test": False,
     },
     "VISUALIZATION": {
-        "visualizers": 'image, masked_image, chi_2theta, chi, sq, fq, gr, gr_argmax, gr_max, chi_argmax, chi_max',
+        "visualizers": "image, masked_image, chi_2theta, chi, sq, fq, gr, gr_argmax, gr_max, chi_argmax, chi_max",
     },
     "PROXY": {
         "inbound_address": "localhost:5567",
         "outbound_address": "localhost:5568",
         "raw_data_prefix": "raw",
-        "analyzed_data_prefix": "an"
-    }
+        "analyzed_data_prefix": "an",
+    },
 }
 
 
@@ -121,7 +121,7 @@ class Config(ConfigParser):
             "alpha": self.getfloat("ANALYSIS", "alpha"),
             "edge": self.getint("ANALYSIS", "edge"),
             "lower_thresh": self.getfloat("ANALYSIS", "lower_thresh"),
-            "upper_thresh": self.get("ANALYSIS", "upper_thresh")
+            "upper_thresh": self.get("ANALYSIS", "upper_thresh"),
         }
 
     @cached_property
@@ -132,7 +132,7 @@ class Config(ConfigParser):
             "polarization_factor": self.getfloat("ANALYSIS", "polarization_factor"),
             "method": self.get("ANALYSIS", "method"),
             "normalization_factor": self.getfloat("ANALYSIS", "normalization_factor"),
-            "unit": "2th_deg"
+            "unit": "2th_deg",
         }
 
     @cached_property
@@ -146,7 +146,7 @@ class Config(ConfigParser):
             "rmax": self.getfloat("ANALYSIS", "rmax"),
             "rstep": self.getfloat("ANALYSIS", "rstep"),
             "composition": self.get("ANALYSIS", "composition"),
-            "dataformat": "QA"
+            "dataformat": "QA",
         }
 
     @cached_property
@@ -158,8 +158,9 @@ class Config(ConfigParser):
         return self.getset("ANALYSIS", "exports")
 
     @cached_property
-    def tiff_base(self) -> Path:
-        return Path(self.get("ANALYSIS", "tiff_base")).expanduser()
+    def tiff_base(self) -> T.List[Path]:
+        tiff_base = self.get("ANALYSIS", "tiff_base").split(":")
+        return [Path(t).expanduser() for t in tiff_base]
 
     @cached_property
     def directory(self) -> SpecialStr:
@@ -187,7 +188,7 @@ class Config(ConfigParser):
             "astype": self.get("ANALYSIS", "tiff_astype", fallback="float32"),
             "bigtiff": self.getboolean("ANALYSIS", "tiff_bigtiff", fallback=False),
             "byteorder": self.get("ANALYSIS", "tiff_byteorder", fallback=None),
-            "imagej": self.get("ANALYSIS", "tiff_imagej", fallback=False)
+            "imagej": self.get("ANALYSIS", "tiff_imagej", fallback=False),
         }
 
     @cached_property
@@ -212,7 +213,9 @@ class Config(ConfigParser):
 
     @cached_property
     def datakeys_list(self) -> T.List[DataKeys]:
-        return [DataKeys(det, img) for det, img in zip(self.detectors, self.image_fields)]
+        return [
+            DataKeys(det, img) for det, img in zip(self.detectors, self.image_fields)
+        ]
 
     def to_dict(self) -> ConfigDict:
         """Convert the configuration to a dictionary."""

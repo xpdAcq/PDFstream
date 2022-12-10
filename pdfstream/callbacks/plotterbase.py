@@ -11,9 +11,19 @@ class PlotterBaseError(Exception):
 
 
 class PlotterBase(DocumentRouter):
-
-    def __init__(self, name: str, figure: Figure, folder: str = "plots", stream_name: str = "primary", save_at_stop: bool = False, save_at_event: bool = False, suffix: str = ".png"):
+    def __init__(
+        self,
+        bases: T.List[Path],
+        name: str,
+        figure: Figure,
+        folder: str = "plots",
+        stream_name: str = "primary",
+        save_at_stop: bool = False,
+        save_at_event: bool = False,
+        suffix: str = ".png",
+    ):
         super().__init__()
+        self._bases = bases
         self._name = name
         self._figure = figure
         self._suffix = suffix
@@ -22,15 +32,24 @@ class PlotterBase(DocumentRouter):
         self._save_at_stop = save_at_stop
         self._save_at_event = save_at_event
         self._filename = None
-        self._directory = None
+        self._directories = None
         self._descriptor = ""
         self._updated = False
 
     def mkdir(self, doc) -> None:
+        self.setdir(doc)
+        for d in self._directories:
+            d.mkdir(exist_ok=True)
+        return
+
+    def setdir(self, doc) -> None:
         if "directory" not in doc:
-            raise PlotterBaseError("Missing key 'directory' in the doc.")
-        self._directory = Path(doc["directory"]).joinpath(self._folder)
-        self._directory.mkdir(exist_ok=True, parents=True)
+            raise PlotterBaseError(
+                "Missing key 'directory' in the doc {}".format(doc["uid"])
+            )
+        self._directories = [
+            Path(d, doc["directory"]).joinpath(self._folder) for d in self._bases
+        ]
         return
 
     def set_filename(self, doc) -> None:
@@ -41,8 +60,9 @@ class PlotterBase(DocumentRouter):
 
     def save_figure(self) -> None:
         f = self._filename + "_" + self._name + self._suffix
-        fpath = self._directory.joinpath(f)
-        self._figure.savefig(fpath)
+        for d in self._directories:
+            fpath = d.joinpath(f)
+            self._figure.savefig(fpath)
         return
 
     def plot_event(self, doc) -> T.Any:
@@ -67,7 +87,7 @@ class PlotterBase(DocumentRouter):
             if not self._updated:  # nothing is drawn
                 return doc
             self._figure.canvas.draw_idle()
-            if int(doc['seq_num']) == 1:
+            if int(doc["seq_num"]) == 1:
                 self._figure.show()
             if self._save_at_event:
                 self.set_filename(doc["data"])

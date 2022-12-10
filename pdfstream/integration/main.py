@@ -25,7 +25,7 @@ def get_chi(
     ndarray,
     tp.Union[None, ndarray],
     dict,
-    tp.Union[str, dict]
+    tp.Union[str, dict],
 ]:
     """Process the diffraction image to get I(Q).
 
@@ -93,7 +93,7 @@ def get_chi(
         The auto masking setting.
     """
     if dk_img is not None:
-        dk_sub_img = bg_sub(img, dk_img, bg_scale=1.)
+        dk_sub_img = bg_sub(img, dk_img, bg_scale=1.0)
     else:
         dk_sub_img = img
     if bg_img is not None:
@@ -101,16 +101,20 @@ def get_chi(
     else:
         bg_sub_img = dk_sub_img
     if mask_setting != "OFF":
-        final_mask, _mask_setting = auto_mask(bg_sub_img, ai, user_mask=mask, mask_setting=mask_setting)
+        final_mask, _mask_setting = auto_mask(
+            bg_sub_img, ai, user_mask=mask, mask_setting=mask_setting
+        )
     elif mask is not None:
         final_mask, _mask_setting = mask, {}
     else:
         final_mask, _mask_setting = None, None
     if img_setting != "OFF":
         vis_img(bg_sub_img, final_mask, img_setting=img_setting)
-    chi, _integ_setting = integrate(bg_sub_img, ai, mask=final_mask, integ_setting=integ_setting)
+    chi, _integ_setting = integrate(
+        bg_sub_img, ai, mask=final_mask, integ_setting=integ_setting
+    )
     if plot_setting != "OFF":
-        vis_chi(chi, plot_setting=plot_setting, unit=_integ_setting.get('unit'))
+        vis_chi(chi, plot_setting=plot_setting, unit=_integ_setting.get("unit"))
     return chi, bg_sub_img, dk_sub_img, img, final_mask, _integ_setting, _mask_setting
 
 

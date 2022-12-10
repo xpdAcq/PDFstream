@@ -31,18 +31,20 @@ def savefig_factory(figure_dir):
     if not figure_dir.is_dir():
         figure_dir.mkdir()
 
-    def savefig(fname: str,
-                dpi=240,
-                facecolor=None,
-                edgecolor=None,
-                orientation='portrait',
-                fmt='pdf',
-                transparent=True,
-                bbox_inches=None,
-                pad_inches=0.1,
-                metadata=None,
-                latex=True,
-                caption=""):
+    def savefig(
+        fname: str,
+        dpi=240,
+        facecolor=None,
+        edgecolor=None,
+        orientation="portrait",
+        fmt="pdf",
+        transparent=True,
+        bbox_inches=None,
+        pad_inches=0.1,
+        metadata=None,
+        latex=True,
+        caption="",
+    ):
         """
         The output formats available depend on the backend being used.
         The latex reference will be copied to clipboard.
@@ -126,12 +128,10 @@ def savefig_factory(figure_dir):
             transparent=transparent,
             bbox_inches=bbox_inches,
             pad_inches=pad_inches,
-            metadata=metadata
+            metadata=metadata,
         )
         if latex:
-            print(
-                LATEX_REF.format(fname.name, caption, fname.stem)
-            )
+            print(LATEX_REF.format(fname.name, caption, fname.stem))
         return
 
     return savefig
@@ -170,6 +170,4 @@ class FigExporter(object):
 
     def latex(self, caption: str = ""):
         """Print the latex string of the reference of the figure in the _filepath attribute."""
-        print(
-            LATEX_REF.format(self._filepath.name, caption, self._filepath.stem)
-        )
+        print(LATEX_REF.format(self._filepath.name, caption, self._filepath.stem))

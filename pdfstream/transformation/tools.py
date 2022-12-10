@@ -6,11 +6,7 @@ from diffpy.pdfgetx import PDFGetter, PDFConfig
 from matplotlib.gridspec import GridSpec
 from numpy import ndarray
 
-__all__ = [
-    'make_pdfgetter',
-    'use_pdfgetter',
-    'visualize'
-]
+__all__ = ["make_pdfgetter", "use_pdfgetter", "visualize"]
 
 
 def make_pdfgetter(pdfconfig: PDFConfig, user_config: dict = None) -> PDFGetter:
@@ -42,17 +38,16 @@ def visualize(pdfgetter: PDFGetter, plot_setting: dict = None):
         if len(tup) > 0:
             dct[attr] = tup
     # plot data
-    figsize = plt.rcParams['figure.figsize']
+    figsize = plt.rcParams["figure.figsize"]
     fig = plt.figure(
-        figsize=(figsize[0], figsize[1] / 2. * len(dct)),
-        tight_layout=False
+        figsize=(figsize[0], figsize[1] / 2.0 * len(dct)), tight_layout=False
     )
     grids = GridSpec(len(dct), 1, hspace=0.5)
     labels = {
         "iq": (r"Q ($\AA^{-1}$)", r"I (A. U.)"),
         "sq": (r"Q ($\AA^{-1}$)", r"S"),
         "fq": (r"Q ($\AA^{-1}$)", r"F ($\AA^{-1}$)"),
-        "gr": (r"r ($\AA$)", r"G ($\AA^{-2}$)")
+        "gr": (r"r ($\AA$)", r"G ($\AA^{-2}$)"),
     }
     for grid, (dtype, tup) in zip(grids, dct.items()):
         x, y = tup

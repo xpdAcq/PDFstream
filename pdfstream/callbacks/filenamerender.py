@@ -6,7 +6,6 @@ from pdfstream.callbacks.config import Config
 
 
 class FileNameRender(CallbackBase):
-
     def __init__(self, config: Config, stream_name: str = "primary") -> None:
         super().__init__()
         self._config = config
@@ -37,9 +36,7 @@ class FileNameRender(CallbackBase):
 
     def _set_directory(self, doc: dict) -> None:
         template = self._config.directory
-        base = self._config.tiff_base
-        d = template.format(**doc)
-        self._directory = str(base.joinpath(d))
+        self._directory = str(template.format(**doc))
         return
 
     def _set_uid(self, doc: dict) -> None:
@@ -47,11 +44,7 @@ class FileNameRender(CallbackBase):
         return
 
     def _get_timestamp(self, doc: dict) -> str:
-        return datetime.datetime.fromtimestamp(
-            doc["time"]
-        ).strftime(
-            "%Y%m%d-%H%M%S"
-        )
+        return datetime.datetime.fromtimestamp(doc["time"]).strftime("%Y%m%d-%H%M%S")
 
     def _add_data_keys(self, doc: dict) -> None:
         doc["data_keys"]["filename"] = {
@@ -78,10 +71,7 @@ class FileNameRender(CallbackBase):
 
     def _set_units(self, doc: dict) -> None:
         data_keys = doc.get("data_keys", {})
-        self._units = [
-            data_keys.get(k, {}).get("units", "")
-            for k in self._hints
-        ]
+        self._units = [data_keys.get(k, {}).get("units", "") for k in self._hints]
         io.server_message("The units of the hints are obtained.")
         return
 
@@ -100,7 +90,7 @@ class FileNameRender(CallbackBase):
                 else:
                     s = "{}_{}".format(hint, value)
                 stack.append(s)
-        return '_'.join(stack)
+        return "_".join(stack)
 
     def _get_numstamp(self, doc: dict) -> str:
         return "{:04d}".format(doc["seq_num"])
@@ -111,7 +101,7 @@ class FileNameRender(CallbackBase):
         h = self._get_hints_str(doc)
         n = self._get_numstamp(doc)
         items = [t, u, h, n] if h else [t, u, n]
-        return '_'.join(items)
+        return "_".join(items)
 
     def _set_filename(self, doc: dict) -> None:
         p = self._file_prefix
@@ -122,7 +112,7 @@ class FileNameRender(CallbackBase):
         return
 
     def _add_filename(self, doc: dict) -> None:
-        doc["data"]["filename"] = self._file_name
+        doc["data"]["filename"] = str(self._file_name)
         return
 
     def start(self, doc):
@@ -136,16 +126,16 @@ class FileNameRender(CallbackBase):
         t = self._get_timestamp(doc)
         doc["filename"] = self._file_prefix + "_" + t + "_" + self._uid
         doc["directory"] = self._directory
-        return
+        return doc
 
     def descriptor(self, doc):
         if doc["name"] == self._stream_name:
-            self._descriptor = doc['uid']
+            self._descriptor = doc["uid"]
             self._add_data_keys(doc)
-        return
+        return doc
 
     def event(self, doc):
         if doc["descriptor"] == self._descriptor:
             self._set_filename(doc)
             self._add_filename(doc)
-        return
+        return doc

@@ -9,8 +9,8 @@ from .serializerbase import SerializerBase
 class YamlSerializer(SerializerBase):
     """Export the start document in yaml file."""
 
-    def __init__(self, folder: str = "meta") -> None:
-        super().__init__(folder)
+    def __init__(self, base: str, folder: str = "meta") -> None:
+        super().__init__(base, folder)
 
     def _get_filepath(self, doc: dict) -> Path:
         return self._directory.joinpath(doc["filename"]).with_suffix(".yml")

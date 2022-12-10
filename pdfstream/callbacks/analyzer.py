@@ -7,18 +7,20 @@ from tempfile import TemporaryDirectory
 
 import event_model
 import numpy as np
-import pdfstream.io as io
 from frozendict import frozendict
-from pdfstream.callbacks.config import Config
-from pdfstream.callbacks.datakeys import DataKeys
-from pdfstream.vend.masking import generate_binner, mask_img_pyfai
 from pyFAI.azimuthalIntegrator import AzimuthalIntegrator
 from pyFAI.io import DefaultAiWriter
 from pyFAI.io.ponifile import PoniFile
 from tifffile import TiffWriter
 
+import pdfstream.io as io
+from pdfstream.callbacks.config import Config
+from pdfstream.callbacks.datakeys import DataKeys
+from pdfstream.vend.masking import generate_binner, mask_img_pyfai
+
 try:
     from diffpy.pdfgetx import PDFConfig, PDFGetter
+
     _PDFGETX_AVAILABLE = True
 except ImportError:
     _PDFGETX_AVAILABLE = False
@@ -50,12 +52,7 @@ def _load_calib(poni_file: str) -> CalibData:
 
 
 def _parse_to_cailb(data: Data, keys: CalibKeys) -> CalibData:
-    return frozendict(
-        {
-            k.split('_')[-1]: data[k]
-            for k in keys
-        }
-    )
+    return frozendict({k.split("_")[-1]: data[k] for k in keys})
 
 
 @lru_cache(maxsize=16)
@@ -69,21 +66,14 @@ def _get_binner(calib: frozendict, shape: tuple):
     return generate_binner(ai, shape)
 
 
-def _write_tiff(
-    image: np.ndarray,
-    filepath: str
-) -> None:
+def _write_tiff(image: np.ndarray, filepath: str) -> None:
     with TiffWriter(filepath) as tw:
         tw.save(image)
     io.server_message("Save the image at '{}' for pyFAI-calib2.".format(filepath))
     return
 
 
-def _run_calibration_gui(
-        tiff_file: str,
-        pyfai_kwargs: dict,
-        test: bool
-) -> int:
+def _run_calibration_gui(tiff_file: str, pyfai_kwargs: dict, test: bool) -> int:
     """Run the gui of calibration."""
     args = ["pyFAI-calib2"]
     _add_kwargs(args, pyfai_kwargs)
@@ -97,11 +87,7 @@ def _run_calibration_gui(
     return cp.returncode
 
 
-def _run_gui_in_temp(
-    image: np.ndarray,
-    pyfai_kwargs: dict,
-    test: bool
-):
+def _run_gui_in_temp(image: np.ndarray, pyfai_kwargs: dict, test: bool):
     with TemporaryDirectory() as temp_dir:
         temp_path = Path(temp_dir)
         temp_tiff = temp_path.joinpath("calibration.tiff")
@@ -140,12 +126,12 @@ class Analyzer(event_model.DocumentRouter):
         self.clear_cache()
 
     def clear_cache(self):
-        self._directory = None
-        self._poni_dir = None
-        self._integration_dir = None
-        self._sq_dir = None
-        self._fq_dir = None
-        self._gr_dir = None
+        self._directories = None
+        self._poni_dirs = None
+        self._integration_dirs = None
+        self._sq_dirs = None
+        self._fq_dirs = None
+        self._gr_dirs = None
         self._calib_keys: T.Optional[CalibKeys] = None
         self._calib_data: T.Optional[CalibData] = None
         self._user_mask: T.Optional[np.ndarray] = None
@@ -156,22 +142,40 @@ class Analyzer(event_model.DocumentRouter):
         self._pyfai_calib_kwargs: T.Optional[T.Dict] = None
         return
 
-    def _mk_dirs(self, doc: dict):
-        if "directory" in doc:
-            self._directory: Path = Path(doc["directory"])
-            self._poni_dir: Path = self._directory.joinpath("calib")
-            self._integration_dir: Path = self._directory.joinpath("integration")
-            self._sq_dir: Path = self._directory.joinpath("sq")
-            self._fq_dir: Path = self._directory.joinpath("fq")
-            self._gr_dir: Path = self._directory.joinpath("gr")
-            self._directory.mkdir(exist_ok=True)
-            self._poni_dir.mkdir(exist_ok=True)
-            self._integration_dir.mkdir(exist_ok=True)
-            self._sq_dir.mkdir(exist_ok=True)
-            self._fq_dir.mkdir(exist_ok=True)
-            self._gr_dir.mkdir(exist_ok=True)
-        else:
-            io.server_message("No 'directory' key in start. No files will be saved.")
+    def _set_and_mk_dirs(self, doc: dict) -> None:
+        self._set_dirs(doc)
+        self._mk_dirs()
+        return
+
+    def _set_dirs(self, doc: dict) -> None:
+        if "directory" not in doc:
+            raise AnalyzerError(
+                "Missing key 'directory' in the doc {}".format(doc["uid"])
+            )
+        tiff_base = self._config.tiff_base
+        self._directories: T.List[Path] = [Path(d, doc["directory"]) for d in tiff_base]
+        self._poni_dirs: T.List[Path] = [d.joinpath("calib") for d in self._directories]
+        self._integration_dirs: T.List[Path] = [
+            d.joinpath("integration") for d in self._directories
+        ]
+        self._sq_dirs: T.List[Path] = [d.joinpath("sq") for d in self._directories]
+        self._fq_dirs: T.List[Path] = [d.joinpath("fq") for d in self._directories]
+        self._gr_dirs: T.List[Path] = [d.joinpath("gr") for d in self._directories]
+        return
+
+    def _mk_dirs(self) -> None:
+        for d in self._directories:
+            d.mkdir(exist_ok=True)
+        for d in self._poni_dirs:
+            d.mkdir(exist_ok=True)
+        for d in self._integration_dirs:
+            d.mkdir(exist_ok=True)
+        for d in self._sq_dirs:
+            d.mkdir(exist_ok=True)
+        for d in self._fq_dirs:
+            d.mkdir(exist_ok=True)
+        for d in self._gr_dirs:
+            d.mkdir(exist_ok=True)
         return
 
     def _set_pdfgetter(self) -> None:
@@ -193,7 +197,7 @@ class Analyzer(event_model.DocumentRouter):
 
     def _set_pyfai_calib_kwargs(self, doc: dict) -> None:
         key = self._config.pyfai_calib_kwargs
-        self._is_calibration = (key in doc)
+        self._is_calibration = key in doc
         self._pyfai_calib_kwargs = doc.get(key, {})
         return
 
@@ -205,13 +209,13 @@ class Analyzer(event_model.DocumentRouter):
             "dtype": "array",
             "shape": [],
             "source": source,
-            "object_name": object_name
+            "object_name": object_name,
         }
         scalar_doc = {
             "dtype": "number",
             "shape": [],
             "source": source,
-            "object_name": object_name
+            "object_name": object_name,
         }
         for k in keys.get_2d_arrays():
             doc["data_keys"][k] = array_doc
@@ -220,11 +224,7 @@ class Analyzer(event_model.DocumentRouter):
         for k in keys.get_scalar():
             doc["data_keys"][k] = scalar_doc
         doc["object_keys"][object_name] = keys.get_all()
-        io.server_message(
-            "Add data keys for '{}'.".format(
-                keys.detector
-            )
-        )
+        io.server_message("Add data keys for '{}'.".format(keys.detector))
         return
 
     def _set_calib_keys(self, doc: dict) -> None:
@@ -242,9 +242,7 @@ class Analyzer(event_model.DocumentRouter):
             io.server_message("Input frames are already averaged.")
         else:
             raise AnalyzerError(
-                "'{}' has ndim = {}. Require 2 or 3.".format(
-                    keys.image, image.ndim
-                )
+                "'{}' has ndim = {}. Require 2 or 3.".format(keys.image, image.ndim)
             )
         return
 
@@ -252,9 +250,9 @@ class Analyzer(event_model.DocumentRouter):
         keys = self._datakeys
         data[keys.mask] = np.zeros_like(data[keys.image], dtype=int)
         for k in keys.get_1d_arrays():
-            data[k] = np.array([0.])
+            data[k] = np.array([0.0])
         for k in keys.get_scalar():
-            data[k] = 0.
+            data[k] = 0.0
         io.server_message("Add data keys for '{}'.".format(keys.image))
         return
 
@@ -278,17 +276,12 @@ class Analyzer(event_model.DocumentRouter):
         data: dict,
         keys: DataKeys,
         user_mask: T.Optional[np.ndarray],
-        calib: frozendict
+        calib: frozendict,
     ) -> None:
         mask_setting = self._config.mask_setting
         image = data[keys.image]
         binner = _get_binner(calib, image.shape)
-        data[keys.mask] = mask_img_pyfai(
-            image,
-            binner,
-            user_mask,
-            **mask_setting
-        )
+        data[keys.mask] = mask_img_pyfai(image, binner, user_mask, **mask_setting)
         return
 
     def _update_mask(self, data: dict) -> None:
@@ -301,8 +294,7 @@ class Analyzer(event_model.DocumentRouter):
         if (user_mask is not None) and (user_mask.shape != image_shape):
             io.server_message(
                 "User mask shape {} != image shape {}.".format(
-                    user_mask.shape,
-                    image_shape
+                    user_mask.shape, image_shape
                 )
             )
             user_mask = None
@@ -318,7 +310,7 @@ class Analyzer(event_model.DocumentRouter):
 
     @staticmethod
     def _get_q(tth: np.ndarray, w: float) -> np.ndarray:
-        q = 4. * np.pi / (w * 1e10) * np.sin(np.deg2rad(tth / 2.))
+        q = 4.0 * np.pi / (w * 1e10) * np.sin(np.deg2rad(tth / 2.0))
         return q
 
     def _update_chi(self, data: dict) -> None:
@@ -327,9 +319,7 @@ class Analyzer(event_model.DocumentRouter):
         ai = _get_pyfai(calib)
         integ_setting = self._config.integ_setting
         tth, intensity = ai.integrate1d(
-            data[keys.image],
-            mask=data[keys.mask],
-            **integ_setting
+            data[keys.image], mask=data[keys.mask], **integ_setting
         )
         data[keys.chi_2theta] = tth
         data[keys.chi_Q] = self._get_q(tth, ai.wavelength)
@@ -383,30 +373,50 @@ class Analyzer(event_model.DocumentRouter):
         calib_data = self._calib_data
         ai = _get_pyfai(calib_data)
         dks = self._datakeys
-        if "poni" in exports and self._poni_dir:
-            poni_file = self._poni_dir.joinpath(data["filename"]).with_suffix(".poni")
-            ai.save(poni_file)
-        if "chi_2theta" in exports and self._integration_dir:
-            chi_tth_file = self._integration_dir.joinpath(data["filename"] + "_mean_tth").with_suffix(".chi")
-            writer = DefaultAiWriter(str(chi_tth_file), ai)
-            writer.save1D(str(chi_tth_file), data[dks.chi_2theta], data[dks.chi_I], dim1_unit="2th_deg")
-        if "chi" in exports and self._integration_dir:
-            chi_q_file = self._integration_dir.joinpath(data["filename"] + "_mean_q").with_suffix(".chi")
-            writer = DefaultAiWriter(str(chi_q_file), ai)
-            writer.save1D(str(chi_q_file), data[dks.chi_Q], data[dks.chi_I], dim1_unit="q_A^-1")
+        if "poni" in exports and self._poni_dirs:
+            for d in self._poni_dirs:
+                poni_file = d.joinpath(data["filename"]).with_suffix(".poni")
+                ai.save(poni_file)
+        if "chi_2theta" in exports and self._integration_dirs:
+            for d in self._integration_dirs:
+                chi_tth_file = d.joinpath(data["filename"] + "_mean_tth").with_suffix(
+                    ".chi"
+                )
+                writer = DefaultAiWriter(str(chi_tth_file), ai)
+                writer.save1D(
+                    str(chi_tth_file),
+                    data[dks.chi_2theta],
+                    data[dks.chi_I],
+                    dim1_unit="2th_deg",
+                )
+        if "chi" in exports and self._integration_dirs:
+            for d in self._integration_dirs:
+                chi_q_file = d.joinpath(data["filename"] + "_mean_q").with_suffix(
+                    ".chi"
+                )
+                writer = DefaultAiWriter(str(chi_q_file), ai)
+                writer.save1D(
+                    str(chi_q_file),
+                    data[dks.chi_Q],
+                    data[dks.chi_I],
+                    dim1_unit="q_A^-1",
+                )
         return
 
     def _save_pdfgetx_data(self, data: dict) -> None:
         exports = self._config.exports
         if "sq" in exports:
-            filename = self._sq_dir.joinpath(data["filename"]).with_suffix(".sq")
-            self._pdfgetter.writeOutput(str(filename), "sq")
+            for d in self._sq_dirs:
+                filename = d.joinpath(data["filename"]).with_suffix(".sq")
+                self._pdfgetter.writeOutput(str(filename), "sq")
         if "fq" in exports:
-            filename = self._fq_dir.joinpath(data["filename"]).with_suffix(".fq")
-            self._pdfgetter.writeOutput(str(filename), "fq")
+            for d in self._fq_dirs:
+                filename = d.joinpath(data["filename"]).with_suffix(".fq")
+                self._pdfgetter.writeOutput(str(filename), "fq")
         if "gr" in exports:
-            filename = self._gr_dir.joinpath(data["filename"]).with_suffix(".gr")
-            self._pdfgetter.writeOutput(str(filename), "gr")
+            for d in self._gr_dirs:
+                filename = d.joinpath(data["filename"]).with_suffix(".gr")
+                self._pdfgetter.writeOutput(str(filename), "gr")
         return
 
     def _save_analyzed_data(self, data: dict) -> None:
@@ -436,7 +446,7 @@ class Analyzer(event_model.DocumentRouter):
         self.clear_cache()
         self._set_config(doc)
         self._set_pyfai_calib_kwargs(doc)
-        self._mk_dirs(doc)
+        self._set_and_mk_dirs(doc)
         return doc
 
     def descriptor(self, doc):

@@ -6,23 +6,31 @@ import matplotlib.pyplot as plt
 from matplotlib.axes import Axes
 from numpy import ndarray
 
-from pdfstream.visualization.tools import plot_line, plot_fit, normalize, shift, auto_text, set_minor_tick, \
-    auto_label
+from pdfstream.visualization.tools import (
+    plot_line,
+    plot_fit,
+    normalize,
+    shift,
+    auto_text,
+    set_minor_tick,
+    auto_label,
+)
 
-PLOT_METHOD = {
-    "line": plot_line,
-    "fit": plot_fit
-}
-TEXT_IND = {
-    "line": -1,
-    "fit": -4
-}
+PLOT_METHOD = {"line": plot_line, "fit": plot_fit}
+TEXT_IND = {"line": -1, "fit": -4}
 
 
 def _waterfall(
-    data: ndarray, plot_method: tp.Callable, ax: Axes, normal: bool = True,
-    stack: bool = True, gap: float = 0, text: tp.Union[str, None] = None, text_xy: tuple = None,
-    text_ind: int = -1, **kwargs
+    data: ndarray,
+    plot_method: tp.Callable,
+    ax: Axes,
+    normal: bool = True,
+    stack: bool = True,
+    gap: float = 0,
+    text: tp.Union[str, None] = None,
+    text_xy: tuple = None,
+    text_ind: int = -1,
+    **kwargs
 ) -> None:
     """The basic visualization function to realize single, waterfall, and comparison plot.
 
@@ -71,10 +79,19 @@ def _waterfall(
 
 
 def waterfall(
-    dataset: tp.Iterable[ndarray], ax: Axes = None, mode: str = "line", normal: bool = True,
-    stack: bool = True, gap: float = 0, texts: tp.Iterable[str] = None, text_xy: tuple = None,
-    label: str = None, minor_tick: tp.Union[int, None] = 2, legends: tp.List[str] = None,
-    colors: tp.Iterable = None, **kwargs
+    dataset: tp.Iterable[ndarray],
+    ax: Axes = None,
+    mode: str = "line",
+    normal: bool = True,
+    stack: bool = True,
+    gap: float = 0,
+    texts: tp.Iterable[str] = None,
+    text_xy: tuple = None,
+    label: str = None,
+    minor_tick: tp.Union[int, None] = 2,
+    legends: tp.List[str] = None,
+    colors: tp.Iterable = None,
+    **kwargs
 ) -> Axes:
     """The visualization function to realize waterfall, and comparison plot.
 
@@ -138,10 +155,10 @@ def waterfall(
     """
 
     def _inject_color(_kwargs, _color):
-        if 'xy_kwargs' in _kwargs:
-            _kwargs['xy_kwargs'].update({'color': _color})
+        if "xy_kwargs" in _kwargs:
+            _kwargs["xy_kwargs"].update({"color": _color})
         else:
-            _kwargs['xy_kwargs'] = {'color': _color}
+            _kwargs["xy_kwargs"] = {"color": _color}
         return
 
     if ax is None:
@@ -159,8 +176,16 @@ def waterfall(
         if color:
             _inject_color(kwargs, color)
         _waterfall(
-            data, PLOT_METHOD[mode], ax=ax, normal=normal, stack=stack, gap=gap, text=text, text_xy=text_xy,
-            text_ind=text_ind, **kwargs
+            data,
+            PLOT_METHOD[mode],
+            ax=ax,
+            normal=normal,
+            stack=stack,
+            gap=gap,
+            text=text,
+            text_xy=text_xy,
+            text_ind=text_ind,
+            **kwargs
         )
     if minor_tick is not None:
         set_minor_tick(ax, minor_tick)
@@ -171,7 +196,9 @@ def waterfall(
     return ax
 
 
-def waterfall_xarray(data: xr.Dataset, x: str, y: str, ycalc: str = None, hue: str = None, **kwargs) -> Axes:
+def waterfall_xarray(
+    data: xr.Dataset, x: str, y: str, ycalc: str = None, hue: str = None, **kwargs
+) -> Axes:
     """The visualization function to realize waterfall, and comparison plot.
 
     Parameters
@@ -247,9 +274,17 @@ def waterfall_xarray(data: xr.Dataset, x: str, y: str, ycalc: str = None, hue: s
 
 
 def visualize(
-    data: ndarray, ax: Axes = None, mode: str = "line", normal: bool = False,
-    text: str = None, text_xy: tuple = None, label: str = None,
-    minor_tick: int = 2, legends: tp.List[str] = None, color: tp.Any = None, **kwargs
+    data: ndarray,
+    ax: Axes = None,
+    mode: str = "line",
+    normal: bool = False,
+    text: str = None,
+    text_xy: tuple = None,
+    label: str = None,
+    minor_tick: int = 2,
+    legends: tp.List[str] = None,
+    color: tp.Any = None,
+    **kwargs
 ) -> Axes:
     """The visualization function to realize single plot.
 
@@ -301,8 +336,16 @@ def visualize(
         The axes with the plot inside.
     """
     return waterfall(
-        (data,), ax=ax, mode=mode, normal=normal, texts=(text,), text_xy=text_xy,
-        label=label, minor_tick=minor_tick, stack=False,
+        (data,),
+        ax=ax,
+        mode=mode,
+        normal=normal,
+        texts=(text,),
+        text_xy=text_xy,
+        label=label,
+        minor_tick=minor_tick,
+        stack=False,
         legends=legends if legends else None,
-        colors=(color,), **kwargs
+        colors=(color,),
+        **kwargs
     )

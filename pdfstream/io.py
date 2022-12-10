@@ -17,9 +17,7 @@ import sys
 logging.basicConfig(
     level=logging.INFO,
     format="[%(asctime)s | %(levelname)s] %(message)s",
-    handlers=[
-        logging.StreamHandler(sys.stdout)
-    ]
+    handlers=[logging.StreamHandler(sys.stdout)],
 )
 
 
@@ -69,7 +67,7 @@ def load_array(data_file: str, minrows=10, **kwargs) -> ndarray:
 
 def load_dict_from_poni(poni_file: str) -> dict:
     """Turn the poni file to pyFAI readable dictionary."""
-    with Path(poni_file).open('r') as f:
+    with Path(poni_file).open("r") as f:
         geometry = yaml.safe_load(f)
     return _lower_key(geometry)
 
@@ -110,5 +108,7 @@ def load_matrix_flexible(matrix_file: str) -> ndarray:
         return np.loadtxt(matrix_file)
     else:
         raise ValueError(
-            "Unknown extension: {}. Only accept .tiff, .tif, .npy, .txt.".format(path.suffix)
+            "Unknown extension: {}. Only accept .tiff, .tif, .npy, .txt.".format(
+                path.suffix
+            )
         )

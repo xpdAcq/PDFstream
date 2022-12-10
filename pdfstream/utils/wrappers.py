@@ -24,7 +24,7 @@ def take_in_namespace(func: Callable):
         # pop out not used kwargs and unpack and put back to dictionary
         namespace.update(kwargs)
         namespace = func(**namespace)
-        namespace.update(namespace.pop('kwargs', {}))
+        namespace.update(namespace.pop("kwargs", {}))
         return namespace
 
     return _func

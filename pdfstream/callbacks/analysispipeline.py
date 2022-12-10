@@ -3,6 +3,7 @@ import typing as T
 from bluesky.callbacks.zmq import Publisher
 from databroker.mongo_normalized import discover_handlers
 from event_model import Filler
+
 from pdfstream.callbacks.analyzer import Analyzer
 from pdfstream.callbacks.config import Config
 from pdfstream.callbacks.darksubtraction import DarkSubtraction
@@ -53,17 +54,13 @@ class AnalysisPipeline:
     def _populate_dark_subtractions(self) -> None:
         config = self._config
         for field in config.image_fields:
-            self._dark_subtractions.append(
-                DarkSubtraction(field)
-            )
+            self._dark_subtractions.append(DarkSubtraction(field))
         return
 
     def _populate_analyzors(self) -> None:
         config = self._config
         for datakeys in config.datakeys_list:
-            self._analyzers.append(
-                Analyzer(datakeys, config)
-            )
+            self._analyzers.append(Analyzer(datakeys, config))
         return
 
     def _populate_publishers(self) -> None:
@@ -80,7 +77,7 @@ class AnalysisPipeline:
             self._set_filler()
         if self._filler is not None:
             name, doc = self._filler(name, doc)
-        self._filename_render(name, doc)
+        name, doc = self._filename_render(name, doc)
         for dark_subtraction in self._dark_subtractions:
             name, doc = dark_subtraction(name, doc)
         for analyzer in self._analyzers:

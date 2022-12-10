@@ -6,26 +6,28 @@ from pdfstream.callbacks.yamlserializer import YamlSerializer
 
 
 class SerializationPipeline:
-
     def __init__(self, config: Config):
-        self._config = config
-        self._tiff_serilizer = None
-        self._csv_serializer = None
-        self._numpy_serializer = None
-        self._yaml_serializer = None
-        dkss = self._config.datakeys_list
-        image_dtype = self._config.image_dtype
+        tiff_base = config.tiff_base
+        dkss = config.datakeys_list
+        image_dtype = config.image_dtype
         images = [dks.image for dks in dkss]
         masks = [dks.mask for dks in dkss]
-        self._tiff_serilizer = TiffSerializer(images, image_dtype)
-        self._csv_serializer = CSVSerializer()
-        self._numpy_serializer = NumpySerializer(masks)
-        self._yaml_serializer = YamlSerializer()
+        self._config = config
+        self._yaml_serializers = [YamlSerializer(d) for d in tiff_base]
+        self._csv_serializers = [CSVSerializer(d) for d in tiff_base]
+        self._tiff_serilizers = [
+            TiffSerializer(d, images, image_dtype) for d in tiff_base
+        ]
+        self._numpy_serializers = [NumpySerializer(d, masks) for d in tiff_base]
         return
 
     def __call__(self, name, doc):
-        self._yaml_serializer(name, doc)
-        self._csv_serializer(name, doc)
-        self._tiff_serilizer(name, doc)
-        self._numpy_serializer(name, doc)
+        for s in self._yaml_serializers:
+            s(name, doc)
+        for s in self._csv_serializers:
+            s(name, doc)
+        for s in self._tiff_serilizers:
+            s(name, doc)
+        for s in self._numpy_serializers:
+            s(name, doc)
         return name, doc

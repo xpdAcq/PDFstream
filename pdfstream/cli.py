@@ -91,18 +91,35 @@ def integrate(
         executor = ProcessPoolExecutor() if not test else ThreadPoolExecutor()
         jobs = [
             executor.submit(
-                _integrate, poni_file, img_file, bg_img_file=bg_img_file, mask_file=mask_file,
-                output_dir=output_dir, bg_scale=bg_scale, mask_setting=mask_setting, integ_setting=integ_setting,
-                plot_setting=plot_setting, img_setting=img_setting, test=test
+                _integrate,
+                poni_file,
+                img_file,
+                bg_img_file=bg_img_file,
+                mask_file=mask_file,
+                output_dir=output_dir,
+                bg_scale=bg_scale,
+                mask_setting=mask_setting,
+                integ_setting=integ_setting,
+                plot_setting=plot_setting,
+                img_setting=img_setting,
+                test=test,
             )
             for img_file in img_files
         ]
         return [job.result() for job in as_completed(jobs)]
     return [
         _integrate(
-            poni_file, img_file, bg_img_file=bg_img_file, mask_file=mask_file,
-            output_dir=output_dir, bg_scale=bg_scale, mask_setting=mask_setting, integ_setting=integ_setting,
-            plot_setting=plot_setting, img_setting=img_setting, test=test
+            poni_file,
+            img_file,
+            bg_img_file=bg_img_file,
+            mask_file=mask_file,
+            output_dir=output_dir,
+            bg_scale=bg_scale,
+            mask_setting=mask_setting,
+            integ_setting=integ_setting,
+            plot_setting=plot_setting,
+            img_setting=img_setting,
+            test=test,
         )
         for img_file in img_files
     ]
@@ -116,9 +133,10 @@ def _integrate(
     output_dir: str = ".",
     bg_scale: float = None,
     mask_setting: tp.Union[dict, str] = None,
-    integ_setting: dict = None, plot_setting: tp.Union[dict, str] = None,
+    integ_setting: dict = None,
+    plot_setting: tp.Union[dict, str] = None,
     img_setting: tp.Union[dict, str] = None,
-    test: bool = False
+    test: bool = False,
 ) -> str:
     """Sub-function for integrate."""
     if integ_setting is None:
@@ -127,12 +145,19 @@ def _integrate(
     bg_img = io.load_img(bg_img_file) if bg_img_file else None
     mask = np.load(mask_file) if mask_file else None
     img = io.load_img(img_file)
-    chi_name = Path(img_file).with_suffix('.chi').name
+    chi_name = Path(img_file).with_suffix(".chi").name
     chi_path = Path(output_dir).joinpath(chi_name)
-    integ_setting.update({'filename': str(chi_path)})
+    integ_setting.update({"filename": str(chi_path)})
     integ.get_chi(
-        ai, img, bg_img=bg_img, mask=mask, bg_scale=bg_scale, mask_setting=mask_setting,
-        integ_setting=integ_setting, plot_setting=plot_setting, img_setting=img_setting,
+        ai,
+        img,
+        bg_img=bg_img,
+        mask=mask,
+        bg_scale=bg_scale,
+        mask_setting=mask_setting,
+        integ_setting=integ_setting,
+        plot_setting=plot_setting,
+        img_setting=img_setting,
     )
     if not test:
         plt.show()
@@ -165,10 +190,20 @@ def average(out_file: str, *img_files, weights: tp.List[float] = None) -> None:
 
 
 def waterfall(
-    *data_files: str, ax: Axes = None, mode: str = "line", normal: bool = True,
-    stack: bool = True, gap: float = 0, texts: tp.List[str] = None, text_xy: tuple = None,
-    label: str = None, minor_tick: tp.Union[int, None] = 2, legends: tp.List[str] = None,
-    colors: tp.Iterable = None, show_fig: bool = True, **kwargs
+    *data_files: str,
+    ax: Axes = None,
+    mode: str = "line",
+    normal: bool = True,
+    stack: bool = True,
+    gap: float = 0,
+    texts: tp.List[str] = None,
+    text_xy: tuple = None,
+    label: str = None,
+    minor_tick: tp.Union[int, None] = 2,
+    legends: tp.List[str] = None,
+    colors: tp.Iterable = None,
+    show_fig: bool = True,
+    **kwargs
 ) -> Axes:
     """Visualize the data in multiple data files in a waterfall or comparison plot.
 
@@ -245,10 +280,21 @@ def waterfall(
         raise ValueError("No input file.")
     dataset = (io.load_array(_) for _ in data_files)
     if label is None:
-        label = PurePath(data_files[0]).suffix.replace('.', '')
+        label = PurePath(data_files[0]).suffix.replace(".", "")
     ax = vis.waterfall(
-        dataset, ax=ax, mode=mode, normal=normal, stack=stack, gap=gap, texts=texts, text_xy=text_xy,
-        label=label, minor_tick=minor_tick, legends=legends, colors=colors, **kwargs
+        dataset,
+        ax=ax,
+        mode=mode,
+        normal=normal,
+        stack=stack,
+        gap=gap,
+        texts=texts,
+        text_xy=text_xy,
+        label=label,
+        minor_tick=minor_tick,
+        legends=legends,
+        colors=colors,
+        **kwargs
     )
     if show_fig:
         plt.show()
@@ -256,10 +302,18 @@ def waterfall(
 
 
 def visualize(
-    data_file: str, ax: Axes = None, mode: str = "line", normal: bool = False,
-    text: str = None, text_xy: tuple = None, label: str = None,
-    minor_tick: int = 2, legends: tp.List[str] = None, color: tp.Iterable = None,
-    show_fig: bool = True, **kwargs
+    data_file: str,
+    ax: Axes = None,
+    mode: str = "line",
+    normal: bool = False,
+    text: str = None,
+    text_xy: tuple = None,
+    label: str = None,
+    minor_tick: int = 2,
+    legends: tp.List[str] = None,
+    color: tp.Iterable = None,
+    show_fig: bool = True,
+    **kwargs
 ) -> Axes:
     """Visualize the data in a single data file.
 
@@ -325,10 +379,20 @@ def visualize(
     """
     data = io.load_array(data_file)
     if label is None:
-        label = PurePath(data_file).suffix.replace('.', '')
+        label = PurePath(data_file).suffix.replace(".", "")
     ax = vis.visualize(
-        data, ax=ax, mode=mode, normal=normal, text=text, text_xy=text_xy, label=label,
-        minor_tick=minor_tick, legends=legends, color=color, **kwargs)
+        data,
+        ax=ax,
+        mode=mode,
+        normal=normal,
+        text=text,
+        text_xy=text_xy,
+        label=label,
+        minor_tick=minor_tick,
+        legends=legends,
+        color=color,
+        **kwargs
+    )
     if show_fig:
         plt.show()
     return ax

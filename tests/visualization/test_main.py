@@ -7,16 +7,23 @@ import numpy as np
 
 
 @pytest.mark.parametrize(
-    'keys,kwargs', [
-        (['Ni_gr', 'Ni_gr'], {'mode': 'line', 'legends': ['Ni0', 'Ni1'], 'label': 'gr'}),
-        (['Ni_gr', 'Ni_gr'], {'mode': 'line', 'stack': False}),
-        (['Ni_gr', 'Ni_gr'], {'mode': 'line', 'xy_kwargs': {'color': 'black'}, 'texts': ['Ni0', 'Ni1']}),
-        (['Ni_gr', 'Ni_gr'], {'mode': 'line', 'colors': ['r', 'g']}),
-        (['Ni_fgr', 'Ni_fgr'], {'mode': 'fit', 'texts': ['Ni0', 'Ni1'], 'label': 'gr'}),
-        (['Ni_fgr', 'Ni_fgr'], {'mode': 'fit', 'stack': False}),
-        (['Ni_fgr', 'Ni_fgr'], {'mode': 'fit', 'xy_kwargs': {'color': 'black'}}),
-        (['Ni_fgr', 'Ni_fgr'], {'mode': 'fit', 'colors': ['r', 'g']})
-    ]
+    "keys,kwargs",
+    [
+        (
+            ["Ni_gr", "Ni_gr"],
+            {"mode": "line", "legends": ["Ni0", "Ni1"], "label": "gr"},
+        ),
+        (["Ni_gr", "Ni_gr"], {"mode": "line", "stack": False}),
+        (
+            ["Ni_gr", "Ni_gr"],
+            {"mode": "line", "xy_kwargs": {"color": "black"}, "texts": ["Ni0", "Ni1"]},
+        ),
+        (["Ni_gr", "Ni_gr"], {"mode": "line", "colors": ["r", "g"]}),
+        (["Ni_fgr", "Ni_fgr"], {"mode": "fit", "texts": ["Ni0", "Ni1"], "label": "gr"}),
+        (["Ni_fgr", "Ni_fgr"], {"mode": "fit", "stack": False}),
+        (["Ni_fgr", "Ni_fgr"], {"mode": "fit", "xy_kwargs": {"color": "black"}}),
+        (["Ni_fgr", "Ni_fgr"], {"mode": "fit", "colors": ["r", "g"]}),
+    ],
 )
 def test_waterfall(test_data, keys, kwargs):
     plt.figure()
@@ -26,7 +33,7 @@ def test_waterfall(test_data, keys, kwargs):
 
 
 def test_waterfall_xarray():
-    x = np.arange(0., 11., 1.)
+    x = np.arange(0.0, 11.0, 1.0)
     y = np.zeros_like(x)
     ds = xr.Dataset({"y": (["x"], y), "ycalc": (["x"], y)}, coords={"x": x})
     vis.waterfall_xarray(ds, "x", "y")
@@ -38,9 +45,12 @@ def test_waterfall_xarray():
 
 
 def test_waterfall_xarray_hue(test_data):
-    x = np.arange(0., 11., 1.)
+    x = np.arange(0.0, 11.0, 1.0)
     y = np.zeros_like(x)
-    ds = xr.Dataset({"y": (["z", "x"], [y, y]), "ycalc": (["z", "x"], [y, y])}, coords={"x": x, "z": [1, 2]})
+    ds = xr.Dataset(
+        {"y": (["z", "x"], [y, y]), "ycalc": (["z", "x"], [y, y])},
+        coords={"x": x, "z": [1, 2]},
+    )
     vis.waterfall_xarray(ds, "x", "y", hue="z")
     plt.show(block=False)
     plt.clf()
@@ -52,15 +62,16 @@ def test_waterfall_xarray_hue(test_data):
 def test_waterfall_error(test_data):
     plt.figure()
     with pytest.raises(ValueError):
-        vis.waterfall(test_data['Ni_gr'], mode="unknown")
+        vis.waterfall(test_data["Ni_gr"], mode="unknown")
 
 
 @pytest.mark.parametrize(
-    'key,kwargs', [
-        ('Ni_gr', {'mode': 'line', 'text': 'Ni', 'xy_kwargs': {'color': 'black'}}),
-        ('Ni_gr', {'mode': 'line', 'legends': ['Ni'], 'xy_kwargs': {'color': 'black'}}),
-        ('Ni_fgr', {'mode': 'fit', 'text': 'Ni', 'xy_kwargs': {'color': 'black'}})
-    ]
+    "key,kwargs",
+    [
+        ("Ni_gr", {"mode": "line", "text": "Ni", "xy_kwargs": {"color": "black"}}),
+        ("Ni_gr", {"mode": "line", "legends": ["Ni"], "xy_kwargs": {"color": "black"}}),
+        ("Ni_fgr", {"mode": "fit", "text": "Ni", "xy_kwargs": {"color": "black"}}),
+    ],
 )
 def test_visualize(test_data, key, kwargs):
     fig = plt.figure()

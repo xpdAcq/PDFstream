@@ -10,9 +10,7 @@ class PartialFormatter(string.Formatter):
         # Handle a key not found
         # Expects the return value to be a tuple of (obj,used_key)
         try:
-            val = super(PartialFormatter, self).get_field(
-                field_name, args, kwargs
-            )
+            val = super(PartialFormatter, self).get_field(field_name, args, kwargs)
             # Python 3, 'super().get_field(field_name, args, kwargs)' works
         except (KeyError, AttributeError):
             val = "{" + field_name + "}", field_name
@@ -32,9 +30,7 @@ class CleanFormatter(string.Formatter):
     def get_field(self, field_name, args, kwargs):
         # Handle a key not found
         try:
-            val = super(CleanFormatter, self).get_field(
-                field_name, args, kwargs
-            )
+            val = super(CleanFormatter, self).get_field(field_name, args, kwargs)
             # Python 3, 'super().get_field(field_name, args, kwargs)' works
         except (KeyError, AttributeError):
             val = "", field_name
@@ -102,9 +98,7 @@ def render(string, formatter=pfmt, **kwargs):
         filename_prefix = get_filename_prefix(folder_tag_list, md)
         if re.fullmatch(r"/+", filename_prefix):
             filename_prefix = md.get("sample_name")
-    formatted_string = formatter.format(
-        string, folder_prefix=filename_prefix, **kwargs
-    )
+    formatted_string = formatter.format(string, folder_prefix=filename_prefix, **kwargs)
     return formatted_string
 
 
@@ -115,9 +109,7 @@ def render2(string: str, md: dict, formatter=pfmt):
     filename_prefix = get_filename_prefix(folder_tag_list, md)
     if re.fullmatch(r"/+", filename_prefix):
         filename_prefix = md.get("sample_name")
-    formatted_string = formatter.format(
-        string, folder_prefix=filename_prefix, **md
-    )
+    formatted_string = formatter.format(string, folder_prefix=filename_prefix, **md)
     return formatted_string
 
 
@@ -129,7 +121,7 @@ def render_and_clean(string, md, formatter=pfmt):
 
 
 def timestampstr(timestamp):
-    """Convert timestamp to strftime formate """
+    """Convert timestamp to strftime formate"""
     timestring = datetime.datetime.fromtimestamp(float(timestamp)).strftime(
         "%Y%m%d-%H%M%S"
     )
@@ -138,6 +130,7 @@ def timestampstr(timestamp):
 
 class SpecialStr(str):
     """A special string with a formatter that ignores the key error."""
+
     CF = CleanFormatter()
 
     def format(self, *args: object, **kwargs: object) -> str:

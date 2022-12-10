@@ -6,14 +6,14 @@ from matplotlib.axes import Axes
 from numpy import ndarray
 
 __all__ = [
-    'auto_label',
-    'auto_text',
-    'normalize',
-    'plot_line',
-    'plot_fit',
-    'shift',
-    'text_position',
-    'set_minor_tick'
+    "auto_label",
+    "auto_text",
+    "normalize",
+    "plot_line",
+    "plot_fit",
+    "shift",
+    "text_position",
+    "set_minor_tick",
 ]
 
 _LABELS = {
@@ -21,9 +21,9 @@ _LABELS = {
     "chi": (r"Q ($\mathrm{\AA}^{-1}$)", r"I (A. U.)"),
     "iq": (r"Q ($\mathrm{\AA}^{-1}$)", r"I (A. U.)"),
     "sq": (r"Q ($\mathrm{\AA}^{-1}$)", r"S"),
-    'fq': (r"Q ($\mathrm{\AA}^{-1}$)", r"F ($\mathrm{\AA}^{-1}$)"),
+    "fq": (r"Q ($\mathrm{\AA}^{-1}$)", r"F ($\mathrm{\AA}^{-1}$)"),
     "gr": (r"r ($\mathrm{\AA}$)", r"G ($\mathrm{\AA}^{-2}$)"),
-    "fgr": (r"r ($\mathrm{\AA}$)", r"G ($\mathrm{\AA}^{-2}$)")
+    "fgr": (r"r ($\mathrm{\AA}$)", r"G ($\mathrm{\AA}^{-2}$)"),
 }
 _TEXT_XY = (0.8, 0.8)
 
@@ -103,6 +103,7 @@ def complimentary(color: Union[str, Any]):
     """Return the complimentary color of a color string."""
     if color[0] != "#":
         from matplotlib.colors import to_hex
+
         hexcolor = to_hex(color)[1:]
     else:
         hexcolor = color[1:]
@@ -167,13 +168,21 @@ def auto_label(ax: Axes, label_type: str):
 
 def get_yzero(y: ndarray, ycalc: ndarray, ydiff: ndarray) -> ndarray:
     """Get the base line yzero of ydiff so that max(yzero + ydiff) = min(min(y), min(ydiff))"""
-    return (min(float(np.min(y)), float(np.min(ycalc))) - float(np.max(ydiff))) * np.ones_like(ydiff)
+    return (
+        min(float(np.min(y)), float(np.min(ycalc))) - float(np.max(ydiff))
+    ) * np.ones_like(ydiff)
 
 
-def plot_fit(vis_data: ndarray, ax: Axes,
-             xy_kwargs: dict = None, xycalc_kwargs: dict = None, xydiff_kwargs: dict = None,
-             xyzero_kwargs: dict = None, fill_kwargs: dict = None,
-             yzero: ndarray = None):
+def plot_fit(
+    vis_data: ndarray,
+    ax: Axes,
+    xy_kwargs: dict = None,
+    xycalc_kwargs: dict = None,
+    xydiff_kwargs: dict = None,
+    xyzero_kwargs: dict = None,
+    fill_kwargs: dict = None,
+    yzero: ndarray = None,
+):
     """Visualize the fit.
 
     Parameters
@@ -215,9 +224,13 @@ def plot_fit(vis_data: ndarray, ax: Axes,
         fill_kwargs = {}
     # split data
     if len(vis_data.shape) != 2:
-        raise ValueError('Invalid data shape: {}. Need 2D data array.'.format(vis_data.shape))
+        raise ValueError(
+            "Invalid data shape: {}. Need 2D data array.".format(vis_data.shape)
+        )
     if vis_data.shape[0] < 3:
-        raise ValueError('Invalid data dimension: {}. Need dim >= 3'.format(vis_data.shape[0]))
+        raise ValueError(
+            "Invalid data dimension: {}. Need dim >= 3".format(vis_data.shape[0])
+        )
     x, y, ycalc = vis_data[:3]
     ydiff = y - ycalc
     # shift ydiff
@@ -225,24 +238,24 @@ def plot_fit(vis_data: ndarray, ax: Axes,
         yzero = get_yzero(y, ycalc, ydiff)
     ydiff += yzero
     # circle data curve
-    _xy_kwargs = {'fillstyle': 'none', 'label': 'data'}
+    _xy_kwargs = {"fillstyle": "none", "label": "data"}
     _xy_kwargs.update(xy_kwargs)
-    data_line, = ax.plot(x, y, 'o', **_xy_kwargs)
+    (data_line,) = ax.plot(x, y, "o", **_xy_kwargs)
     # solid calculation curve
-    _xycalc_kwargs = {'label': 'fit', 'color': complimentary(data_line.get_color())}
+    _xycalc_kwargs = {"label": "fit", "color": complimentary(data_line.get_color())}
     _xycalc_kwargs.update(xycalc_kwargs)
-    ax.plot(x, ycalc, '-', **_xycalc_kwargs)
+    ax.plot(x, ycalc, "-", **_xycalc_kwargs)
     # dash zero difference curve
-    _xyzero_kwargs = {'color': 'grey'}
+    _xyzero_kwargs = {"color": "grey"}
     _xyzero_kwargs.update(xyzero_kwargs)
-    ax.plot(x, yzero, '--', **_xyzero_kwargs)
+    ax.plot(x, yzero, "--", **_xyzero_kwargs)
     # solid shifted difference curve
-    _xydiff_kwargs = {'label': 'residuals', 'color': data_line.get_color()}
+    _xydiff_kwargs = {"label": "residuals", "color": data_line.get_color()}
     _xydiff_kwargs.update(xydiff_kwargs)
-    diff_line, = ax.plot(x, ydiff, '-', **_xydiff_kwargs)
+    (diff_line,) = ax.plot(x, ydiff, "-", **_xydiff_kwargs)
     # fill in area between curves
-    if fill_kwargs.pop('fill', True):
-        _fill_kwargs = {'alpha': 0.4, 'color': diff_line.get_color()}
+    if fill_kwargs.pop("fill", True):
+        _fill_kwargs = {"alpha": 0.4, "color": diff_line.get_color()}
         _fill_kwargs.update(fill_kwargs)
         ax.fill_between(x, ydiff, yzero, **_fill_kwargs)
     return ax
@@ -251,6 +264,7 @@ def plot_fit(vis_data: ndarray, ax: Axes,
 def set_minor_tick(ax: Axes, n: int = 2):
     """Set one minor tick between major ticks."""
     from matplotlib.ticker import AutoMinorLocator
+
     ax.xaxis.set_minor_locator(AutoMinorLocator(n))
     ax.yaxis.set_minor_locator(AutoMinorLocator(n))
     return ax

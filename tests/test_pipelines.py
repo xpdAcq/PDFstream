@@ -24,8 +24,17 @@ def test_Pipelines(db_with_new_xpdacq: Broker, local_dir: Path):
     db = db_with_new_xpdacq
     run = db[-1]
     config = Config()
-    config.set_analysis_config({"detectors": "pe1, pe2", "image_fields": "pe1_image, pe2_image"})
-    config.set_analysis_config({"tiff_base": str(local_dir), "save_plots": True, "is_test": True, "publish": False})
+    config.set_analysis_config(
+        {"detectors": "pe1, pe2", "image_fields": "pe1_image, pe2_image"}
+    )
+    config.set_analysis_config(
+        {
+            "tiff_base": str(local_dir),
+            "save_plots": True,
+            "is_test": True,
+            "publish": False,
+        }
+    )
     pipeline1 = AnalysisPipeline(config)
     pipeline2 = VisualizationPipeline(config)
     pipeline3 = SerializationPipeline(config)
@@ -50,9 +59,18 @@ def test_use_mask(db_with_mask_in_run: Broker, local_dir: Path):
     db = db_with_mask_in_run
     run = db[-1]
     config = Config()
-    config.set_analysis_config({"detectors": "pe1, pe2", "image_fields": "pe1_image, pe2_image"})
+    config.set_analysis_config(
+        {"detectors": "pe1, pe2", "image_fields": "pe1_image, pe2_image"}
+    )
     config.set_analysis_config({"auto_mask": False})
-    config.set_analysis_config({"tiff_base": str(local_dir), "save_plots": True, "is_test": True, "publish": False})
+    config.set_analysis_config(
+        {
+            "tiff_base": str(local_dir),
+            "save_plots": True,
+            "is_test": True,
+            "publish": False,
+        }
+    )
     pipeline1 = AnalysisPipeline(config)
     pipeline2 = VisualizationPipeline(config)
     pipeline3 = SerializationPipeline(config)
@@ -68,7 +86,14 @@ def test_Calibration(db_with_new_calib: Broker, local_dir: Path):
     run = db[-1]
     config = Config()
     config.set_analysis_config({"detectors": "pe1", "image_fields": "pe1_image"})
-    config.set_analysis_config({"tiff_base": str(local_dir), "save_plots": True, "is_test": True, "publish": False})
+    config.set_analysis_config(
+        {
+            "tiff_base": str(local_dir),
+            "save_plots": True,
+            "is_test": True,
+            "publish": False,
+        }
+    )
     pipeline1 = AnalysisPipeline(config)
     pipeline2 = VisualizationPipeline(config)
     pipeline3 = SerializationPipeline(config)

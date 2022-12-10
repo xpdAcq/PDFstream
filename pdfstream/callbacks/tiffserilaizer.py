@@ -1,7 +1,6 @@
 import typing as T
 from pathlib import Path
 
-import event_model
 import numpy as np
 from pdfstream.io import server_message
 from tifffile import TiffWriter
@@ -10,9 +9,15 @@ from .serializerbase import SerializerBase
 
 
 class TiffSerializer(SerializerBase):
-
-    def __init__(self, fields: T.List[str], dtype: str, stream_name: str = "primary", folder: str = "dark_sub") -> None:
-        super().__init__(folder)
+    def __init__(
+        self,
+        base: str,
+        fields: T.List[str],
+        dtype: str,
+        stream_name: str = "primary",
+        folder: str = "dark_sub",
+    ) -> None:
+        super().__init__(base, folder)
         self._fields = fields
         self._dtype = dtype
         self._stream_name = stream_name
@@ -33,7 +38,7 @@ class TiffSerializer(SerializerBase):
 
     def descriptor(self, doc):
         if doc["name"] == self._stream_name:
-            self._descriptor = doc['uid']
+            self._descriptor = doc["uid"]
         return doc
 
     def event(self, doc):

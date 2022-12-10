@@ -1,5 +1,6 @@
 import typing as T
 
+from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 import pdfstream.io as io
@@ -11,19 +12,31 @@ from .plotterbase import PlotterBase
 class ImagePlotter(PlotterBase):
     """Live image show of a image with a mask."""
 
-    def __init__(self, image_field: str, mask_field: str = None, *, cmap: str = "viridis", norm: T.Callable = None,
-                 limit_func: T.Callable = None, auto_redraw: bool = True, interpolation: str = None,
-                 window_title: str = None, name: str = "image", save: bool = False, suffix: str = ".png"):
+    def __init__(
+        self,
+        bases: T.List[Path],
+        image_field: str,
+        mask_field: str = None,
+        *,
+        cmap: str = "viridis",
+        norm: T.Callable = None,
+        limit_func: T.Callable = None,
+        auto_redraw: bool = True,
+        interpolation: str = None,
+        window_title: str = None,
+        name: str = "image",
+        save: bool = False,
+        suffix: str = ".png"
+    ):
         fig = plt.figure()
         self.image_field = image_field
         self.mask_field = mask_field
         self._filename = ""
         self._directory = None
-        self._cs = CrossSection(fig, cmap, norm,
-                                limit_func, auto_redraw, interpolation)
+        self._cs = CrossSection(fig, cmap, norm, limit_func, auto_redraw, interpolation)
         if window_title:
             self._cs._fig.canvas.set_window_title(window_title)
-        super().__init__(name, fig, save_at_event=save, suffix=suffix)
+        super().__init__(bases, name, fig, save_at_event=save, suffix=suffix)
 
     def update(self, data: np.ndarray) -> None:
         self._cs.update_image(data)

@@ -126,9 +126,7 @@ def mask_img(
     return working_mask
 
 
-def binned_outlier(
-    img, binner, tmsk, alpha=3, mask_method="median", pool=None
-):
+def binned_outlier(img, binner, tmsk, alpha=3, mask_method="median", pool=None):
     """Sigma Clipping based masking.
 
     Parameters
@@ -163,18 +161,15 @@ def binned_outlier(
     t = []
     i = 0
     for k in binner.flatcount:
-        m = tmsk2[i: i + k]
-        vm = vfs[i: i + k][m]
+        m = tmsk2[i : i + k]
+        vm = vfs[i : i + k][m]
         if k > 0 and len(vm) > 0:
-            t.append((vm, (pfs[i: i + k][m]), alpha))
+            t.append((vm, (pfs[i : i + k][m]), alpha))
         i += k
     p_err = np.seterr(all="ignore")
     # only run tqdm on mean since it is slow
     with pool as p:
-        futures = [
-            p.submit(mask_ring_dict[mask_method], *x)
-            for x in t
-        ]
+        futures = [p.submit(mask_ring_dict[mask_method], *x) for x in t]
     removals = []
     for f in as_completed(futures):
         removals.extend(f.result())
@@ -207,7 +202,7 @@ def generate_map_bin(geo, img_shape):
 
     pixel_size = [getattr(geo, a) for a in ["pixel1", "pixel2"]]
     rres = np.hypot(*pixel_size)
-    rbins = np.arange(np.min(r) - rres / 2., np.max(r) + rres / 2., rres / 2.)
+    rbins = np.arange(np.min(r) - rres / 2.0, np.max(r) + rres / 2.0, rres / 2.0)
     rbinned = BinnedStatistic1D(r.ravel(), statistic=np.max, bins=rbins)
 
     qbin_sizes = rbinned(q_dq.ravel())
@@ -219,12 +214,7 @@ def generate_map_bin(geo, img_shape):
     return q, qbin
 
 
-def mask_img_pyfai(
-    img,
-    binner,
-    tmsk=None,
-    **kwargs
-):
+def mask_img_pyfai(img, binner, tmsk=None, **kwargs):
     """
     Mask an image based off of various methods
 

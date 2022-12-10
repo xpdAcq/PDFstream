@@ -9,9 +9,14 @@ from .serializerbase import SerializerBase
 
 
 class NumpySerializer(SerializerBase):
-
-    def __init__(self, fields: T.List[str], stream_name: str = "primary", folder: str = "mask") -> None:
-        super().__init__(folder)
+    def __init__(
+        self,
+        base: str,
+        fields: T.List[str],
+        stream_name: str = "primary",
+        folder: str = "mask",
+    ) -> None:
+        super().__init__(base, folder)
         self._fields = fields
         self._stream_name = stream_name
         self._descriptor = ""
