@@ -39,7 +39,7 @@ with open(
 
 setup(
     name="pdfstream",
-    version="0.6.1",
+    version='0.6.2',
     description="The configs analysis toolbox for the study on pair distribution function (PDF).",
     install_requires=requirements,
     long_description=readme,
