@@ -17,6 +17,7 @@ import pdfstream.io as io
 from pdfstream.callbacks.config import Config
 from pdfstream.callbacks.datakeys import DataKeys
 from pdfstream.vend.masking import generate_binner, mask_img_pyfai
+from pdfstream.data import ni_dspacing_file
 
 try:
     from diffpy.pdfgetx import PDFConfig, PDFGetter
@@ -88,6 +89,9 @@ def _run_calibration_gui(tiff_file: str, pyfai_kwargs: dict, test: bool) -> int:
 
 
 def _run_gui_in_temp(image: np.ndarray, pyfai_kwargs: dict, test: bool):
+    if not ("calibrant" in pyfai_kwargs):
+        io.server_message("Failed to find calibrant in start document, use Ni in default.")
+        pyfai_kwargs["calibrant"] = str(ni_dspacing_file)
     with TemporaryDirectory() as temp_dir:
         temp_path = Path(temp_dir)
         temp_tiff = temp_path.joinpath("calibration.tiff")
