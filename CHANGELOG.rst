@@ -4,6 +4,17 @@ PDFstream Change Log
 
 .. current developments
 
+v0.6.2
+====================
+
+**Fixed:**
+
+* The data folder is now added in the package release.
+
+* The file name render returns the modified documents and the following callbacks use the returned documents instead of the input ones.
+
+
+
 v0.6.1
 ====================
 
