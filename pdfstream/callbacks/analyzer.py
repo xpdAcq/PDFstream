@@ -413,7 +413,6 @@ class Analyzer(event_model.DocumentRouter):
             if key in exports:
                 for d in getattr(self, f"_{key}_dirs"):
                     filename = d.joinpath(data["filename"]).with_suffix(f".{key}")
-                    print(f"{d = }\n  {filename = }")
                     if getattr(self._pdfgetter, key) != (None, None):
                         self._pdfgetter.writeOutput(str(filename), key)
                     else:
