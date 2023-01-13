@@ -409,18 +409,16 @@ class Analyzer(event_model.DocumentRouter):
 
     def _save_pdfgetx_data(self, data: dict) -> None:
         exports = self._config.exports
-        if "sq" in exports:
-            for d in self._sq_dirs:
-                filename = d.joinpath(data["filename"]).with_suffix(".sq")
-                self._pdfgetter.writeOutput(str(filename), "sq")
-        if "fq" in exports:
-            for d in self._fq_dirs:
-                filename = d.joinpath(data["filename"]).with_suffix(".fq")
-                self._pdfgetter.writeOutput(str(filename), "fq")
-        if "gr" in exports:
-            for d in self._gr_dirs:
-                filename = d.joinpath(data["filename"]).with_suffix(".gr")
-                self._pdfgetter.writeOutput(str(filename), "gr")
+        for key in ["sq", "fq", "gr"]:
+            if key in exports:
+                for d in getattr(self, f"_{key}_dirs"):
+                    filename = d.joinpath(data["filename"]).with_suffix(f".{key}")
+                    print(f"{d = }\n  {filename = }")
+                    if getattr(self._pdfgetter, key) != (None, None):
+                        self._pdfgetter.writeOutput(str(filename), key)
+                    else:
+                        io.server_message(f"Not saving {key} files as "
+                                          f"self._pdfgetter.{key} = {getattr(self._pdfgetter, key)}")
         return
 
     def _save_analyzed_data(self, data: dict) -> None:
