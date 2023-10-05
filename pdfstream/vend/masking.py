@@ -122,7 +122,7 @@ def mask_img(
             mask_method=auto_type,
             pool=pool,
         )
-    working_mask = working_mask.astype(np.bool)
+    working_mask = working_mask.astype(bool)
     return working_mask
 
 
