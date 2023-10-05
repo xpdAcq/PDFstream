@@ -4,6 +4,15 @@ PDFstream Change Log
 
 .. current developments
 
+v0.6.3
+====================
+
+**Fixed:**
+
+* remove last rogue deprecated `np.bool`
+
+
+
 v0.6.2
 ====================
 
