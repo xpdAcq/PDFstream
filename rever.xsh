@@ -4,7 +4,7 @@ $ACTIVITIES = [
     'changelog',
     'tag',
     'push_tag',
-#    'ghrelease',
+    'ghrelease',
     'pypi',
 #    'forge'
 ]
@@ -16,10 +16,10 @@ $VERSION_BUMP_PATTERNS = [
 
 $CHANGELOG_FILENAME = 'CHANGELOG.rst'
 $CHANGELOG_TEMPLATE = 'TEMPLATE.rst'
-$TAG_REMOTE = 'git@github.com:xpdAcq/pdfstream.git'
+$TAG_REMOTE = 'git@github.com:xpdAcq/PDFstream.git'
 
 $GITHUB_ORG = 'xpdAcq'
-$GITHUB_REPO = 'pdfstream'
+$GITHUB_REPO = 'PDFstream'
 
 $FORGE_FEEDSTOCK = 'git@github.com:nsls-ii-forge/pdfstream-feedstock.git'
 $FORGE_FEEDSTOCK_ORG = 'nsls-ii-forge'
