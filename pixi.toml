@@ -1,0 +1,26 @@
+[workspace]
+authors = ["Thomas A Caswell <tcaswell@bnl.gov>"]
+channels = ["conda-forge"]
+name = "PDFstream"
+platforms = ["linux-64"]
+version = "0.1.0"
+
+[tasks]
+
+[dependencies]
+python = "==3.10"
+bluesky-base = ">=1.14.1,<2"
+fire = ">=0.7.0,<0.8"
+pyfai = ">=2025.3.0,<2026"
+tiled = ">=0.1.0b28,<0.2"
+databroker = ">=2.0.0b62,<3"
+suitcase-csv = ">=0.3.0,<0.4"
+suitcase-json-metadata = ">=0.2.1,<0.3"
+scikit-beam = ">=0.0.26,<0.0.27"
+suitcase-tiff = ">=0.4.0,<0.5"
+xpdview = ">=0.5.0,<0.6"
+"diffpy.pdfgui" = ">=3.0.5,<4"
+xray-vision = ">=0.1.1,<0.2"
+
+[pypi-dependencies]
+pdfstream = { path = ".", editable = true }
