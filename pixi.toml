@@ -24,3 +24,7 @@ xray-vision = ">=0.1.1,<0.2"
 
 [pypi-dependencies]
 pdfstream = { path = ".", editable = true }
+
+[tasks.server]
+args = ["ini"]
+cmd = "run_server {{ ini }}"
