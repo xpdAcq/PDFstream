@@ -11,7 +11,7 @@ import numpy as np
 from bluesky.callbacks.stream import LiveDispatcher
 from databroker.v1 import Broker
 from event_model import RunRouter
-from pyFAI.azimuthalIntegrator import AzimuthalIntegrator
+from pyFAI.integrator.azimuthal import AzimuthalIntegrator
 from suitcase.csv import Serializer as CSVSerializer
 from suitcase.json_metadata import Serializer as JsonSerializer
 
@@ -379,7 +379,7 @@ def process(
     pdfconfig = PDFConfig(**pdfgetx_setting)
     pdfgetter = PDFGetter(pdfconfig)
     pdfgetter(x, y)
-    iq, sq, fq, gr = pdfgetter.iq, pdfgetter.sq, pdfgetter.fq, pdfgetter.gr
+    iq, sq, fq, gr = [x, y], pdfgetter.sq, pdfgetter.fq, pdfgetter.gr
     gr_max_ind = np.argmax(gr[1])
     data.update(
         {
