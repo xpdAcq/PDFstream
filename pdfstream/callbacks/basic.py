@@ -241,7 +241,15 @@ class MyWaterfall(Waterfall):
             valfmt="%1.2f",
         )
         self.x_offset_slider.on_changed(self.update_x_offset)
-
+        
+    def clear(self):
+        self.key_list.clear()
+        self.x_array_list.clear()
+        self.y_array_list.clear()
+        for line in self.ax.get_lines():
+            line.remove()
+        self.canvas.draw_idle()
+ 
 
 class LiveWaterfall(CallbackBase):
     """A live water plot for the one dimensional data."""
