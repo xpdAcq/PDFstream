@@ -21,10 +21,11 @@ suitcase-tiff = ">=0.4.0,<0.5"
 xpdview = ">=0.5.0,<0.6"
 "diffpy.pdfgui" = ">=3.0.5,<4"
 xray-vision = ">=0.1.1,<0.2"
+setuptools = "<81"
 
 [pypi-dependencies]
 pdfstream = { path = ".", editable = true }
 
 [tasks.server]
-args = ["ini"]
-cmd = "run_server {{ ini }}"
+# args = ["ini"]
+cmd = "run_server"
