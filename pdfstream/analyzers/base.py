@@ -1,7 +1,7 @@
 from configparser import ConfigParser
 
 from bluesky.callbacks.core import CallbackBase
-from databroker.core import BlueskyRun
+from databroker.client import BlueskyRun
 
 
 class AnalyzerConfig(ConfigParser):

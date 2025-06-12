@@ -1,7 +1,7 @@
 import typing as tp
 
 from databroker import catalog
-from databroker.core import BlueskyRun
+from databroker.client import BlueskyRun
 
 from pdfstream.analyzers.base import AnalyzerConfig, Analyzer
 from pdfstream.servers.xpd_server import XPDRouter, XPDConfig

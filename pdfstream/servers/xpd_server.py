@@ -1,7 +1,7 @@
 """The analysis server. Process raw image to PDF."""
 import typing as tp
 
-import databroker.core
+import databroker.mongo_normalized
 from bluesky.callbacks.zmq import Publisher
 from databroker.v1 import Broker
 from event_model import RunRouter
@@ -99,7 +99,7 @@ class XPDRouter(RunRouter):
         factory = XPDFactory(config)
         super(XPDRouter, self).__init__(
             [factory],
-            handler_registry=databroker.core.discover_handlers()
+            handler_registry=databroker.mongo_normalized.discover_handlers()
         )
 
 

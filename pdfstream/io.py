@@ -6,6 +6,7 @@ from typing import Dict, Any
 import fabio
 import numpy as np
 import pyFAI
+from pyFAI.integrator.azimuthal import AzimuthalIntegrator
 import yaml
 from numpy import ndarray
 from tifffile import TiffWriter
@@ -14,15 +15,15 @@ import pdfstream.data
 from pdfstream.vend.loaddata import load_data
 
 
-def load_ai_from_poni_file(poni_file: str) -> pyFAI.AzimuthalIntegrator:
+def load_ai_from_poni_file(poni_file: str) -> AzimuthalIntegrator:
     """Initiate the AzimuthalIntegrator using poni file."""
     ai = pyFAI.load(poni_file)
     return ai
 
 
-def load_ai_from_calib_result(calib_result: dict) -> pyFAI.AzimuthalIntegrator:
+def load_ai_from_calib_result(calib_result: dict) -> AzimuthalIntegrator:
     """Initiate the AzimuthalIntegrator using calibration information."""
-    ai = pyFAI.azimuthalIntegrator.AzimuthalIntegrator()
+    ai = AzimuthalIntegrator()
     # different from poni file, set_config only accepts dictionary of lowercase keys
     _calib_result = _lower_key(calib_result)
     # the pyFAI only accept strings so the None should be parsed to a string

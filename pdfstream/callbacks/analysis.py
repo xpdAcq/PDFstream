@@ -11,7 +11,7 @@ import numpy as np
 from bluesky.callbacks.stream import LiveDispatcher
 from databroker.v1 import Broker
 from event_model import RunRouter
-from pyFAI.azimuthalIntegrator import AzimuthalIntegrator
+from pyFAI.integrator.azimuthal import AzimuthalIntegrator
 from suitcase.csv import Serializer as CSVSerializer
 from suitcase.json_metadata import Serializer as JsonSerializer
 
@@ -337,8 +337,8 @@ def process(
         "chi_2theta": np.array([0.]),
         "chi_Q": np.array([0.]),
         "chi_I": np.array([0.]),
-        "chi_max": np.float(0.),
-        "chi_argmax": np.float(0.),
+        "chi_max": np.float64(0.),
+        "chi_argmax": np.float64(0.),
         "iq_Q": np.array([0.]),
         "iq_I": np.array([0.]),
         "sq_Q": np.array([0.]),
@@ -347,8 +347,8 @@ def process(
         "fq_F": np.array([0.]),
         "gr_r": np.array([0.]),
         "gr_G": np.array([0.]),
-        "gr_max": np.float(0.),
-        "gr_argmax": np.float(0.)
+        "gr_max": np.float64(0.),
+        "gr_argmax": np.float64(0.)
     }
     # dark subtraction
     if dk_img is not None:
@@ -379,7 +379,7 @@ def process(
     pdfconfig = PDFConfig(**pdfgetx_setting)
     pdfgetter = PDFGetter(pdfconfig)
     pdfgetter(x, y)
-    iq, sq, fq, gr = pdfgetter.iq, pdfgetter.sq, pdfgetter.fq, pdfgetter.gr
+    iq, sq, fq, gr = [x, y], pdfgetter.sq, pdfgetter.fq, pdfgetter.gr
     gr_max_ind = np.argmax(gr[1])
     data.update(
         {
