@@ -2,12 +2,12 @@ from pathlib import Path
 
 import numpy as np
 import pytest
-from pkg_resources import resource_filename
+from importlib.resources import files
 
 import pdfstream.servers.lsq_server as mod
 from pdfstream.callbacks.composer import gen_stream
 
-cfg_file = resource_filename("tests", "configs/lsq_server.ini")
+cfg_file = str(files("tests").joinpath("configs/lsq_server.ini"))
 
 
 @pytest.fixture

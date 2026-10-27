@@ -3,13 +3,13 @@ from pathlib import Path
 
 import matplotlib.pyplot as plt
 import pytest
-from pkg_resources import resource_filename
+from importlib.resources import files
 
 import pdfstream.callbacks
 import pdfstream.callbacks.analysis as an
 from pdfstream.schemas import analysis_out_schemas, analysis_in_schemas, Validator
 
-fn = resource_filename("tests", "configs/xpd_server.ini")
+fn = str(files("tests").joinpath("configs/xpd_server.ini"))
 
 
 @pytest.mark.parametrize("use_db", [True, False])

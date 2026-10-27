@@ -1,7 +1,5 @@
 """The paths of data files and other package variables."""
-from pathlib import Path
+from importlib.resources import files
 
-from pkg_resources import resource_filename
-
-ni_dspacing_file = Path(resource_filename("pdfstream", "data/Ni_dspacing.txt"))
+ni_dspacing_file = files("pdfstream").joinpath("data/Ni_dspacing.txt")
 QUIET = False

@@ -31,7 +31,7 @@ class XPDConfig(CalibrationConfig, AnalysisConfig, VisConfig, ExportConfig):
         port = self.getint("PUBLISH TO", "port", fallback=5567)
         prefix = self.get("PUBLISH TO", "prefix", fallback="an").encode()
         return {
-            "address": (host, port),
+            "address": host,
             "prefix": prefix
         }
 
@@ -120,16 +120,13 @@ class XPDFactory:
             self.analysis[0].subscribe(Visualizer(config))
         if self.functionality["send_messages"]:
             pub_config = self.config.publisher_config
-            io.server_message(
-                "Data will be published to {}:{} with prefix {}.".format(
-                    pub_config["address"][0], pub_config["address"][1], pub_config["prefix"]
-                )
-            )
+            io.server_message(pub_config)
             self.analysis[0].subscribe(Publisher(**pub_config))
             if self.calibration:
                 self.calibration[0].subscribe(Publisher(**pub_config))
 
     def __call__(self, name: str, doc: dict) -> tp.Tuple[list, list]:
+        print(f"{name = }\n{doc}\n")
         if name == "start":
             if doc.get(self.config.dark_identifier):
                 # dark frame run

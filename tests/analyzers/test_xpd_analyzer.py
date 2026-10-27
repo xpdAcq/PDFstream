@@ -1,8 +1,8 @@
-from pkg_resources import resource_filename
+from importlib.resources import files
 
 import pdfstream.analyzers.xpd_analyzer as mod
 
-fn = resource_filename("tests", "configs/xpd_server.ini")
+fn = str(files("tests").joinpath("configs/xpd_server.ini"))
 
 
 def test_XPDAnalyzer(db_with_img_and_bg_img, tmpdir):

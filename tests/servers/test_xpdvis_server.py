@@ -1,8 +1,8 @@
-from pkg_resources import resource_filename
+from importlib.resources import files
 
 import pdfstream.servers.xpdvis_server as mod
 
-fn = resource_filename("tests", "configs/xpdvis_server.ini")
+fn = str(files("tests").joinpath("configs/xpdvis_server.ini"))
 
 
 def test_make_and_run():

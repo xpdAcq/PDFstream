@@ -1,13 +1,11 @@
-from pathlib import Path
-
 import pytest
-from pkg_resources import resource_filename
+from importlib.resources import files
 
 import pdfstream.main
 import pdfstream.servers
 import pdfstream.servers.base as mod
 
-fn = Path(resource_filename("tests", "configs"))
+fn = files("tests").joinpath("configs")
 
 
 @pytest.mark.parametrize(

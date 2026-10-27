@@ -11,7 +11,7 @@ import pyFAI
 import pytest
 from databroker.v2 import Broker
 from diffpy.pdfgetx import PDFConfig, PDFGetter
-from pkg_resources import resource_filename
+from importlib.resources import files
 
 from pdfstream.callbacks.composer import gen_stream
 from pdfstream.io import load_img, load_array
@@ -19,15 +19,15 @@ from pdfstream.io import load_img, load_array
 # do not show any figures in test otherwise they will block the tests
 plt.ioff()
 
-NI_PONI_FILE = resource_filename('tests', 'test_data/Ni_poni_file.poni')
-NI_GR_FILE = resource_filename('tests', 'test_data/Ni_gr_file.gr')
-NI_CHI_FILE = resource_filename('tests', 'test_data/Ni_chi_file.chi')
-NI_FGR_FILE = resource_filename('tests', 'test_data/Ni_fgr_file.fgr')
-NI_IMG_FILE = resource_filename('tests', 'test_data/Ni_img_file.tiff')
-MASK_FILE = resource_filename("tests", "test_data/mask_file.npy")
-KAPTON_IMG_FILE = resource_filename('tests', 'test_data/Kapton_img_file.tiff')
-BLACK_IMG_FILE = resource_filename('tests', 'test_data/black_img.tiff')
-WHITE_IMG_FILE = resource_filename('tests', 'test_data/white_img.tiff')
+NI_PONI_FILE = str(files('tests').joinpath('test_data/Ni_poni_file.poni'))
+NI_GR_FILE = str(files('tests').joinpath('test_data/Ni_gr_file.gr'))
+NI_CHI_FILE = str(files('tests').joinpath('test_data/Ni_chi_file.chi'))
+NI_FGR_FILE = str(files('tests').joinpath('test_data/Ni_fgr_file.fgr'))
+NI_IMG_FILE = str(files('tests').joinpath('test_data/Ni_img_file.tiff'))
+MASK_FILE = str(files('tests').joinpath('test_data/mask_file.npy'))
+KAPTON_IMG_FILE = str(files('tests').joinpath('test_data/Kapton_img_file.tiff'))
+BLACK_IMG_FILE = str(files('tests').joinpath('test_data/black_img.tiff'))
+WHITE_IMG_FILE = str(files('tests').joinpath('test_data/white_img.tiff'))
 NI_IMG = load_img(NI_IMG_FILE)
 NI_FRAMES = numpy.expand_dims(NI_IMG, 0)
 KAPTON_IMG = load_img(KAPTON_IMG_FILE)
@@ -41,7 +41,7 @@ AI = pyFAI.load(NI_PONI_FILE)
 MASK = numpy.load(MASK_FILE)
 BLACK_IMG = load_img(BLACK_IMG_FILE)
 WHITE_IMG = load_img(WHITE_IMG_FILE)
-START_DOC_FILE = resource_filename('tests', 'test_data/start.json')
+START_DOC_FILE = str(files('tests').joinpath('test_data/start.json'))
 with Path(START_DOC_FILE).open("r") as f:
     START_DOC = json.load(f)
 

@@ -25,7 +25,7 @@ class ServerConfig(ConfigParser):
 
     @property
     def address(self):
-        return self.host, self.port
+        return self.host
 
     @property
     def prefix(self):
@@ -49,7 +49,7 @@ class BaseServer(RemoteDispatcher):
         try:
             server_message(
                 "Server is started. " +
-                "Listen to {}:{} prefix {}.".format(self._config.host, self._config.port, self._config.prefix)
+                "Listen to {} prefix {}.".format(self._config.host, self._config.prefix)
             )
             super(BaseServer, self).start()
         except KeyboardInterrupt:

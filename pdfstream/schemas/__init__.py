@@ -1,8 +1,7 @@
 import json
-from pathlib import Path
+from importlib.resources import files
 
 from event_model import DocumentNames, _Validator
-from pkg_resources import resource_filename as rs_fn
 
 __all__ = [
     "analysis_in_schemas",
@@ -24,7 +23,7 @@ ANALYSIS_IN_SCHEMA_NAMES = {
 
 analysis_in_schemas = {}
 for doc_name, filename in ANALYSIS_IN_SCHEMA_NAMES.items():
-    with Path(rs_fn('pdfstream', filename)).open("r") as fin:
+    with files('pdfstream').joinpath(filename).open("r") as fin:
         analysis_in_schemas[doc_name] = json.load(fin)
 
 ANALYSIS_OUT_SCHEMA_NAMES = {
@@ -40,7 +39,7 @@ ANALYSIS_OUT_SCHEMA_NAMES = {
 
 analysis_out_schemas = {}
 for doc_name, filename in ANALYSIS_OUT_SCHEMA_NAMES.items():
-    with Path(rs_fn('pdfstream', filename)).open("r") as fin:
+    with files('pdfstream').joinpath(filename).open("r") as fin:
         analysis_out_schemas[doc_name] = json.load(fin)
 
 
